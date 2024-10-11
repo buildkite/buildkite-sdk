@@ -1,0 +1,15 @@
+{
+	"name": "buildkite-pipeline-sdk",
+	"version": "0.0.1",
+	"description": "",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" \u0026\u0026 exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/node": "^20.11.30"
+	}
+}
