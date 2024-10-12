@@ -16,12 +16,18 @@ var steps = schema_types.NewField().
 	Name("steps").
 	Description("A list of steps in the group; at least 1 step is required. Allowed step types: wait, trigger, command/commands, block, input.").
 	UnionArray(
+		"steps",
 		blockStep.ToObjectField(),
 		commandStep.ToObjectField(),
 		inputStep.ToObjectField(),
 		triggerStep.ToObjectField(),
 		waitStep.ToObjectField(),
 	)
+
+var stepsField = schema_types.NewField().
+	Name("steps").
+	Description("A list of steps in the group; at least 1 step is required. Allowed step types: wait, trigger, command/commands, block, input.").
+	FieldRef(&steps)
 
 var groupStep = Step{
 	Name:        "group",
@@ -35,6 +41,6 @@ var groupStep = Step{
 		label,
 		notify,
 		skip,
-		steps,
+		stepsField,
 	},
 }

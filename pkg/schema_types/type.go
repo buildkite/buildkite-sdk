@@ -3,6 +3,7 @@ package schema_types
 type SchemaType interface {
 	TypeScriptType() string
 	GoType() string
+	IsUnion() bool
 }
 
 // Simple
@@ -55,9 +56,9 @@ func (array) AnyMap() SchemaArray {
 	}
 }
 
-func (array) Union(fields []Field) SchemaArray {
+func (array) Union(name string, fields []Field) SchemaArray {
 	return SchemaArray{
-		Items: Union.New(fields),
+		Items: Union.New(name, fields),
 	}
 }
 
@@ -115,8 +116,9 @@ var Object = object{}
 // Union
 type union struct{}
 
-func (union) New(fields []Field) SchemaUnion {
+func (union) New(name string, fields []Field) SchemaUnion {
 	return SchemaUnion{
+		Name:   AttributeName(name),
 		Values: fields,
 	}
 }

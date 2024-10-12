@@ -1,4 +1,4 @@
-package typescript_code_gen
+package go_code_gen
 
 import (
 	"fmt"
@@ -13,13 +13,9 @@ func newTypesFile(fields []schema_types.Field, steps []schema.Step) string {
 	for _, field := range fields {
 		def := field.GetDefinition()
 		switch def.Typ.(type) {
-		case schema_types.SchemaUnion:
-			file.code = append(file.code,
-				fmt.Sprintf("type %s = %s\n", def.Name.TitleCase(), def.Typ.TypeScriptType()),
-			)
 		default:
 			file.code = append(file.code,
-				fmt.Sprintf("%s\n", def.Typ.TypeScriptType()),
+				fmt.Sprintf("%s\n", def.Typ.GoType()),
 			)
 		}
 	}
@@ -27,13 +23,9 @@ func newTypesFile(fields []schema_types.Field, steps []schema.Step) string {
 	for _, step := range steps {
 		def := step.ToObjectField().GetDefinition()
 		switch def.Typ.(type) {
-		case schema_types.SchemaUnion:
-			file.code = append(file.code,
-				fmt.Sprintf("type %s = %s\n", def.Name.TitleCase(), def.Typ.TypeScriptType()),
-			)
 		default:
 			file.code = append(file.code,
-				fmt.Sprintf("%s\n", def.Typ.TypeScriptType()),
+				fmt.Sprintf("%s\n", def.Typ.GoType()),
 			)
 		}
 	}

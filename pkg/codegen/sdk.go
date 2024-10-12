@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 
+	go_code_gen "github.com/buildkite/pipeline-sdk/pkg/codegen/go"
 	typescript_code_gen "github.com/buildkite/pipeline-sdk/pkg/codegen/typescript"
 	"github.com/buildkite/pipeline-sdk/pkg/schema"
 )
@@ -13,12 +14,12 @@ const SDK_FOLDER = "sdk"
 
 type LanguageTarget interface {
 	FolderName() string
-	Files(pipelineSchema schema.PipelineSchema) (map[string]string, error)
+	Files(pipelineSchema schema.PipelineSchema) map[string]string
 }
 
 var targets = []LanguageTarget{
 	typescript_code_gen.TypeScriptSDK{},
-	// go_code_gen.GoSDK{},
+	go_code_gen.GoSDK{},
 }
 
 func GenerateSDKs(pipelineSchema schema.PipelineSchema) error {
@@ -34,11 +35,7 @@ func GenerateSDKs(pipelineSchema schema.PipelineSchema) error {
 			return err
 		}
 
-		files, err := target.Files(pipelineSchema)
-		if err != nil {
-			return fmt.Errorf("generating files: %v", err)
-		}
-
+		files := target.Files(pipelineSchema)
 		for name, contents := range files {
 			out := path.Join(targetFolder, name)
 			err = os.WriteFile(out, []byte(contents), os.ModePerm)

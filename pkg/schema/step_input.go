@@ -7,6 +7,11 @@ var input = schema_types.NewField().
 	Description("The label for this input step.").
 	String()
 
+var fieldsField = schema_types.NewField().
+	Name("fields").
+	Description("An input step is used to collect information from a user.").
+	FieldRef(&fields)
+
 var inputStep = Step{
 	Name:        "input",
 	Description: "An input step is used to collect information from a user.",
@@ -14,7 +19,7 @@ var inputStep = Step{
 		allowDependencyFailure,
 		branches,
 		dependsOn,
-		fields,
+		fieldsField,
 		ifField,
 		input,
 		key,

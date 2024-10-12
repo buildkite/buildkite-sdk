@@ -12,6 +12,7 @@ var PipelinesSchema = PipelineSchema{
 		selectInputOption,
 		selectInput,
 		textInput,
+		steps,
 	},
 	Steps: []Step{
 		blockStep,

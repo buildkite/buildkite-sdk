@@ -91,13 +91,13 @@ func (f *Field) Object(props []Field) Field {
 	return *f
 }
 
-func (f *Field) Union(fields ...Field) Field {
-	f.typ = Union.New(fields)
+func (f *Field) Union(name string, fields ...Field) Field {
+	f.typ = Union.New(name, fields)
 	return *f
 }
 
-func (f *Field) UnionArray(fields ...Field) Field {
-	f.typ = Array.Union(fields)
+func (f *Field) UnionArray(name string, fields ...Field) Field {
+	f.typ = Array.Union(name, fields)
 	return *f
 }
 

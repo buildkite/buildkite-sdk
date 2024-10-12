@@ -20,7 +20,7 @@ export enum BlockedState {
 }
 
 
-type Fields = (TextInput | SelectInputAttribute)
+(TextInput | SelectInputAttribute)[]
 
 export interface Retry {
     // Whether to allow a job to retry automatically. This field accepts a boolean value, individual retry conditions, or a list of multiple different retry conditions.
@@ -66,6 +66,8 @@ export interface TextInput {
     default?: string;
 }
 
+(Block | Command | Input | Trigger | Wait)[]
+
 export interface Block {
     // Whether to continue to proceed past this step if any of the steps named in the depends_on attribute fail.
     allowDependencyFailure?: boolean;
@@ -78,7 +80,7 @@ export interface Block {
     // A list of step keys that this step depends on. This step will only proceed after the named steps have completed. See managing step dependencies for more information.
     dependsOn?: string[];
     // An input step is used to collect information from a user.
-    fields?: (TextInput | SelectInputAttribute);
+    fields?: Fields;
     // A boolean expression that omits the step when false. See Using conditionals for supported expressions.
     if?: string;
     // A unique string to identify the block step.
@@ -152,7 +154,7 @@ export interface Group {
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     skip?: boolean;
     // A list of steps in the group; at least 1 step is required. Allowed step types: wait, trigger, command/commands, block, input.
-    steps?: (Block | Command | Input | Trigger | Wait)[];
+    steps?: Steps;
 }
 
 export interface Input {
@@ -163,7 +165,7 @@ export interface Input {
     // A list of step keys that this step depends on. This step will only proceed after the named steps have completed. See managing step dependencies for more information.
     dependsOn?: string[];
     // An input step is used to collect information from a user.
-    fields?: (TextInput | SelectInputAttribute);
+    fields?: Fields;
     // A boolean expression that omits the step when false. See Using conditionals for supported expressions.
     if?: string;
     // The label for this input step.

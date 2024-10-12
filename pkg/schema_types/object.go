@@ -12,6 +12,14 @@ type SchemaObject struct {
 	Properties []Field
 }
 
+func (SchemaObject) IsUnion() bool {
+	return false
+}
+
+func (s SchemaObject) Fields() []Field {
+	return s.Properties
+}
+
 func (s SchemaObject) TypeScriptType() string {
 	tsInterface := utils.CodeBlock{
 		fmt.Sprintf("export interface %s {", s.Name.TitleCase()),
@@ -49,17 +57,27 @@ func (s SchemaObject) TypeScriptType() string {
 func (s SchemaObject) GoType() string {
 	var properties []string
 	for _, prop := range s.Properties {
-		var propType string
 		if prop.fieldref != nil {
-			propType = prop.fieldref.typ.GoType()
-		} else {
-			propType = prop.typ.GoType()
+			properties = append(properties, utils.CodeBlock{
+				utils.NewCodeComment(prop.description, 0),
+				fmt.Sprintf("%s %s `json:\"%s,omitempty\"`", prop.name.TitleCase(), prop.fieldref.name.TitleCase(), prop.name),
+			}.DisplayIndent(4))
+			continue
 		}
 
-		properties = append(properties, fmt.Sprintf("%s\n%s\n",
-			utils.NewCodeComment(prop.description, 4),
-			fmt.Sprintf("    %s %s `json:\"%s,omitempty\"`", s.Name.TitleCase(), propType, prop.name),
-		))
+		propType := prop.typ.GoType()
+		switch prop.typ.(type) {
+		case SchemaUnion:
+			properties = append(properties, utils.CodeBlock{
+				utils.NewCodeComment(prop.description, 0),
+				fmt.Sprintf("%s %s `json:\"%s,omitempty\"`", prop.name.TitleCase(), prop.name.TitleCase(), prop.name),
+			}.DisplayIndent(4))
+		default:
+			properties = append(properties, fmt.Sprintf("%s\n%s\n",
+				utils.NewCodeComment(prop.description, 4),
+				fmt.Sprintf("    %s %s `json:\"%s,omitempty\"`", prop.name.TitleCase(), propType, prop.name),
+			))
+		}
 	}
 
 	return utils.CodeBlock{

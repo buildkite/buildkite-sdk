@@ -12,6 +12,10 @@ type SchemaEnum struct {
 	Values []string
 }
 
+func (SchemaEnum) IsUnion() bool {
+	return false
+}
+
 func (s SchemaEnum) TypeScriptType() string {
 	enumProps := utils.CodeBlock{}
 	for _, val := range s.Values {
@@ -26,13 +30,14 @@ func (s SchemaEnum) TypeScriptType() string {
 }
 
 func (s SchemaEnum) GoType() string {
+	name := utils.SnakeCaseToTitleCase(s.Name)
 	consts := utils.CodeBlock{}
 	for _, val := range s.Values {
-		consts = append(consts, fmt.Sprintf("    %s %s = \"%s\"", strings.ToUpper(val), s.Name, val))
+		consts = append(consts, fmt.Sprintf("    %s %s = \"%s\"", strings.ToUpper(val), name, val))
 	}
 
 	return utils.CodeBlock{
-		fmt.Sprintf("type %s string", s.Name),
+		fmt.Sprintf("type %s string", name),
 		"const (",
 		consts.Display(),
 		")",

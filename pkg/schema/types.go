@@ -93,4 +93,4 @@ var selectInput = schema_types.NewField().
 var fields = schema_types.NewField().
 	Name("fields").
 	Description("An input step is used to collect information from a user.").
-	Union(textInput, selectInput)
+	UnionArray("fields", textInput, selectInput)
