@@ -3,6 +3,10 @@ package schema_types
 // String
 type SchemaString struct{}
 
+func (SchemaString) IsUnion() bool {
+	return false
+}
+
 func (SchemaString) TypeScriptType() string {
 	return "string"
 }
@@ -13,6 +17,10 @@ func (SchemaString) GoType() string {
 
 // Number
 type SchemaNumber struct{}
+
+func (SchemaNumber) IsUnion() bool {
+	return false
+}
 
 func (SchemaNumber) TypeScriptType() string {
 	return "number"
@@ -25,6 +33,10 @@ func (SchemaNumber) GoType() string {
 // Boolean
 type SchemaBoolean struct{}
 
+func (SchemaBoolean) IsUnion() bool {
+	return false
+}
+
 func (SchemaBoolean) TypeScriptType() string {
 	return "boolean"
 }
@@ -35,6 +47,10 @@ func (SchemaBoolean) GoType() string {
 
 // Any
 type SchemaAny struct{}
+
+func (SchemaAny) IsUnion() bool {
+	return false
+}
 
 func (SchemaAny) TypeScriptType() string {
 	return "any"

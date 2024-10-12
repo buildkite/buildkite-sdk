@@ -26,7 +26,7 @@ var blockStep = Step{
 		blockedStateField,
 		branches,
 		dependsOn,
-		fields,
+		fieldsField,
 		ifField,
 		key,
 		prompt,

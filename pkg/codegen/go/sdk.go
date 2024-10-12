@@ -10,6 +10,6 @@ func (GoSDK) FolderName() string {
 
 func (GoSDK) Files(pipelineSchema schema.PipelineSchema) map[string]string {
 	return map[string]string{
-		"types.go": "",
+		"types.go": newTypesFile(pipelineSchema.Types, pipelineSchema.Steps),
 	}
 }
