@@ -25,9 +25,9 @@ func newStepBuilderFile(pipelineSchema schema.PipelineSchema) string {
 	for _, step := range pipelineSchema.Steps {
 		file.imports.AddImport("./types", "types")
 
-		stepName := utils.Capitalize(step.Name)
+		stepName := utils.String.Capitalize(step.Name)
 		file.code = append(file.code, utils.CodeBlock{
-			utils.NewCodeComment(step.Description, 0),
+			utils.CodeGen.Comment.TypeScript(step.Description, 0),
 			fmt.Sprintf("public add%sStep(args: types.%s): this {", stepName, stepName),
 			"    this.steps.push({ ...args });",
 			"    return this;",

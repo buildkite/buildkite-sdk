@@ -20,7 +20,9 @@ func (c CodeBlock) DisplayIndent(spaces int) string {
 	)
 }
 
-func NewCodeComment(str string, indent int) string {
+type codeComment struct{}
+
+func (codeComment) newComment(identifier, str string, indent int) string {
 	parts := strings.Split(str, "\n")
 	spaces := strings.Repeat(" ", indent)
 
@@ -31,8 +33,33 @@ func NewCodeComment(str string, indent int) string {
 			continue
 		}
 
-		result = append(result, fmt.Sprintf("%s// %s", spaces, part))
+		result = append(result, fmt.Sprintf("%s%s %s", spaces, identifier, part))
 	}
 
 	return strings.Join(result, "\n")
+}
+
+func (c codeComment) TypeScript(str string, indent int) string {
+	return c.newComment("//", str, indent)
+}
+
+func (c codeComment) Go(str string, indent int) string {
+	return c.newComment("//", str, indent)
+}
+
+type codeGen struct {
+	Comment codeComment
+}
+
+func (codeGen) NewCodeBlock(lines ...string) CodeBlock {
+	block := CodeBlock{}
+	for _, line := range lines {
+		block = append(block, line)
+	}
+
+	return block
+}
+
+var CodeGen = codeGen{
+	Comment: codeComment{},
 }

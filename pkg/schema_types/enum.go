@@ -23,14 +23,14 @@ func (s SchemaEnum) TypeScriptType() string {
 	}
 
 	return utils.CodeBlock{
-		fmt.Sprintf("export enum %s {", utils.SnakeCaseToTitleCase(s.Name)),
+		fmt.Sprintf("export enum %s {", utils.String.SnakeCaseToTitleCase(s.Name)),
 		enumProps.Display(),
 		"}\n",
 	}.Display()
 }
 
 func (s SchemaEnum) GoType() string {
-	name := utils.SnakeCaseToTitleCase(s.Name)
+	name := utils.String.SnakeCaseToTitleCase(s.Name)
 	consts := utils.CodeBlock{}
 	for _, val := range s.Values {
 		consts = append(consts, fmt.Sprintf("    %s %s = \"%s\"", strings.ToUpper(val), name, val))

@@ -5,25 +5,27 @@ import (
 	"strings"
 )
 
-func AddIndent(str string, indent int) string {
+type stringFunctions struct{}
+
+func (stringFunctions) AddIndent(str string, indent int) string {
 	return fmt.Sprintf("%s%s", strings.Repeat(" ", indent), str)
 }
 
-func Capitalize(str string) string {
+func (stringFunctions) Capitalize(str string) string {
 	return strings.ToUpper(str[0:1]) + str[1:]
 }
 
-func SnakeCaseToTitleCase(str string) string {
+func (stringFunctions) SnakeCaseToTitleCase(str string) string {
 	result := ""
 	parts := strings.Split(str, "_")
 	for _, part := range parts {
-		result += Capitalize(strings.ToLower(part))
+		result += String.Capitalize(strings.ToLower(part))
 	}
 
 	return result
 }
 
-func SnakeCaseToCamelCase(str string) string {
+func (stringFunctions) SnakeCaseToCamelCase(str string) string {
 	result := ""
 	parts := strings.Split(str, "_")
 	for i, part := range parts {
@@ -32,8 +34,10 @@ func SnakeCaseToCamelCase(str string) string {
 			continue
 		}
 
-		result += Capitalize(strings.ToLower(part))
+		result += String.Capitalize(strings.ToLower(part))
 	}
 
 	return result
 }
+
+var String = stringFunctions{}

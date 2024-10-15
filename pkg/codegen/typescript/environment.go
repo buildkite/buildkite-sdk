@@ -45,7 +45,7 @@ func newEnvironmentFile(envs []schema.EnvironmentVariable) string {
 		}
 
 		block := utils.CodeBlock{
-			utils.NewCodeComment(def.Description, 0),
+			utils.CodeGen.Comment.TypeScript(def.Description, 0),
 			fmt.Sprintf("public %s(%s): %s {", def.Name, dynamicArgs, returnType),
 			fmt.Sprintf("    %s;", returnStatement),
 			"}",

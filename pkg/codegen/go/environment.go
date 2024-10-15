@@ -20,9 +20,9 @@ import (
 type environment struct{}`
 
 func newEnvironmentFile(envs []schema.EnvironmentVariable) string {
-	file := utils.CodeBlock{environmentFile}
+	file := utils.CodeGen.NewCodeBlock(environmentFile)
 
-	methods := utils.CodeBlock{}
+	methods := utils.CodeGen.NewCodeBlock()
 	for _, env := range envs {
 		def := env.GetDefinition()
 		codeBlock := fmt.Sprintf(`str := os.Getenv("%s")`, def.Name)
@@ -33,7 +33,7 @@ func newEnvironmentFile(envs []schema.EnvironmentVariable) string {
 			)
 		}
 
-		methodBody := utils.CodeBlock{codeBlock}
+		methodBody := utils.CodeGen.NewCodeBlock(codeBlock)
 
 		returnType := def.Typ.GoType()
 		switch def.Typ.(type) {
@@ -54,7 +54,7 @@ func newEnvironmentFile(envs []schema.EnvironmentVariable) string {
 		}
 
 		methods = append(methods, fmt.Sprintf("%s\n%s\n%s\n%s\n",
-			utils.NewCodeComment(def.Description, 0),
+			utils.CodeGen.Comment.Go(def.Description, 0),
 			fmt.Sprintf("func (e environment) %s(%s) %s {", def.Name, dynamicArgs, returnType),
 			methodBody.DisplayIndent(4),
 			"}",

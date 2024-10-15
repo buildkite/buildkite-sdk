@@ -52,7 +52,7 @@ func (s SchemaUnion) GoType() string {
 					}
 
 					definitionFields[field.name.TitleCase()] = fmt.Sprintf("%s\n    %s %s `json:\"%s,omitempty\"`",
-						utils.NewCodeComment(field.description, 4),
+						utils.CodeGen.Comment.Go(field.description, 4),
 						field.name.TitleCase(),
 						propType,
 						string(field.name),
