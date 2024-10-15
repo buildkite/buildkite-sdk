@@ -59,3 +59,24 @@ func (SchemaAny) TypeScriptType() string {
 func (SchemaAny) GoType() string {
 	return "interface{}"
 }
+
+// Simple
+type simple struct{}
+
+func (simple) String() SchemaString {
+	return SchemaString{}
+}
+
+func (simple) Number() SchemaNumber {
+	return SchemaNumber{}
+}
+
+func (simple) Boolean() SchemaBoolean {
+	return SchemaBoolean{}
+}
+
+func (simple) Any() SchemaAny {
+	return SchemaAny{}
+}
+
+var Simple = simple{}

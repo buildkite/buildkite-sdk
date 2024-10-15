@@ -95,3 +95,15 @@ func (s SchemaUnion) GoType() string {
 
 	return block.Display()
 }
+
+// Union
+type union struct{}
+
+func (union) New(name string, fields []Field) SchemaUnion {
+	return SchemaUnion{
+		Name:   AttributeName(name),
+		Values: fields,
+	}
+}
+
+var Union = union{}

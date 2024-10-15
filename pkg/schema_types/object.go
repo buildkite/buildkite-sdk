@@ -86,3 +86,14 @@ func (s SchemaObject) GoType() string {
 		"}",
 	}.Display()
 }
+
+type object struct{}
+
+func (object) New(name string, props []Field) SchemaObject {
+	return SchemaObject{
+		Name:       AttributeName(name),
+		Properties: props,
+	}
+}
+
+var Object = object{}

@@ -21,3 +21,43 @@ func (s SchemaArray) GoType() string {
 
 	return fmt.Sprintf("[]%s", s.Items.GoType())
 }
+
+type array struct{}
+
+func (array) String() SchemaArray {
+	return SchemaArray{
+		Items: SchemaString{},
+	}
+}
+
+func (array) Number() SchemaArray {
+	return SchemaArray{
+		Items: SchemaNumber{},
+	}
+}
+
+func (array) StringMap() SchemaArray {
+	return SchemaArray{
+		Items: Map.String(),
+	}
+}
+
+func (array) NumberMap() SchemaArray {
+	return SchemaArray{
+		Items: Map.Number(),
+	}
+}
+
+func (array) AnyMap() SchemaArray {
+	return SchemaArray{
+		Items: Map.Any(),
+	}
+}
+
+func (array) Union(name string, fields []Field) SchemaArray {
+	return SchemaArray{
+		Items: Union.New(name, fields),
+	}
+}
+
+var Array = array{}
