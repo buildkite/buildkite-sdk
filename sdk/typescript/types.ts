@@ -1,4 +1,4 @@
-// This file is auto-generated please do not edit
+// This file is auto-generated. Do not edit.
 
 export interface Build {
     // The message for the build. Supports emoji.
@@ -20,7 +20,7 @@ export enum BlockedState {
 }
 
 
-(TextInput | SelectInputAttribute)[]
+type Fields = (TextInput | SelectInputAttribute)[]
 
 export interface Retry {
     // Whether to allow a job to retry automatically. This field accepts a boolean value, individual retry conditions, or a list of multiple different retry conditions.
@@ -66,7 +66,7 @@ export interface TextInput {
     default?: string;
 }
 
-(Block | Command | Input | Trigger | Wait)[]
+type Steps = (Block | Command | Input | Trigger | Wait)[]
 
 export interface Block {
     // Whether to continue to proceed past this step if any of the steps named in the depends_on attribute fail.

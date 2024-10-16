@@ -1,4 +1,4 @@
-// This file is auto-generated please do not edit
+// This file is auto-generated. Do not edit.
 
 class Environment {
     // The agent session token for the job. The variable is read by the agent `artifact` and `meta-data` commands.
@@ -410,6 +410,5 @@ class Environment {
         return process.env.BUILDKITE_UNBLOCKER_TEAMS.split(":");
     }
 }
-
 
 export default Environment;
