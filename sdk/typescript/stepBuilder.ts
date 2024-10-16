@@ -1,8 +1,6 @@
 // This file is auto-generated. Do not edit.
 import * as fs from "fs";
-import * as ./types from "types";
-
-%s
+import * as types from "./types";
 
 class StepBuilder {
 	private steps: any[] = [];

@@ -8,8 +8,6 @@ import (
 )
 
 var stepBuilderCode = `
-%s
-
 class StepBuilder {
 	private steps: any[] = [];
 
@@ -32,7 +30,7 @@ func newStepBuilderFile(pipelineSchema schema.PipelineSchema) string {
 	file := newFile()
 
 	file.AddImport("fs", "fs")
-	file.AddImport("./types", "types")
+	file.AddImport("types", "./types")
 	file.AppendCode(stepBuilderCode)
 
 	for _, step := range pipelineSchema.Steps {

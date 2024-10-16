@@ -10,9 +10,9 @@ import (
 )
 
 func generateReturnStatement(def schema.EnvironmentVariableDefinition) string {
-	envKey := fmt.Sprintf("process.env.%s", def.Name)
+	envKey := fmt.Sprintf("process.env.%s!", def.Name)
 	if def.Dynamic {
-		envKey = "process.env[strs.join(\"_\").toUpperCase()]"
+		envKey = "process.env[strs.join(\"_\").toUpperCase()]!"
 	}
 
 	switch def.Typ.(type) {

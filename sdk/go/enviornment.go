@@ -48,7 +48,7 @@ func (e environment) BUILDKITE_AGENT_ID() string {
 // The value of each agent tag. The tag name is appended to the end of the variable name. They can be set using the --tags flag on the buildkite-agent start command, or in the agent configuration file. The Queue tag is specifically used for isolating jobs and agents, and appears as the BUILDKITE_AGENT_META_DATA_QUEUE environment variable.
 func (e environment) BUILDKITE_AGENT_META_DATA(strs ...string) string {
     envKey := strings.ToUpper(strings.Join(strs, "_"))
-str := os.Getenv(envKey)
+    str := os.Getenv(envKey)
 
     return str
 }

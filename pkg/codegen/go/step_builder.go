@@ -14,7 +14,7 @@ var printFn = `func (s *stepBuilder) Print() error {
 		return err
 	}
 
-	return os.WriteFile("pipeline.json", jsonBytes, os.ModePerm)",
+	return os.WriteFile("pipeline.json", jsonBytes, os.ModePerm)
 }`
 
 var stepBuilderStruct = fmt.Sprintf(`type stepBuilder struct {
