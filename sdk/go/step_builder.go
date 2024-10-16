@@ -1,5 +1,4 @@
-// This file is auto-generated please do not edit
-
+// This file is auto-generated. Do not edit.
 package buildkite
 import (
     "encoding/json"
