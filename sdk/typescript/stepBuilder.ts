@@ -1,7 +1,6 @@
-// This file is auto-generated please do not edit
-import * as types from "./types";
+// This file is auto-generated. Do not edit.
 import * as fs from "fs";
-
+import * as types from "./types";
 
 class StepBuilder {
 	private steps: any[] = [];
@@ -39,5 +38,6 @@ class StepBuilder {
         this.steps.push({ ...args });
         return this;
     }
+
 }
 export default StepBuilder;

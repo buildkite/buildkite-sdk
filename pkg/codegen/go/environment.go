@@ -8,60 +8,70 @@ import (
 	"github.com/buildkite/pipeline-sdk/pkg/utils"
 )
 
-var environmentFile = `// This file is auto-generated please do not edit
+var environmentFile = `type environment struct{}`
 
-package buildkite
-
-import (
-	"os"
-	"strings"
-)
-
-type environment struct{}`
-
-func newEnvironmentFile(envs []schema.EnvironmentVariable) string {
-	file := utils.CodeBlock{environmentFile}
-
-	methods := utils.CodeBlock{}
-	for _, env := range envs {
-		def := env.GetDefinition()
-		codeBlock := fmt.Sprintf(`str := os.Getenv("%s")`, def.Name)
-		if def.Dynamic {
-			codeBlock = fmt.Sprintf("%s\n%s\n",
-				"envKey := strings.ToUpper(strings.Join(strs, \"_\"))",
-				"str := os.Getenv(envKey)",
-			)
-		}
-
-		methodBody := utils.CodeBlock{codeBlock}
-
-		returnType := def.Typ.GoType()
-		switch def.Typ.(type) {
-		case schema_types.SchemaBoolean:
-			methodBody = append(methodBody, "return ParseStringToBool(str)")
-		case schema_types.SchemaNumber:
-			methodBody = append(methodBody, "return ParseStringToInt(str)")
-		case schema_types.SchemaArray:
-			methodBody = append(methodBody, fmt.Sprintf("return strings.Split(str, \"%s\")", def.Metadata["delimiter"]))
-		default:
-			returnType = "string"
-			methodBody = append(methodBody, "return str")
-		}
-
-		dynamicArgs := ""
-		if def.Dynamic {
-			dynamicArgs = "strs ...string"
-		}
-
-		methods = append(methods, fmt.Sprintf("%s\n%s\n%s\n%s\n",
-			utils.NewCodeComment(def.Description, 0),
-			fmt.Sprintf("func (e environment) %s(%s) %s {", def.Name, dynamicArgs, returnType),
-			methodBody.DisplayIndent(4),
-			"}",
-		))
+func renderGetenvBlock(name string, dynamic bool) string {
+	if dynamic {
+		return fmt.Sprintf("%s\n    %s\n",
+			"envKey := strings.ToUpper(strings.Join(strs, \"_\"))",
+			"str := os.Getenv(envKey)",
+		)
 	}
 
-	file = append(file, methods.Display())
+	return fmt.Sprintf(`str := os.Getenv("%s")`, name)
+}
 
-	return file.Display()
+func renderReturnStatement(typ schema_types.SchemaType, metadata map[string]string) string {
+	switch typ.(type) {
+	case schema_types.SchemaBoolean:
+		return "return ParseStringToBool(str)"
+	case schema_types.SchemaNumber:
+		return "return ParseStringToInt(str)"
+	case schema_types.SchemaArray:
+		return fmt.Sprintf("return strings.Split(str, \"%s\")", metadata["delimiter"])
+	default:
+		return "return str"
+	}
+}
+
+func renderEnvVarArgs(dynamic bool) string {
+	if dynamic {
+		return "strs ...string"
+	}
+	return ""
+}
+
+func renderEnvironmentVaribleMethod(env schema.EnvironmentVariable) string {
+	def := env.GetDefinition()
+
+	methodBody := utils.CodeGen.NewCodeBlock(
+		renderGetenvBlock(def.Name, def.Dynamic),
+		renderReturnStatement(def.Typ, def.Metadata),
+	)
+
+	args := renderEnvVarArgs(def.Dynamic)
+
+	return utils.CodeGen.NewCodeBlock(
+		utils.CodeGen.Comment.Go(def.Description, 0),
+		fmt.Sprintf("func (e environment) %s(%s) %s {", def.Name, args, def.Typ.GoType()),
+		methodBody.DisplayIndent(4),
+		"}",
+	).Display()
+
+}
+
+func newEnvironmentFile(envs []schema.EnvironmentVariable) string {
+	file := newFile()
+	file.AddImport("os", "os")
+	file.AddImport("strings", "strings")
+
+	methods := utils.CodeGen.NewCodeBlock(environmentFile)
+
+	for _, env := range envs {
+		methods = append(methods, renderEnvironmentVaribleMethod(env))
+	}
+
+	file.AppendCode(methods.Display())
+
+	return file.Render()
 }

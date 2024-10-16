@@ -34,7 +34,7 @@ func (s SchemaObject) TypeScriptType() string {
 
 		if p.fieldref != nil {
 			properties = append(properties, utils.CodeBlock{
-				utils.NewCodeComment(p.description, 0),
+				utils.CodeGen.Comment.TypeScript(p.description, 0),
 				fmt.Sprintf("%s%s: %s;", p.name.CamelCase(), optionalMarker, p.fieldref.name.TitleCase()),
 			}.DisplayIndent(4))
 			continue
@@ -43,7 +43,7 @@ func (s SchemaObject) TypeScriptType() string {
 		propType := p.typ.TypeScriptType()
 
 		properties = append(properties, utils.CodeBlock{
-			utils.NewCodeComment(p.description, 0),
+			utils.CodeGen.Comment.TypeScript(p.description, 0),
 			fmt.Sprintf("%s%s: %s;", p.name.CamelCase(), optionalMarker, propType),
 		}.DisplayIndent(4))
 	}
@@ -59,7 +59,7 @@ func (s SchemaObject) GoType() string {
 	for _, prop := range s.Properties {
 		if prop.fieldref != nil {
 			properties = append(properties, utils.CodeBlock{
-				utils.NewCodeComment(prop.description, 0),
+				utils.CodeGen.Comment.Go(prop.description, 0),
 				fmt.Sprintf("%s %s `json:\"%s,omitempty\"`", prop.name.TitleCase(), prop.fieldref.name.TitleCase(), prop.name),
 			}.DisplayIndent(4))
 			continue
@@ -69,12 +69,12 @@ func (s SchemaObject) GoType() string {
 		switch prop.typ.(type) {
 		case SchemaUnion:
 			properties = append(properties, utils.CodeBlock{
-				utils.NewCodeComment(prop.description, 0),
+				utils.CodeGen.Comment.Go(prop.description, 0),
 				fmt.Sprintf("%s %s `json:\"%s,omitempty\"`", prop.name.TitleCase(), prop.name.TitleCase(), prop.name),
 			}.DisplayIndent(4))
 		default:
 			properties = append(properties, fmt.Sprintf("%s\n%s\n",
-				utils.NewCodeComment(prop.description, 4),
+				utils.CodeGen.Comment.Go(prop.description, 4),
 				fmt.Sprintf("    %s %s `json:\"%s,omitempty\"`", prop.name.TitleCase(), propType, prop.name),
 			))
 		}
@@ -86,3 +86,14 @@ func (s SchemaObject) GoType() string {
 		"}",
 	}.Display()
 }
+
+type object struct{}
+
+func (object) New(name string, props []Field) SchemaObject {
+	return SchemaObject{
+		Name:       AttributeName(name),
+		Properties: props,
+	}
+}
+
+var Object = object{}

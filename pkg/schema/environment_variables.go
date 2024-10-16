@@ -4,7 +4,7 @@ import (
 	"github.com/buildkite/pipeline-sdk/pkg/schema_types"
 )
 
-type environmentVariableDefinition struct {
+type EnvironmentVariableDefinition struct {
 	Name        string
 	Description string
 	Typ         schema_types.SchemaType
@@ -20,8 +20,8 @@ type EnvironmentVariable struct {
 	dynamic     bool
 }
 
-func (e EnvironmentVariable) GetDefinition() environmentVariableDefinition {
-	return environmentVariableDefinition{
+func (e EnvironmentVariable) GetDefinition() EnvironmentVariableDefinition {
+	return EnvironmentVariableDefinition{
 		Name:        e.name,
 		Description: e.description,
 		Typ:         e.typ,

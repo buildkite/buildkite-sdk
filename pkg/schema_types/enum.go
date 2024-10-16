@@ -17,29 +17,40 @@ func (SchemaEnum) IsUnion() bool {
 }
 
 func (s SchemaEnum) TypeScriptType() string {
-	enumProps := utils.CodeBlock{}
+	enumProps := utils.CodeGen.NewCodeBlock()
 	for _, val := range s.Values {
 		enumProps = append(enumProps, fmt.Sprintf("    %s = \"%s\",", strings.ToUpper(val), val))
 	}
 
-	return utils.CodeBlock{
-		fmt.Sprintf("export enum %s {", utils.SnakeCaseToTitleCase(s.Name)),
+	return utils.CodeGen.NewCodeBlock(
+		fmt.Sprintf("export enum %s {", utils.String.SnakeCaseToTitleCase(s.Name)),
 		enumProps.Display(),
 		"}\n",
-	}.Display()
+	).Display()
 }
 
 func (s SchemaEnum) GoType() string {
-	name := utils.SnakeCaseToTitleCase(s.Name)
-	consts := utils.CodeBlock{}
+	name := utils.String.SnakeCaseToTitleCase(s.Name)
+	consts := utils.CodeGen.NewCodeBlock()
 	for _, val := range s.Values {
 		consts = append(consts, fmt.Sprintf("    %s %s = \"%s\"", strings.ToUpper(val), name, val))
 	}
 
-	return utils.CodeBlock{
+	return utils.CodeGen.NewCodeBlock(
 		fmt.Sprintf("type %s string", name),
 		"const (",
 		consts.Display(),
 		")",
-	}.Display()
+	).Display()
 }
+
+type enum struct{}
+
+func (enum) String(name string, values []string) SchemaEnum {
+	return SchemaEnum{
+		Name:   name,
+		Values: values,
+	}
+}
+
+var Enum = enum{}

@@ -17,3 +17,25 @@ func (s SchemaMap) TypeScriptType() string {
 func (s SchemaMap) GoType() string {
 	return fmt.Sprintf("map[string]%s", s.Items.GoType())
 }
+
+type smap struct{}
+
+func (smap) String() SchemaMap {
+	return SchemaMap{
+		Items: SchemaString{},
+	}
+}
+
+func (smap) Number() SchemaMap {
+	return SchemaMap{
+		Items: SchemaNumber{},
+	}
+}
+
+func (smap) Any() SchemaMap {
+	return SchemaMap{
+		Items: SchemaAny{},
+	}
+}
+
+var Map = smap{}

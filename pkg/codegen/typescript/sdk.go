@@ -12,7 +12,7 @@ func (TypeScriptSDK) FolderName() string {
 
 func (TypeScriptSDK) Files(pipelineSchema schema.PipelineSchema) map[string]string {
 	return map[string]string{
-		"environment.ts": newEnvironmentFile(pipelineSchema.Environment),
+		"environment.ts": newEnvironmentFile(pipelineSchema.Environment).Render(),
 		"index.ts":       newIndexFile(),
 		"package.json":   newPackageJSONFile(),
 		"stepBuilder.ts": newStepBuilderFile(pipelineSchema),

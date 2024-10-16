@@ -7,9 +7,7 @@ import (
 	"github.com/buildkite/pipeline-sdk/pkg/utils"
 )
 
-var stepBuilderCode = `import * as fs from "fs";
-%s
-
+var stepBuilderCode = `
 class StepBuilder {
 	private steps: any[] = [];
 
@@ -17,25 +15,29 @@ class StepBuilder {
 		fs.writeFileSync("pipeline.json", JSON.stringify({ steps: this.steps }, null, 4));
 	}`
 
+func renderStepFunction(step schema.Step) string {
+	stepName := utils.String.Capitalize(step.Name)
+	return utils.CodeGen.NewCodeBlock(
+		utils.CodeGen.Comment.TypeScript(step.Description, 0),
+		fmt.Sprintf("public add%sStep(args: types.%s): this {", stepName, stepName),
+		"    this.steps.push({ ...args });",
+		"    return this;",
+		"}",
+	).DisplayIndent(4)
+}
+
 func newStepBuilderFile(pipelineSchema schema.PipelineSchema) string {
-	file := NewFile()
-	file.code = append(file.code, stepBuilderCode)
-	interfaces := utils.CodeBlock{}
+	file := newFile()
+
+	file.AddImport("fs", "fs")
+	file.AddImport("types", "./types")
+	file.AppendCode(stepBuilderCode)
 
 	for _, step := range pipelineSchema.Steps {
-		file.imports.AddImport("./types", "types")
-
-		stepName := utils.Capitalize(step.Name)
-		file.code = append(file.code, utils.CodeBlock{
-			utils.NewCodeComment(step.Description, 0),
-			fmt.Sprintf("public add%sStep(args: types.%s): this {", stepName, stepName),
-			"    this.steps.push({ ...args });",
-			"    return this;",
-			"}",
-		}.DisplayIndent(4))
+		file.AppendCode(renderStepFunction(step))
 	}
 
-	file.code[0] = fmt.Sprintf(file.code[0], interfaces.Display())
+	file.AppendCode("\n}\nexport default StepBuilder;")
 
-	return fmt.Sprintf("%s\n}\nexport default StepBuilder;", file.String())
+	return file.Render()
 }
