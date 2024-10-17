@@ -27,11 +27,11 @@ func (s SchemaUnion) TypeScriptType() string {
 
 func (s SchemaUnion) GoType() string {
 	block := utils.CodeBlock{}
-	transformFuncs := utils.CodeBlock{}
+	transformFuncs := utils.CodeGen.NewCodeBlock()
+	definitions := utils.CodeGen.NewCodeBlock()
+	definitionFields := make(map[string]bool)
 
-	definitionFields := make(map[string]string)
 	for _, val := range s.Values {
-		fmt.Println(val.name)
 		var transformAssignments []string
 		switch val.typ.(type) {
 		case SchemaObject:
@@ -52,12 +52,13 @@ func (s SchemaUnion) GoType() string {
 						propType = field.typ.GoType()
 					}
 
-					definitionFields[field.name.TitleCase()] = fmt.Sprintf("%s\n    %s %s `json:\"%s,omitempty\"`",
+					definitionFields[field.name.TitleCase()] = true
+					definitions = append(definitions, fmt.Sprintf("%s\n    %s %s `json:\"%s,omitempty\"`",
 						utils.CodeGen.Comment.Go(field.description, 4),
 						field.name.TitleCase(),
 						propType,
 						string(field.name),
-					)
+					))
 
 					transformAssignments = append(transformAssignments, fmt.Sprintf("        %s: x.%s,",
 						field.name.TitleCase(),
@@ -76,11 +77,6 @@ func (s SchemaUnion) GoType() string {
 			s.Name.CamelCase(),
 			strings.Join(transformAssignments, "\n"),
 		))
-	}
-
-	var definitions []string
-	for _, def := range definitionFields {
-		definitions = append(definitions, def)
 	}
 
 	block = append(block, fmt.Sprintf("type %sDefinition struct {\n%s\n}",
