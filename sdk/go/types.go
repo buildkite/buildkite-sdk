@@ -126,71 +126,71 @@ type TextInput struct {
 }
 
 type stepsDefinition struct {
-    // A map of agent tag keys to values to target specific agents for this step.
-    Agents map[string]string `json:"agents,omitempty"`
-    // The glob path or paths of artifacts to upload from this step.
-    ArtifactPaths []string `json:"artifact_paths,omitempty"`
+    // Whether to continue to proceed past this step if any of the steps named in the depends_on attribute fail.
+    AllowDependencyFailure bool `json:"allow_dependency_failure,omitempty"`
+    // The label for this block step.
+    Block string `json:"block,omitempty"`
+    // Adjust the priority for a specific job, as a positive or negative integer.
+    Priority int `json:"priority,omitempty"`
+    // An array of values to be used in the matrix expansion.
+    Matrix []string `json:"matrix,omitempty"`
     // The number of parallel jobs that will be created based on this step.
     Parallelism int `json:"parallelism,omitempty"`
-    // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
-    Skip bool `json:"skip,omitempty"`
+    // The conditions for retrying this step.
+    Retry Retry `json:"retry,omitempty"`
+    // Run the next step, even if the previous step has failed.
+    ContinueOnFailure bool `json:"continue_on_failure,omitempty"`
     // When providing options for the wait step, you will need to set this value to "~".
     Wait string `json:"wait,omitempty"`
+    // The glob path or paths of artifacts to upload from this step.
+    ArtifactPaths []string `json:"artifact_paths,omitempty"`
+    // Setting this attribute to true cancels the job as soon as the build is marked as failing.
+    CancelOnBuildFailing bool `json:"cancel_on_build_failing,omitempty"`
+    // A map of environment variables for this step.
+    Env map[string]string `json:"env,omitempty"`
+    // The slug of the pipeline to create a build. You can find it in the URL of your pipeline, and it corresponds to the name of the pipeline, converted to kebab-case.
+    Trigger string `json:"trigger,omitempty"`
+    // The state that the build is set to when the build is blocked by this block step. The default is passed. When the blocked_state of a block step is set to failed, the step that triggered it will be stuck in the running state until it is manually unblocked. Default: passed Values: passed, failed, running
+    BlockedState  `json:"blocked_state,omitempty"`
+    // A unique name for the concurrency group that you are creating. If you use this attribute, you must also define the concurrency attribute.
+    ConcurrencyGroup string `json:"concurrency_group,omitempty"`
+    // Allow all non-zero exit statuses not to fail the build.
+    SoftFailAll bool `json:"soft_fail_all,omitempty"`
+    // The maximum number of minutes a job created from this step is allowed to run. If the job exceeds this time limit, or if it finishes with a non-zero exit status, the job is automatically canceled and the build fails. Jobs that time out with an exit status of 0 are marked as passed.
+    TimeoutInMinutes int `json:"timeout_in_minutes,omitempty"`
     // A list of step keys that this step depends on. This step will only proceed after the named steps have completed. See managing step dependencies for more information.
     DependsOn []string `json:"depends_on,omitempty"`
     // An input step is used to collect information from a user.
     Fields  `json:"fields,omitempty"`
-    // Allow specified non-zero exit statuses not to fail the build.
-    SoftFail map[string]int `json:"soft_fail,omitempty"`
-    // An optional map of attributes for the triggered build. Available attributes: branch, commit, env, message, meta_data
-    Build Build `json:"build,omitempty"`
-    // The branch pattern defining which branches will include this block step in their builds.
-    Branches string `json:"branches,omitempty"`
-    // A unique name for the concurrency group that you are creating. If you use this attribute, you must also define the concurrency attribute.
-    ConcurrencyGroup string `json:"concurrency_group,omitempty"`
-    // A map of environment variables for this step.
-    Env map[string]string `json:"env,omitempty"`
-    // The label for this input step.
-    Input string `json:"input,omitempty"`
     // The instructional message displayed in the dialog box when the unblock step is activated.
     Prompt string `json:"prompt,omitempty"`
     // The maximum number of jobs created from this step that are allowed to run at the same time. If you use this attribute, you must also define a label for it with the concurrency_group attribute.
     Concurrency int `json:"concurrency,omitempty"`
-    // Adjust the priority for a specific job, as a positive or negative integer.
-    Priority int `json:"priority,omitempty"`
-    // Whether to continue to proceed past this step if any of the steps named in the depends_on attribute fail.
-    AllowDependencyFailure bool `json:"allow_dependency_failure,omitempty"`
     // A unique string to identify the block step.
     Key string `json:"key,omitempty"`
-    // An array of plugins for this step.
-    Plugins []map[string]interface{} `json:"plugins,omitempty"`
-    // The slug of the pipeline to create a build. You can find it in the URL of your pipeline, and it corresponds to the name of the pipeline, converted to kebab-case.
-    Trigger string `json:"trigger,omitempty"`
-    // The shell command to run during this step.
-    Commands []string `json:"commands,omitempty"`
     // The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
     Label string `json:"label,omitempty"`
-    // The conditions for retrying this step.
-    Retry Retry `json:"retry,omitempty"`
+    // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
+    Skip bool `json:"skip,omitempty"`
+    // Allow specified non-zero exit statuses not to fail the build.
+    SoftFail map[string]int `json:"soft_fail,omitempty"`
+    // The label for this input step.
+    Input string `json:"input,omitempty"`
+    // An optional map of attributes for the triggered build. Available attributes: branch, commit, env, message, meta_data
+    Build Build `json:"build,omitempty"`
+    // The branch pattern defining which branches will include this block step in their builds.
+    Branches string `json:"branches,omitempty"`
+    // A boolean expression that omits the step when false. See Using conditionals for supported expressions.
+    If string `json:"if,omitempty"`
+    // A map of agent tag keys to values to target specific agents for this step.
+    Agents map[string]string `json:"agents,omitempty"`
+    // An array of plugins for this step.
+    Plugins []map[string]interface{} `json:"plugins,omitempty"`
+    // The shell command to run during this step.
+    Commands []string `json:"commands,omitempty"`
     // If set to true the step will immediately continue, regardless of the success of the triggered build. If set to false the step will wait for the triggered build to complete and continue only if the triggered build passed.
     // Note that when async is set to true, as long as the triggered build starts, the original pipeline will show that as successful. The original pipeline does not get updated after subsequent steps or after the triggered build completes.
     Async bool `json:"async,omitempty"`
-    // The label for this block step.
-    Block string `json:"block,omitempty"`
-    // The state that the build is set to when the build is blocked by this block step. The default is passed. When the blocked_state of a block step is set to failed, the step that triggered it will be stuck in the running state until it is manually unblocked. Default: passed Values: passed, failed, running
-    BlockedState  `json:"blocked_state,omitempty"`
-    // The maximum number of minutes a job created from this step is allowed to run. If the job exceeds this time limit, or if it finishes with a non-zero exit status, the job is automatically canceled and the build fails. Jobs that time out with an exit status of 0 are marked as passed.
-    TimeoutInMinutes int `json:"timeout_in_minutes,omitempty"`
-    // A boolean expression that omits the step when false. See Using conditionals for supported expressions.
-    If string `json:"if,omitempty"`
-    // Allow all non-zero exit statuses not to fail the build.
-    SoftFailAll bool `json:"soft_fail_all,omitempty"`
-    // Run the next step, even if the previous step has failed.
-    ContinueOnFailure bool `json:"continue_on_failure,omitempty"`
-    // Setting this attribute to true cancels the job as soon as the build is marked as failing.
-    CancelOnBuildFailing bool `json:"cancel_on_build_failing,omitempty"`
-    // An array of values to be used in the matrix expansion.
-    Matrix []string `json:"matrix,omitempty"`
 }
 type Steps interface {
     ToSteps() stepsDefinition
