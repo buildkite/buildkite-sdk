@@ -1,3 +1,3 @@
 module github.com/buildkite/pipeline-sdk/sdk/go
 
-go 1.22.2
+go 1.23.2

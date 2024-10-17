@@ -27,7 +27,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
-						Image: "golang:1.22",
+						Image: "golang:1.23.2",
 					},
 				},
 			},
@@ -45,7 +45,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
-						Image: "golang:1.22",
+						Image: "golang:1.23.2",
 					},
 				},
 			},
@@ -60,7 +60,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
-						Image: "golang:1.22",
+						Image: "golang:1.23.2",
 					},
 				},
 				{
