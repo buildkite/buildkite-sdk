@@ -12,7 +12,7 @@ func TestNewStepBuilderMethod(t *testing.T) {
 	t.Run("should render a step builder method", func(t *testing.T) {
 		stepName := schema_types.AttributeName("test")
 		result := newStepBuilderMethod(stepName)
-		assert.Equal(t, "func (s *stepBuilder) AddTest(step *Test) *stepBuilder {\n    s.Steps = append(s.Steps, step)\n    return s\n}", result)
+		assert.Equal(t, "func (s *StepBuilder) AddTest(step *Test) *StepBuilder {\n    s.Steps = append(s.Steps, step)\n    return s\n}", result)
 	})
 }
 

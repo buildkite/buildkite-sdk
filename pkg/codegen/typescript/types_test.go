@@ -26,7 +26,7 @@ func TestRenderType(t *testing.T) {
 	t.Run("should render a type", func(t *testing.T) {
 		field := schema_types.NewField().Name("field").String()
 		result := renderType(field)
-		assert.Equal(t, "string\n", result)
+		assert.Equal(t, "type Field = string\n", result)
 	})
 }
 
