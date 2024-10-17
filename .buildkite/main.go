@@ -101,7 +101,6 @@ func run() error {
 
 	// Print out what branch we are on.
 	if branchName == "main" {
-
 		pipeline.AddCommand(&bk.Command{
 			Commands: []string{
 				`echo "main build"`,
