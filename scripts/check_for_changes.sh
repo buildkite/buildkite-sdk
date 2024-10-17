@@ -9,5 +9,7 @@ if [ -z "${FILES}" ]; then
 fi
 
 echo "working tree is dirty"
-git diff
+DIFF="$(git diff)"
+echo "${DIFF}"
+
 exit 1
