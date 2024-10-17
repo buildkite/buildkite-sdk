@@ -2,12 +2,12 @@
 
 set -eo pipefail
 
-echo "INSTALLING GO SDK"
+echo "INSTALLING TYPESCRIPT SDK"
 
 pushd sdk/typescript
 npm install
 npm link
 popd
 
-echo "GO SDK INSTALLED"
+echo "TYPESCRIPT SDK INSTALLED"
 exit 0
