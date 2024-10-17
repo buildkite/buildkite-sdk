@@ -39,7 +39,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 				"./scripts/build.sh",
 			},
 			ArtifactPaths: []string{
-				"sdk/**",
+				"sdk/**/*",
 			},
 			Plugins: []map[string]interface{}{
 				{
