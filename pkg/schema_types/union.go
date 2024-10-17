@@ -31,6 +31,7 @@ func (s SchemaUnion) GoType() string {
 
 	definitionFields := make(map[string]string)
 	for _, val := range s.Values {
+		fmt.Println(val.name)
 		var transformAssignments []string
 		switch val.typ.(type) {
 		case SchemaObject:

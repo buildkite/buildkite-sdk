@@ -4,10 +4,15 @@ import (
 	"github.com/buildkite/pipeline-sdk/pkg/utils"
 )
 
+type codeGenImport struct {
+	pkgName    string
+	identifier string
+}
+
 type CodeGenFile struct {
 	language CodeGenLanguage
 	header   utils.CodeBlock
-	imports  map[string]string
+	imports  []codeGenImport
 	code     utils.CodeBlock
 }
 
@@ -16,7 +21,7 @@ func (c *CodeGenFile) AppendToHeader(str string) {
 }
 
 func (c *CodeGenFile) AddImport(pkgName, identifier string) {
-	c.imports[pkgName] = identifier
+	c.imports = append(c.imports, codeGenImport{pkgName: pkgName, identifier: identifier})
 }
 
 func (c CodeGenFile) RenderImports() string {
@@ -53,8 +58,7 @@ func (file) New(language CodeGenLanguage) *CodeGenFile {
 		header: utils.CodeGen.NewCodeBlock(
 			language.NewComment("This file is auto-generated. Do not edit."),
 		),
-		imports: make(map[string]string),
-		code:    utils.CodeGen.NewCodeBlock(),
+		code: utils.CodeGen.NewCodeBlock(),
 	}
 }
 
