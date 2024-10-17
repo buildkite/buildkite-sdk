@@ -8,7 +8,7 @@ go run .
 
 echo "INSTALL SDKS"
 pushd sdk/go
-go mod init
+go mod init github.com/buildkite/pipeline-sdk/sdk/go
 go mod tidy
 popd
 
