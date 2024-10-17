@@ -513,3 +513,4 @@ func (e environment) BUILDKITE_UNBLOCKER_TEAMS() []string {
     str := os.Getenv("BUILDKITE_UNBLOCKER_TEAMS")
     return strings.Split(str, ":")
 }
+var Environment = environment{}

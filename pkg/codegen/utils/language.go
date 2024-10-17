@@ -10,7 +10,7 @@ type CodeGenLanguage interface {
 	Name() string
 	NewComment(comment string) string
 	NewCommentWithIndent(comment string, indent int) string
-	RenderImports(imports map[string]string) string
+	RenderImports(imports []codeGenImport) string
 }
 
 const typescriptName = "typescript"
@@ -31,10 +31,10 @@ func (typescriptMetadata) NewCommentWithIndent(comment string, indent int) strin
 	return utils.CodeGen.Comment.TypeScript(comment, indent)
 }
 
-func (typescriptMetadata) RenderImports(imports map[string]string) string {
+func (typescriptMetadata) RenderImports(imports []codeGenImport) string {
 	block := utils.CodeGen.NewCodeBlock()
-	for pkgName, identifier := range imports {
-		block = append(block, fmt.Sprintf("import * as %s from \"%s\";", pkgName, identifier))
+	for _, pkg := range imports {
+		block = append(block, fmt.Sprintf("import * as %s from \"%s\";", pkg.pkgName, pkg.identifier))
 	}
 	return block.Display()
 }
@@ -57,15 +57,15 @@ func (goMetadata) NewCommentWithIndent(comment string, indent int) string {
 	return utils.CodeGen.Comment.Go(comment, indent)
 }
 
-func (goMetadata) RenderImports(imports map[string]string) string {
+func (goMetadata) RenderImports(imports []codeGenImport) string {
 	importsBlock := utils.CodeGen.NewCodeBlock()
-	for pkgName, identifier := range imports {
-		pkgIdentifier := identifier
-		if pkgName == identifier {
+	for _, pkg := range imports {
+		pkgIdentifier := pkg.identifier
+		if pkg.pkgName == pkg.identifier {
 			pkgIdentifier = ""
 		}
 
-		importsBlock = append(importsBlock, fmt.Sprintf("    %s\"%s\"", pkgIdentifier, pkgName))
+		importsBlock = append(importsBlock, fmt.Sprintf("    %s\"%s\"", pkgIdentifier, pkg.pkgName))
 	}
 
 	return utils.CodeGen.NewCodeBlock(

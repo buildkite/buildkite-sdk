@@ -10,7 +10,7 @@ func TestCodeGenFile(t *testing.T) {
 	t.Run("should create a new file", func(t *testing.T) {
 		file := File.New(Languages.Go())
 		assert.Contains(t, file.header.Display(), "This file is auto-generated. Do not edit.")
-		assert.NotNil(t, file.imports)
+		assert.Equal(t, 0, len(file.imports))
 		assert.NotNil(t, file.language)
 		assert.Equal(t, 0, len(file.code))
 	})

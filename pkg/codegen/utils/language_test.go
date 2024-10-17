@@ -23,7 +23,9 @@ func TestLanguage(t *testing.T) {
 		})
 
 		t.Run("should render imports", func(t *testing.T) {
-			imports := map[string]string{"fs": "fs"}
+			imports := []codeGenImport{
+				{pkgName: "fs", identifier: "fs"},
+			}
 			result := ts.RenderImports(imports)
 			assert.Equal(t, "import * as fs from \"fs\";", result)
 		})
@@ -45,7 +47,9 @@ func TestLanguage(t *testing.T) {
 		})
 
 		t.Run("should render imports", func(t *testing.T) {
-			imports := map[string]string{"fmt": "fmt"}
+			imports := []codeGenImport{
+				{pkgName: "fmt"},
+			}
 			result := golang.RenderImports(imports)
 			assert.Equal(t, "import (\n    \"fmt\"\n)", result)
 		})

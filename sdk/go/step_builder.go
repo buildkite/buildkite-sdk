@@ -4,38 +4,38 @@ import (
     "encoding/json"
     "os"
 )
-type stepBuilder struct {
+type StepBuilder struct {
 	Steps []interface{} `json:"steps"`
 }
 
-func NewStepBuilder() *stepBuilder {
-	return &stepBuilder{}
+func NewStepBuilder() *StepBuilder {
+	return &StepBuilder{}
 }
-func (s *stepBuilder) AddBlock(step *Block) *stepBuilder {
+func (s *StepBuilder) AddBlock(step *Block) *StepBuilder {
     s.Steps = append(s.Steps, step)
     return s
 }
-func (s *stepBuilder) AddCommand(step *Command) *stepBuilder {
+func (s *StepBuilder) AddCommand(step *Command) *StepBuilder {
     s.Steps = append(s.Steps, step)
     return s
 }
-func (s *stepBuilder) AddGroup(step *Group) *stepBuilder {
+func (s *StepBuilder) AddGroup(step *Group) *StepBuilder {
     s.Steps = append(s.Steps, step)
     return s
 }
-func (s *stepBuilder) AddInput(step *Input) *stepBuilder {
+func (s *StepBuilder) AddInput(step *Input) *StepBuilder {
     s.Steps = append(s.Steps, step)
     return s
 }
-func (s *stepBuilder) AddTrigger(step *Trigger) *stepBuilder {
+func (s *StepBuilder) AddTrigger(step *Trigger) *StepBuilder {
     s.Steps = append(s.Steps, step)
     return s
 }
-func (s *stepBuilder) AddWait(step *Wait) *stepBuilder {
+func (s *StepBuilder) AddWait(step *Wait) *StepBuilder {
     s.Steps = append(s.Steps, step)
     return s
 }
-func (s *stepBuilder) Print() error {
+func (s *StepBuilder) Print() error {
 	jsonBytes, err := json.MarshalIndent(s, "", "\t")
 	if err != nil {
 		return err
