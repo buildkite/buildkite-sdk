@@ -29,9 +29,10 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			},
 		}).
 		AddCommand(&bk.Command{
-			Label: "Build and Install SDKs",
+			Label: "Build SDKs",
 			Commands: []string{
-				"./scripts/build_and_install.sh",
+				"./scripts/build.sh",
+				"./scripts/check_for_changes",
 			},
 			Plugins: []map[string]interface{}{
 				{
