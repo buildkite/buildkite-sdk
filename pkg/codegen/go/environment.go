@@ -72,6 +72,7 @@ func newEnvironmentFile(envs []schema.EnvironmentVariable) string {
 	}
 
 	file.AppendCode(methods.Display())
+	file.AppendCode("var Environment = environment{}")
 
 	return file.Render()
 }
