@@ -72,7 +72,7 @@ func run() error {
 		return err
 	}
 
-	fmt.Println(str)
+	fmt.Println(string(str))
 
 	return os.WriteFile("pipeline.json", str, os.ModePerm)
 }
