@@ -39,7 +39,8 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 				"./scripts/build.sh",
 			},
 			ArtifactPaths: []string{
-				"sdk/**/*",
+				"sdk/go/**/*",
+				"sdk/typescript/**/*",
 			},
 			Plugins: []map[string]interface{}{
 				{
@@ -64,7 +65,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 				},
 				{
 					"artifacts#v1.9.2": artifactPluginArgs{
-						Download: []string{"sdk/**"},
+						Download: []string{"sdk/go/**"},
 					},
 				},
 			},
@@ -79,7 +80,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Plugins: []map[string]interface{}{
 				{
 					"artifacts#v1.9.2": artifactPluginArgs{
-						Download: []string{"sdk/**"},
+						Download: []string{"sdk/typescript/**"},
 					},
 				},
 			},
