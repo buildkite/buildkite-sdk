@@ -72,6 +72,8 @@ func run() error {
 		return err
 	}
 
+	fmt.Println(str)
+
 	return os.WriteFile("pipeline.json", str, os.ModePerm)
 }
 
