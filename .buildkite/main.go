@@ -10,7 +10,7 @@ import (
 
 type dockerPluginArgs struct {
 	Image       string   `json:"image"`
-	Environment []string `json:"environment"`
+	Environment []string `json:"environment,omitempty"`
 }
 
 func runBranchBuild(pipeline *bk.StepBuilder) {
