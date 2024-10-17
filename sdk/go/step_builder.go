@@ -1,8 +1,8 @@
 // This file is auto-generated. Do not edit.
 package buildkite
 import (
-    "encoding/json"
     "os"
+    "encoding/json"
 )
 type StepBuilder struct {
 	Steps []interface{} `json:"steps"`
