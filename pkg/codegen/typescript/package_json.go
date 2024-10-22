@@ -14,11 +14,11 @@ type typescriptPackageJSON struct {
 	DevDependencies map[string]string `json:"devDependencies"`
 }
 
-func newPackageJSONFile() string {
+func newPackageJSONFile(version string) string {
 	// Write package.json
 	packageJSON := typescriptPackageJSON{
 		Name:        "buildkite-pipeline-sdk",
-		Version:     "0.0.1",
+		Version:     version,
 		Description: "",
 		Main:        "index.ts",
 		Scripts: map[string]string{

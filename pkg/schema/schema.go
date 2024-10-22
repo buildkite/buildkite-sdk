@@ -3,7 +3,8 @@ package schema
 import "github.com/buildkite/pipeline-sdk/pkg/schema_types"
 
 var PipelinesSchema = PipelineSchema{
-	Name: "Buildkite Pipeline Schema",
+	Version: "0.0.1",
+	Name:    "Buildkite Pipeline Schema",
 	Types: []schema_types.Field{
 		build,
 		blockedState,

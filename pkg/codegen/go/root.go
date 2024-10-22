@@ -1,10 +1,7 @@
 package go_code_gen
 
-var rootFile = `package buildkite
+import "fmt"
 
-var Environment = environment{}
-var PipelineBuilder = &StepBuilder{}`
-
-func newRootFile() string {
-	return rootFile
+func newVersionFile(version string) string {
+	return fmt.Sprintf("package buildkite\n\nvar PkgVersion = \"%s\"", version)
 }

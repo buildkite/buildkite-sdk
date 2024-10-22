@@ -14,7 +14,7 @@ func (TypeScriptSDK) Files(pipelineSchema schema.PipelineSchema) map[string]stri
 	return map[string]string{
 		"environment.ts": newEnvironmentFile(pipelineSchema.Environment).Render(),
 		"index.ts":       newIndexFile(),
-		"package.json":   newPackageJSONFile(),
+		"package.json":   newPackageJSONFile(pipelineSchema.Version),
 		"stepBuilder.ts": newStepBuilderFile(pipelineSchema),
 		"types.ts":       newTypesFile(pipelineSchema.Types, pipelineSchema.Steps),
 	}
