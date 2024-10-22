@@ -2,14 +2,14 @@
 
 set -eo pipefail
 
-go() {
+process_go() {
     pushd sdk/go
     go mod init github.com/buildkite/pipeline-sdk/sdk/go
     go mod tidy
     popd
 }
 
-typescript() {
+process_typescript() {
     pushd sdk/typescript
     npm install
     npm link
@@ -20,13 +20,17 @@ echo "BUILDING SDKS"
 rm -rf sdk
 go run .
 
-if [ $1 = "go" ]; then
-    go()
-else if [ $1 = "typescript" ]; then
-    typescript()
-else
-    go()
-    typescript()
-fi
+case $1 in
+    go)
+        process_go
+        ;;
+    typescript)
+        process_typescript
+        ;;
+    *)
+        process_go
+        process_typescript
+        ;;
+esac
 
 echo "SDKS BUILT AND INSTALLED"
