@@ -36,50 +36,77 @@ pipeline.write();
 
 ## Go Example
 
+The code sample below shows a small Go program to generate a pipeline in json
+format.
+
 ```go
+// main.go
 package main
 
 import (
-	"fmt"
+    "fmt"
+    "os"
 
-	bk "github.com/buildkite/pipeline-sdk/sdk/go"
+    bk "github.com/buildkite/pipeline-sdk/sdk/go"
 )
 
 func run() error {
-	// Create a new Buildkite Pipeline
-	pipeline := bk.NewStepBuilder().
-		AddCommandStep(&bk.CommandStepArgs{
-			Commands: []string{
-				"echo \"Hello World!\"",
-			},
-		})
+    // Create a new Buildkite Pipeline
+    pipeline := bk.NewStepBuilder().
+        AddCommand(&bk.Command{
+            Commands: []string{
+                "echo \"Hello World!\"",
+            },
+        })
 
-	// Get the branch name of the current build
-	branchName := bk.Environment.Branch()
+    // Get the branch name of the current build
+    branchName := bk.Environment.BUILDKITE_BRANCH()
 
-	// Print out what branch we are on.
-	if branchName == "main" {
-		pipeline.AddCommandStep(&bk.CommandStepArgs{
-			Commands: []string{
-				`echo "I am on the main branch"`,
-			},
-		})
-	} else {
-		pipeline.AddCommandStep(&bk.CommandStepArgs{
-			Commands: []string{
-				fmt.Sprintf(`echo "I am on the %s branch"`, branchName),
-			},
-		})
-	}
+    // Print out what branch we are on.
+    if branchName == "main" {
+        pipeline.AddCommand(&bk.Command{
+            Commands: []string{
+                `echo "I am on the main branch"`,
+            },
+        })
+    } else {
+        pipeline.AddCommand(&bk.Command{
+            Commands: []string{
+                fmt.Sprintf(`echo "I am on the %s branch"`, branchName),
+            },
+        })
+    }
 
-	return pipeline.Print()
+    return pipeline.Print()
 }
 
 func main() {
-	err := run()
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
-		os.Exit(1)
-	}
+    err := run()
+    if err != nil {
+        fmt.Printf("ERROR: %v\n", err)
+        os.Exit(1)
+    }
+}
+```
+
+Compiling and running the program will generate a file in your current working
+directory called `pipeline.json` with the following contents:
+
+```json
+{
+    "steps": [
+        {
+            "commands": [
+                "echo \"Hello World!\""
+            ],
+            "retry": {}
+        },
+        {
+            "commands": [
+                "echo \"I am on the  branch\""
+            ],
+            "retry": {}
+        }
+    ]
 }
 ```
