@@ -14,5 +14,6 @@ func (GoSDK) Files(pipelineSchema schema.PipelineSchema) map[string]string {
 		"step_builder.go": newStepBuilderFile(pipelineSchema.Steps),
 		"types.go":        newTypesFile(pipelineSchema.Types, pipelineSchema.Steps),
 		"utils.go":        newUtilsFiles(),
+		"version.go":      newVersionFile(pipelineSchema.Version),
 	}
 }
