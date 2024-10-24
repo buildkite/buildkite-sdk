@@ -58,9 +58,14 @@ func (s SchemaObject) GoType() string {
 	var properties []string
 	for _, prop := range s.Properties {
 		if prop.fieldref != nil {
+			arrayType := ""
+			if _, ok := prop.fieldref.typ.(SchemaArray); ok {
+				arrayType = "[]"
+			}
+
 			properties = append(properties, utils.CodeBlock{
 				utils.CodeGen.Comment.Go(prop.description, 0),
-				fmt.Sprintf("%s %s `json:\"%s,omitempty\"`", prop.name.TitleCase(), prop.fieldref.name.TitleCase(), prop.name),
+				fmt.Sprintf("%s %s%s `json:\"%s,omitempty\"`", prop.name.TitleCase(), arrayType, prop.fieldref.name.TitleCase(), prop.name),
 			}.DisplayIndent(4))
 			continue
 		}

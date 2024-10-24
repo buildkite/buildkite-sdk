@@ -41,9 +41,9 @@ func (s SchemaUnion) GoType() string {
 					var propType string
 					if field.fieldref != nil {
 						switch field.fieldref.typ.(type) {
-						case SchemaEnum:
 						case SchemaArray:
-						case SchemaObject:
+							propType = fmt.Sprintf("[]%s", field.fieldref.name.TitleCase())
+						case SchemaObject, SchemaEnum:
 							propType = field.fieldref.name.TitleCase()
 						default:
 							propType = field.fieldref.typ.GoType()

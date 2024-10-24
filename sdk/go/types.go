@@ -131,13 +131,13 @@ type stepsDefinition struct {
     // The label for this block step.
     Block string `json:"block,omitempty"`
     // The state that the build is set to when the build is blocked by this block step. The default is passed. When the blocked_state of a block step is set to failed, the step that triggered it will be stuck in the running state until it is manually unblocked. Default: passed Values: passed, failed, running
-    BlockedState  `json:"blocked_state,omitempty"`
+    BlockedState BlockedState `json:"blocked_state,omitempty"`
     // The branch pattern defining which branches will include this block step in their builds.
     Branches string `json:"branches,omitempty"`
     // A list of step keys that this step depends on. This step will only proceed after the named steps have completed. See managing step dependencies for more information.
     DependsOn []string `json:"depends_on,omitempty"`
     // An input step is used to collect information from a user.
-    Fields  `json:"fields,omitempty"`
+    Fields []Fields `json:"fields,omitempty"`
     // A boolean expression that omits the step when false. See Using conditionals for supported expressions.
     If string `json:"if,omitempty"`
     // A unique string to identify the block step.
@@ -264,7 +264,7 @@ type Block struct {
     DependsOn []string `json:"depends_on,omitempty"`
 
     // An input step is used to collect information from a user.
-    Fields Fields `json:"fields,omitempty"`
+    Fields []Fields `json:"fields,omitempty"`
     // A boolean expression that omits the step when false. See Using conditionals for supported expressions.
     If string `json:"if,omitempty"`
 
@@ -370,7 +370,7 @@ type Group struct {
     Skip bool `json:"skip,omitempty"`
 
     // A list of steps in the group; at least 1 step is required. Allowed step types: wait, trigger, command/commands, block, input.
-    Steps Steps `json:"steps,omitempty"`
+    Steps []Steps `json:"steps,omitempty"`
 }
 
 type Input struct {
@@ -384,7 +384,7 @@ type Input struct {
     DependsOn []string `json:"depends_on,omitempty"`
 
     // An input step is used to collect information from a user.
-    Fields Fields `json:"fields,omitempty"`
+    Fields []Fields `json:"fields,omitempty"`
     // A boolean expression that omits the step when false. See Using conditionals for supported expressions.
     If string `json:"if,omitempty"`
 
