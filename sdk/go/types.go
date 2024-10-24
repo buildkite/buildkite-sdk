@@ -207,11 +207,8 @@ type Command struct {
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     Skip bool `json:"skip,omitempty"`
 
-    // Allow specified non-zero exit statuses not to fail the build.
-    SoftFail map[string]int `json:"soft_fail,omitempty"`
-
-    // Allow all non-zero exit statuses not to fail the build.
-    SoftFailAll bool `json:"soft_fail_all,omitempty"`
+    // Make all exit statuses soft-fail.
+    SoftFail bool `json:"soft_fail,omitempty"`
 
     // The maximum number of minutes a job created from this step is allowed to run. If the job exceeds this time limit, or if it finishes with a non-zero exit status, the job is automatically canceled and the build fails. Jobs that time out with an exit status of 0 are marked as passed.
     TimeoutInMinutes int `json:"timeout_in_minutes,omitempty"`
@@ -238,7 +235,7 @@ type Group struct {
     Label string `json:"label,omitempty"`
 
     // Allows you to trigger build notifications to different services. You can also choose to conditionally send notifications based on pipeline events.
-    Notify string `json:"notify,omitempty"`
+    Notify []string `json:"notify,omitempty"`
 
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     Skip bool `json:"skip,omitempty"`
@@ -298,8 +295,8 @@ type Trigger struct {
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     Skip bool `json:"skip,omitempty"`
 
-    // Allow specified non-zero exit statuses not to fail the build.
-    SoftFail map[string]int `json:"soft_fail,omitempty"`
+    // When true, failure of the triggered build will not cause the triggering build to fail.
+    SoftFail bool `json:"soft_fail,omitempty"`
 
     // The slug of the pipeline to create a build. You can find it in the URL of your pipeline, and it corresponds to the name of the pipeline, converted to kebab-case.
     Trigger string `json:"trigger,omitempty"`

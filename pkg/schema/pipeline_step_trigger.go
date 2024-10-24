@@ -45,6 +45,11 @@ var trigger = schema_types.NewField().
 	Description("The slug of the pipeline to create a build. You can find it in the URL of your pipeline, and it corresponds to the name of the pipeline, converted to kebab-case.").
 	String()
 
+var triggerSoftFail = schema_types.NewField().
+	Name("soft_fail").
+	Description("When true, failure of the triggered build will not cause the triggering build to fail.").
+	Boolean()
+
 var triggerStep = Step{
 	Name:        "trigger",
 	Description: "A trigger step creates a build on another pipeline.",
@@ -57,7 +62,7 @@ var triggerStep = Step{
 		ifField,
 		label,
 		skip,
-		softFail,
+		triggerSoftFail,
 		trigger,
 	},
 }

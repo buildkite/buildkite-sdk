@@ -135,10 +135,8 @@ export interface Command {
     retry?: Retry;
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     skip?: boolean;
-    // Allow specified non-zero exit statuses not to fail the build.
-    softFail?: Record<string, number>;
-    // Allow all non-zero exit statuses not to fail the build.
-    softFailAll?: boolean;
+    // Make all exit statuses soft-fail.
+    softFail?: boolean;
     // The maximum number of minutes a job created from this step is allowed to run. If the job exceeds this time limit, or if it finishes with a non-zero exit status, the job is automatically canceled and the build fails. Jobs that time out with an exit status of 0 are marked as passed.
     timeoutInMinutes?: number;
 }
@@ -157,7 +155,7 @@ export interface Group {
     // The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
     label?: string;
     // Allows you to trigger build notifications to different services. You can also choose to conditionally send notifications based on pipeline events.
-    notify?: string;
+    notify?: string[];
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     skip?: boolean;
     // A list of steps in the group; at least 1 step is required. Allowed step types: wait, trigger, command/commands, block, input.
@@ -201,8 +199,8 @@ export interface Trigger {
     label?: string;
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     skip?: boolean;
-    // Allow specified non-zero exit statuses not to fail the build.
-    softFail?: Record<string, number>;
+    // When true, failure of the triggered build will not cause the triggering build to fail.
+    softFail?: boolean;
     // The slug of the pipeline to create a build. You can find it in the URL of your pipeline, and it corresponds to the name of the pipeline, converted to kebab-case.
     trigger?: string;
 }
