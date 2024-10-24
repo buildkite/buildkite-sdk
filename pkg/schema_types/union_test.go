@@ -36,7 +36,7 @@ func TestSchemaUnion(t *testing.T) {
 	})
 
 	t.Run("should return the go type", func(t *testing.T) {
-		assert.Equal(t, "type unionDefinition struct {\n\n}\ntype Union interface {\n    ToUnion() unionDefinition\n}\nfunc (x FieldOne) ToUnion() unionDefinition {\n    return unionDefinition{\n\n    }\n}\nfunc (x FieldTwo) ToUnion() unionDefinition {\n    return unionDefinition{\n\n    }\n}", testValue.GoType())
+		assert.Equal(t, "type Union interface {\n    MarshalJSON() ([]byte, error)\n}\nfunc (x *FieldOne) MarshalJSON() ([]byte, error) {\n    return json.Marshal(*x)\n}\nfunc (x *FieldTwo) MarshalJSON() ([]byte, error) {\n    return json.Marshal(*x)\n}", testValue.GoType())
 	})
 }
 
