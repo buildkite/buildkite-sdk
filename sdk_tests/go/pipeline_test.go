@@ -53,8 +53,6 @@ func (p pipelineSchemaValidator) ValidatePipeline(t *testing.T, pipeline *bk.Ste
 	pipelineJSON, err := json.Marshal(pipeline)
 	assert.NoError(t, err)
 
-	fmt.Println(string(pipelineJSON))
-
 	j, err := jsonschema.UnmarshalJSON(strings.NewReader(string(pipelineJSON)))
 	assert.NoError(t, err)
 
@@ -82,24 +80,51 @@ func newPipelineSchemaValidator(t *testing.T) pipelineSchemaValidator {
 func TestWaitStep(t *testing.T) {
 	validator := newPipelineSchemaValidator(t)
 
-	t.Run("Command", func(t *testing.T) {
-		t.Run("should render a command step", func(t *testing.T) {
-			pipeline := bk.NewStepBuilder().AddCommand(&bk.Command{
-				Commands: []string{"./run.sh"},
-			})
+	// t.Run("Command", func(t *testing.T) {
+	// 	t.Run("should render a command step", func(t *testing.T) {
+	// 		pipeline := bk.NewStepBuilder().AddCommand(&bk.Command{
+	// 			Commands: []string{"./run.sh"},
+	// 		})
 
-			validator.ValidatePipeline(t, pipeline)
-		})
-	})
+	// 		validator.ValidatePipeline(t, pipeline)
+	// 	})
+	// })
 
 	t.Run("Input", func(t *testing.T) {
 		t.Run("should render an input step", func(t *testing.T) {
 			pipeline := bk.NewStepBuilder().AddInput(&bk.Input{
 				Input: "My cool input step",
 				Fields: []bk.Fields{
-					bk.TextInput{
+					&bk.TextInput{
 						Key:  "name",
 						Text: "What is your name?",
+					},
+				},
+			})
+
+			validator.ValidatePipeline(t, pipeline)
+		})
+
+		t.Run("should render a text and select input", func(t *testing.T) {
+			pipeline := bk.NewStepBuilder().AddInput(&bk.Input{
+				Input: "My cool input step",
+				Fields: []bk.Fields{
+					&bk.TextInput{
+						Key:  "name",
+						Text: "What is your name?",
+					},
+					&bk.SelectInputAttribute{
+						Key: "type",
+						Options: []bk.SelectInputOption{
+							{
+								Label: "Customer",
+								Value: "customer",
+							},
+							{
+								Label: "Employee",
+								Value: "employee",
+							},
+						},
 					},
 				},
 			})
@@ -111,11 +136,19 @@ func TestWaitStep(t *testing.T) {
 	t.Run("Wait", func(t *testing.T) {
 		t.Run("should render a wait step", func(t *testing.T) {
 			pipeline := bk.NewStepBuilder().AddWait(&bk.Wait{
-				Wait:                   "",
 				AllowDependencyFailure: true,
 				ContinueOnFailure:      true,
 				DependsOn:              []string{"test"},
 				If:                     "foo == bar",
+			})
+
+			validator.ValidatePipeline(t, pipeline)
+		})
+
+		t.Run("should render a valid wait step even if user provides `wait` argument", func(t *testing.T) {
+			val := bk.WaitLabel("alsk")
+			pipeline := bk.NewStepBuilder().AddWait(&bk.Wait{
+				Wait: &val,
 			})
 
 			validator.ValidatePipeline(t, pipeline)

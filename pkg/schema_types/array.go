@@ -19,6 +19,10 @@ func (s SchemaArray) GoType() string {
 		return s.Items.GoType()
 	}
 
+	if items, ok := s.Items.(SchemaObject); ok {
+		return fmt.Sprintf("[]%s", items.Name.TitleCase())
+	}
+
 	return fmt.Sprintf("[]%s", s.Items.GoType())
 }
 
@@ -57,6 +61,12 @@ func (array) AnyMap() SchemaArray {
 func (array) Union(name string, fields []Field) SchemaArray {
 	return SchemaArray{
 		Items: Union.New(name, fields),
+	}
+}
+
+func (array) Custom(fieldref Field) SchemaArray {
+	return SchemaArray{
+		Items: fieldref.typ,
 	}
 }
 

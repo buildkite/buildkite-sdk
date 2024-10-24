@@ -3,10 +3,16 @@ package schema
 import "github.com/buildkite/pipeline-sdk/pkg/schema_types"
 
 var wait = schema_types.NewField().
+	Name("wait_label").
+	Description("When providing options for the wait step, you will need to set this value to \"~\".").
+	Required().
+	Null("wait_label")
+
+var waitField = schema_types.NewField().
 	Name("wait").
 	Description("When providing options for the wait step, you will need to set this value to \"~\".").
 	Required().
-	String()
+	FieldRef(&wait)
 
 var continueOnFailure = schema_types.NewField().
 	Name("continue_on_failure").
@@ -21,6 +27,6 @@ var waitStep = Step{
 		continueOnFailure,
 		dependsOn,
 		ifField,
-		wait,
+		waitField,
 	},
 }
