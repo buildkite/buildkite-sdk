@@ -12,6 +12,8 @@ process_go() {
 process_typescript() {
     pushd sdk/typescript
     npm install
+    npx tsc --init --outDir ./dist
+    npm run build
     npm link
     popd
 }

@@ -2,14 +2,16 @@
 	"name": "buildkite-pipeline-sdk",
 	"version": "0.0.1",
 	"description": "",
-	"main": "index.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" \u0026\u0026 exit 1"
+		"build": "tsc"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"@types/node": "^20.11.30"
+		"@types/node": "^20.11.30",
+		"typescript": "^5.6.3"
 	}
 }

@@ -7,6 +7,7 @@ type typescriptPackageJSON struct {
 	Version         string            `json:"version"`
 	Description     string            `json:"description"`
 	Main            string            `json:"main"`
+	Types           string            `json:"types"`
 	Scripts         map[string]string `json:"scripts"`
 	Keywords        []string          `json:"keywords"`
 	Author          string            `json:"author"`
@@ -20,15 +21,17 @@ func newPackageJSONFile(version string) string {
 		Name:        "buildkite-pipeline-sdk",
 		Version:     version,
 		Description: "",
-		Main:        "index.ts",
+		Main:        "dist/index.js",
+		Types:       "dist/index.d.ts",
 		Scripts: map[string]string{
-			"test": "echo \"Error: no test specified\" && exit 1",
+			"build": "tsc",
 		},
 		Keywords: []string{},
 		Author:   "",
 		License:  "ISC",
 		DevDependencies: map[string]string{
 			"@types/node": "^20.11.30",
+			"typescript":  "^5.6.3",
 		},
 	}
 

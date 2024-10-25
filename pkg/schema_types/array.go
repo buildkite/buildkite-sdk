@@ -11,7 +11,13 @@ func (SchemaArray) IsUnion() bool {
 }
 
 func (s SchemaArray) TypeScriptType() string {
-	return fmt.Sprintf("%s[]", s.Items.TypeScriptType())
+	switch s.Items.(type) {
+	case SchemaObject:
+		typ := s.Items.(SchemaObject)
+		return fmt.Sprintf("%s[]", typ.Name.TitleCase())
+	default:
+		return fmt.Sprintf("%s[]", s.Items.TypeScriptType())
+	}
 }
 
 func (s SchemaArray) GoType() string {

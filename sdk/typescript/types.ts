@@ -50,12 +50,7 @@ export interface SelectInputAttribute {
     // A boolean value that defines whether multiple options may be selected. When multiple options are selected, they are delimited in the meta-data field by a line break
     multiple?: boolean;
     // The list of select field options. For 6 or less options they'll be displayed as radio buttons, otherwise they'll be displayed in a dropdown box. If selecting multiple options is permitted the options will be displayed as checkboxes.
-    options?: export interface SelectInputOption {
-    // The text displayed for the option.
-    label?: string;
-    // The value to be stored as meta-data (to be later retrieved using the buildkite-agent meta-data command).
-    value?: string;
-}[];
+    options?: SelectInputOption[];
 }
 
 export interface TextInput {
@@ -73,7 +68,7 @@ export interface TextInput {
 
 type Steps = (Block | Command | Input | Trigger | Wait)[]
 
-type WaitLabel = 
+type WaitLabel = null
 
 export interface Block {
     // Whether to continue to proceed past this step if any of the steps named in the depends_on attribute fail.
