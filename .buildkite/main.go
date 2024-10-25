@@ -32,7 +32,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Key:   "build",
 			Label: "Build SDKs",
 			Commands: []string{
-				"./scripts/build.sh",
+				"./scripts/build_and_install.sh",
 				"./scripts/check_for_changes.sh",
 			},
 			Plugins: []map[string]interface{}{
