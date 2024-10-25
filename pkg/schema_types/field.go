@@ -51,6 +51,11 @@ func (f *Field) FieldRef(ref *Field) Field {
 	return *f
 }
 
+func (f *Field) CustomArray(ref Field) Field {
+	f.typ = Array.Custom(ref)
+	return *f
+}
+
 func (f *Field) String() Field {
 	f.typ = Simple.String()
 	return *f
@@ -103,6 +108,11 @@ func (f *Field) UnionArray(name string, fields ...Field) Field {
 
 func (f *Field) Enum(values ...string) Field {
 	f.typ = Enum.String(string(f.name), values)
+	return *f
+}
+
+func (f *Field) Null(name string) Field {
+	f.typ = Null.New(name)
 	return *f
 }
 

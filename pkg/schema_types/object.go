@@ -58,15 +58,35 @@ func (s SchemaObject) GoType() string {
 	var properties []string
 	for _, prop := range s.Properties {
 		if prop.fieldref != nil {
+			arrayType := ""
+			typeName := fmt.Sprintf("*%s", prop.fieldref.name.TitleCase())
+			if typ, ok := prop.fieldref.typ.(SchemaArray); ok {
+				arrayType = "[]"
+
+				if typ.IsUnion() || typ.Items.IsUnion() {
+					typeName = prop.fieldref.name.TitleCase()
+				}
+			}
+
+			omitEmpty := ",omitempty"
+			if _, ok := prop.fieldref.typ.(SchemaNull); ok {
+				omitEmpty = ""
+			}
+
 			properties = append(properties, utils.CodeBlock{
 				utils.CodeGen.Comment.Go(prop.description, 0),
-				fmt.Sprintf("%s %s `json:\"%s,omitempty\"`", prop.name.TitleCase(), prop.fieldref.name.TitleCase(), prop.name),
+				fmt.Sprintf("%s %s%s `json:\"%s%s\"`", prop.name.TitleCase(), arrayType, typeName, prop.name, omitEmpty),
 			}.DisplayIndent(4))
 			continue
 		}
 
 		propType := prop.typ.GoType()
 		switch prop.typ.(type) {
+		case SchemaNull:
+			properties = append(properties, utils.CodeBlock{
+				utils.CodeGen.Comment.Go(prop.description, 0),
+				fmt.Sprintf("%s %s `json:\"%s\"`", prop.name.TitleCase(), prop.name.TitleCase(), prop.name),
+			}.DisplayIndent(4))
 		case SchemaUnion:
 			properties = append(properties, utils.CodeBlock{
 				utils.CodeGen.Comment.Go(prop.description, 0),

@@ -87,7 +87,7 @@ var selectInput = schema_types.NewField().
 		schema_types.NewField().
 			Name("options").
 			Description("The list of select field options. For 6 or less options they'll be displayed as radio buttons, otherwise they'll be displayed in a dropdown box. If selecting multiple options is permitted the options will be displayed as checkboxes.").
-			FieldRef(&selectInputOption),
+			CustomArray(selectInputOption),
 	})
 
 var fields = schema_types.NewField().

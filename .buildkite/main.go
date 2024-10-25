@@ -51,11 +51,12 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			},
 		}).
 		AddCommand(&bk.Command{
-			Label:     "Check Go SDK",
+			Label:     "Test Go SDK",
 			DependsOn: []string{"build"},
 			Commands: []string{
 				"./scripts/install_go.sh",
 				"./scripts/check_for_changes.sh",
+				"cd ./sdk_tests/go && go test .",
 			},
 			Plugins: []map[string]interface{}{
 				{

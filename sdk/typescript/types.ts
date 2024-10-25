@@ -50,7 +50,12 @@ export interface SelectInputAttribute {
     // A boolean value that defines whether multiple options may be selected. When multiple options are selected, they are delimited in the meta-data field by a line break
     multiple?: boolean;
     // The list of select field options. For 6 or less options they'll be displayed as radio buttons, otherwise they'll be displayed in a dropdown box. If selecting multiple options is permitted the options will be displayed as checkboxes.
-    options?: SelectInputOption;
+    options?: export interface SelectInputOption {
+    // The text displayed for the option.
+    label?: string;
+    // The value to be stored as meta-data (to be later retrieved using the buildkite-agent meta-data command).
+    value?: string;
+}[];
 }
 
 export interface TextInput {
@@ -67,6 +72,8 @@ export interface TextInput {
 }
 
 type Steps = (Block | Command | Input | Trigger | Wait)[]
+
+type WaitLabel = 
 
 export interface Block {
     // Whether to continue to proceed past this step if any of the steps named in the depends_on attribute fail.
@@ -128,10 +135,8 @@ export interface Command {
     retry?: Retry;
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     skip?: boolean;
-    // Allow specified non-zero exit statuses not to fail the build.
-    softFail?: Record<string, number>;
-    // Allow all non-zero exit statuses not to fail the build.
-    softFailAll?: boolean;
+    // Make all exit statuses soft-fail.
+    softFail?: boolean;
     // The maximum number of minutes a job created from this step is allowed to run. If the job exceeds this time limit, or if it finishes with a non-zero exit status, the job is automatically canceled and the build fails. Jobs that time out with an exit status of 0 are marked as passed.
     timeoutInMinutes?: number;
 }
@@ -150,7 +155,7 @@ export interface Group {
     // The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
     label?: string;
     // Allows you to trigger build notifications to different services. You can also choose to conditionally send notifications based on pipeline events.
-    notify?: string;
+    notify?: string[];
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     skip?: boolean;
     // A list of steps in the group; at least 1 step is required. Allowed step types: wait, trigger, command/commands, block, input.
@@ -194,8 +199,8 @@ export interface Trigger {
     label?: string;
     // Whether to skip this step or not. Passing a string provides a reason for skipping this command. Passing an empty string is equivalent to false.
     skip?: boolean;
-    // Allow specified non-zero exit statuses not to fail the build.
-    softFail?: Record<string, number>;
+    // When true, failure of the triggered build will not cause the triggering build to fail.
+    softFail?: boolean;
     // The slug of the pipeline to create a build. You can find it in the URL of your pipeline, and it corresponds to the name of the pipeline, converted to kebab-case.
     trigger?: string;
 }
@@ -210,5 +215,5 @@ export interface Wait {
     // A boolean expression that omits the step when false. See Using conditionals for supported expressions.
     if?: string;
     // When providing options for the wait step, you will need to set this value to "~".
-    wait: string;
+    wait: WaitLabel;
 }

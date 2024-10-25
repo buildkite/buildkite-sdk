@@ -10,7 +10,7 @@ var group = schema_types.NewField().
 var notify = schema_types.NewField().
 	Name("notify").
 	Description("Allows you to trigger build notifications to different services. You can also choose to conditionally send notifications based on pipeline events.").
-	String()
+	StringArray()
 
 var steps = schema_types.NewField().
 	Name("steps").

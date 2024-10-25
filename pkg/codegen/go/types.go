@@ -9,6 +9,7 @@ import (
 
 func newTypesFile(fields []schema_types.Field, steps []schema.Step) string {
 	file := newFile()
+	file.AddImport("encoding/json", "encoding/json")
 
 	for _, field := range fields {
 		def := field.GetDefinition()

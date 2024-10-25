@@ -17,7 +17,7 @@ func TestSchemaArray(t *testing.T) {
 	})
 
 	t.Run("should return a struct and interface for unions", func(t *testing.T) {
-		expectation := "type testFieldDefinition struct {\n\n}\ntype TestField interface {\n    ToTestField() testFieldDefinition\n}"
+		expectation := "type TestField interface {\n    MarshalJSON() ([]byte, error)\n}"
 		testUnionValue := SchemaArray{
 			Items: Union.New("test_field", []Field{}),
 		}

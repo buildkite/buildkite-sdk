@@ -66,12 +66,7 @@ var retryOptionsField = schema_types.NewField().
 
 var softFail = schema_types.NewField().
 	Name("soft_fail").
-	Description("Allow specified non-zero exit statuses not to fail the build.").
-	NumberMap()
-
-var softFailAll = schema_types.NewField().
-	Name("soft_fail_all").
-	Description("Allow all non-zero exit statuses not to fail the build.").
+	Description("Make all exit statuses soft-fail.").
 	Boolean()
 
 var timeoutInMinutes = schema_types.NewField().
@@ -103,7 +98,6 @@ var commandStep = Step{
 		retryOptionsField,
 		skip,
 		softFail,
-		softFailAll,
 		timeoutInMinutes,
 	},
 }
