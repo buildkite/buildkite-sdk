@@ -20,6 +20,7 @@ var cancelOnBuildFailing = schema_types.NewField().
 var commands = schema_types.NewField().
 	Name("commands").
 	Description("The shell command to run during this step.").
+	Required().
 	StringArray()
 
 var concurrency = schema_types.NewField().

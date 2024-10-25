@@ -5,6 +5,7 @@ import "github.com/buildkite/pipeline-sdk/pkg/schema_types"
 var group = schema_types.NewField().
 	Name("group").
 	Description("Name of the group in the UI. In YAML, if you don't want a label, pass a `~`. Can also be provided in the `label` attribute if `null` is provided to the `group` attribute.").
+	Required().
 	String()
 
 var notify = schema_types.NewField().
@@ -15,6 +16,7 @@ var notify = schema_types.NewField().
 var steps = schema_types.NewField().
 	Name("steps").
 	Description("A list of steps in the group; at least 1 step is required. Allowed step types: wait, trigger, command/commands, block, input.").
+	Required().
 	UnionArray(
 		"steps",
 		blockStep.ToObjectField(),
@@ -27,6 +29,7 @@ var steps = schema_types.NewField().
 var stepsField = schema_types.NewField().
 	Name("steps").
 	Description("A list of steps in the group; at least 1 step is required. Allowed step types: wait, trigger, command/commands, block, input.").
+	Required().
 	FieldRef(&steps)
 
 var groupStep = Step{

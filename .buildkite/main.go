@@ -13,10 +13,6 @@ type dockerPluginArgs struct {
 	Environment []string `json:"environment,omitempty"`
 }
 
-type artifactPluginArgs struct {
-	Download []string `json:"download,omitempty"`
-}
-
 func runBranchBuild(pipeline *bk.StepBuilder) {
 	pipeline.
 		AddCommand(&bk.Command{
@@ -37,10 +33,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Label: "Build SDKs",
 			Commands: []string{
 				"./scripts/build.sh",
-			},
-			ArtifactPaths: []string{
-				"sdk/go/**/*",
-				"sdk/typescript/**/*",
+				"./scripts/check_for_changes.sh",
 			},
 			Plugins: []map[string]interface{}{
 				{
@@ -54,19 +47,12 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Label:     "Test Go SDK",
 			DependsOn: []string{"build"},
 			Commands: []string{
-				"./scripts/install_go.sh",
-				"./scripts/check_for_changes.sh",
-				"cd ./sdk_tests/go && go test .",
+				"./scripts/ci_test.sh go",
 			},
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
 						Image: "golang:1.23.2",
-					},
-				},
-				{
-					"artifacts#v1.9.2": artifactPluginArgs{
-						Download: []string{"sdk/go/**"},
 					},
 				},
 			},
@@ -75,15 +61,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Label:     "Check TypeScript SDK",
 			DependsOn: []string{"build"},
 			Commands: []string{
-				"./scripts/install_typescript.sh",
-				"./scripts/check_for_changes.sh",
-			},
-			Plugins: []map[string]interface{}{
-				{
-					"artifacts#v1.9.2": artifactPluginArgs{
-						Download: []string{"sdk/typescript/**"},
-					},
-				},
+				"./scripts/ci_test.sh typescript",
 			},
 		})
 }

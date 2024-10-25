@@ -43,6 +43,7 @@ var buildField = schema_types.
 var trigger = schema_types.NewField().
 	Name("trigger").
 	Description("The slug of the pipeline to create a build. You can find it in the URL of your pipeline, and it corresponds to the name of the pipeline, converted to kebab-case.").
+	Required().
 	String()
 
 var triggerSoftFail = schema_types.NewField().
