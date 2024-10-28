@@ -8,6 +8,8 @@ import (
 	bk "github.com/buildkite/pipeline-sdk/sdk/go"
 )
 
+const dockerImg = "zchase399/buildkite-pipeline-sdk-build:0.0.1"
+
 type dockerPluginArgs struct {
 	Image       string   `json:"image"`
 	Environment []string `json:"environment,omitempty"`
@@ -23,7 +25,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
-						Image: "golang:1.23.2",
+						Image: dockerImg,
 					},
 				},
 			},
@@ -38,7 +40,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
-						Image: "golang:1.23.2",
+						Image: dockerImg,
 					},
 				},
 			},
@@ -52,7 +54,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
-						Image: "golang:1.23.2",
+						Image: dockerImg,
 					},
 				},
 			},
@@ -62,6 +64,13 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			DependsOn: []string{"build"},
 			Commands: []string{
 				"./scripts/ci_test.sh typescript",
+			},
+			Plugins: []map[string]interface{}{
+				{
+					"docker#v5.11.0": dockerPluginArgs{
+						Image: dockerImg,
+					},
+				},
 			},
 		})
 }
