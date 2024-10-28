@@ -8,7 +8,7 @@ import (
 	bk "github.com/buildkite/pipeline-sdk/sdk/go"
 )
 
-const dockerImg = "zchase399/buildkite-pipeline-sdk-build:0.0.1"
+const dockerImg = "zchase399/buildkite-pipeline-sdk-build:0.0.2"
 
 type dockerPluginArgs struct {
 	Image       string   `json:"image"`
