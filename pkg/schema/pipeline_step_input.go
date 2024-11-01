@@ -5,6 +5,7 @@ import "github.com/buildkite/pipeline-sdk/pkg/schema_types"
 var input = schema_types.NewField().
 	Name("input").
 	Description("The label for this input step.").
+	Required().
 	String()
 
 var fieldsField = schema_types.NewField().

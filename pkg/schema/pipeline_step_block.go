@@ -5,6 +5,7 @@ import "github.com/buildkite/pipeline-sdk/pkg/schema_types"
 var block = schema_types.NewField().
 	Name("block").
 	Description("The label for this block step.").
+	Required().
 	String()
 
 var blockedState = schema_types.NewField().

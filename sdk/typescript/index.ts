@@ -3,5 +3,6 @@
 import Environment from "./environment";
 import StepBuilder from "./stepBuilder";
 
-export const environment = new Environment();
-export const stepBuilder = new StepBuilder();
+export * as types from "./types";
+
+export { Environment, StepBuilder };

@@ -35,7 +35,7 @@ func (s SchemaObject) TypeScriptType() string {
 		if p.fieldref != nil {
 			properties = append(properties, utils.CodeBlock{
 				utils.CodeGen.Comment.TypeScript(p.description, 0),
-				fmt.Sprintf("%s%s: %s;", p.name.CamelCase(), optionalMarker, p.fieldref.name.TitleCase()),
+				fmt.Sprintf("%s%s: %s;", string(p.name), optionalMarker, p.fieldref.name.TitleCase()),
 			}.DisplayIndent(4))
 			continue
 		}
@@ -44,7 +44,7 @@ func (s SchemaObject) TypeScriptType() string {
 
 		properties = append(properties, utils.CodeBlock{
 			utils.CodeGen.Comment.TypeScript(p.description, 0),
-			fmt.Sprintf("%s%s: %s;", p.name.CamelCase(), optionalMarker, propType),
+			fmt.Sprintf("%s%s: %s;", string(p.name), optionalMarker, propType),
 		}.DisplayIndent(4))
 	}
 

@@ -8,13 +8,11 @@ import (
 	bk "github.com/buildkite/pipeline-sdk/sdk/go"
 )
 
+const dockerImg = "zchase399/buildkite-pipeline-sdk-build:0.0.2"
+
 type dockerPluginArgs struct {
 	Image       string   `json:"image"`
 	Environment []string `json:"environment,omitempty"`
-}
-
-type artifactPluginArgs struct {
-	Download []string `json:"download,omitempty"`
 }
 
 func runBranchBuild(pipeline *bk.StepBuilder) {
@@ -27,7 +25,7 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
-						Image: "golang:1.23.2",
+						Image: dockerImg,
 					},
 				},
 			},
@@ -36,16 +34,13 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Key:   "build",
 			Label: "Build SDKs",
 			Commands: []string{
-				"./scripts/build.sh",
-			},
-			ArtifactPaths: []string{
-				"sdk/go/**/*",
-				"sdk/typescript/**/*",
+				"./scripts/build_and_install.sh",
+				"./scripts/check_for_changes.sh",
 			},
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
-						Image: "golang:1.23.2",
+						Image: dockerImg,
 					},
 				},
 			},
@@ -54,19 +49,12 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Label:     "Test Go SDK",
 			DependsOn: []string{"build"},
 			Commands: []string{
-				"./scripts/install_go.sh",
-				"./scripts/check_for_changes.sh",
-				"cd ./sdk_tests/go && go test .",
+				"./scripts/ci_test.sh go",
 			},
 			Plugins: []map[string]interface{}{
 				{
 					"docker#v5.11.0": dockerPluginArgs{
-						Image: "golang:1.23.2",
-					},
-				},
-				{
-					"artifacts#v1.9.2": artifactPluginArgs{
-						Download: []string{"sdk/go/**"},
+						Image: dockerImg,
 					},
 				},
 			},
@@ -75,13 +63,12 @@ func runBranchBuild(pipeline *bk.StepBuilder) {
 			Label:     "Check TypeScript SDK",
 			DependsOn: []string{"build"},
 			Commands: []string{
-				"./scripts/install_typescript.sh",
-				"./scripts/check_for_changes.sh",
+				"./scripts/ci_test.sh typescript",
 			},
 			Plugins: []map[string]interface{}{
 				{
-					"artifacts#v1.9.2": artifactPluginArgs{
-						Download: []string{"sdk/typescript/**"},
+					"docker#v5.11.0": dockerPluginArgs{
+						Image: dockerImg,
 					},
 				},
 			},

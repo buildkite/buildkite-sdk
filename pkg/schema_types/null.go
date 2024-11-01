@@ -11,7 +11,7 @@ func (SchemaNull) IsUnion() bool {
 }
 
 func (s SchemaNull) TypeScriptType() string {
-	return ""
+	return "null"
 }
 
 func (s SchemaNull) GoType() string {

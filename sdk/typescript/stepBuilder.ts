@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as types from "./types";
 
 class StepBuilder {
-	private steps: any[] = [];
+	public steps: any[] = [];
 
 	public write() {
 		fs.writeFileSync("pipeline.json", JSON.stringify({ steps: this.steps }, null, 4));
