@@ -28,7 +28,7 @@ func newPackageJSONFile(version string) string {
 		},
 		Keywords: []string{},
 		Author:   "",
-		License:  "ISC",
+		License:  "MIT",
 		DevDependencies: map[string]string{
 			"@types/node": "^20.11.30",
 			"typescript":  "^5.6.3",
