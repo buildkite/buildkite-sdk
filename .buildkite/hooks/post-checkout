@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Build an image for the toolchain and load it into the local image store.
+docker build --load --platform linux/amd64 -t buildkite-sdk-tools:latest .

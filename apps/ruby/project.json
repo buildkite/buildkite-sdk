@@ -1,0 +1,38 @@
+{
+    "name": "app-ruby",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/ruby",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rimraf .yardoc",
+                    "rimraf .rspec_status",
+                    "rimraf pkg"
+                ],
+                "parallel": false,
+                "cwd": "apps/ruby"
+            },
+            "cache": false
+        },
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["bundle install"],
+                "cwd": "apps/ruby"
+            },
+            "cache": false
+        },
+        "run": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["bundle install", "bundle exec ruby main.rb"],
+                "cwd": "apps/ruby"
+            },
+            "cache": false
+        }
+    }
+}

@@ -1,17 +1,11 @@
 {
-	"name": "buildkite-pipeline-sdk",
-	"version": "0.0.1",
-	"description": "",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"scripts": {
-		"build": "tsc"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "MIT",
-	"devDependencies": {
-		"@types/node": "^20.11.30",
-		"typescript": "^5.6.3"
-	}
+    "name": "@buildkite/buildkite-sdk",
+    "version": "0.0.0",
+    "dependencies": {
+        "tslib": "^2.3.0",
+        "yaml": "^2.6.1"
+    },
+    "type": "commonjs",
+    "main": "./src/index.js",
+    "typings": "./src/index.d.ts"
 }

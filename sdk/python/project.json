@@ -1,0 +1,80 @@
+{
+    "name": "sdk-python",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "library",
+    "sourceRoot": "sdk/python/src",
+    "targets": {
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rimraf .pytest_cache",
+                    "rimraf .venv",
+                    "rimraf .coverage"
+                ],
+                "cwd": "sdk/python"
+            },
+            "cache": false
+        },
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["uv venv", "uv pip install -r pyproject.toml"],
+                "cwd": "sdk/python",
+                "parallel": false
+            }
+        },
+        "format": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["black ./src"],
+                "cwd": "sdk/python"
+            },
+            "cache": false
+        },
+        "build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{workspaceRoot}/dist/sdks/python"],
+            "options": {
+                "command": "uv build -o ../../dist/sdks/python",
+                "cwd": "sdk/python"
+            },
+            "cache": false
+        },
+        "docs:build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{workspaceRoot}/dist/docs/python"],
+            "options": {
+                "command": "uv run pdoc src/buildkite_sdk -o ../../dist/docs/python",
+                "cwd": "sdk/python"
+            },
+            "cache": false
+        },
+        "docs:serve": {
+            "executor": "@nx/web:file-server",
+            "options": {
+                "port": 8081,
+                "buildTarget": "docs:build"
+            }
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "outputs": [
+                "{workspaceRoot}/reports/sdk/python/unittests",
+                "{workspaceRoot}/coverage/sdk/python"
+            ],
+            "options": {
+                "commands": ["uv run pytest tests/"],
+                "cwd": "sdk/python",
+                "parallel": false
+            },
+            "dependsOn": ["install"]
+        },
+        "publish": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "uv publish --username __token__ --password $PYPI_TOKEN dist/sdks/python/*"
+            }
+        }
+    }
+}

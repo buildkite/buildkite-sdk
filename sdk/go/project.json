@@ -1,0 +1,66 @@
+{
+    "name": "sdk-go",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "library",
+    "sourceRoot": "sdk/go/sdk/buildkite",
+    "tags": [],
+    "targets": {
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": []
+            },
+            "cache": false
+        },
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["go mod tidy"],
+                "cwd": "sdk/go",
+                "parallel": false
+            }
+        },
+        "format": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["go fmt ./sdk/buildkite/*"],
+                "cwd": "sdk/go"
+            },
+            "cache": false
+        },
+        "build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{projectRoot}/dist/sdks/go"],
+            "options": {
+                "commands": [
+                    "rimraf dist/sdks/go",
+                    "mkdir -p dist/sdks/go",
+                    "cp -R sdk/go/go.* sdk dist/sdks/go/"
+                ],
+                "parallel": false
+            },
+            "cache": false
+        },
+        "publish": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "go list -m github.com/buildkite/buildkite-sdk/sdk/go@v$VERSION"
+                ],
+                "env": {
+                    "GOPROXY": "proxy.golang.org",
+                    "VERSION": "0.0.0"
+                }
+            },
+            "cache": false
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["go test"],
+                "cwd": "sdk/go/sdk/buildkite",
+                "parallel": false
+            }
+        }
+    }
+}

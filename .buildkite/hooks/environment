@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# export PATH="/.pulumi/bin:$PATH"
+# export PULUMI_ACCESS_TOKEN="$(buildkite-agent secret get PULUMI_ACCESS_TOKEN)"
+# eval "$(pulumi env open cnunciato/default/personal --format shell)"
+
+# For reference, the script above normally emits:
+# export GITHUB_TOKEN="<some-token>"
+# export NPM_TOKEN="<some-token>"
+# export PYPI_TOKEN="<some-token>"
+# export GEM_HOST_API_KEY="<some-token>"

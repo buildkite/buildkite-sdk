@@ -1,0 +1,48 @@
+{
+    "name": "app-go",
+    "$schema": "../node_modules/nx/schemas/project-schema.json",
+    "projectType": "application",
+    "sourceRoot": "apps/go",
+    "tags": [],
+    "targets": {
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": []
+            },
+            "cache": false
+        },
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["go mod tidy"],
+                "cwd": "apps/go",
+                "parallel": false
+            }
+        },
+        "build": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["go build ."],
+                "cwd": "apps/go",
+                "parallel": false
+            }
+        },
+        "run": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["go run main.go"],
+                "cwd": "apps/go",
+                "parallel": false
+            }
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["go test"],
+                "cwd": "apps/go",
+                "parallel": false
+            }
+        }
+    }
+}
