@@ -1,0 +1,121 @@
+{
+    "targets": {
+        "install:all": {
+            "dependsOn": [
+                "app-typescript:install",
+                "app-python:install",
+                "app-go:install",
+                "app-ruby:install",
+                "sdk-typescript:install",
+                "sdk-python:install",
+                "sdk-go:install",
+                "sdk-ruby:install"
+            ]
+        },
+        "clean:all": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rimraf dist",
+                    "rimraf out",
+                    "rimraf tmp",
+                    "rimraf coverage",
+                    "rimraf reports"
+                ]
+            },
+            "dependsOn": [
+                "app-typescript:clean",
+                "app-python:clean",
+                "app-go:clean",
+                "app-ruby:clean",
+                "sdk-typescript:clean",
+                "sdk-python:clean",
+                "sdk-go:clean",
+                "sdk-ruby:clean"
+            ]
+        },
+        "format:all": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": []
+            },
+            "dependsOn": [
+                "sdk-typescript:format",
+                "sdk-python:format",
+                "sdk-go:format",
+                "sdk-ruby:format"
+            ]
+        },
+        "gen:types": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["node ./sdk/gen-types.js", "npm run format"],
+                "parallel": false
+            }
+        },
+        "gen:pipeline": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "ruby ./.buildkite/pipeline.rb > ./.buildkite/pipeline.json"
+                ],
+                "parallel": false
+            }
+        },
+        "build:all": {
+            "dependsOn": [
+                "sdk-typescript:build",
+                "sdk-python:build",
+                "sdk-go:build",
+                "sdk-ruby:build"
+            ]
+        },
+        "test:all": {
+            "dependsOn": [
+                "sdk-typescript:test",
+                "sdk-python:test",
+                "sdk-go:test",
+                "sdk-ruby:test",
+                "app-typescript:test",
+                "app-python:test",
+                "app-go:test"
+            ]
+        },
+        "docs:all": {
+            "dependsOn": [
+                "sdk-typescript:docs:build",
+                "sdk-python:docs:build",
+                "sdk-ruby:docs:build"
+            ]
+        },
+        "run:all": {
+            "dependsOn": [
+                "app-typescript:run",
+                "app-python:run",
+                "app-go:run",
+                "app-ruby:run"
+            ]
+        },
+        "publish:all": {
+            "dependsOn": [
+                "sdk-typescript:publish",
+                "sdk-python:publish",
+                "sdk-go:publish",
+                "sdk-ruby:publish"
+            ]
+        },
+        "rebuild:all": {
+            "dependsOn": ["build:all", "docs:all", "run:all"]
+        },
+        "release:all": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["node ./release.js $VERSION_FROM $VERSION_TO"],
+                "env": {
+                    "VERSION_FROM": "0.0.0",
+                    "VERSION_TO": "0.0.1"
+                }
+            }
+        }
+    }
+}

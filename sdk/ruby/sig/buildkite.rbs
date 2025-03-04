@@ -1,0 +1,26 @@
+# See the writing guide of rbs: https://github.com/ruby/rbs#guides
+module Buildkite
+  VERSION: String
+
+  class CommandStep
+    attr_reader label: String
+    attr_reader commands: Array[String]
+  end
+
+  class BlockStep
+    attr_reader label: String
+    attr_reader block: String
+  end
+
+  class Pipeline
+    @steps: Array[CommandStep | BlockStep]
+
+    def initialize: () -> void
+
+    def add_step: (step: CommandStep | BlockStep) -> self
+
+    def to_json: () -> untyped
+
+    def to_yaml: () -> untyped
+  end
+end

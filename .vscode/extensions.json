@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "nrwl.angular-console",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "firsttris.vscode-jest-runner",
+        "soutaro.rbs-syntax",
+        "Shopify.ruby-lsp",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "rubocop.vscode-rubocop",
+        "golang.go",
+        "dawhite.mustache"
+    ]
+}

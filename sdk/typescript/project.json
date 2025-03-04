@@ -1,0 +1,68 @@
+{
+    "name": "sdk-typescript",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "sdk/typescript/src",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": []
+            },
+            "cache": false
+        },
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["echo 'Skipping, as this one's managed by Nx."],
+                "cwd": "sdk/typescript"
+            }
+        },
+        "format": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["npx prettier --write ."],
+                "cwd": "sdk/typescript"
+            },
+            "cache": false
+        },
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/sdks/typescript",
+                "main": "sdk/typescript/src/index.ts",
+                "tsConfig": "sdk/typescript/tsconfig.lib.json",
+                "assets": ["sdk/typescript/*.md"],
+                "clean": true
+            },
+            "cache": false
+        },
+        "docs:build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{workspaceRoot}/dist/docs/typescript"],
+            "options": {
+                "command": "npx typedoc --entryPoints sdk/typescript --entryPointStrategy packages --out ./dist/docs/typescript"
+            },
+            "cache": false
+        },
+        "docs:serve": {
+            "executor": "@nx/web:file-server",
+            "options": {
+                "port": 8080,
+                "buildTarget": "docs:build"
+            }
+        },
+        "publish": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN",
+                    "npm publish"
+                ],
+                "cwd": "dist/sdks/typescript"
+            }
+        }
+    }
+}

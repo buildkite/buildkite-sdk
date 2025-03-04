@@ -1,0 +1,25 @@
+require:
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.0
+  # Exclude:
+  #   - "lib/schema.rb"
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Metrics/LineLength:
+  Exclude:
+    - "lib/environment.rb"
+
+Metrics/ModuleLength:
+  Exclude:
+    - "lib/environment.rb"

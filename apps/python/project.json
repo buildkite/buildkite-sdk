@@ -1,0 +1,54 @@
+{
+    "name": "app-python",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "application",
+    "sourceRoot": "apps/python/src",
+    "targets": {
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["uv venv", "uv pip install -r pyproject.toml"],
+                "cwd": "apps/python",
+                "parallel": false
+            }
+        },
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rimraf .pytest_cache",
+                    "rimraf .venv",
+                    "rimraf .coverage"
+                ],
+                "cwd": "apps/python"
+            },
+            "cache": false
+        },
+        "run": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "PYTHONPATH=../../sdk/python/src uv run src/main.py"
+                ],
+                "cwd": "apps/python",
+                "parallel": false
+            },
+            "dependsOn": ["install"]
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "outputs": [
+                "{workspaceRoot}/reports/apps/python/unittests",
+                "{workspaceRoot}/coverage/apps/python"
+            ],
+            "options": {
+                "commands": [
+                    "PYTHONPATH=../../sdk/python/src uv run pytest tests/"
+                ],
+                "cwd": "apps/python",
+                "parallel": false
+            },
+            "dependsOn": ["install"]
+        }
+    }
+}

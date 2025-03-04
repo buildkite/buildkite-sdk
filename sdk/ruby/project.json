@@ -1,0 +1,81 @@
+{
+    "name": "sdk-ruby",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "sdk/ruby",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rimraf .yardoc",
+                    "rimraf .rspec_status",
+                    "rimraf pkg"
+                ],
+                "cwd": "sdk/ruby"
+            },
+            "cache": false
+        },
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["bundle install"],
+                "cwd": "sdk/ruby"
+            },
+            "cache": false
+        },
+        "format": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["bundle exec rubocop -A"],
+                "cwd": "sdk/ruby"
+            },
+            "cache": false
+        },
+        "build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{projectRoot}/dist/sdks/ruby"],
+            "options": {
+                "commands": ["bundle exec rake build"],
+                "cwd": "sdk/ruby"
+            },
+            "cache": false
+        },
+        "publish": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["gem push buildkite-sdk-$VERSION.gem"],
+                "cwd": "dist/sdks/ruby",
+                "env": {
+                    "VERSION": "0.0.0"
+                }
+            },
+            "cache": false
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["bundle install", "bundle exec rspec spec"],
+                "cwd": "sdk/ruby"
+            },
+            "cache": false
+        },
+        "docs:build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{workspaceRoot}/dist/docs/ruby"],
+            "options": {
+                "command": "bundle exec yard doc lib --output-dir ../../dist/docs/ruby",
+                "cwd": "sdk/ruby"
+            },
+            "cache": false
+        },
+        "docs:serve": {
+            "executor": "@nx/web:file-server",
+            "options": {
+                "port": 8082,
+                "buildTarget": "docs:build"
+            }
+        }
+    }
+}

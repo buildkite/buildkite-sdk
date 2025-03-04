@@ -1,0 +1,75 @@
+{
+    "name": "app-typescript",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/typescript/src",
+    "projectType": "application",
+    "tags": [],
+    "targets": {
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [],
+                "cwd": "apps/typescript"
+            }
+        },
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": []
+            },
+            "cache": false
+        },
+        "build": {
+            "executor": "@nx/esbuild:esbuild",
+            "outputs": ["{options.outputPath}"],
+            "defaultConfiguration": "production",
+            "options": {
+                "platform": "node",
+                "outputPath": "dist/apps/typescript",
+                "format": ["cjs"],
+                "bundle": false,
+                "main": "apps/typescript/src/main.ts",
+                "tsConfig": "apps/typescript/tsconfig.app.json",
+                "assets": ["apps/typescript/src/assets"],
+                "generatePackageJson": true,
+                "esbuildOptions": {
+                    "sourcemap": true,
+                    "outExtension": {
+                        ".js": ".js"
+                    }
+                }
+            },
+            "configurations": {
+                "development": {},
+                "production": {
+                    "esbuildOptions": {
+                        "sourcemap": false,
+                        "outExtension": {
+                            ".js": ".js"
+                        }
+                    }
+                }
+            }
+        },
+        "run": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "dependsOn": ["build"],
+            "options": {
+                "buildTarget": "app-typescript:build",
+                "runBuildTargetDependencies": false,
+                "watch": false
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "app-typescript:build:development"
+                }
+            }
+        },
+        "test": {
+            "options": {
+                "passWithNoTests": true
+            }
+        }
+    }
+}

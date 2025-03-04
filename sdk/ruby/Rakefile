@@ -1,0 +1,22 @@
+require "bundler/gem_tasks"
+require "rspec/core/rake_task"
+require "rubocop/rake_task"
+
+RSpec::Core::RakeTask.new(:spec)
+RuboCop::RakeTask.new
+
+task default: %i[spec rubocop]
+
+desc "Build the SDK into the dist directory."
+task :build do
+  gemspec = "buildkite.gemspec"
+  target_dir = File.expand_path("../../dist/sdks/ruby", __dir__)
+
+  mkdir_p target_dir
+
+  sh "gem build #{gemspec}"
+  gem_file = Dir.glob("*.gem").max_by { |f| File.mtime(f) }
+  mv gem_file, File.join(target_dir, gem_file)
+
+  puts "Gem built and moved to: #{target_dir}"
+end
