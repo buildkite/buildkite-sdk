@@ -31,6 +31,7 @@ if !tag.nil? && tag.start_with?("v")
       GITHUB_TOKEN: "prod/buildkite-sdk/github-token"
     }
   }})
+end
 
 pipeline.add_step(
   label: ":hammer_and_wrench: Install, test, build, publish",
