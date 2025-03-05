@@ -37,12 +37,7 @@ type PurpleBuildNotify struct {
 	Webhook              *string                   `json:"webhook,omitempty"`
 	PagerdutyChangeEvent *string                   `json:"pagerduty_change_event,omitempty"`
 	GithubCommitStatus   *PurpleGithubCommitStatus `json:"github_commit_status,omitempty"`
-	GithubCheck          *PurpleGithubCheck        `json:"github_check,omitempty"`
-}
-
-type PurpleGithubCheck struct {
-	// GitHub commit status name
-	Context *string `json:"context,omitempty"`
+	GithubCheck          map[string]interface{}    `json:"github_check,omitempty"`
 }
 
 type PurpleGithubCommitStatus struct {
@@ -114,8 +109,8 @@ type GroupStepClass struct {
 	// Continue to the next steps, even if the previous group of steps fail
 	ContinueOnFailure *AllowDependencyFailureUnion `json:"continue_on_failure"`
 	// Waits for previous steps to pass before continuing
-	Wait   *Label `json:"wait"`
-	Waiter *Label `json:"waiter"`
+	Wait   *Label    `json:"wait"`
+	Waiter *WaitStep `json:"waiter,omitempty"`
 	// Whether to continue the build without waiting for the triggered step to complete
 	Async *AllowDependencyFailureUnion `json:"async"`
 	// Properties of the build that will be created when the step is triggered
@@ -278,12 +273,7 @@ type NotifyClass struct {
 	If                 *string                   `json:"if,omitempty"`
 	Slack              *IndigoSlack              `json:"slack"`
 	GithubCommitStatus *FluffyGithubCommitStatus `json:"github_commit_status,omitempty"`
-	GithubCheck        *FluffyGithubCheck        `json:"github_check,omitempty"`
-}
-
-type FluffyGithubCheck struct {
-	// GitHub commit status name
-	Context *string `json:"context,omitempty"`
+	GithubCheck        map[string]interface{}    `json:"github_check,omitempty"`
 }
 
 type FluffyGithubCommitStatus struct {
@@ -358,15 +348,10 @@ type FluffyBuildNotify struct {
 	If                   *string                      `json:"if,omitempty"`
 	Slack                *IndecentSlack               `json:"slack"`
 	GithubCommitStatus   *TentacledGithubCommitStatus `json:"github_commit_status,omitempty"`
-	GithubCheck          *TentacledGithubCheck        `json:"github_check,omitempty"`
+	GithubCheck          map[string]interface{}       `json:"github_check,omitempty"`
 	Email                *string                      `json:"email,omitempty"`
 	Webhook              *string                      `json:"webhook,omitempty"`
 	PagerdutyChangeEvent *string                      `json:"pagerduty_change_event,omitempty"`
-}
-
-type TentacledGithubCheck struct {
-	// GitHub commit status name
-	Context *string `json:"context,omitempty"`
 }
 
 type TentacledGithubCommitStatus struct {
@@ -438,8 +423,8 @@ type PurpleStep struct {
 	// Continue to the next steps, even if the previous group of steps fail
 	ContinueOnFailure *AllowDependencyFailureUnion `json:"continue_on_failure"`
 	// Waits for previous steps to pass before continuing
-	Wait   *Label `json:"wait"`
-	Waiter *Label `json:"waiter"`
+	Wait   *Label    `json:"wait"`
+	Waiter *WaitStep `json:"waiter,omitempty"`
 	// Whether to continue the build without waiting for the triggered step to complete
 	Async *AllowDependencyFailureUnion `json:"async"`
 	// Properties of the build that will be created when the step is triggered
@@ -482,10 +467,9 @@ type WaitStep struct {
 	Key               *string                      `json:"key,omitempty"`
 	Label             *string                      `json:"label"`
 	Name              *string                      `json:"name"`
-	Type              *WaitType                    `json:"type,omitempty"`
+	Type              *WaiterType                  `json:"type,omitempty"`
 	// Waits for previous steps to pass before continuing
-	Wait   *string `json:"wait"`
-	Waiter *string `json:"waiter"`
+	Wait *string `json:"wait"`
 }
 
 type NotifyEnum string
@@ -578,11 +562,11 @@ const (
 	PurpleWaiter   BlockStepType = "waiter"
 )
 
-type WaitType string
+type WaiterType string
 
 const (
-	FluffyWait   WaitType = "wait"
-	FluffyWaiter WaitType = "waiter"
+	FluffyWait   WaiterType = "wait"
+	FluffyWaiter WaiterType = "waiter"
 )
 
 // Pauses the execution of a build and waits on a user to unblock it

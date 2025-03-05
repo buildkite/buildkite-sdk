@@ -30,6 +30,11 @@ def from_list(f: Callable[[Any], T], x: Any) -> List[T]:
     return [f(y) for y in x]
 
 
+def from_dict(f: Callable[[Any], T], x: Any) -> Dict[str, T]:
+    assert isinstance(x, dict)
+    return {k: f(v) for (k, v) in x.items()}
+
+
 def to_class(c: Type[T], x: Any) -> dict:
     assert isinstance(x, c)
     return cast(Any, x).to_dict()
@@ -45,34 +50,9 @@ def to_enum(c: Type[EnumT], x: Any) -> EnumT:
     return x.value
 
 
-def from_dict(f: Callable[[Any], T], x: Any) -> Dict[str, T]:
-    assert isinstance(x, dict)
-    return {k: f(v) for (k, v) in x.items()}
-
-
 def from_int(x: Any) -> int:
     assert isinstance(x, int) and not isinstance(x, bool)
     return x
-
-
-class PurpleGithubCheck:
-    context: Optional[str]
-    """GitHub commit status name"""
-
-    def __init__(self, context: Optional[str]) -> None:
-        self.context = context
-
-    @staticmethod
-    def from_dict(obj: Any) -> "PurpleGithubCheck":
-        assert isinstance(obj, dict)
-        context = from_union([from_str, from_none], obj.get("context"))
-        return PurpleGithubCheck(context)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        if self.context is not None:
-            result["context"] = from_union([from_str, from_none], self.context)
-        return result
 
 
 class PurpleGithubCommitStatus:
@@ -131,7 +111,7 @@ class PurpleBuildNotify:
     webhook: Optional[str]
     pagerduty_change_event: Optional[str]
     github_commit_status: Optional[PurpleGithubCommitStatus]
-    github_check: Optional[PurpleGithubCheck]
+    github_check: Optional[Dict[str, Any]]
 
     def __init__(
         self,
@@ -142,7 +122,7 @@ class PurpleBuildNotify:
         webhook: Optional[str],
         pagerduty_change_event: Optional[str],
         github_commit_status: Optional[PurpleGithubCommitStatus],
-        github_check: Optional[PurpleGithubCheck],
+        github_check: Optional[Dict[str, Any]],
     ) -> None:
         self.email = email
         self.build_notify_if = build_notify_if
@@ -173,7 +153,7 @@ class PurpleBuildNotify:
             obj.get("github_commit_status"),
         )
         github_check = from_union(
-            [PurpleGithubCheck.from_dict, from_none], obj.get("github_check")
+            [lambda x: from_dict(lambda x: x, x), from_none], obj.get("github_check")
         )
         return PurpleBuildNotify(
             email,
@@ -213,7 +193,7 @@ class PurpleBuildNotify:
             )
         if self.github_check is not None:
             result["github_check"] = from_union(
-                [lambda x: to_class(PurpleGithubCheck, x), from_none], self.github_check
+                [lambda x: from_dict(lambda x: x, x), from_none], self.github_check
             )
         return result
 
@@ -877,26 +857,6 @@ class MatrixClass:
         return result
 
 
-class FluffyGithubCheck:
-    context: Optional[str]
-    """GitHub commit status name"""
-
-    def __init__(self, context: Optional[str]) -> None:
-        self.context = context
-
-    @staticmethod
-    def from_dict(obj: Any) -> "FluffyGithubCheck":
-        assert isinstance(obj, dict)
-        context = from_union([from_str, from_none], obj.get("context"))
-        return FluffyGithubCheck(context)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        if self.context is not None:
-            result["context"] = from_union([from_str, from_none], self.context)
-        return result
-
-
 class FluffyGithubCommitStatus:
     context: Optional[str]
     """GitHub commit status name"""
@@ -950,7 +910,7 @@ class NotifyClass:
     notify_if: Optional[str]
     slack: Optional[Union[FluffySlack, str]]
     github_commit_status: Optional[FluffyGithubCommitStatus]
-    github_check: Optional[FluffyGithubCheck]
+    github_check: Optional[Dict[str, Any]]
 
     def __init__(
         self,
@@ -958,7 +918,7 @@ class NotifyClass:
         notify_if: Optional[str],
         slack: Optional[Union[FluffySlack, str]],
         github_commit_status: Optional[FluffyGithubCommitStatus],
-        github_check: Optional[FluffyGithubCheck],
+        github_check: Optional[Dict[str, Any]],
     ) -> None:
         self.basecamp_campfire = basecamp_campfire
         self.notify_if = notify_if
@@ -981,7 +941,7 @@ class NotifyClass:
             obj.get("github_commit_status"),
         )
         github_check = from_union(
-            [FluffyGithubCheck.from_dict, from_none], obj.get("github_check")
+            [lambda x: from_dict(lambda x: x, x), from_none], obj.get("github_check")
         )
         return NotifyClass(
             basecamp_campfire, notify_if, slack, github_commit_status, github_check
@@ -1006,7 +966,7 @@ class NotifyClass:
             )
         if self.github_check is not None:
             result["github_check"] = from_union(
-                [lambda x: to_class(FluffyGithubCheck, x), from_none], self.github_check
+                [lambda x: from_dict(lambda x: x, x), from_none], self.github_check
             )
         return result
 
@@ -1868,26 +1828,6 @@ class InputStep:
         return result
 
 
-class TentacledGithubCheck:
-    context: Optional[str]
-    """GitHub commit status name"""
-
-    def __init__(self, context: Optional[str]) -> None:
-        self.context = context
-
-    @staticmethod
-    def from_dict(obj: Any) -> "TentacledGithubCheck":
-        assert isinstance(obj, dict)
-        context = from_union([from_str, from_none], obj.get("context"))
-        return TentacledGithubCheck(context)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        if self.context is not None:
-            result["context"] = from_union([from_str, from_none], self.context)
-        return result
-
-
 class TentacledGithubCommitStatus:
     context: Optional[str]
     """GitHub commit status name"""
@@ -1941,7 +1881,7 @@ class FluffyBuildNotify:
     build_notify_if: Optional[str]
     slack: Optional[Union[TentacledSlack, str]]
     github_commit_status: Optional[TentacledGithubCommitStatus]
-    github_check: Optional[TentacledGithubCheck]
+    github_check: Optional[Dict[str, Any]]
     email: Optional[str]
     webhook: Optional[str]
     pagerduty_change_event: Optional[str]
@@ -1952,7 +1892,7 @@ class FluffyBuildNotify:
         build_notify_if: Optional[str],
         slack: Optional[Union[TentacledSlack, str]],
         github_commit_status: Optional[TentacledGithubCommitStatus],
-        github_check: Optional[TentacledGithubCheck],
+        github_check: Optional[Dict[str, Any]],
         email: Optional[str],
         webhook: Optional[str],
         pagerduty_change_event: Optional[str],
@@ -1981,7 +1921,7 @@ class FluffyBuildNotify:
             obj.get("github_commit_status"),
         )
         github_check = from_union(
-            [TentacledGithubCheck.from_dict, from_none], obj.get("github_check")
+            [lambda x: from_dict(lambda x: x, x), from_none], obj.get("github_check")
         )
         email = from_union([from_str, from_none], obj.get("email"))
         webhook = from_union([from_str, from_none], obj.get("webhook"))
@@ -2018,8 +1958,7 @@ class FluffyBuildNotify:
             )
         if self.github_check is not None:
             result["github_check"] = from_union(
-                [lambda x: to_class(TentacledGithubCheck, x), from_none],
-                self.github_check,
+                [lambda x: from_dict(lambda x: x, x), from_none], self.github_check
             )
         if self.email is not None:
             result["email"] = from_union([from_str, from_none], self.email)
@@ -2264,8 +2203,6 @@ class WaitStep:
     wait: Optional[str]
     """Waits for previous steps to pass before continuing"""
 
-    waiter: Optional[str]
-
     def __init__(
         self,
         allow_dependency_failure: Optional[Union[bool, AllowDependencyFailureEnum]],
@@ -2280,7 +2217,6 @@ class WaitStep:
         name: Optional[str],
         type: Optional[WaitType],
         wait: Optional[str],
-        waiter: Optional[str],
     ) -> None:
         self.allow_dependency_failure = allow_dependency_failure
         self.branches = branches
@@ -2294,7 +2230,6 @@ class WaitStep:
         self.name = name
         self.type = type
         self.wait = wait
-        self.waiter = waiter
 
     @staticmethod
     def from_dict(obj: Any) -> "WaitStep":
@@ -2328,7 +2263,6 @@ class WaitStep:
         name = from_union([from_none, from_str], obj.get("name"))
         type = from_union([WaitType, from_none], obj.get("type"))
         wait = from_union([from_none, from_str], obj.get("wait"))
-        waiter = from_union([from_none, from_str], obj.get("waiter"))
         return WaitStep(
             allow_dependency_failure,
             branches,
@@ -2342,7 +2276,6 @@ class WaitStep:
             name,
             type,
             wait,
-            waiter,
         )
 
     def to_dict(self) -> dict:
@@ -2401,8 +2334,6 @@ class WaitStep:
             )
         if self.wait is not None:
             result["wait"] = from_union([from_none, from_str], self.wait)
-        if self.waiter is not None:
-            result["waiter"] = from_union([from_none, from_str], self.waiter)
         return result
 
 
@@ -2484,7 +2415,7 @@ class PurpleStep:
     wait: Optional[Union[WaitStep, str]]
     """Waits for previous steps to pass before continuing"""
 
-    waiter: Optional[Union[WaitStep, str]]
+    waiter: Optional[WaitStep]
     step_async: Optional[Union[bool, AllowDependencyFailureEnum]]
     """Whether to continue the build without waiting for the triggered step to complete"""
 
@@ -2536,7 +2467,7 @@ class PurpleStep:
         script: Optional[CommandStep],
         continue_on_failure: Optional[Union[bool, AllowDependencyFailureEnum]],
         wait: Optional[Union[WaitStep, str]],
-        waiter: Optional[Union[WaitStep, str]],
+        waiter: Optional[WaitStep],
         step_async: Optional[Union[bool, AllowDependencyFailureEnum]],
         build: Optional[Build],
         trigger: Optional[Union[str, TriggerStep]],
@@ -2726,9 +2657,7 @@ class PurpleStep:
             obj.get("continue_on_failure"),
         )
         wait = from_union([from_none, WaitStep.from_dict, from_str], obj.get("wait"))
-        waiter = from_union(
-            [from_none, WaitStep.from_dict, from_str], obj.get("waiter")
-        )
+        waiter = from_union([WaitStep.from_dict, from_none], obj.get("waiter"))
         step_async = from_union(
             [from_bool, AllowDependencyFailureEnum, from_none], obj.get("async")
         )
@@ -3002,7 +2931,7 @@ class PurpleStep:
             )
         if self.waiter is not None:
             result["waiter"] = from_union(
-                [from_none, lambda x: to_class(WaitStep, x), from_str], self.waiter
+                [lambda x: to_class(WaitStep, x), from_none], self.waiter
             )
         if self.step_async is not None:
             result["async"] = from_union(
@@ -3114,7 +3043,7 @@ class GroupStepClass:
     wait: Optional[Union[WaitStep, str]]
     """Waits for previous steps to pass before continuing"""
 
-    waiter: Optional[Union[WaitStep, str]]
+    waiter: Optional[WaitStep]
     step_async: Optional[Union[bool, AllowDependencyFailureEnum]]
     """Whether to continue the build without waiting for the triggered step to complete"""
 
@@ -3172,7 +3101,7 @@ class GroupStepClass:
         script: Optional[CommandStep],
         continue_on_failure: Optional[Union[bool, AllowDependencyFailureEnum]],
         wait: Optional[Union[WaitStep, str]],
-        waiter: Optional[Union[WaitStep, str]],
+        waiter: Optional[WaitStep],
         step_async: Optional[Union[bool, AllowDependencyFailureEnum]],
         build: Optional[Build],
         trigger: Optional[Union[str, TriggerStep]],
@@ -3367,9 +3296,7 @@ class GroupStepClass:
             obj.get("continue_on_failure"),
         )
         wait = from_union([from_none, WaitStep.from_dict, from_str], obj.get("wait"))
-        waiter = from_union(
-            [from_none, WaitStep.from_dict, from_str], obj.get("waiter")
-        )
+        waiter = from_union([WaitStep.from_dict, from_none], obj.get("waiter"))
         step_async = from_union(
             [from_bool, AllowDependencyFailureEnum, from_none], obj.get("async")
         )
@@ -3655,7 +3582,7 @@ class GroupStepClass:
             )
         if self.waiter is not None:
             result["waiter"] = from_union(
-                [from_none, lambda x: to_class(WaitStep, x), from_str], self.waiter
+                [lambda x: to_class(WaitStep, x), from_none], self.waiter
             )
         if self.step_async is not None:
             result["async"] = from_union(

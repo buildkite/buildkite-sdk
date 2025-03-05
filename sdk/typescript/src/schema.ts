@@ -26,15 +26,7 @@ export interface PurpleBuildNotify {
     webhook?: string;
     pagerduty_change_event?: string;
     github_commit_status?: PurpleGithubCommitStatus;
-    github_check?: PurpleGithubCheck;
-}
-
-export interface PurpleGithubCheck {
-    /**
-     * GitHub commit status name
-     */
-    context?: string;
-    [property: string]: any;
+    github_check?: { [key: string]: any };
 }
 
 export interface PurpleGithubCommitStatus {
@@ -151,7 +143,7 @@ export interface GroupStepClass {
      * Waits for previous steps to pass before continuing
      */
     wait?: WaitStep | null | string;
-    waiter?: WaitStep | null | string;
+    waiter?: WaitStep;
     /**
      * Whether to continue the build without waiting for the triggered step to complete
      */
@@ -433,15 +425,7 @@ export interface NotifyClass {
     if?: string;
     slack?: SlackClass | string;
     github_commit_status?: FluffyGithubCommitStatus;
-    github_check?: FluffyGithubCheck;
-}
-
-export interface FluffyGithubCheck {
-    /**
-     * GitHub commit status name
-     */
-    context?: string;
-    [property: string]: any;
+    github_check?: { [key: string]: any };
 }
 
 export interface FluffyGithubCommitStatus {
@@ -576,18 +560,10 @@ export interface FluffyBuildNotify {
     if?: string;
     slack?: FluffySlack | string;
     github_commit_status?: TentacledGithubCommitStatus;
-    github_check?: TentacledGithubCheck;
+    github_check?: { [key: string]: any };
     email?: string;
     webhook?: string;
     pagerduty_change_event?: string;
-}
-
-export interface TentacledGithubCheck {
-    /**
-     * GitHub commit status name
-     */
-    context?: string;
-    [property: string]: any;
 }
 
 export interface TentacledGithubCommitStatus {
@@ -699,7 +675,7 @@ export interface PurpleStep {
      * Waits for previous steps to pass before continuing
      */
     wait?: WaitStep | null | string;
-    waiter?: WaitStep | null | string;
+    waiter?: WaitStep;
     /**
      * Whether to continue the build without waiting for the triggered step to complete
      */
@@ -773,15 +749,14 @@ export interface WaitStep {
     key?: string;
     label?: null | string;
     name?: null | string;
-    type?: WaitType;
+    type?: WaiterType;
     /**
      * Waits for previous steps to pass before continuing
      */
     wait?: null | string;
-    waiter?: null | string;
 }
 
-export enum WaitType {
+export enum WaiterType {
     Wait = "wait",
     Waiter = "waiter",
 }
@@ -1056,14 +1031,10 @@ const typeMap: any = {
             {
                 json: "github_check",
                 js: "github_check",
-                typ: u(undefined, r("PurpleGithubCheck")),
+                typ: u(undefined, m("any")),
             },
         ],
         false
-    ),
-    PurpleGithubCheck: o(
-        [{ json: "context", js: "context", typ: u(undefined, "") }],
-        "any"
     ),
     PurpleGithubCommitStatus: o(
         [{ json: "context", js: "context", typ: u(undefined, "") }],
@@ -1218,11 +1189,7 @@ const typeMap: any = {
                 js: "wait",
                 typ: u(undefined, u(r("WaitStep"), null, "")),
             },
-            {
-                json: "waiter",
-                js: "waiter",
-                typ: u(undefined, u(r("WaitStep"), null, "")),
-            },
+            { json: "waiter", js: "waiter", typ: u(undefined, r("WaitStep")) },
             {
                 json: "async",
                 js: "async",
@@ -1517,14 +1484,10 @@ const typeMap: any = {
             {
                 json: "github_check",
                 js: "github_check",
-                typ: u(undefined, r("FluffyGithubCheck")),
+                typ: u(undefined, m("any")),
             },
         ],
         false
-    ),
-    FluffyGithubCheck: o(
-        [{ json: "context", js: "context", typ: u(undefined, "") }],
-        "any"
     ),
     FluffyGithubCommitStatus: o(
         [{ json: "context", js: "context", typ: u(undefined, "") }],
@@ -1659,7 +1622,7 @@ const typeMap: any = {
             {
                 json: "github_check",
                 js: "github_check",
-                typ: u(undefined, r("TentacledGithubCheck")),
+                typ: u(undefined, m("any")),
             },
             { json: "email", js: "email", typ: u(undefined, "") },
             { json: "webhook", js: "webhook", typ: u(undefined, "") },
@@ -1670,10 +1633,6 @@ const typeMap: any = {
             },
         ],
         false
-    ),
-    TentacledGithubCheck: o(
-        [{ json: "context", js: "context", typ: u(undefined, "") }],
-        "any"
     ),
     TentacledGithubCommitStatus: o(
         [{ json: "context", js: "context", typ: u(undefined, "") }],
@@ -1825,11 +1784,7 @@ const typeMap: any = {
                 js: "wait",
                 typ: u(undefined, u(r("WaitStep"), null, "")),
             },
-            {
-                json: "waiter",
-                js: "waiter",
-                typ: u(undefined, u(r("WaitStep"), null, "")),
-            },
+            { json: "waiter", js: "waiter", typ: u(undefined, r("WaitStep")) },
             {
                 json: "async",
                 js: "async",
@@ -1919,9 +1874,8 @@ const typeMap: any = {
             { json: "key", js: "key", typ: u(undefined, "") },
             { json: "label", js: "label", typ: u(undefined, u(null, "")) },
             { json: "name", js: "name", typ: u(undefined, u(null, "")) },
-            { json: "type", js: "type", typ: u(undefined, r("WaitType")) },
+            { json: "type", js: "type", typ: u(undefined, r("WaiterType")) },
             { json: "wait", js: "wait", typ: u(undefined, u(null, "")) },
-            { json: "waiter", js: "waiter", typ: u(undefined, u(null, "")) },
         ],
         false
     ),
@@ -1953,6 +1907,6 @@ const typeMap: any = {
         "wait",
         "waiter",
     ],
-    WaitType: ["wait", "waiter"],
+    WaiterType: ["wait", "waiter"],
     StringStep: ["block", "input", "wait", "waiter"],
 };
