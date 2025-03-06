@@ -13,19 +13,18 @@ pipeline.add_step(
   plugins: [
     *plugins,
     { "artifacts#v1.9.2": {
-      upload: ["node_modules/**/*"],
+      upload: ["node_modules"],
       compressed: "node_modules.tgz"
     }}
   ],
   commands: [
     "mise trust",
-    "npm install",
-    "npm test",
+    "npm install"
   ]
 )
 
 artifact_plugin = { "artifacts#v1.9.2": {
-  download: ["node_modules/**/*"],
+  download: ["node_modules"],
   compressed: "node_modules.tgz"
 }}
 
@@ -39,7 +38,7 @@ pipeline.add_step(
   ],
   commands: [
     "mise trust",
-    "npm test",
+    "npm test"
   ]
 )
 
@@ -52,35 +51,35 @@ pipeline.add_step(
   ],
   commands: [
     "mise trust",
-    "npm run build",
+    "npm run build"
   ]
 )
 
 pipeline.add_step(
   label: ":test_tube: Docs",
   key: "docs",
-  depends_on: ["build","test"],
+  depends_on: ["install","build","test"],
   plugins: [
     *plugins,
     artifact_plugin
   ],
   commands: [
     "mise trust",
-    "npm run docs",
+    "npm run docs"
   ]
 )
 
 pipeline.add_step(
   label: ":test_tube: Apps",
   key: "apps",
-  depends_on: ["build","test"],
+  depends_on: ["install","build","test"],
   plugins: [
     *plugins,
     artifact_plugin
   ],
   commands: [
     "mise trust",
-    "npm run apps",
+    "npm run apps"
   ]
 )
 
