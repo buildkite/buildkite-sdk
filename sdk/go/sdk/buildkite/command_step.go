@@ -22,7 +22,7 @@ type CommandStep struct {
 	Label                  *string
 	Matrix                 Matrix
 	Name                   *string
-	Notify                 []CommandNotify
+	Notify                 []StepNotify
 	Parallelism            *int64
 	Plugins                map[string]interface{}
 	Priority               *int64
@@ -34,19 +34,9 @@ type CommandStep struct {
 }
 
 func (step CommandStep) toPipelineStep() *PipelineStep {
-	var notify []schema.BlockStepNotify
-	for _, val := range step.Notify {
-		notify = append(notify, schema.BlockStepNotify{
-			FluffyBuildNotify: &schema.FluffyBuildNotify{
-				BasecampCampfire: val.NotifyClass.BasecampCampfire,
-				If:               val.NotifyClass.If,
-				Slack: &schema.IndecentSlack{
-					TentacledSlack: (*schema.TentacledSlack)(val.NotifyClass.Slack.FluffySlack),
-				},
-				GithubCheck:        val.NotifyClass.GithubCheck,
-				GithubCommitStatus: (*schema.TentacledGithubCommitStatus)(val.NotifyClass.GithubCommitStatus),
-			},
-		})
+	notify := make([]schema.BlockStepNotify, len(step.Notify))
+	for i, item := range step.Notify {
+		notify[i] = *item.toSchema()
 	}
 
 	commandStep := &PipelineStep{

@@ -3,8 +3,19 @@ package buildkite
 import "github.com/buildkite/buildkite-sdk/sdk/go/sdk/schema"
 
 // Input Fields
+type field struct {
+	Text     *string                  `json:"text,omitempty"`
+	Key      *string                  `json:"key,omitempty"`
+	Hint     *string                  `json:"hint,omitempty"`
+	Required *bool                    `json:"required,omitempty"`
+	Default  *string                  `json:"default,omitempty"`
+	Select   *string                  `json:"select,omitempty"`
+	Options  []InputSelectFieldOption `json:"options,omitempty"`
+	Multiple *bool                    `json:"multiple,omitempty"`
+}
+
 type Field interface {
-	toSchema() schema.Field
+	toSchema() field
 }
 
 type InputTextField struct {
@@ -15,31 +26,21 @@ type InputTextField struct {
 	Default  *string
 }
 
-func (i InputTextField) toSchema() schema.Field {
-	field := schema.Field{
-		Text: i.Text,
-		Key:  *i.Key,
-		Hint: i.Hint,
-	}
-
-	if i.Required != nil {
-		field.Required = &schema.AllowDependencyFailureUnion{
-			Bool: i.Required,
-		}
-	}
-
-	if i.Default != nil {
-		field.Default = &schema.Branches{
-			String: i.Default,
-		}
+func (i InputTextField) toSchema() field {
+	field := field{
+		Text:     i.Text,
+		Key:      i.Key,
+		Hint:     i.Hint,
+		Required: i.Required,
+		Default:  i.Default,
 	}
 
 	return field
 }
 
 type InputSelectFieldOption struct {
-	Label string
-	Value string
+	Label string `json:"label,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 type InputSelectField struct {
@@ -52,38 +53,15 @@ type InputSelectField struct {
 	Multiple *bool
 }
 
-func (i InputSelectField) toSchema() schema.Field {
-	opts := make([]schema.Option, len(i.Options))
-	for i, opt := range i.Options {
-		opts[i] = schema.Option{
-			Label: opt.Label,
-			Value: opt.Value,
-		}
-	}
-
-	field := schema.Field{
-		Select:  i.Select,
-		Key:     *i.Key,
-		Hint:    i.Hint,
-		Options: opts,
-	}
-
-	if i.Required != nil {
-		field.Required = &schema.AllowDependencyFailureUnion{
-			Bool: i.Required,
-		}
-	}
-
-	if i.Default != nil {
-		field.Default = &schema.Branches{
-			String: i.Default,
-		}
-	}
-
-	if i.Multiple != nil {
-		field.Multiple = &schema.AllowDependencyFailureUnion{
-			Bool: i.Multiple,
-		}
+func (i InputSelectField) toSchema() field {
+	field := field{
+		Select:   i.Select,
+		Hint:     i.Hint,
+		Options:  i.Options,
+		Key:      i.Key,
+		Required: i.Required,
+		Default:  i.Default,
+		Multiple: i.Multiple,
 	}
 
 	return field
@@ -105,7 +83,7 @@ type InputStep struct {
 }
 
 func (step InputStep) toPipelineStep() *PipelineStep {
-	fields := make([]schema.Field, len(step.Fields))
+	fields := make([]field, len(step.Fields))
 	for i, field := range step.Fields {
 		fields[i] = field.toSchema()
 	}

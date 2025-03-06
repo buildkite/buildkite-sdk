@@ -32,7 +32,7 @@ type BlockStep struct {
 }
 
 func (step BlockStep) toPipelineStep() *PipelineStep {
-	fields := make([]schema.Field, len(step.Fields))
+	fields := make([]field, len(step.Fields))
 	for i, field := range step.Fields {
 		fields[i] = field.toSchema()
 	}

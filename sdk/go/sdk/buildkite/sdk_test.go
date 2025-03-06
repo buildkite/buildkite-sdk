@@ -29,7 +29,6 @@ func TestAddCommandStep(t *testing.T) {
         }
     ]
 }`
-	if actual != expected {
-		t.Errorf("Expected '%s' to be '%s'", actual, expected)
-	}
+
+	assert.Equal(t, expected, actual)
 }

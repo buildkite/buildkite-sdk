@@ -17,6 +17,11 @@ type WaitStep struct {
 }
 
 func (step WaitStep) toPipelineStep() *PipelineStep {
+	label := "~"
+	if step.Wait != nil {
+		label = *step.Wait
+	}
+
 	waitStep := &PipelineStep{
 		ID:         step.ID,
 		Identifier: step.Identifier,
@@ -25,7 +30,7 @@ func (step WaitStep) toPipelineStep() *PipelineStep {
 		Label:      step.Label,
 		Name:       step.Name,
 		Wait: &schema.Label{
-			String: step.Wait,
+			String: &label,
 		},
 	}
 

@@ -179,6 +179,100 @@ type Retry interface {
 	toSchema() *schema.Retry
 }
 
+type RetrySimple struct {
+	Automatic *bool
+	Manual    *bool
+}
+
+func (r RetrySimple) toSchema() *schema.Retry {
+	retry := &schema.Retry{}
+
+	if r.Automatic != nil {
+		retry.Automatic = &schema.Automatic{
+			Bool: r.Automatic,
+		}
+	}
+
+	if r.Manual != nil {
+		retry.Manual = &schema.ManualUnion{
+			Bool: r.Manual,
+		}
+	}
+
+	return retry
+}
+
+type RetryComplexManual struct {
+	Allowed        *bool
+	PermitOnPassed *bool
+	Reason         *string
+}
+
+type retryExitStatus struct{}
+
+func (r retryExitStatus) Code(code int64) *schema.AutomaticRetryExitStatus {
+	return &schema.AutomaticRetryExitStatus{
+		Integer: &code,
+	}
+}
+
+func (r retryExitStatus) Wildcard() *schema.AutomaticRetryExitStatus {
+	val := schema.ExitStatus
+	return &schema.AutomaticRetryExitStatus{
+		Enum: &val,
+	}
+}
+
+var RetryExitStatus = retryExitStatus{}
+
+type RetryComplexAutomatic struct {
+	ExitStatus   *schema.AutomaticRetryExitStatus
+	Signal       *string
+	SignalReason *string
+	Limit        *int64
+}
+
+type RetryComplex struct {
+	Automatic []RetryComplexAutomatic
+	Manual    *RetryComplexManual
+}
+
+func (r RetryComplex) toSchema() *schema.Retry {
+	retry := &schema.Retry{}
+
+	if r.Automatic != nil {
+		items := make([]schema.AutomaticRetry, len(r.Automatic))
+		for i, val := range r.Automatic {
+			items[i] = schema.AutomaticRetry{
+				ExitStatus:   val.ExitStatus,
+				Signal:       val.Signal,
+				SignalReason: (*schema.SignalReasonEnum)(val.SignalReason),
+				Limit:        val.Limit,
+			}
+
+			retry.Automatic = &schema.Automatic{
+				AutomaticRetryArray: items,
+			}
+		}
+	}
+
+	if r.Manual != nil {
+		retry.Manual = &schema.ManualUnion{
+			ManualClass: &schema.ManualClass{
+				Allowed: &schema.AllowDependencyFailureUnion{
+					Bool: r.Manual.Allowed,
+				},
+				PermitOnPassed: &schema.AllowDependencyFailureUnion{
+					Bool: r.Manual.PermitOnPassed,
+				},
+				Reason: r.Manual.Reason,
+			},
+		}
+	}
+
+	return retry
+}
+
 // Signature
 type Signature struct {
 	Algorithm    string
@@ -229,16 +323,13 @@ func (s SoftFailAdvanced) toSchema() *schema.SoftFail {
 	}
 }
 
-// TODO: make these more user friendly
-type CommandNotify schema.NotifyElement
-
 type PipelineStep struct {
 	AllowDependencyFailure *schema.AllowDependencyFailureUnion `json:"allow_dependency_failure,omitempty"`
 	Block                  *schema.Block                       `json:"block,omitempty"`
 	BlockedState           *schema.BlockedState                `json:"blocked_state,omitempty"`
 	Branches               *schema.Branches                    `json:"branches,omitempty"`
 	DependsOn              *schema.DependsOn                   `json:"depends_on,omitempty"`
-	Fields                 []schema.Field                      `json:"fields,omitempty"`
+	Fields                 []field                             `json:"fields,omitempty"`
 	ID                     *string                             `json:"id,omitempty"`
 	Identifier             *string                             `json:"identifier,omitempty"`
 	If                     *string                             `json:"if,omitempty"`
