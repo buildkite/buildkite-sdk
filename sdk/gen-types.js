@@ -20,6 +20,7 @@ async function genTypes() {
     );
 
     const schema = await result.json();
+
     const source = {
         name: "schema",
         schema: JSON.stringify(schema),
@@ -50,8 +51,8 @@ async function genTypes() {
             options: undefined,
         },
         go: {
-            path: "./sdk/go/sdk/buildkite/schema.go",
-            options: { package: "buildkite", omitEmpty: true },
+            path: "./sdk/go/sdk/schema/schema.go",
+            options: { package: "schema", omitEmpty: true },
         },
         ruby: {
             path: "./sdk/ruby/lib/schema.rb",
