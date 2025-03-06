@@ -8,7 +8,8 @@ plugins = [
 ]
 
 pipeline.add_step(
-  label: ":test_tube: Test",
+  key: "install",
+  label: ":test_tube: Install",
   plugins: plugins,
   commands: [
     "mise trust",
@@ -25,7 +26,26 @@ artifact_plugin = { "artifacts#v1.9.2": { download: [
 ] } }
 
 pipeline.add_step(
+  key: "test",
+  depends_on: "install",
+  label: ":test_tube: Test",
+  plugins: [
+    *plugins,
+    artifact_plugin
+  ],
+  commands: [
+    "mise trust",
+    "npm test",
+  ]
+)
+
+artifact_plugin = { "artifacts#v1.9.2": { download: [
+  "node_modules/**/*"
+] } }
+
+pipeline.add_step(
   label: ":test_tube: Build",
+  depends_on: "install",
   plugins: [
     *plugins,
     artifact_plugin
@@ -38,6 +58,8 @@ pipeline.add_step(
 
 pipeline.add_step(
   label: ":test_tube: Docs",
+  key: "docs",
+  depends_on: ["build","test"],
   plugins: [
     *plugins,
     artifact_plugin
@@ -50,6 +72,8 @@ pipeline.add_step(
 
 pipeline.add_step(
   label: ":test_tube: Apps",
+  key: "apps",
+  depends_on: ["build","test"],
   plugins: [
     *plugins,
     artifact_plugin
