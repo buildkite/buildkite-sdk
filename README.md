@@ -1,6 +1,6 @@
 # buildkite-sdk
 
-[![Build status](https://badge.buildkite.com/a95a3beece2339d1783a0a819f4ceb323c1eb12fb9662be274.svg)](https://buildkite.com/buildkite/pipeline-sdk)
+[![Build status](https://badge.buildkite.com/a95a3beece2339d1783a0a819f4ceb323c1eb12fb9662be274.svg?branch=main)](https://buildkite.com/buildkite/pipeline-sdk)
 
 A multi-language SDK for [Buildkite](https://buildkite.com)! 🪁 Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema) and generates and publishes packages for TypeScript, Python, Go, and Ruby.
 
