@@ -2,48 +2,33 @@ package buildkite
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAddCommandStep(t *testing.T) {
-	pipeline := Pipeline{}
+	pipeline := NewPipeline()
 
-	label := "some-label"
-	command := "echo 'Hello, world!'"
-	pipeline.AddCommandStep(CommandStep{
-		Label: &label,
-		Command: &CommandUnion{
-			String: &command,
+	pipeline.AddStep(CommandStep{
+		Label: Value("some-label"),
+		Commands: []string{
+			"echo 'Hello, world!'",
 		},
 	})
 
-	actual, _ := pipeline.ToJSON()
+	actual, err := pipeline.ToJSON()
+	assert.NoError(t, err)
+
 	expected := `{
     "steps": [
         {
-            "agents": null,
-            "allow_dependency_failure": null,
-            "artifact_paths": null,
-            "branches": null,
-            "cache": null,
-            "cancel_on_build_failing": null,
-            "command": "echo 'Hello, world!'",
-            "commands": null,
-            "depends_on": null,
             "label": "some-label",
-            "matrix": null,
-            "plugins": null,
-            "skip": null,
-            "soft_fail": null
+            "commands": [
+                "echo 'Hello, world!'"
+            ]
         }
     ]
 }`
-	if actual != expected {
-		t.Errorf("Expected '%s' to be '%s'", actual, expected)
-	}
 
-	// actual, _ = pipeline.ToYAML()
-	// expected = `nope`
-	// if actual != expected {
-	// 	t.Errorf("Expected '%s' to be '%s'", actual, expected)
-	// }
+	assert.Equal(t, expected, actual)
 }

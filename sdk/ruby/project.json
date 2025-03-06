@@ -48,7 +48,7 @@
                 "commands": ["gem push buildkite-sdk-$VERSION.gem"],
                 "cwd": "dist/sdks/ruby",
                 "env": {
-                    "VERSION": "0.0.0"
+                    "VERSION": "0.0.1"
                 }
             },
             "cache": false

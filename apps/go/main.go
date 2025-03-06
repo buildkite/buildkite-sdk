@@ -8,15 +8,12 @@ import (
 )
 
 func main() {
-	pipeline := buildkite.Pipeline{}
+	pipeline := buildkite.NewPipeline()
 
-	label := "some-label"
-	command := "echo 'Hello, world!'"
-
-	pipeline.AddCommandStep(buildkite.CommandStep{
-		Label: &label,
-		Command: &buildkite.CommandUnion{
-			String: &command,
+	pipeline.AddStep(buildkite.CommandStep{
+		Label: buildkite.Value("some-label"),
+		Commands: []string{
+			"echo 'Hello, world!'",
 		},
 	})
 
