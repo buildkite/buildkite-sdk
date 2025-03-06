@@ -246,3 +246,13 @@ The following environment variables are required for releasing and publishing:
 -   `GEM_HOST_API_KEY` for publishing to RubyGems (with `gem push`)
 
 See the `publish:all` and `release:all` tasks in `./project.json` for details.
+
+## Upgrading nx
+
+To upgrade the nx workspace to the latest version, use `nx migrate`. From the root of the project, run:
+
+```bash
+npx nx migrate latest
+```
+
+See the [nx guide](https://nx.dev/features/automate-updating-dependencies) for details.
