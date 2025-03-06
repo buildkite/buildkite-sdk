@@ -10,20 +10,24 @@ plugins = [
 pipeline.add_step(
   key: "install",
   label: ":test_tube: Install",
-  plugins: plugins,
+  plugins: [
+    *plugins,
+    { "artifacts#v1.9.2": {
+      upload: ["node_modules/**/*"],
+      compressed: "node_modules.tgz"
+    }}
+  ],
   commands: [
     "mise trust",
     "npm install",
     "npm test",
-  ],
-  artifact_paths: [
-    "node_modules/**/*"
   ]
 )
 
-artifact_plugin = { "artifacts#v1.9.2": { download: [
-  "node_modules/**/*"
-] } }
+artifact_plugin = { "artifacts#v1.9.2": {
+  download: ["node_modules/**/*"],
+  compressed: "node_modules.tgz"
+}}
 
 pipeline.add_step(
   key: "test",
@@ -38,10 +42,6 @@ pipeline.add_step(
     "npm test",
   ]
 )
-
-artifact_plugin = { "artifacts#v1.9.2": { download: [
-  "node_modules/**/*"
-] } }
 
 pipeline.add_step(
   label: ":test_tube: Build",
