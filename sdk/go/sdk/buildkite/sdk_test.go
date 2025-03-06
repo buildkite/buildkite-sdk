@@ -3,27 +3,29 @@ package buildkite
 import (
 	"testing"
 
-	"github.com/buildkite/buildkite-sdk/sdk/go/sdk/schema"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAddCommandStep(t *testing.T) {
 	pipeline := NewPipeline()
 
-	label := "some-label"
-	command := "echo 'Hello, world!'"
-	pipeline.AddCommandStep(schema.CommandStep{
-		Label: &label,
-		Command: &schema.CommandUnion{
-			String: &command,
+	pipeline.AddStep(CommandStep{
+		Label: Value("some-label"),
+		Commands: []string{
+			"echo 'Hello, world!'",
 		},
 	})
 
-	actual, _ := pipeline.ToJSON()
+	actual, err := pipeline.ToJSON()
+	assert.NoError(t, err)
+
 	expected := `{
     "steps": [
         {
             "label": "some-label",
-            "command": "echo 'Hello, world!'"
+            "commands": [
+                "echo 'Hello, world!'"
+            ]
         }
     ]
 }`

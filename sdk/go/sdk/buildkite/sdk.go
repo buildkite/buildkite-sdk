@@ -7,8 +7,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func NewPipeline() pipeline {
-	return pipeline{
+func NewPipeline() *pipeline {
+	return &pipeline{
 		Schema: schema.Schema{},
 	}
 }
@@ -20,28 +20,12 @@ type pipeline struct {
 	Steps  []*PipelineStep `json:"steps"`
 }
 
-func (p *pipeline) AddCommandStep(step schema.CommandStep) {
-	p.Steps = append(p.Steps, commandStepToGroupStep(step))
+type pipelineStep interface {
+	toPipelineStep() *PipelineStep
 }
 
-func (p *pipeline) AddWaitStep(step schema.WaitStep) {
-	p.Steps = append(p.Steps, waitStepToGroupStep(step))
-}
-
-func (p *pipeline) AddBlockStep(step schema.BlockStep) {
-	p.Steps = append(p.Steps, blockStepToGroupStep(step))
-}
-
-func (p *pipeline) AddInputStep(step schema.InputStep) {
-	p.Steps = append(p.Steps, inputStepToGroupStep(step))
-}
-
-func (p *pipeline) AddTriggerStep(step schema.TriggerStep) {
-	p.Steps = append(p.Steps, triggerStepToGroupStep(step))
-}
-
-func (p *pipeline) AddGroupStep(step GroupStep) {
-	p.Steps = append(p.Steps, groupStepToPipelineStep(step))
+func (p *pipeline) AddStep(step pipelineStep) {
+	p.Steps = append(p.Steps, step.toPipelineStep())
 }
 
 func (p *pipeline) ToJSON() (string, error) {
