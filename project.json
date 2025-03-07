@@ -62,6 +62,15 @@
                 "parallel": false
             }
         },
+        "gen:pipeline-release": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "ruby ./.buildkite/release.rb > ./.buildkite/pipeline.json"
+                ],
+                "parallel": false
+            }
+        },
         "build:all": {
             "dependsOn": [
                 "sdk-typescript:build",

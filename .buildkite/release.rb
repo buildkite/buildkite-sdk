@@ -4,7 +4,18 @@ require_relative("../sdk/ruby/lib/environment")
 pipeline = Buildkite::Pipeline.new
 
 plugins = [
-  { "docker#v5.11.0": { image: "buildkite-sdk-tools:latest" } }
+  { "docker#v5.11.0": { image: "buildkite-sdk-tools:latest" } },
+  { "rubygems-oidc#v0.2.0": { role: "rg_oidc_akr_emf87k6zphtb7x7adyrk" } },
+  { "aws-assume-role-with-web-identity#v1.0.0": {
+    "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+  }},
+  { "aws-ssm#v1.0.0": {
+    parameters: {
+      NPM_TOKEN: "prod/buildkite-sdk/npm-token",
+      PYPI_TOKEN: "prod/buildkite-sdk/pypi-token",
+      GITHUB_TOKEN: "prod/buildkite-sdk/github-token"
+    }
+  }}
 ]
 
 pipeline.add_step(
@@ -89,25 +100,14 @@ language_targets.each do |target|
         ],
       },
       {
-        key: "#{target[:key]}-docs",
-        label: ":books: Docs",
+        key: "#{target[:key]}-publish",
+        label: ":rocket: Publish",
         depends_on: ["#{target[:key]}-test","#{target[:key]}-build"],
         plugins: language_plugins,
         commands: [
           "mise trust",
           "nx install #{target[:sdk_label]}",
-          "nx run #{target[:sdk_label]}:docs:build"
-        ],
-      },
-      {
-        label: ":lab_coat: Apps",
-        key: "#{target[:key]}-apps",
-        depends_on: ["#{target[:key]}-test","#{target[:key]}-build"],
-        plugins: language_plugins,
-        commands: [
-          "mise trust",
-          "nx install #{target[:app_label]}",
-          "nx run #{target[:app_label]}:run"
+          "nx run #{target[:sdk_label]}:publish"
         ],
       },
     ]
