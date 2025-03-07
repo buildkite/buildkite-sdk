@@ -59,7 +59,7 @@ pipeline.add_step(
     {
       key: "docs",
       label: ":books: Docs",
-      depends_on: ["test","build"]
+      depends_on: ["test","build"],
       plugins: language_plugins,
       commands: [
         "mise trust",
@@ -70,7 +70,7 @@ pipeline.add_step(
     {
       label: ":lab_coat: Apps",
       key: "apps",
-      depends_on: ["test","build"]
+      depends_on: ["test","build"],
       plugins: language_plugins,
       commands: [
         "mise trust",
