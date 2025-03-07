@@ -6,6 +6,7 @@
         "agent:local": "buildkite-agent start --token $BUILDKITE_AGENT_TOKEN_LOCAL_BUILDKITE_SDK",
         "postinstall": "nx install:all --verbose",
         "pipeline": "nx gen:pipeline",
+        "pipeline-release": "nx gen:pipeline-release",
         "types": "nx gen:types",
         "test": "nx test:all",
         "build": "nx build:all",

@@ -19,6 +19,11 @@ if (!from || !to) {
         "sdk/ruby/project.json",
     ];
 
+    const git = simpleGit();
+    const branch = `release/v${to}`
+
+    await git.checkoutLocalBranch(branch)
+
     // Bump versions.
     replaceInFileSync({
         files: paths,
@@ -30,7 +35,6 @@ if (!from || !to) {
     execSync("npm run build", { stdio: "inherit" });
 
     // Commit and tag.
-    const git = simpleGit();
     await git.add("sdk"); // Include everything here, as lockfiles will also have changed.
     await git.add("project.json"); // As this contains the new version.
     await git.commit(`Release v${to}`);
@@ -38,7 +42,7 @@ if (!from || !to) {
     await git.addTag(`sdk/go/v${to}`);
 
     // Push the commit and tags. This is what triggers publishing.
-    await git.push("origin", "main", { "--tags": true });
+    await git.push("origin", branch, { "--tags": true });
 
     // Auth with GitHub.
     const octokit = new Octokit({
