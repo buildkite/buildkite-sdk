@@ -91,7 +91,7 @@ language_targets.each do |target|
       {
         key: "#{target[:key]}-docs",
         label: ":books: Docs",
-        depends_on: ["node-test","node-build"],
+        depends_on: ["#{target[:key]}-test","#{target[:key]}-build"],
         plugins: language_plugins,
         commands: [
           "mise trust",
@@ -102,7 +102,7 @@ language_targets.each do |target|
       {
         label: ":lab_coat: Apps",
         key: "#{target[:key]}-apps",
-        depends_on: ["node-test","node-build"],
+        depends_on: ["#{target[:key]}-test","#{target[:key]}-build"],
         plugins: language_plugins,
         commands: [
           "mise trust",
