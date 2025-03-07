@@ -24,14 +24,7 @@ RUN mise install go@latest && mise use --global go@latest
 
 # Install Python tools.
 RUN pip install --no-cache-dir uv black
-
-FROM base
-
-WORKDIR /workdir
-
-COPY . .
-
-RUN mise trust && npm install
+RUN npm install -g nx
 
 # Override the default command (irb).
 CMD ["true"]
