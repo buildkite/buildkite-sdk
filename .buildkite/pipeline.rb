@@ -13,8 +13,8 @@ pipeline.add_step(
   plugins: [
     *plugins,
     { "artifacts#v1.9.2": {
-      upload: ["node_modules"]
-      compressed: node_modules.tgz
+      upload: ["node_modules"],
+      compressed: "node_modules.tgz"
     }}
   ],
   commands: [
@@ -26,8 +26,8 @@ pipeline.add_step(
 language_plugins = [
   *plugins,
   { "artifacts#v1.9.2": {
-    download: ["node_modules"]
-    compressed: node_modules.tgz
+    download: ["node_modules"],
+    compressed: "node_modules.tgz"
   }}
 ]
 
