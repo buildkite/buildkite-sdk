@@ -32,6 +32,7 @@ language_plugins = [
 ]
 
 pipeline.add_step(
+  depends_on: "install",
   key: "node",
   group: ":typescript: TypeScript",
   steps: [
