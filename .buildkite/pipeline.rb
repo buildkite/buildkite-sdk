@@ -42,8 +42,8 @@ pipeline.add_step(
       plugins: language_plugins,
       commands: [
         "mise trust",
-        "nx install:typescript --verbose",
-        "nx test:typescript"
+        "nx install sdk-typescript",
+        "nx test sdk-typescript"
       ],
     },
   ]
