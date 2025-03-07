@@ -46,6 +46,38 @@ pipeline.add_step(
         "nx test sdk-typescript"
       ],
     },
+    {
+      key: "build",
+      label: ":package: Build",
+      plugins: language_plugins,
+      commands: [
+        "mise trust",
+        "nx install sdk-typescript",
+        "nx build sdk-typescript"
+      ],
+    },
+    {
+      key: "docs",
+      label: ":books: Docs",
+      depends_on: ["test","build"]
+      plugins: language_plugins,
+      commands: [
+        "mise trust",
+        "nx install sdk-typescript",
+        "nx run sdk-typescript:docs:build"
+      ],
+    },
+    {
+      label: ":lab_coat: Apps",
+      key: "apps",
+      depends_on: ["test","build"]
+      plugins: language_plugins,
+      commands: [
+        "mise trust",
+        "nx install app-typescript",
+        "nx run app-typescript"
+      ],
+    },
   ]
 )
 
