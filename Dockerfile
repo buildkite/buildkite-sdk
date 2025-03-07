@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir uv black
 
 FROM base
 
-WORKDIR /app
+WORKDIR /workdir
 
 COPY . .
 

@@ -12,34 +12,38 @@ pipeline.add_step(
   label: ":test_tube: Test",
   plugins: plugins,
   commands: [
+    "mise trust",
     "npm test"
   ]
 )
 
 pipeline.add_step(
-  label: ":test_tube: Build",
+  label: ":package: Build",
   plugins: plugins,
   commands: [
+    "mise trust",
     "npm run build"
   ]
 )
 
 pipeline.add_step(
-  label: ":test_tube: Docs",
+  label: ":books: Docs",
   key: "docs",
   depends_on: ["build","test"],
   plugins: plugins,
   commands: [
+    "mise trust",
     "npm run docs"
   ]
 )
 
 pipeline.add_step(
-  label: ":test_tube: Apps",
+  label: ":lab_coat: Apps",
   key: "apps",
   depends_on: ["build","test"],
   plugins: plugins,
   commands: [
+    "mise trust",
     "npm run apps"
   ]
 )
