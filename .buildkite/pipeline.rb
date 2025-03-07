@@ -75,7 +75,57 @@ pipeline.add_step(
       commands: [
         "mise trust",
         "nx install app-typescript",
-        "nx run app-typescript"
+        "nx run app-typescript:run"
+      ],
+    },
+  ]
+)
+
+pipeline.add_step(
+  depends_on: "install",
+  key: "python",
+  group: ":python: Python",
+  steps: [
+    {
+      key: "test",
+      label: ":test_tube: Test",
+      plugins: language_plugins,
+      commands: [
+        "mise trust",
+        "nx install sdk-python",
+        "nx test sdk-python"
+      ],
+    },
+    {
+      key: "build",
+      label: ":package: Build",
+      plugins: language_plugins,
+      commands: [
+        "mise trust",
+        "nx install sdk-python",
+        "nx build sdk-python"
+      ],
+    },
+    {
+      key: "docs",
+      label: ":books: Docs",
+      depends_on: ["test","build"],
+      plugins: language_plugins,
+      commands: [
+        "mise trust",
+        "nx install sdk-python",
+        "nx run sdk-python:docs:build"
+      ],
+    },
+    {
+      label: ":lab_coat: Apps",
+      key: "apps",
+      depends_on: ["test","build"],
+      plugins: language_plugins,
+      commands: [
+        "mise trust",
+        "nx install app-python",
+        "nx run app-python:run"
       ],
     },
   ]
