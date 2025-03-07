@@ -37,7 +37,7 @@ pipeline.add_step(
   group: ":typescript: TypeScript",
   steps: [
     {
-      key: "test",
+      key: "node-test",
       label: ":test_tube: Test",
       plugins: language_plugins,
       commands: [
@@ -47,7 +47,7 @@ pipeline.add_step(
       ],
     },
     {
-      key: "build",
+      key: "node-build",
       label: ":package: Build",
       plugins: language_plugins,
       commands: [
@@ -57,9 +57,9 @@ pipeline.add_step(
       ],
     },
     {
-      key: "docs",
+      key: "node-docs",
       label: ":books: Docs",
-      depends_on: ["test","build"],
+      depends_on: ["node-test","node-build"],
       plugins: language_plugins,
       commands: [
         "mise trust",
@@ -69,8 +69,8 @@ pipeline.add_step(
     },
     {
       label: ":lab_coat: Apps",
-      key: "apps",
-      depends_on: ["test","build"],
+      key: "node-apps",
+      depends_on: ["node-test","node-build"],
       plugins: language_plugins,
       commands: [
         "mise trust",
@@ -87,7 +87,7 @@ pipeline.add_step(
   group: ":python: Python",
   steps: [
     {
-      key: "test",
+      key: "python-test",
       label: ":test_tube: Test",
       plugins: language_plugins,
       commands: [
@@ -97,7 +97,7 @@ pipeline.add_step(
       ],
     },
     {
-      key: "build",
+      key: "python-build",
       label: ":package: Build",
       plugins: language_plugins,
       commands: [
@@ -107,9 +107,9 @@ pipeline.add_step(
       ],
     },
     {
-      key: "docs",
+      key: "python-docs",
       label: ":books: Docs",
-      depends_on: ["test","build"],
+      depends_on: ["python-test","python-build"],
       plugins: language_plugins,
       commands: [
         "mise trust",
@@ -119,8 +119,8 @@ pipeline.add_step(
     },
     {
       label: ":lab_coat: Apps",
-      key: "apps",
-      depends_on: ["test","build"],
+      key: "python-apps",
+      depends_on: ["python-test","python-build"],
       plugins: language_plugins,
       commands: [
         "mise trust",
