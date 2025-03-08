@@ -1,14 +1,20 @@
-from buildkite_sdk import Pipeline
+from buildkite_sdk import Pipeline, CommandStep
 from os import makedirs
 
 def generate_json():
     pipeline = Pipeline()
-    pipeline.add_command_step({"label": "some-label", "command": "echo 'Hello, world!'"})
+    pipeline.add_step(CommandStep(
+        label="some-label",
+        commands="echo 'Hello, world!'",
+    ))
     return pipeline.to_json()
 
 def generate_yaml():
     pipeline = Pipeline()
-    pipeline.add_command_step({"label": "some-label", "command": "echo 'Hello, world!'"})
+    pipeline.add_step(CommandStep(
+        label="some-label",
+        commands="echo 'Hello, world!'",
+    ))
     return pipeline.to_yaml()
 
 makedirs("../../out/apps/python", exist_ok=True)

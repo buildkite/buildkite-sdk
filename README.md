@@ -74,7 +74,7 @@ require "buildkite"
 
 pipeline = Buildkite::Pipeline.new
 
-pipeline.add_command_step(
+pipeline.add_step(
   label: "some-label",
   command: "echo 'Hello, World!'"
 )
@@ -130,7 +130,7 @@ Use it in your program:
 from buildkite_sdk import Pipeline
 
 pipeline = Pipeline()
-pipeline.add_command_step({"command": "echo 'Hello, world!'"})
+pipeline.add_step({"command": "echo 'Hello, world!'"})
 
 print(pipeline.to_json())
 print(pipeline.to_yaml())
@@ -184,7 +184,7 @@ require "buildkite"
 
 pipeline = Buildkite::Pipeline.new
 
-pipeline.add_command_step(
+pipeline.add_step(
   label: "some-label",
   command: "echo 'Hello, World!'"
 )

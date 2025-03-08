@@ -4,12 +4,12 @@ def test_main():
     assert generate_json() == """{
     "steps": [
         {
-            "label": "some-label",
-            "command": "echo 'Hello, world!'"
+            "commands": "echo 'Hello, world!'",
+            "label": "some-label"
         }
     ]
 }"""
     assert generate_yaml() == """steps:
-- command: echo 'Hello, world!'
+- commands: echo 'Hello, world!'
   label: some-label
 """
