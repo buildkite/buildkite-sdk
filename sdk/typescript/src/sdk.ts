@@ -16,6 +16,13 @@ export type PipelineStep =
     | BlockStep
     | GroupStep;
 
+interface PipelineSchema {
+    agents?: Record<string, any>;
+    env?: Record<string, any>;
+    notify?: (schema.PurpleBuildNotify | schema.NotifyEnum)[];
+    steps?: PipelineStep[];
+}
+
 export class Pipeline {
     private agents: Record<string, any> = {};
     private env: Record<string, any> = {};
@@ -59,23 +66,37 @@ export class Pipeline {
         return this;
     }
 
+    private createPipeline(): PipelineSchema {
+        const pipeline: PipelineSchema = {}
+
+        if (Object.keys(this.agents).length > 0) {
+            pipeline.agents = this.agents
+        }
+
+        if (Object.keys(this.env).length > 0) {
+            pipeline.env = this.env
+        }
+
+        if (Object.keys(this.notify).length > 0) {
+            pipeline.notify = this.notify
+        }
+
+        if (Object.keys(this.steps).length > 0) {
+            pipeline.steps = this.steps
+        }
+
+        return pipeline
+    }
+
     toJSON() {
         return JSON.stringify(
-            {
-                agents: this.agents,
-                notify: this.notify,
-                steps: this.steps,
-            },
+            this.createPipeline(),
             null,
             4
         );
     }
 
     toYAML() {
-        return yaml.stringify({
-            agents: this.agents,
-            notify: this.notify,
-            steps: this.steps,
-        });
+        return yaml.stringify(this.createPipeline());
     }
 }
