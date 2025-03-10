@@ -3,20 +3,17 @@ package buildkite
 import (
 	"encoding/json"
 
-	"github.com/buildkite/buildkite-sdk/sdk/go/sdk/schema"
 	"gopkg.in/yaml.v3"
 )
 
 func NewPipeline() *pipeline {
-	return &pipeline{
-		Schema: schema.Schema{},
-	}
+	return &pipeline{}
 }
 
 type pipeline struct {
-	schema.Schema
-
-	Agents *schema.Agents  `json:"agents,omitempty"`
+	Agents map[string]any  `json:"agents,omitempty"`
+	Env    map[string]any  `json:"env,omitempty"`
+	Notify PipelineNotify  `json:"notify,omitempty"`
 	Steps  []*PipelineStep `json:"steps"`
 }
 
@@ -26,6 +23,26 @@ type pipelineStep interface {
 
 func (p *pipeline) AddStep(step pipelineStep) {
 	p.Steps = append(p.Steps, step.toPipelineStep())
+}
+
+func (p *pipeline) AddAgent(key string, value any) {
+	if p.Agents == nil {
+		p.Agents = make(map[string]any)
+	}
+
+	p.Agents[key] = value
+}
+
+func (p *pipeline) AddEnvironmentVariable(key string, value any) {
+	if p.Env == nil {
+		p.Env = make(map[string]any)
+	}
+
+	p.Env[key] = value
+}
+
+func (p *pipeline) AddNotify(notify PipelineNotify) {
+	p.Notify = notify
 }
 
 func (p *pipeline) ToJSON() (string, error) {
