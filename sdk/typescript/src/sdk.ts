@@ -18,6 +18,7 @@ export type PipelineStep =
 
 export class Pipeline {
     private agents: Record<string, any> = {};
+    private env: Record<string, any> = {};
     private notify: (schema.PurpleBuildNotify | schema.NotifyEnum)[] = [];
     private steps: PipelineStep[] = [];
 
@@ -32,7 +33,17 @@ export class Pipeline {
     }
 
     /**
+     * Add an environemnt variable
+     * @param key
+     * @param value
+     */
+    addEnvironmentVariable(key: string, value: any) {
+        this.env[key] = value
+    }
+
+    /**
      * Add an notification
+     * @param notify
      */
     addNotify(notify: schema.PurpleBuildNotify | schema.NotifyEnum) {
         this.notify.push(notify);
