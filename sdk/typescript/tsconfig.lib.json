@@ -6,6 +6,6 @@
         "emitDeclarationOnly": false,
         "noImplicitAny": false
     },
-    "include": ["src/**/*.ts", "src/sdk.spec.ts"],
+    "include": ["src/**/*.ts", "src/sdk.spec.ts", "global.d.ts"],
     "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }

@@ -1,28 +1,41 @@
 import * as yaml from "yaml";
 import * as schema from "./schema";
-import * as env from "./environment";
-export * as environmentVariables from "./environment";
 
-type PipelineStep =
-    | schema.CommandStep
-    | schema.WaitStep
-    | schema.InputStep
-    | schema.TriggerStep
-    | schema.BlockStep
-    | schema.GroupStepClass;
+export type CommandStep = schema.CommandStep;
+export type WaitStep = schema.WaitStep;
+export type InputStep = schema.InputStep;
+export type TriggerStep = schema.TriggerStep;
+export type BlockStep = schema.BlockStep;
+export type GroupStep = schema.GroupStepClass;
 
-// export class Environment {
-//     static get(key: env.Environment) {
-//         env.Environment.BUILDKITE_AGENT_DISCONNECT_AFTER_IDLE_TIMEOUT;
-//         return env.Environment[key];
-//     }
-// }
+export type PipelineStep =
+    | CommandStep
+    | WaitStep
+    | InputStep
+    | TriggerStep
+    | BlockStep
+    | GroupStep;
 
 export class Pipeline {
+    private agents: Record<string, any> = {};
+    private notify: (schema.PurpleBuildNotify | schema.NotifyEnum)[] = [];
     private steps: PipelineStep[] = [];
 
-    constructor() {
-        this.steps = [];
+    /**
+     * Add an agent to target by tag
+     * @param tagName
+     * @param tagValue
+     * @returns
+     */
+    addAgent(tagName: string, tagValue: string) {
+        this.agents[tagName] = tagValue;
+    }
+
+    /**
+     * Add an notification
+     */
+    addNotify(notify: schema.PurpleBuildNotify | schema.NotifyEnum) {
+        this.notify.push(notify);
     }
 
     /**
@@ -38,6 +51,8 @@ export class Pipeline {
     toJSON() {
         return JSON.stringify(
             {
+                agents: this.agents,
+                notify: this.notify,
                 steps: this.steps,
             },
             null,
@@ -47,6 +62,8 @@ export class Pipeline {
 
     toYAML() {
         return yaml.stringify({
+            agents: this.agents,
+            notify: this.notify,
             steps: this.steps,
         });
     }
