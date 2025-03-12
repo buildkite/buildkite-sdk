@@ -8,7 +8,7 @@ from .input_step import InputStep
 from .trigger_step import TriggerStep
 from .wait_step import WaitStep
 
-#Types
+# Types
 from .types import (
     BlockedStateEnum,
     Build,
