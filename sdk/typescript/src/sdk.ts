@@ -1,5 +1,6 @@
 import * as yaml from "yaml";
 import * as schema from "./schema";
+export { EnvironmentVariable } from "./environment";
 
 export type CommandStep = schema.CommandStep;
 export type WaitStep = schema.WaitStep;
@@ -45,7 +46,7 @@ export class Pipeline {
      * @param value
      */
     addEnvironmentVariable(key: string, value: any) {
-        this.env[key] = value
+        this.env[key] = value;
     }
 
     /**
@@ -67,33 +68,29 @@ export class Pipeline {
     }
 
     private createPipeline(): PipelineSchema {
-        const pipeline: PipelineSchema = {}
+        const pipeline: PipelineSchema = {};
 
         if (Object.keys(this.agents).length > 0) {
-            pipeline.agents = this.agents
+            pipeline.agents = this.agents;
         }
 
         if (Object.keys(this.env).length > 0) {
-            pipeline.env = this.env
+            pipeline.env = this.env;
         }
 
         if (Object.keys(this.notify).length > 0) {
-            pipeline.notify = this.notify
+            pipeline.notify = this.notify;
         }
 
         if (Object.keys(this.steps).length > 0) {
-            pipeline.steps = this.steps
+            pipeline.steps = this.steps;
         }
 
-        return pipeline
+        return pipeline;
     }
 
     toJSON() {
-        return JSON.stringify(
-            this.createPipeline(),
-            null,
-            4
-        );
+        return JSON.stringify(this.createPipeline(), null, 4);
     }
 
     toYAML() {

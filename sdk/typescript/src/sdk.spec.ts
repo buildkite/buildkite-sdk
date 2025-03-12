@@ -11,7 +11,7 @@ describe("toJSON()", () => {
         expect(pipeline.toJSON()).toBe(
             JSON.stringify(
                 {
-                    steps: [{ command: "echo 'Hello, world!'" }]
+                    steps: [{ command: "echo 'Hello, world!'" }],
                 },
                 null,
                 4

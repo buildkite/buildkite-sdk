@@ -147,7 +147,7 @@ async function genEnvVars() {
             };
         }),
     });
-    fs.writeFileSync(`${sdkPath}/global.d.ts`, rendered, "utf-8");
+    fs.writeFileSync(`${sdkPath}/src/environment.ts`, rendered, "utf-8");
 
     // Python.
     sdkPath = "./sdk/python";
