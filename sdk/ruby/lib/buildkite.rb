@@ -10,6 +10,23 @@ module Buildkite
   class Pipeline
     def initialize
       @steps = []
+      @agents = nil
+      @env = nil
+      @notify = nil
+    end
+
+    def add_agent(key, value)
+      @agents = {} if @agents.nil?
+      @agents[key] = value
+    end
+
+    def add_environment_variable(key, value)
+      @env = {} if @env.nil?
+      @env[key] = value
+    end
+
+    def add_notify(notify)
+      @notify = notify
     end
 
     # Adds a step to the pipeline.
@@ -31,12 +48,22 @@ module Buildkite
       self
     end
 
+    def to_pipeline
+      pipeline = {
+        "steps" => @steps
+      }
+      pipeline["agents"] = @agents if @agents != nil
+      pipeline["env"] = @env if @env != nil
+      pipeline["notify"] = @notify if @notify != nil
+      return pipeline
+    end
+
     def to_json(*_args)
-      JSON.pretty_generate({ steps: @steps }, indent: "    ")
+      JSON.pretty_generate(self.to_pipeline, indent: "    ")
     end
 
     def to_yaml
-      { steps: @steps }.to_yaml
+      self.to_pipeline.to_yaml
     end
   end
 end
