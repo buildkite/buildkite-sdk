@@ -3,11 +3,11 @@ require_relative "lib/buildkite/version"
 Gem::Specification.new do |spec|
   spec.name = "buildkite-sdk"
   spec.version = Buildkite::VERSION
-  spec.authors = ["Christian Nunciato"]
-  spec.email = ["chris.nunciato@buildkite.com"]
+  spec.authors = ["Buildkite"]
+  spec.email = ["support@buildkite.com"]
 
   spec.summary = "A Ruby SDK for Buildkite!"
-  spec.description = "A Ruby SDK for Buildkite!"
+  spec.description = File.read("README.md")
   spec.homepage = "https://buildkite.com"
   spec.required_ruby_version = ">= 3.0.0"
 
