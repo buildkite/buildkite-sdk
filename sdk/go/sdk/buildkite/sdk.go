@@ -13,7 +13,7 @@ func NewPipeline() *pipeline {
 type pipeline struct {
 	Agents map[string]any  `json:"agents,omitempty"`
 	Env    map[string]any  `json:"env,omitempty"`
-	Notify PipelineNotify  `json:"notify,omitempty"`
+	Notify *PipelineNotify `json:"notify,omitempty"`
 	Steps  []*PipelineStep `json:"steps"`
 }
 
@@ -41,7 +41,7 @@ func (p *pipeline) AddEnvironmentVariable(key string, value any) {
 	p.Env[key] = value
 }
 
-func (p *pipeline) AddNotify(notify PipelineNotify) {
+func (p *pipeline) AddNotify(notify *PipelineNotify) {
 	p.Notify = notify
 }
 
