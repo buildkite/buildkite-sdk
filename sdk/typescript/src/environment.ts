@@ -1,4 +1,4 @@
-export enum Environment {
+export enum EnvironmentVariable {
     /**
      * Always `true`
      */
