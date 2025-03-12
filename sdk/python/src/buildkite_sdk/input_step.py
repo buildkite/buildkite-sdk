@@ -1,12 +1,7 @@
 from typing import Optional, List, Union
-from buildkite_sdk.types import (
-    DependsOn,
-    SelectField,
-    TextField
-)
-from buildkite_sdk.schema import (
-    InputStep as _input_step
-)
+from buildkite_sdk.types import DependsOn, SelectField, TextField
+from buildkite_sdk.schema import InputStep as _input_step
+
 
 def InputStep(
     input: str,

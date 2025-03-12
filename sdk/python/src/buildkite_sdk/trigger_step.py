@@ -8,6 +8,7 @@ from buildkite_sdk.schema import (
     TriggerStep as _trigger_step,
 )
 
+
 def TriggerStep(
     trigger: str,
     allow_dependency_failure: Optional[bool] = None,
@@ -22,9 +23,7 @@ def TriggerStep(
     label: Optional[str] = None,
     name: Optional[str] = None,
     skip: Optional[Union[bool, str]] = None,
-    soft_fail: Optional[
-        Union[bool, List[SoftFail]]
-    ] = None,
+    soft_fail: Optional[Union[bool, List[SoftFail]]] = None,
 ) -> _trigger_step:
     return _trigger_step(
         trigger=trigger,

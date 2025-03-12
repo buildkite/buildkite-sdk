@@ -10,9 +10,8 @@ from buildkite_sdk.types import (
     SoftFail,
     StepNotify,
 )
-from buildkite_sdk.schema import (
-    CommandStep as _command_step
-)
+from buildkite_sdk.schema import CommandStep as _command_step
+
 
 def CommandStep(
     commands: Union[List[str], str],
@@ -41,9 +40,7 @@ def CommandStep(
     retry: Optional[Retry] = None,
     signature: Optional[Signature] = None,
     skip: Optional[Union[bool, str]] = None,
-    soft_fail: Optional[
-        Union[bool, List[SoftFail]]
-    ] = None,
+    soft_fail: Optional[Union[bool, List[SoftFail]]] = None,
     timeout_in_minutes: Optional[int] = None,
 ) -> _command_step:
     return _command_step(

@@ -5,9 +5,8 @@ from buildkite_sdk.types import (
     SelectField,
     TextField,
 )
-from buildkite_sdk.schema import (
-    BlockStep as _block_step
-)
+from buildkite_sdk.schema import BlockStep as _block_step
+
 
 def BlockStep(
     block: Optional[str],

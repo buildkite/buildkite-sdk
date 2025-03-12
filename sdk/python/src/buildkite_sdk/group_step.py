@@ -14,8 +14,16 @@ from buildkite_sdk.schema import (
     WaitStep as _wait_step,
 )
 
+
 def _step_to_purple_step(
-    step: Union[_group_step_class, _block_step, _command_step, _input_step, _trigger_step, _wait_step],
+    step: Union[
+        _group_step_class,
+        _block_step,
+        _command_step,
+        _input_step,
+        _trigger_step,
+        _wait_step,
+    ],
 ):
     return PurpleStep(
         allow_dependency_failure=getattr(step, "allow_dependency_failure", None),
@@ -62,9 +70,19 @@ def _step_to_purple_step(
         trigger=getattr(step, "trigger", None),
     )
 
+
 def GroupStep(
     group: str,
-    steps: List[Union[_group_step_class, _block_step, _command_step, _input_step, _trigger_step, _wait_step]],
+    steps: List[
+        Union[
+            _group_step_class,
+            _block_step,
+            _command_step,
+            _input_step,
+            _trigger_step,
+            _wait_step,
+        ]
+    ],
     allow_dependency_failure: Optional[bool] = None,
     depends_on: Optional[Union[List[Union[DependsOn, str]], str]] = None,
     id: Optional[str] = None,
