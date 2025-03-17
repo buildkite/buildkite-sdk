@@ -101,7 +101,7 @@ language_targets.each do |target|
       {
         key: "#{target[:key]}-publish",
         label: ":rocket: Publish",
-        depends_on: ["#{target[:key]}-test","#{target[:key]}-build"],
+        depends_on: ["#{target[:key]}-test"],
         plugins: language_plugins,
         commands: [
           "mise trust",
