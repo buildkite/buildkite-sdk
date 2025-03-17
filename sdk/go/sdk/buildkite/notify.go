@@ -54,7 +54,7 @@ func (c StepNotify) toSchema() *schema.BlockStepNotify {
 }
 
 // Pipeline Notify
-type NotifyGithubCommitStatus struct {
+type NotifyGitHubCommitStatus struct {
 	Context *string
 }
 
@@ -65,8 +65,8 @@ type PipelineNotify struct {
 	Slack                *NotifySlack              `json:"slack,omitempty"`
 	Webhook              *string                   `json:"webhook,omitempty"`
 	PagerdutyChangeEvent *string                   `json:"pagerduty_change_event,omitempty"`
-	GitHubCommitStatus   *NotifyGithubCommitStatus `json:"github_commit_status,omitempty"`
-	GithubCheck          map[string]interface{}    `json:"github_check,omitempty"`
+	GitHubCommitStatus   *NotifyGitHubCommitStatus `json:"github_commit_status,omitempty"`
+	GitHubCheck          map[string]interface{}    `json:"github_check,omitempty"`
 }
 
 func (p PipelineNotify) toSchema() *schema.BlockStepNotify {
@@ -96,12 +96,12 @@ func (p PipelineNotify) toSchema() *schema.BlockStepNotify {
 		notify.PagerdutyChangeEvent = p.PagerdutyChangeEvent
 	}
 
-	if p.GithubCommitStatus != nil {
-		notify.GithubCommitStatus = (*schema.TentacledGithubCommitStatus)(p.GithubCommitStatus)
+	if p.GitHubCommitStatus != nil {
+		notify.GithubCommitStatus = (*schema.TentacledGithubCommitStatus)(p.GitHubCommitStatus)
 	}
 
-	if p.GithubCheck != nil {
-		notify.GithubCheck = p.GithubCheck
+	if p.GitHubCheck != nil {
+		notify.GithubCheck = p.GitHubCheck
 	}
 
 	return &schema.BlockStepNotify{
