@@ -1,10 +1,9 @@
 from typing import Optional, List, Union
-from buildkite_sdk.types import (
-    DependsOn
-)
+from buildkite_sdk.types import DependsOn
 from buildkite_sdk.schema import (
     WaitStep as _wait_step,
 )
+
 
 def WaitStep(
     wait: Optional[str] = "~",
