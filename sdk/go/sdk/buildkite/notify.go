@@ -65,7 +65,7 @@ type PipelineNotify struct {
 	Slack                *NotifySlack              `json:"slack,omitempty"`
 	Webhook              *string                   `json:"webhook,omitempty"`
 	PagerdutyChangeEvent *string                   `json:"pagerduty_change_event,omitempty"`
-	GithubCommitStatus   *NotifyGithubCommitStatus `json:"github_commit_status,omitempty"`
+	GitHubCommitStatus   *NotifyGithubCommitStatus `json:"github_commit_status,omitempty"`
 	GithubCheck          map[string]interface{}    `json:"github_check,omitempty"`
 }
 
