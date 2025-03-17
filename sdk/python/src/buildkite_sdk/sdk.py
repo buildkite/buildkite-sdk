@@ -53,7 +53,7 @@ class Pipeline:
         """Add a command step to the pipeline."""
         self.steps.append(props.to_dict())
 
-    def to_pipeline(self):
+    def build(self):
         pipeline = {}
         pipeline["steps"] = self.steps
 
@@ -68,8 +68,8 @@ class Pipeline:
 
     def to_json(self):
         """Serialize the pipeline as a JSON string."""
-        return json.dumps(self.to_pipeline(), indent=4)
+        return json.dumps(self.build(), indent=4)
 
     def to_yaml(self):
         """Serialize the pipeline as a YAML string."""
-        return yaml.dump(self.to_pipeline())
+        return yaml.dump(self.build())

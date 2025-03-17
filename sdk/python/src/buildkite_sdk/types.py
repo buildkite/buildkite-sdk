@@ -142,7 +142,7 @@ class StepNotify(_fluffy_build_notify):
         )
 
 
-class NotifyGithubCommitStatus(_purple_github_commit_status):
+class NotifyGitHubCommitStatus(_purple_github_commit_status):
     def __init__(self, context: Optional[str]):
         super().__init__(context=context)
 
@@ -156,7 +156,7 @@ class PipelineNotify(_purple_build_notify):
         slack: Optional[NotifySlack],
         webhook: Optional[str],
         pagerduty_change_event: Optional[str],
-        github_commit_status: Optional[NotifyGithubCommitStatus],
+        github_commit_status: Optional[NotifyGitHubCommitStatus],
         github_check: Optional[Dict[str, Any]],
     ) -> None:
         super().__init__(
