@@ -2,8 +2,6 @@ package buildkite
 
 import "github.com/buildkite/buildkite-sdk/sdk/go/sdk/schema"
 
-type k schema.BlockStepNotify
-
 /**
  *   Notify Types
  */
@@ -53,4 +51,60 @@ func (c StepNotify) toSchema() *schema.BlockStepNotify {
 	}
 
 	return notify
+}
+
+// Pipeline Notify
+type NotifyGitHubCommitStatus struct {
+	Context *string
+}
+
+type PipelineNotify struct {
+	Email                *string                   `json:"email,omitempty"`
+	If                   *string                   `json:"if,omitempty"`
+	BasecampCampfire     *string                   `json:"basecamp_campfire,omitempty"`
+	Slack                *NotifySlack              `json:"slack,omitempty"`
+	Webhook              *string                   `json:"webhook,omitempty"`
+	PagerdutyChangeEvent *string                   `json:"pagerduty_change_event,omitempty"`
+	GitHubCommitStatus   *NotifyGitHubCommitStatus `json:"github_commit_status,omitempty"`
+	GitHubCheck          map[string]interface{}    `json:"github_check,omitempty"`
+}
+
+func (p PipelineNotify) toSchema() *schema.BlockStepNotify {
+	notify := &schema.FluffyBuildNotify{}
+
+	if p.Email != nil {
+		notify.Email = p.Email
+	}
+
+	if p.If != nil {
+		notify.If = p.If
+	}
+
+	if p.BasecampCampfire != nil {
+		notify.BasecampCampfire = p.BasecampCampfire
+	}
+
+	if p.Slack != nil {
+		notify.Slack = p.toSchema().FluffyBuildNotify.Slack
+	}
+
+	if p.Webhook != nil {
+		notify.Webhook = p.Webhook
+	}
+
+	if p.PagerdutyChangeEvent != nil {
+		notify.PagerdutyChangeEvent = p.PagerdutyChangeEvent
+	}
+
+	if p.GitHubCommitStatus != nil {
+		notify.GithubCommitStatus = (*schema.TentacledGithubCommitStatus)(p.GitHubCommitStatus)
+	}
+
+	if p.GitHubCheck != nil {
+		notify.GithubCheck = p.GitHubCheck
+	}
+
+	return &schema.BlockStepNotify{
+		FluffyBuildNotify: notify,
+	}
 }
