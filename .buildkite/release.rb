@@ -99,16 +99,6 @@ language_targets.each do |target|
         ],
       },
       {
-        key: "#{target[:key]}-build",
-        label: ":package: Build",
-        plugins: language_plugins,
-        commands: [
-          "mise trust",
-          "nx install #{target[:sdk_label]}",
-          "nx build #{target[:sdk_label]}"
-        ],
-      },
-      {
         key: "#{target[:key]}-publish",
         label: ":rocket: Publish",
         depends_on: ["#{target[:key]}-test","#{target[:key]}-build"],
@@ -116,6 +106,7 @@ language_targets.each do |target|
         commands: [
           "mise trust",
           "nx install #{target[:sdk_label]}",
+          "nx build #{target[:sdk_label]}",
           "nx run #{target[:sdk_label]}:publish"
         ],
       },
