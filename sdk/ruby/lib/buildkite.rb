@@ -48,7 +48,7 @@ module Buildkite
       self
     end
 
-    def to_pipeline
+    def build
       pipeline = {
         "steps" => @steps
       }
@@ -59,11 +59,11 @@ module Buildkite
     end
 
     def to_json(*_args)
-      JSON.pretty_generate(self.to_pipeline, indent: "    ")
+      JSON.pretty_generate(self.build, indent: "    ")
     end
 
     def to_yaml
-      self.to_pipeline.to_yaml
+      self.build.to_yaml
     end
   end
 end
