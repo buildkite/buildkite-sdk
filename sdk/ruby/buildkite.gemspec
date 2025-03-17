@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email = ["support@buildkite.com"]
 
   spec.summary = "A Ruby SDK for Buildkite!"
-  spec.description = File.read("README.md")
+  spec.description = "A Ruby SDK for Buildkite."
   spec.homepage = "https://buildkite.com"
   spec.required_ruby_version = ">= 3.0.0"
 
