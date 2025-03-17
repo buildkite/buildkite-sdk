@@ -67,7 +67,7 @@ export class Pipeline {
         return this;
     }
 
-    private createPipeline(): PipelineSchema {
+    private build(): PipelineSchema {
         const pipeline: PipelineSchema = {};
 
         if (Object.keys(this.agents).length > 0) {
@@ -90,10 +90,10 @@ export class Pipeline {
     }
 
     toJSON() {
-        return JSON.stringify(this.createPipeline(), null, 4);
+        return JSON.stringify(this.build(), null, 4);
     }
 
     toYAML() {
-        return yaml.stringify(this.createPipeline());
+        return yaml.stringify(this.build());
     }
 }
