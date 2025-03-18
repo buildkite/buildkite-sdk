@@ -6,6 +6,12 @@ from .schema import (
     TriggerStep as _trigger_step,
     WaitStep as _wait_step,
 )
+from .block_step import BlockStepArgs
+from .command_step import CommandStepArgs
+from .group_step import GroupStepArgs
+from .input_step import InputStepArgs
+from .trigger_step import TriggerStepArgs
+from .wait_step import WaitStepArgs
 from .environment import Environment
 from .types import PipelineNotify
 from typing import Union
@@ -42,16 +48,35 @@ class Pipeline:
     def add_step(
         self,
         props: Union[
+            # classes
             _block_step,
             _command_step,
             _group_step,
             _input_step,
             _trigger_step,
             _wait_step,
+            # typed dicts
+            BlockStepArgs,
+            CommandStepArgs,
+            InputStepArgs,
+            GroupStepArgs,
+            TriggerStepArgs,
+            WaitStepArgs,
         ],
     ):
         """Add a command step to the pipeline."""
-        self.steps.append(props.to_dict())
+        step = props
+        if isinstance(props, Union[
+            _block_step,
+            _command_step,
+            _group_step,
+            _input_step,
+            _trigger_step,
+            _wait_step,
+        ]):
+            step = props.to_dict()
+
+        self.steps.append(step)
 
     def build(self):
         pipeline = {}

@@ -1,9 +1,21 @@
-from typing import Optional, List, Union
+from typing import Optional, List, Union, TypedDict
 from buildkite_sdk.types import DependsOn
 from buildkite_sdk.schema import (
     WaitStep as _wait_step,
 )
 
+class WaitStepArgs(TypedDict):
+    wait: str
+    allow_dependency_failure: Optional[bool]
+    branches: Optional[Union[List[str], str]]
+    continue_on_failure: Optional[bool]
+    depends_on: Optional[Union[List[Union[DependsOn, str]], str]]
+    id: Optional[str]
+    identifier: Optional[str]
+    wait_step_if: Optional[str]
+    key: Optional[str]
+    label: Optional[str]
+    name: Optional[str]
 
 def WaitStep(
     wait: Optional[str] = "~",

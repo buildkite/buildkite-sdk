@@ -1,4 +1,4 @@
-from typing import Optional, List, Union
+from typing import Optional, List, Union, TypedDict
 from buildkite_sdk.schema import PurpleStep
 from buildkite_sdk.types import (
     DependsOn,
@@ -13,7 +13,33 @@ from buildkite_sdk.schema import (
     TriggerStep as _trigger_step,
     WaitStep as _wait_step,
 )
+from .block_step import BlockStepArgs
+from .command_step import CommandStepArgs
+from .input_step import InputStepArgs
+from .trigger_step import TriggerStepArgs
+from .wait_step import WaitStepArgs
 
+class GroupStepArgs(TypedDict):
+    group: str
+    steps: List[
+        Union[
+            BlockStepArgs,
+            CommandStepArgs,
+            InputStepArgs,
+            TriggerStepArgs,
+            WaitStepArgs,
+        ]
+    ]
+    allow_dependency_failure: Optional[bool]
+    depends_on: Optional[Union[List[Union[DependsOn, str]], str]]
+    id: Optional[str]
+    identifier: Optional[str]
+    step_if: Optional[str]
+    key: Optional[str]
+    label: Optional[str]
+    name: Optional[str]
+    notify: Optional[List[Union[StepNotify, NotifyEnum]]]
+    skip: Optional[Union[bool, str]]
 
 def _step_to_purple_step(
     step: Union[

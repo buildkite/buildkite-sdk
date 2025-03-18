@@ -1,7 +1,20 @@
-from typing import Optional, List, Union
+from typing import Optional, List, Union, TypedDict
 from buildkite_sdk.types import DependsOn, SelectField, TextField
 from buildkite_sdk.schema import InputStep as _input_step
 
+class InputStepArgs(TypedDict):
+    input: str
+    fields: List[Union[SelectField, TextField]]
+    allow_dependency_failure: Optional[bool]
+    branches: Optional[Union[List[str], str]]
+    depends_on: Optional[Union[List[Union[DependsOn, str]], str]]
+    id: Optional[str]
+    identifier: Optional[str]
+    input_step_if: Optional[str]
+    key: Optional[str]
+    label: Optional[str]
+    name: Optional[str]
+    prompt: Optional[str]
 
 def InputStep(
     input: str,
