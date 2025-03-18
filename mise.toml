@@ -1,5 +1,5 @@
 [tools]
 node = "latest"
-python = "latest"
+python = "3.13.1"
 go = "latest"
 ruby = "latest"
