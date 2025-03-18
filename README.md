@@ -127,10 +127,12 @@ uv add buildkite-sdk
 Use it in your program:
 
 ```python
-from buildkite_sdk import Pipeline
+from buildkite_sdk import Pipeline, CommandStep
 
 pipeline = Pipeline()
-pipeline.add_step({"command": "echo 'Hello, world!'"})
+pipeline.add_step(CommandStep(
+    commands="echo 'Hello, world!'"
+))
 
 print(pipeline.to_json())
 print(pipeline.to_yaml())
