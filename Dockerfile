@@ -19,7 +19,7 @@ RUN curl https://mise.run | sh
 
 # Install Node.js, Python, and Go.
 RUN mise install node@latest && mise use --global node@latest
-RUN mise install python@3.14.0 && mise use --global python@3.14.0
+RUN mise install python@3.13.1 && mise use --global python@3.13.1
 RUN mise install go@latest && mise use --global go@latest
 
 # Install Python tools.
