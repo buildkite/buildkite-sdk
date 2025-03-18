@@ -2,67 +2,15 @@
 
 [![Build status](https://badge.buildkite.com/a95a3beece2339d1783a0a819f4ceb323c1eb12fb9662be274.svg?branch=main)](https://buildkite.com/buildkite/pipeline-sdk)
 
-A multi-language SDK for [Buildkite](https://buildkite.com)! 🪁 Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema) and generates and publishes packages for TypeScript, Python, Go, and Ruby.
+A multi-language SDK for [Buildkite](https://buildkite.com)! 🪁
 
-## Prerequisites
-
-For development, you'll need current versions of the following tools:
-
--   [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
--   For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
--   For Ruby: [Bundler](https://bundler.io/)
-
-See `mise.toml` for details. (We also recommend [Mise](https://mise.jdx.dev/) for tool-version management.) If you're on a Mac, and you use [Homebrew](https://brew.sh/), you can run `brew bundle` and `mise install` to get all you need:
-
-```bash
-brew bundle
-mise install
-```
-
-If you hit any rough edges during development, please file an issue. Thanks!
-
-### Useful commands
-
-```bash
-# Install all project dependencies.
-npm install
-
-# Test all SDKs and apps.
-npm test
-
-# Build all SDKs (and write them to ./dist/sdks).
-npm run build
-
-# Build all SDK docs (and write them to ./dist/docs).
-npm run docs
-
-# Serve the docs locally (which builds them implicitly).
-npm run docs:serve
-
-# Run all apps (which writes JSON and YAML pipelines to ./out).
-npm run apps
-
-# Watch all projects for changes (which rebuilds the docs and SDKs and re-runs all apps).
-npm run watch
-
-# Launch web servers for all docsets and watch all projects for changes. (Requires reload.)
-npm run dev
-
-# Format all SDK code.
-npm run format
-
-# Publish to npm, PyPi pkg.go.dev, and RubyGems.
-npm run publish
-
-# Clear away build and test artifacts.
-npm run clean
-```
+Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema) and generates and publishes packages for TypeScript, Python, Go, and Ruby.
 
 ## Installing and using the SDKs
 
-The easiest way to use the SDK is to install the appropriate package for your language of choice, import the library into your program, assemble your pipeline steps programmatically, and serialize the pipeline to JSON or YAML, passing the output to `buildkite-agent pipeline upload`.
+The easiest way to use the SDK is to install the appropriate package for your language of choice, import the library into your program, assemble your pipeline steps programmatically, and serialize the pipeline to JSON or YAML, passing the output to [`buildkite-agent pipeline upload`](https://buildkite.com/docs/agent/v3/cli-pipeline).
 
-For example, if your language of choice were Ruby:
+For example, to use the Ruby SDK:
 
 ```bash
 gem install buildkite-sdk
@@ -93,7 +41,7 @@ This repository [uses this approach](./.buildkite/pipeline.rb) to ship the Build
 
 See below for more examples.
 
-### Node.js
+### Node.js (JavaScript/TypeScript)
 
 Install the package:
 
@@ -127,10 +75,12 @@ uv add buildkite-sdk
 Use it in your program:
 
 ```python
-from buildkite_sdk import Pipeline
+from buildkite_sdk import Pipeline, CommandStep
 
 pipeline = Pipeline()
-pipeline.add_step({"command": "echo 'Hello, world!'"})
+pipeline.add_step(CommandStep(
+    commands="echo 'Hello, world!'"
+))
 
 print(pipeline.to_json())
 print(pipeline.to_yaml())
@@ -193,6 +143,72 @@ puts pipeline.to_json
 puts pipeline.to_yaml
 ```
 
+## Development
+
+### Prerequisites
+
+To work on the SDK, you'll need current versions of the following tools:
+
+-   [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+-   For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
+-   For Ruby: [Bundler](https://bundler.io/)
+
+See `mise.toml` for details. (We also recommend [Mise](https://mise.jdx.dev/) for tool-version management.) If you're on a Mac, and you use [Homebrew](https://brew.sh/), you can run `brew bundle` and `mise install` to get all you need:
+
+```bash
+brew bundle
+mise install
+```
+
+If you hit any rough edges during development, please file an issue. Thanks!
+
+### Useful commands
+
+```bash
+# Install all project dependencies.
+npm install
+
+# Test all SDKs and apps.
+npm test
+
+# Build all SDKs (and write them to ./dist/sdks).
+npm run build
+
+# Build all SDK docs (and write them to ./dist/docs).
+npm run docs
+
+# Serve the docs locally (which builds them implicitly).
+npm run docs:serve
+
+# Run all apps (which writes JSON and YAML pipelines to ./out).
+npm run apps
+
+# Watch all projects for changes (which rebuilds the docs and SDKs and re-runs all apps).
+npm run watch
+
+# Launch web servers for all docsets and watch all projects for changes. (Requires reload.)
+npm run dev
+
+# Format all SDK code.
+npm run format
+
+# Publish to npm, PyPi pkg.go.dev, and RubyGems.
+npm run publish
+
+# Clear away build and test artifacts.
+npm run clean
+```
+
+### Upgrading nx
+
+We manage this repository with [Nx](https://nx.dev/). To upgrade the Nx workspace to the latest version, use `nx migrate`. From the root of the project, run:
+
+```bash
+npx nx migrate latest
+```
+
+See the [nx guide](https://nx.dev/features/automate-updating-dependencies) for details.
+
 ## Publishing new versions
 
 All SDKs version on the same cadence. To publish a new version (of all SDKs), follow these steps:
@@ -246,13 +262,3 @@ The following environment variables are required for releasing and publishing:
 -   `GEM_HOST_API_KEY` for publishing to RubyGems (with `gem push`)
 
 See the `publish:all` and `release:all` tasks in `./project.json` for details.
-
-## Upgrading nx
-
-To upgrade the nx workspace to the latest version, use `nx migrate`. From the root of the project, run:
-
-```bash
-npx nx migrate latest
-```
-
-See the [nx guide](https://nx.dev/features/automate-updating-dependencies) for details.
