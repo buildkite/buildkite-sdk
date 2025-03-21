@@ -1,4 +1,4 @@
-from typing import Optional, List, Union
+from typing import Optional, List, Union, TypedDict
 from buildkite_sdk.types import (
     BlockedStateEnum,
     DependsOn,
@@ -7,6 +7,20 @@ from buildkite_sdk.types import (
 )
 from buildkite_sdk.schema import BlockStep as _block_step
 
+class BlockStepArgs(TypedDict, total=False):
+    block: Optional[str]
+    allow_dependency_failure: Optional[bool]
+    blocked_state: Optional[BlockedStateEnum]
+    branches: Optional[Union[List[str], str]]
+    depends_on: Optional[Union[List[Union[DependsOn, str]], str]]
+    fields: Optional[List[Union[SelectField, TextField]]]
+    id: Optional[str]
+    identifier: Optional[str]
+    block_step_if: Optional[str]
+    key: Optional[str]
+    label: Optional[str]
+    name: Optional[str]
+    prompt: Optional[str]
 
 def BlockStep(
     block: Optional[str],

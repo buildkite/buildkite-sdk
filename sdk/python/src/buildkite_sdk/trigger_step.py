@@ -1,4 +1,4 @@
-from typing import Optional, List, Union
+from typing import Optional, List, Union, TypedDict
 from buildkite_sdk.types import (
     Build,
     DependsOn,
@@ -8,6 +8,21 @@ from buildkite_sdk.schema import (
     TriggerStep as _trigger_step,
 )
 
+class TriggerStepArgs(TypedDict):
+    trigger: str
+    allow_dependency_failure: Optional[bool]
+    trigger_step_async: Optional[bool]
+    branches: Optional[Union[List[str], str]]
+    build: Optional[Build]
+    depends_on: Optional[Union[List[Union[DependsOn, str]], str]]
+    id: Optional[str]
+    identifier: Optional[str]
+    trigger_step_if: Optional[str]
+    key: Optional[str]
+    label: Optional[str]
+    name: Optional[str]
+    skip: Optional[Union[bool, str]]
+    soft_fail: Optional[Union[bool, List[SoftFail]]]
 
 def TriggerStep(
     trigger: str,

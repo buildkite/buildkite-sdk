@@ -1,4 +1,4 @@
-from typing import Optional, List, Union, Dict, Any
+from typing import Optional, List, Union, Dict, Any, TypedDict
 from buildkite_sdk.types import (
     Cache,
     ConcurrencyMethod,
@@ -12,6 +12,35 @@ from buildkite_sdk.types import (
 )
 from buildkite_sdk.schema import CommandStep as _command_step
 
+class CommandStepArgs(TypedDict, total=False):
+    commands: Union[List[str], str]
+    agents: Optional[Union[Dict[str, Any], List[str]]]
+    allow_dependency_failure: Optional[bool]
+    artifact_paths: Optional[Union[List[str], str]]
+    branches: Optional[Union[List[str], str]]
+    cache: Optional[Union[List[str], Cache, str]]
+    cancel_on_build_failing: Optional[bool]
+    concurrency: Optional[int]
+    concurrency_group: Optional[str]
+    concurrency_method: Optional[ConcurrencyMethod]
+    depends_on: Optional[Union[List[Union[DependsOn, str]], str]]
+    env: Optional[Dict[str, Any]]
+    id: Optional[str]
+    identifier: Optional[str]
+    command_step_if: Optional[str]
+    key: Optional[str]
+    label: Optional[str]
+    matrix: Optional[Union[List[Union[int, bool, str]], MatrixAdvanced]]
+    name: Optional[str]
+    notify: Optional[List[Union[StepNotify, NotifyEnum]]]
+    parallelism: Optional[int]
+    plugins: Optional[Union[List[Union[Dict[str, Any], str]], Dict[str, Any]]]
+    priority: Optional[int]
+    retry: Optional[Retry]
+    signature: Optional[Signature]
+    skip: Optional[Union[bool, str]]
+    soft_fail: Optional[Union[bool, List[SoftFail]]]
+    timeout_in_minutes: Optional[int]
 
 def CommandStep(
     commands: Union[List[str], str],

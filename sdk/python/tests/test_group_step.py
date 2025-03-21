@@ -21,3 +21,24 @@ def test_simple_group_step():
         ],
     }]}
     assert pipeline.to_json() == json.dumps(expected, indent="    ")
+
+def test_group_step_typed_dict():
+    pipeline = Pipeline()
+    pipeline.add_step({
+        "group":"my-group",
+        "steps": [
+            { "commands": "command1" },
+            { "wait": "~" },
+            { "commands": "command2" },
+        ],
+    })
+
+    expected = {"steps": [{
+        "group": "my-group",
+        "steps": [
+            {"commands": "command1"},
+            {"wait": "~"},
+            {"commands": "command2"},
+        ],
+    }]}
+    assert pipeline.to_json() == json.dumps(expected, indent="    ")
