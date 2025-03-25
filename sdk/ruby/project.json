@@ -63,9 +63,9 @@
         },
         "docs:build": {
             "executor": "nx:run-commands",
-            "outputs": ["{workspaceRoot}/dist/docs/ruby"],
+            "outputs": ["{workspaceRoot}/dist/docs/ruby/ruby"],
             "options": {
-                "command": "bundle exec yard doc lib --output-dir ../../dist/docs/ruby",
+                "command": "bundle exec yard doc lib --output-dir ../../dist/docs/ruby/ruby",
                 "cwd": "sdk/ruby"
             },
             "cache": false
