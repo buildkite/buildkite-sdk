@@ -60,7 +60,12 @@ def run_language_pipeline(target)
     ]
   )
 
-  return language_pipeline.to_json
+  file_name = ".buildkite/#{target[:key]}-pipeline.json"
+  out_file = File.new(file_name, "w")
+  out_file.puts(language_pipeline.to_json)
+  out_file.close()
+
+  return file_name
 end
 
 language_targets = {
@@ -132,7 +137,7 @@ pipeline.add_step(
         {
           path: "sdk/typescript",
           config: {
-            command: "#{run_language_pipeline(language_targets[:typescript])} | buildkite-agent pipeline upload",
+            command: "buildkite-agent pipeline upload #{run_language_pipeline(language_targets[:typescript])}",
           },
         },
       ]
