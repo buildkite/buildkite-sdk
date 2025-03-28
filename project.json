@@ -57,7 +57,7 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": [
-                    "ruby ./.buildkite/pipeline.rb > ./.buildkite/pipeline.json"
+                    "ruby ./.buildkite/diff.rb > ./.buildkite/pipeline.json"
                 ],
                 "parallel": false
             }
