@@ -117,6 +117,7 @@ pipeline.add_step(
 )
 
 pipeline.add_step(
+  depends_on: "install",
   key: "upload-language-pipelines",
   label: ":buildkite: Generate Language Pipelines",
   plugins: [
