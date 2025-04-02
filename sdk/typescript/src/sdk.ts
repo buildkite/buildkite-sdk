@@ -41,7 +41,7 @@ export class Pipeline {
     }
 
     /**
-     * Add an environemnt variable
+     * Add an environment variable
      * @param key
      * @param value
      */
