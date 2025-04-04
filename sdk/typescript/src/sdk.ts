@@ -25,10 +25,10 @@ interface PipelineSchema {
 }
 
 export class Pipeline {
-    private agents: Record<string, any> = {};
-    private env: Record<string, any> = {};
-    private notify: (schema.PurpleBuildNotify | schema.NotifyEnum)[] = [];
-    private steps: PipelineStep[] = [];
+    public agents: Record<string, any> = {};
+    public env: Record<string, any> = {};
+    public notify: (schema.PurpleBuildNotify | schema.NotifyEnum)[] = [];
+    public steps: PipelineStep[] = [];
 
     /**
      * Add an agent to target by tag
