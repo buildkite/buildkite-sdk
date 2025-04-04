@@ -7,6 +7,7 @@ from buildkite_sdk.types import (
 )
 from buildkite_sdk.schema import BlockStep as _block_step
 
+
 class BlockStepArgs(TypedDict, total=False):
     block: Optional[str]
     allow_dependency_failure: Optional[bool]
@@ -21,6 +22,7 @@ class BlockStepArgs(TypedDict, total=False):
     label: Optional[str]
     name: Optional[str]
     prompt: Optional[str]
+
 
 def BlockStep(
     block: Optional[str],

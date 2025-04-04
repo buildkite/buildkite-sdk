@@ -58,8 +58,9 @@
         "yaml": "^2.7.0"
     },
     "workspaces": [
-        "libs/**",
-        "packages/**"
+        "apps/**",
+        "sdk/**",
+        "infra"
     ],
     "dependencies": {
         "@octokit/rest": "^21.0.2",

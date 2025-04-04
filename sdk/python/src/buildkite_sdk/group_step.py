@@ -19,6 +19,7 @@ from .input_step import InputStepArgs
 from .trigger_step import TriggerStepArgs
 from .wait_step import WaitStepArgs
 
+
 class GroupStepArgs(TypedDict):
     group: str
     steps: List[
@@ -40,6 +41,7 @@ class GroupStepArgs(TypedDict):
     name: Optional[str]
     notify: Optional[List[Union[StepNotify, NotifyEnum]]]
     skip: Optional[Union[bool, str]]
+
 
 def _step_to_purple_step(
     step: Union[

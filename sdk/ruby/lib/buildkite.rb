@@ -52,18 +52,18 @@ module Buildkite
       pipeline = {
         "steps" => @steps
       }
-      pipeline["agents"] = @agents if @agents != nil
-      pipeline["env"] = @env if @env != nil
-      pipeline["notify"] = @notify if @notify != nil
-      return pipeline
+      pipeline["agents"] = @agents unless @agents.nil?
+      pipeline["env"] = @env unless @env.nil?
+      pipeline["notify"] = @notify unless @notify.nil?
+      pipeline
     end
 
     def to_json(*_args)
-      JSON.pretty_generate(self.build, indent: "    ")
+      JSON.pretty_generate(build, indent: "    ")
     end
 
     def to_yaml
-      self.build.to_yaml
+      build.to_yaml
     end
   end
 end

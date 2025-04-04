@@ -9,7 +9,8 @@
                 "sdk-typescript:install",
                 "sdk-python:install",
                 "sdk-go:install",
-                "sdk-ruby:install"
+                "sdk-ruby:install",
+                "infra:install"
             ]
         },
         "clean:all": {
@@ -43,7 +44,8 @@
                 "sdk-typescript:format",
                 "sdk-python:format",
                 "sdk-go:format",
-                "sdk-ruby:format"
+                "sdk-ruby:format",
+                "infra:format"
             ]
         },
         "gen:types": {
@@ -100,16 +102,8 @@
         "docs:publish": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": [
-                    "rm -rf dist/docs/publish && mkdir -p dist/docs/publish/sdk",
-                    "cp -R dist/docs/typescript dist/docs/publish/sdk/",
-                    "cp -R dist/docs/python dist/docs/publish/sdk/",
-                    "cp -R dist/docs/ruby dist/docs/publish/sdk/",
-                    "pulumi -C infra up --skip-preview --stack dev"
-                ],
-                "parallel": false
+                "commands": ["nx run infra:deploy"]
             },
-            "cache": false,
             "dependsOn": ["docs:all"]
         },
         "run:all": {
