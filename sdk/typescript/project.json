@@ -43,7 +43,7 @@
             "executor": "nx:run-commands",
             "outputs": ["{workspaceRoot}/dist/docs/typescript"],
             "options": {
-                "command": "npx typedoc --useHostedBaseUrlForAbsoluteLinks --hostedBaseUrl \"https://d2r03mytjb8g6u.cloudfront.net/typescript\" --entryPoints sdk/typescript --entryPointStrategy packages --out ./dist/docs/typescript"
+                "command": "npx typedoc --entryPoints sdk/typescript --entryPointStrategy packages --out ./dist/docs/typescript"
             },
             "cache": false
         },
