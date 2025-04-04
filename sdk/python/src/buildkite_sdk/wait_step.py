@@ -4,6 +4,7 @@ from buildkite_sdk.schema import (
     WaitStep as _wait_step,
 )
 
+
 class WaitStepArgs(TypedDict):
     wait: str
     allow_dependency_failure: Optional[bool]
@@ -16,6 +17,7 @@ class WaitStepArgs(TypedDict):
     key: Optional[str]
     label: Optional[str]
     name: Optional[str]
+
 
 def WaitStep(
     wait: Optional[str] = "~",

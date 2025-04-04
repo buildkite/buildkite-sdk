@@ -1,0 +1,6 @@
+encryptionsalt: v1:e6xIDh3VRh0=:v1:uvEcWD8QmlguUQx4:o48Ij5bVvOeod2zeE+PyurjYXzd9lA==
+config:
+  aws:region: us-west-2
+  infra:errorDocument: error.html
+  infra:indexDocument: index.html
+  infra:path: ../dist/docs/publish

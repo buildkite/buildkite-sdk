@@ -2,6 +2,7 @@ from typing import Optional, List, Union, TypedDict
 from buildkite_sdk.types import DependsOn, SelectField, TextField
 from buildkite_sdk.schema import InputStep as _input_step
 
+
 class InputStepArgs(TypedDict):
     input: str
     fields: List[Union[SelectField, TextField]]
@@ -15,6 +16,7 @@ class InputStepArgs(TypedDict):
     label: Optional[str]
     name: Optional[str]
     prompt: Optional[str]
+
 
 def InputStep(
     input: str,

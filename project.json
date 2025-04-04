@@ -9,7 +9,8 @@
                 "sdk-typescript:install",
                 "sdk-python:install",
                 "sdk-go:install",
-                "sdk-ruby:install"
+                "sdk-ruby:install",
+                "infra:install"
             ]
         },
         "clean:all": {
@@ -43,7 +44,8 @@
                 "sdk-typescript:format",
                 "sdk-python:format",
                 "sdk-go:format",
-                "sdk-ruby:format"
+                "sdk-ruby:format",
+                "infra:format"
             ]
         },
         "gen:types": {
@@ -96,6 +98,20 @@
                 "sdk-python:docs:build",
                 "sdk-ruby:docs:build"
             ]
+        },
+        "docs:publish:preview": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["nx run infra:preview"]
+            },
+            "dependsOn": ["docs:all"]
+        },
+        "docs:publish": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["nx run infra:deploy"]
+            },
+            "dependsOn": ["docs:all"]
         },
         "run:all": {
             "dependsOn": [

@@ -66,14 +66,17 @@ class Pipeline:
     ):
         """Add a command step to the pipeline."""
         step = props
-        if isinstance(props, Union[
-            _block_step,
-            _command_step,
-            _group_step,
-            _input_step,
-            _trigger_step,
-            _wait_step,
-        ]):
+        if isinstance(
+            props,
+            Union[
+                _block_step,
+                _command_step,
+                _group_step,
+                _input_step,
+                _trigger_step,
+                _wait_step,
+            ],
+        ):
             step = props.to_dict()
 
         self.steps.append(step)

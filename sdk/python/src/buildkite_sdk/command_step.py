@@ -12,6 +12,7 @@ from buildkite_sdk.types import (
 )
 from buildkite_sdk.schema import CommandStep as _command_step
 
+
 class CommandStepArgs(TypedDict, total=False):
     commands: Union[List[str], str]
     agents: Optional[Union[Dict[str, Any], List[str]]]
@@ -41,6 +42,7 @@ class CommandStepArgs(TypedDict, total=False):
     skip: Optional[Union[bool, str]]
     soft_fail: Optional[Union[bool, List[SoftFail]]]
     timeout_in_minutes: Optional[int]
+
 
 def CommandStep(
     commands: Union[List[str], str],

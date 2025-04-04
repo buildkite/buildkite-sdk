@@ -195,6 +195,9 @@ npm run format
 # Publish to npm, PyPi pkg.go.dev, and RubyGems.
 npm run publish
 
+# Publish the docs to AWS.
+npm run docs:publish
+
 # Clear away build and test artifacts.
 npm run clean
 ```

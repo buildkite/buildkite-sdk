@@ -1,0 +1,12 @@
+{
+    "name": "infra",
+    "devDependencies": {
+        "@types/node": "^22",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@pulumi/aws": "^6.75.0",
+        "@pulumi/pulumi": "^3.160.0",
+        "@pulumi/synced-folder": "^0.11.1"
+    }
+}

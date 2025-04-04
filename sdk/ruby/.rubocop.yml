@@ -4,8 +4,8 @@ require:
 
 AllCops:
   TargetRubyVersion: 3.0
-  # Exclude:
-  #   - "lib/schema.rb"
+  Exclude:
+    - "lib/schema.rb"
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -16,10 +16,17 @@ Style/FrozenStringLiteralComment:
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
 
-Metrics/LineLength:
+Style/Documentation:
+  Exclude:
+    - "lib/schema.rb"
+
+Layout/LineLength:
   Exclude:
     - "lib/environment.rb"
 
 Metrics/ModuleLength:
   Exclude:
     - "lib/environment.rb"
+
+RSpec/ExampleLength:
+  Max: 20
