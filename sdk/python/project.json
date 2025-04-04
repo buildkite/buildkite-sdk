@@ -43,9 +43,9 @@
         },
         "docs:build": {
             "executor": "nx:run-commands",
-            "outputs": ["{workspaceRoot}/dist/docs/python/python"],
+            "outputs": ["{workspaceRoot}/dist/docs/python"],
             "options": {
-                "command": "uv run pdoc src/buildkite_sdk -o ../../dist/docs/python/python",
+                "command": "uv run pdoc src/buildkite_sdk -o ../../dist/docs/python",
                 "cwd": "sdk/python"
             },
             "cache": false

@@ -97,6 +97,14 @@
                 "sdk-ruby:docs:build"
             ]
         },
+        "docs:publish": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["pulumi -C infra up --yes --stack dev"],
+                "parallel": false
+            },
+            "dependsOn": ["docs:all"]
+        },
         "run:all": {
             "dependsOn": [
                 "app-typescript:run",

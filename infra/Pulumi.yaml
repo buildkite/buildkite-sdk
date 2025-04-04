@@ -1,0 +1,10 @@
+name: infra
+description: A TypeScript program to deploy a static website on AWS
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: static-website-aws-typescript
