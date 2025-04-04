@@ -1,16 +1,14 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
-import * as synced_folder from "@pulumi/synced-folder";
+import * as synced from "@pulumi/synced-folder";
 
-// Import the program's configuration settings.
 const config = new pulumi.Config();
 const path = config.require("path");
 const indexDocument = config.require("indexDocument");
 const errorDocument = config.require("errorDocument");
 
-// Create an S3 bucket and configure it as a website.
+// Create an S3 bucket to hold the docs.
 const bucket = new aws.s3.BucketV2("bucket");
-
 const bucketWebsite = new aws.s3.BucketWebsiteConfigurationV2(
     "bucket-website",
     {
@@ -20,7 +18,7 @@ const bucketWebsite = new aws.s3.BucketWebsiteConfigurationV2(
     }
 );
 
-// Configure ownership controls for the new S3 bucket
+// Configure ownership controls for the bucket.
 const ownershipControls = new aws.s3.BucketOwnershipControls(
     "ownership-controls",
     {
@@ -31,7 +29,7 @@ const ownershipControls = new aws.s3.BucketOwnershipControls(
     }
 );
 
-// Configure public ACL block on the new S3 bucket
+// Configure a public access block for the bucket.
 const publicAccessBlock = new aws.s3.BucketPublicAccessBlock(
     "public-access-block",
     {
@@ -41,7 +39,7 @@ const publicAccessBlock = new aws.s3.BucketPublicAccessBlock(
 );
 
 // Use a synced folder to manage the files of the website.
-const bucketFolder = new synced_folder.S3BucketFolder(
+new synced.S3BucketFolder(
     "bucket-folder",
     {
         path: path,
@@ -53,6 +51,7 @@ const bucketFolder = new synced_folder.S3BucketFolder(
 );
 
 // Create a CloudFront CDN to distribute and cache the website.
+const tenMinutes = 60 * 10;
 const cdn = new aws.cloudfront.Distribution("cdn", {
     enabled: true,
     origins: [
@@ -72,13 +71,13 @@ const cdn = new aws.cloudfront.Distribution("cdn", {
         viewerProtocolPolicy: "redirect-to-https",
         allowedMethods: ["GET", "HEAD", "OPTIONS"],
         cachedMethods: ["GET", "HEAD", "OPTIONS"],
-        defaultTtl: 600,
-        maxTtl: 600,
-        minTtl: 600,
+        defaultTtl: tenMinutes,
+        maxTtl: tenMinutes,
+        minTtl: tenMinutes,
         forwardedValues: {
-            queryString: true,
+            queryString: false,
             cookies: {
-                forward: "all",
+                forward: "none",
             },
         },
     },
@@ -104,3 +103,6 @@ export const originURL = pulumi.interpolate`http://${bucketWebsite.websiteEndpoi
 export const originHostname = bucketWebsite.websiteEndpoint;
 export const cdnURL = pulumi.interpolate`https://${cdn.domainName}`;
 export const cdnHostname = cdn.domainName;
+export const typescriptDocsURL = pulumi.interpolate`https://${cdn.domainName}/sdk/typescript`;
+export const pythonDocsURL = pulumi.interpolate`https://${cdn.domainName}/sdk/python`;
+export const rubyDocsURL = pulumi.interpolate`https://${cdn.domainName}/sdk/ruby`;

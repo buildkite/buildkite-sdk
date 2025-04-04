@@ -105,7 +105,7 @@
                     "cp -R dist/docs/typescript dist/docs/publish/sdk/",
                     "cp -R dist/docs/python dist/docs/publish/sdk/",
                     "cp -R dist/docs/ruby dist/docs/publish/sdk/",
-                    "pulumi -C infra up --yes --stack dev"
+                    "pulumi -C infra up --skip-preview --stack dev"
                 ],
                 "parallel": false
             },
