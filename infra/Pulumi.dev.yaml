@@ -3,4 +3,4 @@ config:
   aws:region: us-west-2
   infra:errorDocument: error.html
   infra:indexDocument: index.html
-  infra:path: ../dist/docs
+  infra:path: ../dist/docs/publish
