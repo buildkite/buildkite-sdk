@@ -99,6 +99,13 @@
                 "sdk-ruby:docs:build"
             ]
         },
+        "docs:publish:preview": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["nx run infra:preview"]
+            },
+            "dependsOn": ["docs:all"]
+        },
         "docs:publish": {
             "executor": "nx:run-commands",
             "options": {
