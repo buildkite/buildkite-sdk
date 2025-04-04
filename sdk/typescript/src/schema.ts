@@ -85,11 +85,11 @@ export interface GroupStepClass {
     /**
      * The commands to run on the agent
      */
-    command?: string[] | CommandStep | string;
+    command?: string;
     /**
      * The commands to run on the agent
      */
-    commands?: string[] | CommandStep | string;
+    commands?: string[];
     /**
      * The maximum number of jobs created from this step that are allowed to run at the same
      * time. If you use this attribute, you must also define concurrency_group.
@@ -316,11 +316,11 @@ export interface CommandStep {
     /**
      * The commands to run on the agent
      */
-    command?: string[] | string;
+    command?: string;
     /**
      * The commands to run on the agent
      */
-    commands?: string[] | string;
+    commands?: string[];
     /**
      * The maximum number of jobs created from this step that are allowed to run at the same
      * time. If you use this attribute, you must also define concurrency_group.
@@ -617,11 +617,11 @@ export interface PurpleStep {
     /**
      * The commands to run on the agent
      */
-    command?: string[] | CommandStep | string;
+    command?: string;
     /**
      * The commands to run on the agent
      */
-    commands?: string[] | CommandStep | string;
+    commands?: string[];
     /**
      * The maximum number of jobs created from this step that are allowed to run at the same
      * time. If you use this attribute, you must also define concurrency_group.
