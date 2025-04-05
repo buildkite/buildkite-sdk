@@ -6,6 +6,7 @@
                 "app-python:install",
                 "app-go:install",
                 "app-ruby:install",
+                "app-groovy:install",
                 "sdk-typescript:install",
                 "sdk-python:install",
                 "sdk-go:install",
@@ -118,7 +119,8 @@
                 "app-typescript:run",
                 "app-python:run",
                 "app-go:run",
-                "app-ruby:run"
+                "app-ruby:run",
+                "app-groovy:run"
             ]
         },
         "publish:all": {
