@@ -4,7 +4,7 @@
 
 A multi-language SDK for [Buildkite](https://buildkite.com)! 🪁
 
-Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema) and generates and publishes packages for TypeScript, Python, Go, and Ruby.
+Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema) and generates and publishes packages for TypeScript, Python, Go, Ruby, and Groovy.
 
 ## Installing and using the SDKs
 
@@ -143,6 +143,31 @@ puts pipeline.to_json
 puts pipeline.to_yaml
 ```
 
+### Groovy
+
+Install the package:
+
+```bash
+# TODO.
+```
+
+Use it in your program:
+
+```groovy
+import buildkite.Pipeline
+import buildkite.StepTypes
+
+def pipeline = new Pipeline()
+
+pipeline.addStep([
+    label: "some-label",
+    command: "echo 'Hello, world!'"
+])
+
+print pipeline.toJSON()
+print pipeline.toYAML()
+```
+
 ## Development
 
 ### Prerequisites
@@ -158,6 +183,15 @@ See `mise.toml` for details. (We also recommend [Mise](https://mise.jdx.dev/) fo
 ```bash
 brew bundle
 mise install
+```
+
+For Groovy, you'll need to set up your Java environment -- we recommend [SDKMAN!](https://sdkman.io/)):
+
+```bash
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk install java 17.0.10-tem
+sdk install groovy 4.0.26
 ```
 
 If you hit any rough edges during development, please file an issue. Thanks!

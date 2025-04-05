@@ -59,6 +59,13 @@ language_targets = [
     key: "ruby",
     sdk_label: "sdk-ruby",
     app_label: "app-ruby"
+  },
+  {
+    icon: ":java:",
+    label: "Groovy",
+    key: "groovy",
+    sdk_label: "sdk-groovy",
+    app_label: "app-groovy"
   }
 ]
 
