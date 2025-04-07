@@ -225,3 +225,26 @@ export interface Signature {
      */
     value?: string;
 }
+
+/**
+ * Properties of the build that will be created when the step is triggered
+ */
+export interface Build {
+    /**
+     * The branch for the build
+     */
+    branch?: string;
+    /**
+     * The commit hash for the build
+     */
+    commit?: string;
+    env?: { [key: string]: any };
+    /**
+     * The message for the build (supports emoji)
+     */
+    message?: string;
+    /**
+     * Meta-data for the build
+     */
+    meta_data?: { [key: string]: any };
+}
