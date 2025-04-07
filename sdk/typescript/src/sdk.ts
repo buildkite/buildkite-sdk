@@ -2,11 +2,11 @@ import * as yaml from "yaml";
 import * as schema from "./schema";
 import { BlockStep } from './blockStep'
 import { CommandStep } from './commandStep'
+import { InputStep } from './inputStep'
 export { EnvironmentVariable } from "./environment";
 
-export type { BlockStep, CommandStep };
+export type { BlockStep, CommandStep, InputStep };
 
-export type InputStep = schema.InputStep;
 export type TriggerStep = schema.TriggerStep;
 export type WaitStep = schema.WaitStep;
 export type GroupStep = schema.GroupStepClass;
