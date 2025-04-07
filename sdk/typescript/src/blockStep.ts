@@ -1,4 +1,4 @@
-import { BlockedState, DependsOnClass, Field } from './types'
+import { BlockedState, DependsOn, Field } from './types'
 
 export interface BlockStep {
     block: string;
@@ -6,7 +6,7 @@ export interface BlockStep {
     allow_dependency_failure?: boolean;
     blocked_state?: BlockedState;
     branches?: string[] | string;
-    depends_on?: Array<DependsOnClass | string> | null | string;
+    depends_on?: Array<DependsOn | string> | null | string;
     fields?: Field[];
     id?: string;
     identifier?: string;
