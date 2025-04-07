@@ -1,15 +1,14 @@
 import * as yaml from "yaml";
-import * as schema from "./schema";
+import { PipelineNotify, NotifyEnum } from './types'
 import { BlockStep } from './blockStep'
 import { CommandStep } from './commandStep'
+import { GroupStep } from './groupStep'
 import { InputStep } from './inputStep'
 import { TriggerStep } from './triggerStep'
+import { WaitStep } from './waitStep'
 export { EnvironmentVariable } from "./environment";
 
-export type { BlockStep, CommandStep, InputStep, TriggerStep  };
-
-export type WaitStep = schema.WaitStep;
-export type GroupStep = schema.GroupStepClass;
+export type { BlockStep, CommandStep, GroupStep, InputStep, TriggerStep, WaitStep  };
 
 export type PipelineStep =
     | CommandStep
@@ -22,15 +21,15 @@ export type PipelineStep =
 interface PipelineSchema {
     agents?: Record<string, any>;
     env?: Record<string, any>;
-    notify?: (schema.PurpleBuildNotify | schema.NotifyEnum)[];
+    notify?: (PipelineNotify | NotifyEnum)[];
     steps?: PipelineStep[];
 }
 
 export class Pipeline {
-    private agents: Record<string, any> = {};
-    private env: Record<string, any> = {};
-    private notify: (schema.PurpleBuildNotify | schema.NotifyEnum)[] = [];
-    private steps: PipelineStep[] = [];
+    public agents: Record<string, any> = {};
+    public env: Record<string, any> = {};
+    public notify: (PipelineNotify | NotifyEnum)[] = [];
+    public steps: PipelineStep[] = [];
 
     /**
      * Add an agent to target by tag
@@ -55,7 +54,7 @@ export class Pipeline {
      * Add an notification
      * @param notify
      */
-    addNotify(notify: schema.PurpleBuildNotify | schema.NotifyEnum) {
+    addNotify(notify: PipelineNotify | NotifyEnum) {
         this.notify.push(notify);
     }
 

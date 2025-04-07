@@ -142,6 +142,17 @@ export interface Notify {
     github_check?: { [key: string]: any };
 }
 
+export interface PipelineNotify {
+    email?: string;
+    if?: string;
+    basecamp_campfire?: string;
+    slack?: NotifySlack | string;
+    webhook?: string;
+    pagerduty_change_event?: string;
+    github_commit_status?: GithubCommitStatus;
+    github_check?: { [key: string]: any };
+}
+
 /**
  * The conditions for retrying this step.
  */
