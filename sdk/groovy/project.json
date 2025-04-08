@@ -1,0 +1,66 @@
+{
+    "name": "sdk-groovy",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "library",
+    "sourceRoot": "sdk/groovy/src",
+    "targets": {
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [],
+                "cwd": "sdk/groovy"
+            },
+            "cache": false
+        },
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [],
+                "cwd": "sdk/groovy",
+                "parallel": false
+            }
+        },
+        "format": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [],
+                "cwd": "sdk/groovy"
+            },
+            "cache": false
+        },
+        "build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{workspaceRoot}/dist/sdks/groovy"],
+            "options": {
+                "command": "echo 'Nothing to build yet!'",
+                "cwd": "sdk/groovy"
+            },
+            "cache": false
+        },
+        "docs:build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{workspaceRoot}/dist/docs/groovy"],
+            "options": {
+                "command": "echo 'No docs to build yet!'",
+                "cwd": "sdk/groovy"
+            },
+            "cache": false
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "outputs": [],
+            "options": {
+                "commands": [],
+                "cwd": "sdk/groovy",
+                "parallel": false
+            },
+            "dependsOn": ["install"]
+        },
+        "publish": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "echo 'Nothing to publish yet!'"
+            }
+        }
+    }
+}

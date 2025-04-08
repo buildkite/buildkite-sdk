@@ -3,6 +3,12 @@ require_relative("../sdk/ruby/lib/environment")
 
 pipeline = Buildkite::Pipeline.new
 
+is_fork_pr = Environment::BUILDKITE_PULL_REQUEST_REPO != "" && Environment::BUILDKITE_REPO == Environment::BUILDKITE_PULL_REQUEST_REPO
+if is_fork_pr
+  puts pipeline.to_json
+  exit
+end
+
 plugins = [
   { "docker#v5.11.0": { image: "buildkite-sdk-tools:latest" } }
 ]

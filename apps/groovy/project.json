@@ -1,0 +1,43 @@
+{
+    "name": "app-groovy",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "application",
+    "sourceRoot": "apps/groovy/src",
+    "targets": {
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [],
+                "cwd": "apps/groovy",
+                "parallel": false
+            }
+        },
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [],
+                "cwd": "apps/groovy"
+            },
+            "cache": false
+        },
+        "run": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["groovy -classpath ../../sdk/groovy main.groovy"],
+                "cwd": "apps/groovy",
+                "parallel": false
+            },
+            "dependsOn": ["install"]
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "outputs": [],
+            "options": {
+                "commands": [],
+                "cwd": "apps/groovy",
+                "parallel": false
+            },
+            "dependsOn": ["install"]
+        }
+    }
+}
