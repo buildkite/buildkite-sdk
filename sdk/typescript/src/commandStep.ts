@@ -40,11 +40,11 @@ interface CommandStepOptionalAttributes {
     timeout_in_minutes?: number;
 }
 
-interface SingleCommandStep extends CommandStepOptionalAttributes {
+export interface SingleCommandStep extends CommandStepOptionalAttributes {
     command: string
 }
 
-interface MultipleCommandStep extends CommandStepOptionalAttributes {
+export interface MultipleCommandStep extends CommandStepOptionalAttributes {
     commands: string[]
 }
 
