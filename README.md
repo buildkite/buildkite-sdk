@@ -8,7 +8,7 @@ Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-s
 
 ## Installing and using the SDKs
 
-To learn more about how to install and use the Buildkite SDK for each langauge as part of your Buildkite pipelines, and to access each language's SDK docs, refer to the [Buildkite SDK](http://buildkite.com/docs/pipelines/configure/dynamic-pipelines/sdk) page of the Buildkite Docs.
+Learn more about how to install the Buildkite SDK for each langauge, and use it to work with your Buildkite pipelines, as well as access each language's SDK docs, from the [Buildkite SDK](http://buildkite.com/docs/pipelines/configure/dynamic-pipelines/sdk) page of the Buildkite Docs.
 
 ## Development
 
