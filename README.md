@@ -4,144 +4,11 @@
 
 A multi-language SDK for [Buildkite](https://buildkite.com)! 🪁
 
-Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema) and generates and publishes packages for TypeScript, Python, Go, and Ruby.
+Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema) and generates and publishes packages for TypeScript or JavaScript, Python, Go, and Ruby.
 
 ## Installing and using the SDKs
 
-The easiest way to use the SDK is to install the appropriate package for your language of choice, import the library into your program, assemble your pipeline steps programmatically, and serialize the pipeline to JSON or YAML, passing the output to [`buildkite-agent pipeline upload`](https://buildkite.com/docs/agent/v3/cli-pipeline).
-
-For example, to use the Ruby SDK:
-
-```bash
-gem install buildkite-sdk
-```
-
-```ruby
-# In ~/.buildkite/pipeline.rb:
-require "buildkite"
-
-pipeline = Buildkite::Pipeline.new
-
-pipeline.add_step(
-  label: "some-label",
-  command: "echo 'Hello, World!'"
-)
-
-puts pipeline.to_json
-```
-
-```yaml
-# In your pipeline's Settings > Steps:
-steps:
-    - label: ":pipeline: Generate pipeline"
-      command: ruby .buildkite/pipeline.rb | buildkite-agent pipeline upload
-```
-
-This repository [uses this approach](./.buildkite/pipeline.rb) to ship the Buildkite SDK ... with the Buildkite SDK!
-
-See below for more examples.
-
-### Node.js (JavaScript/TypeScript)
-
-Install the package:
-
-```bash
-npm install @buildkite/buildkite-sdk
-```
-
-Use it in your program:
-
-```javascript
-const { Pipeline } = require("@buildkite/buildkite-sdk");
-
-const pipeline = new Pipeline();
-
-pipeline.addStep({
-    command: "echo 'Hello, world!'",
-});
-
-console.log(pipeline.toJSON());
-console.log(pipeline.toYAML());
-```
-
-### Python
-
-Install the package:
-
-```bash
-uv add buildkite-sdk
-```
-
-Use it in your program:
-
-```python
-from buildkite_sdk import Pipeline, CommandStep
-
-pipeline = Pipeline()
-pipeline.add_step(CommandStep(
-    commands="echo 'Hello, world!'"
-))
-
-print(pipeline.to_json())
-print(pipeline.to_yaml())
-```
-
-### Go
-
-Install the package:
-
-```bash
-go get github.com/buildkite/buildkite-sdk/sdk/go
-```
-
-Use it in your program:
-
-```go
-package main
-
-import (
-	"fmt"
-	"github.com/buildkite/buildkite-sdk/sdk/go/sdk/buildkite"
-)
-
-func main() {
-	pipeline := buildkite.Pipeline{}
-	command := "echo 'Hello, world!"
-
-	pipeline.AddCommandStep(buildkite.CommandStep{
-		Command: &buildkite.CommandUnion{
-			String: &command,
-		},
-	})
-
-	fmt.Println(pipeline.ToJSON())
-	fmt.Println(pipeline.ToYAML())
-}
-```
-
-### Ruby
-
-Install the package:
-
-```bash
-gem install buildkite-sdk
-```
-
-Use it in your program:
-
-```ruby
-require "buildkite"
-
-pipeline = Buildkite::Pipeline.new
-
-pipeline.add_step(
-  label: "some-label",
-  command: "echo 'Hello, World!'"
-)
-
-puts pipeline.to_json
-puts pipeline.to_yaml
-```
+Learn more about how to set up the Buildkite SDK for each langauge, and use it to work with your Buildkite pipelines, from the [Buildkite SDK](http://buildkite.com/docs/pipelines/configure/dynamic-pipelines/sdk) page of the Buildkite Docs.
 
 ## Development
 
@@ -149,9 +16,9 @@ puts pipeline.to_yaml
 
 To work on the SDK, you'll need current versions of the following tools:
 
--   [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
--   For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
--   For Ruby: [Bundler](https://bundler.io/)
+- [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+- For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
+- For Ruby: [Bundler](https://bundler.io/)
 
 See `mise.toml` for details. (We also recommend [Mise](https://mise.jdx.dev/) for tool-version management.) If you're on a Mac, and you use [Homebrew](https://brew.sh/), you can run `brew bundle` and `mise install` to get all you need:
 
