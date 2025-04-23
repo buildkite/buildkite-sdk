@@ -8,7 +8,7 @@ Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-s
 
 ## Installing and using the SDKs
 
-Learn more about how to install the Buildkite SDK for each langauge, and use it to work with your Buildkite pipelines, as well as access each language's SDK docs, from the [Buildkite SDK](http://buildkite.com/docs/pipelines/configure/dynamic-pipelines/sdk) page of the Buildkite Docs.
+Learn more about how to set up the Buildkite SDK for each langauge, and use it to work with your Buildkite pipelines, from the [Buildkite SDK](http://buildkite.com/docs/pipelines/configure/dynamic-pipelines/sdk) page of the Buildkite Docs.
 
 ## Development
 
@@ -16,9 +16,9 @@ Learn more about how to install the Buildkite SDK for each langauge, and use it 
 
 To work on the SDK, you'll need current versions of the following tools:
 
--   [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
--   For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
--   For Ruby: [Bundler](https://bundler.io/)
+- [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+- For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
+- For Ruby: [Bundler](https://bundler.io/)
 
 See `mise.toml` for details. (We also recommend [Mise](https://mise.jdx.dev/) for tool-version management.) If you're on a Mac, and you use [Homebrew](https://brew.sh/), you can run `brew bundle` and `mise install` to get all you need:
 
