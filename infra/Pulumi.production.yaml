@@ -1,0 +1,7 @@
+secretsprovider: awskms:///arn:aws:kms:us-east-1:597088016345:key/a2c3d231-7616-4952-b29f-a2a055e0fc89?region=us-east-1
+encryptedkey: AQICAHiVWPN7ilXj0RbBJ3Ha9E+mh1oApfhyVlWbAlap5AVt7AG/vd34yQLkk3DD8Q/sfqCNAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMsZftoKr4ChrRFahNAgEQgDvCCBifMgceqEFddi22ziYj5yGuKC9F4dT48y9DHquJNeXkkeIax4H31gFWFXkCFF43sr8taqEZFWI62g==
+config:
+  aws:region: us-east-1
+  infra:errorDocument: error.html
+  infra:indexDocument: index.html
+  infra:path: ../dist/docs/publish
