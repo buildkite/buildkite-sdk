@@ -8,7 +8,15 @@ const indexDocument = config.require("indexDocument");
 const errorDocument = config.require("errorDocument");
 
 // Create an S3 bucket to hold the docs.
-const bucket = new aws.s3.BucketV2("bucket");
+const bucket = new aws.s3.BucketV2("bucket", {
+    tags: {
+        Name: 'bk-sdk-docs-bucket',
+        CostBucket: 'marketing-site',
+        VantaNoAlert: 'Bucket intentionally public',
+    },
+});
+
+
 const bucketWebsite = new aws.s3.BucketWebsiteConfigurationV2(
     "bucket-website",
     {
