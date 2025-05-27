@@ -12,9 +12,9 @@ from buildkite_sdk.types import (
 )
 from buildkite_sdk.schema import CommandStep as _command_step
 
-
 class CommandStepArgs(TypedDict, total=False):
-    commands: Union[List[str], str]
+    commands: Optional[Union[List[str], str]]
+    command: Optional[Union[List[str], str]]
     agents: Optional[Union[Dict[str, Any], List[str]]]
     allow_dependency_failure: Optional[bool]
     artifact_paths: Optional[Union[List[str], str]]
@@ -45,7 +45,8 @@ class CommandStepArgs(TypedDict, total=False):
 
 
 def CommandStep(
-    commands: Union[List[str], str],
+    commands: Optional[Union[List[str], str]],
+    command: Optional[Union[List[str], str]],
     agents: Optional[Union[Dict[str, Any], List[str]]] = None,
     allow_dependency_failure: Optional[bool] = None,
     artifact_paths: Optional[Union[List[str], str]] = None,
@@ -81,6 +82,7 @@ def CommandStep(
         branches=branches,
         cache=cache,
         cancel_on_build_failing=cancel_on_build_failing,
+        command=command,
         commands=commands,
         concurrency=concurrency,
         concurrency_group=concurrency_group,
