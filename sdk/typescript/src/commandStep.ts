@@ -10,13 +10,15 @@ import {
     SoftFail,
 } from './types'
 
-interface CommandStepOptionalAttributes {
+export interface CommandStep {
     agents?: string[] | { [key: string]: any };
     allow_dependency_failure?: boolean;
     artifact_paths?: string[] | string;
     branches?: string[] | string;
     cache?: string | string[] | CacheObject;
     cancel_on_build_failing?: boolean;
+    command?: string | string[];
+    commands?: string | string[];
     concurrency?: number;
     concurrency_group?: string;
     concurrency_method?: ConcurrencyMethod;
@@ -39,13 +41,3 @@ interface CommandStepOptionalAttributes {
     soft_fail?: SoftFail[] | boolean;
     timeout_in_minutes?: number;
 }
-
-export interface SingleCommandStep extends CommandStepOptionalAttributes {
-    command: string
-}
-
-export interface MultipleCommandStep extends CommandStepOptionalAttributes {
-    commands: string[]
-}
-
-export type CommandStep = SingleCommandStep | MultipleCommandStep

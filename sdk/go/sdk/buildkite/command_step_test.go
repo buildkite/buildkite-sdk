@@ -7,7 +7,7 @@ import (
 )
 
 func TestCommandStep(t *testing.T) {
-	t.Run("should create a simple command step", func(t *testing.T) {
+	t.Run("should create a commands step", func(t *testing.T) {
 		pipeline := NewPipeline()
 		pipeline.AddStep(CommandStep{
 			Commands: []string{
@@ -24,6 +24,26 @@ func TestCommandStep(t *testing.T) {
             "commands": [
                 "command"
             ]
+        }
+    ]
+}`
+		assert.Equal(t, expected, result)
+	})
+
+	t.Run("should create a simple command step", func(t *testing.T) {
+		pipeline := NewPipeline()
+		cmd := "command"
+		pipeline.AddStep(CommandStep{
+			Command: &cmd,
+		})
+
+		result, err := pipeline.ToJSON()
+		assert.NoError(t, err)
+
+		expected := `{
+    "steps": [
+        {
+            "command": "command"
         }
     ]
 }`
