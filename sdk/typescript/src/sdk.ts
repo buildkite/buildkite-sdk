@@ -1,14 +1,14 @@
 import * as yaml from "yaml";
 import { PipelineNotify, NotifyEnum } from './types'
 import { BlockStep } from './blockStep'
-import { CommandStep, SingleCommandStep, MultipleCommandStep } from './commandStep'
+import { CommandStep } from './commandStep'
 import { GroupStep } from './groupStep'
 import { InputStep } from './inputStep'
 import { TriggerStep } from './triggerStep'
 import { WaitStep } from './waitStep'
 export { EnvironmentVariable } from "./environment";
 
-export type { BlockStep, CommandStep, GroupStep, InputStep, TriggerStep, WaitStep, SingleCommandStep, MultipleCommandStep  };
+export type { BlockStep, CommandStep, GroupStep, InputStep, TriggerStep, WaitStep };
 
 export type PipelineStep =
     | CommandStep

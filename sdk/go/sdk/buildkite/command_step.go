@@ -9,6 +9,7 @@ type CommandStep struct {
 	Branches               []string
 	Cache                  Cache
 	CancelOnBuildFailing   *bool
+	Command                *string
 	Commands               []string
 	Concurrency            *int64
 	ConcurrencyGroup       *string
@@ -40,10 +41,6 @@ func (step CommandStep) toPipelineStep() *PipelineStep {
 	}
 
 	commandStep := &PipelineStep{
-		Commands: &schema.CommandUnion{
-			StringArray: step.Commands,
-		},
-
 		ArtifactPaths:     step.ArtifactPaths,
 		Concurrency:       step.Concurrency,
 		ConcurrencyGroup:  step.ConcurrencyGroup,
@@ -59,6 +56,18 @@ func (step CommandStep) toPipelineStep() *PipelineStep {
 		Parallelism:       step.Parallelism,
 		Priority:          step.Priority,
 		TimeoutInMinutes:  step.TimeoutInMinutes,
+	}
+
+	if step.Commands != nil {
+		commandStep.Commands = &schema.CommandUnion{
+			StringArray: step.Commands,
+		}
+	}
+
+	if step.Command != nil {
+		commandStep.Command = &schema.CommandUnion{
+			String: step.Command,
+		}
 	}
 
 	if step.Agents != nil {

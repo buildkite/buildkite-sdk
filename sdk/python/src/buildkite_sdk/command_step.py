@@ -45,8 +45,8 @@ class CommandStepArgs(TypedDict, total=False):
 
 
 def CommandStep(
-    commands: Optional[Union[List[str], str]],
-    command: Optional[Union[List[str], str]],
+    commands: Optional[Union[List[str], str]] = None,
+    command: Optional[Union[List[str], str]] = None,
     agents: Optional[Union[Dict[str, Any], List[str]]] = None,
     allow_dependency_failure: Optional[bool] = None,
     artifact_paths: Optional[Union[List[str], str]] = None,
@@ -106,5 +106,4 @@ def CommandStep(
         soft_fail=soft_fail,
         timeout_in_minutes=timeout_in_minutes,
         type=None,
-        command=None,
     )
