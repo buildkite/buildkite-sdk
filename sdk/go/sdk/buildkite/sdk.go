@@ -6,11 +6,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func NewPipeline() *pipeline {
-	return &pipeline{}
+func NewPipeline() *Pipeline {
+	return &Pipeline{}
 }
 
-type pipeline struct {
+type Pipeline struct {
 	Agents map[string]any  `json:"agents,omitempty"`
 	Env    map[string]any  `json:"env,omitempty"`
 	Notify *PipelineNotify `json:"notify,omitempty"`
@@ -21,11 +21,11 @@ type pipelineStep interface {
 	toPipelineStep() *PipelineStep
 }
 
-func (p *pipeline) AddStep(step pipelineStep) {
+func (p *Pipeline) AddStep(step pipelineStep) {
 	p.Steps = append(p.Steps, step.toPipelineStep())
 }
 
-func (p *pipeline) AddAgent(key string, value any) {
+func (p *Pipeline) AddAgent(key string, value any) {
 	if p.Agents == nil {
 		p.Agents = make(map[string]any)
 	}
@@ -33,7 +33,7 @@ func (p *pipeline) AddAgent(key string, value any) {
 	p.Agents[key] = value
 }
 
-func (p *pipeline) AddEnvironmentVariable(key string, value any) {
+func (p *Pipeline) AddEnvironmentVariable(key string, value any) {
 	if p.Env == nil {
 		p.Env = make(map[string]any)
 	}
@@ -41,11 +41,11 @@ func (p *pipeline) AddEnvironmentVariable(key string, value any) {
 	p.Env[key] = value
 }
 
-func (p *pipeline) AddNotify(notify *PipelineNotify) {
+func (p *Pipeline) AddNotify(notify *PipelineNotify) {
 	p.Notify = notify
 }
 
-func (p *pipeline) ToJSON() (string, error) {
+func (p *Pipeline) ToJSON() (string, error) {
 	data, err := json.MarshalIndent(p, "", "    ")
 	if err != nil {
 		return "", err
@@ -53,7 +53,7 @@ func (p *pipeline) ToJSON() (string, error) {
 	return string(data), nil
 }
 
-func (p *pipeline) ToYAML() (string, error) {
+func (p *Pipeline) ToYAML() (string, error) {
 	data, err := yaml.Marshal(p)
 	if err != nil {
 		return "", err
