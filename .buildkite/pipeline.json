@@ -1,0 +1,54 @@
+{
+    "steps": [
+        {
+            "key": "install",
+            "label": ":test_tube: Install (test)",
+            "plugins": [
+                {
+                    "docker#v5.11.0": {
+                        "image": "buildkite-sdk-tools:latest",
+                        "propagate-environment": true,
+                        "environment": [
+                            "GITHUB_TOKEN",
+                            "NPM_TOKEN",
+                            "PYPI_TOKEN",
+                            "GEM_HOST_API_KEY"
+                        ]
+                    }
+                },
+                {
+                    "rubygems-oidc#v0.2.0": {
+                        "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                    }
+                },
+                {
+                    "aws-assume-role-with-web-identity#v1.0.0": {
+                        "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                    }
+                },
+                {
+                    "aws-ssm#v1.0.0": {
+                        "parameters": {
+                            "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                            "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                            "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                        }
+                    }
+                },
+                {
+                    "artifacts#v1.9.2": {
+                        "upload": [
+                            "node_modules"
+                        ],
+                        "compressed": "node_modules.tgz"
+                    }
+                }
+            ],
+            "commands": [
+                "echo 'hello world2'",
+                "env | cut -d= -f1",
+                "env | while IFS='=' read -r key value; do echo \"$key=${value:0:5}\"; done"
+            ]
+        }
+    ]
+}

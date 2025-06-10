@@ -4,6 +4,9 @@ set -euo pipefail
 
 echo "hello, world"
 env|rev
+echo $(pwd)
 
 # Build an image for the toolchain and load it into the local image store.
 docker build --load --platform linux/amd64 -t buildkite-sdk-tools:latest .
+
+buildkite-agent pipeline upload ../pipeline.json
