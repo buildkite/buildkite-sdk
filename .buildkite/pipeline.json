@@ -17,11 +17,6 @@
                     }
                 },
                 {
-                    "rubygems-oidc#v0.2.0": {
-                        "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
-                    }
-                },
-                {
                     "aws-assume-role-with-web-identity#v1.0.0": {
                         "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
                     }
@@ -33,14 +28,6 @@
                             "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
                             "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
                         }
-                    }
-                },
-                {
-                    "artifacts#v1.9.2": {
-                        "upload": [
-                            "node_modules"
-                        ],
-                        "compressed": "node_modules.tgz"
                     }
                 }
             ],
