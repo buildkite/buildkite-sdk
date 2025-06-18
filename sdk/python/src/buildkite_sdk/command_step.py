@@ -1,4 +1,6 @@
-from typing import Optional, List, Union, Dict, Any, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict, Union
+
+from buildkite_sdk.schema import CommandStep as _command_step
 from buildkite_sdk.types import (
     Cache,
     ConcurrencyMethod,
@@ -10,7 +12,7 @@ from buildkite_sdk.types import (
     SoftFail,
     StepNotify,
 )
-from buildkite_sdk.schema import CommandStep as _command_step
+
 
 class CommandStepArgs(TypedDict, total=False):
     commands: Optional[Union[List[str], str]]
@@ -28,7 +30,7 @@ class CommandStepArgs(TypedDict, total=False):
     env: Optional[Dict[str, Any]]
     id: Optional[str]
     identifier: Optional[str]
-    command_step_if: Optional[str]
+    step_if: Optional[str]
     key: Optional[str]
     label: Optional[str]
     matrix: Optional[Union[List[Union[int, bool, str]], MatrixAdvanced]]
@@ -60,7 +62,7 @@ def CommandStep(
     env: Optional[Dict[str, Any]] = None,
     id: Optional[str] = None,
     identifier: Optional[str] = None,
-    command_step_if: Optional[str] = None,
+    step_if: Optional[str] = None,
     key: Optional[str] = None,
     label: Optional[str] = None,
     matrix: Optional[Union[List[Union[int, bool, str]], MatrixAdvanced]] = None,
@@ -91,7 +93,7 @@ def CommandStep(
         env=env,
         id=id,
         identifier=identifier,
-        command_step_if=command_step_if,
+        step_if=step_if,
         key=key,
         label=label,
         matrix=matrix,
