@@ -1,6 +1,7 @@
-from typing import Optional, List, Union, TypedDict
-from buildkite_sdk.types import DependsOn, SelectField, TextField
+from typing import List, Optional, TypedDict, Union
+
 from buildkite_sdk.schema import InputStep as _input_step
+from buildkite_sdk.types import DependsOn, SelectField, TextField
 
 
 class InputStepArgs(TypedDict):
@@ -11,7 +12,7 @@ class InputStepArgs(TypedDict):
     depends_on: Optional[Union[List[Union[DependsOn, str]], str]]
     id: Optional[str]
     identifier: Optional[str]
-    input_step_if: Optional[str]
+    step_if: Optional[str]
     key: Optional[str]
     label: Optional[str]
     name: Optional[str]
@@ -26,7 +27,7 @@ def InputStep(
     depends_on: Optional[Union[List[Union[DependsOn, str]], str]] = None,
     id: Optional[str] = None,
     identifier: Optional[str] = None,
-    input_step_if: Optional[str] = None,
+    step_if: Optional[str] = None,
     key: Optional[str] = None,
     label: Optional[str] = None,
     name: Optional[str] = None,
@@ -39,7 +40,7 @@ def InputStep(
         fields=fields,
         id=id,
         identifier=identifier,
-        input_step_if=input_step_if,
+        step_if=step_if,
         input=input,
         key=key,
         label=label,

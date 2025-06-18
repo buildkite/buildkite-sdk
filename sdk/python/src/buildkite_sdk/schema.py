@@ -312,7 +312,7 @@ class Field:
 
     default: Optional[Union[List[str], str]]
     """The value that is pre-filled in the text field
-    
+
     The value of the option(s) that will be pre-selected in the dropdown
     """
     format: Optional[str]
@@ -442,7 +442,7 @@ class BlockStep:
     fields: Optional[List[Field]]
     id: Optional[str]
     identifier: Optional[str]
-    block_step_if: Optional[str]
+    step_if: Optional[str]
     key: Optional[str]
     label: Optional[str]
     name: Optional[str]
@@ -459,7 +459,7 @@ class BlockStep:
         fields: Optional[List[Field]],
         id: Optional[str],
         identifier: Optional[str],
-        block_step_if: Optional[str],
+        step_if: Optional[str],
         key: Optional[str],
         label: Optional[str],
         name: Optional[str],
@@ -474,7 +474,7 @@ class BlockStep:
         self.fields = fields
         self.id = id
         self.identifier = identifier
-        self.block_step_if = block_step_if
+        self.step_if = step_if
         self.key = key
         self.label = label
         self.name = name
@@ -508,7 +508,7 @@ class BlockStep:
         )
         id = from_union([from_str, from_none], obj.get("id"))
         identifier = from_union([from_str, from_none], obj.get("identifier"))
-        block_step_if = from_union([from_str, from_none], obj.get("if"))
+        step_if = from_union([from_str, from_none], obj.get("if"))
         key = from_union([from_str, from_none], obj.get("key"))
         label = from_union([from_str, from_none], obj.get("label"))
         name = from_union([from_str, from_none], obj.get("name"))
@@ -523,7 +523,7 @@ class BlockStep:
             fields,
             id,
             identifier,
-            block_step_if,
+            step_if,
             key,
             label,
             name,
@@ -575,8 +575,8 @@ class BlockStep:
             result["id"] = from_union([from_str, from_none], self.id)
         if self.identifier is not None:
             result["identifier"] = from_union([from_str, from_none], self.identifier)
-        if self.block_step_if is not None:
-            result["if"] = from_union([from_str, from_none], self.block_step_if)
+        if self.step_if is not None:
+            result["if"] = from_union([from_str, from_none], self.step_if)
         if self.key is not None:
             result["key"] = from_union([from_str, from_none], self.key)
         if self.label is not None:
@@ -1254,7 +1254,7 @@ class CommandStep:
     env: Optional[Dict[str, Any]]
     id: Optional[str]
     identifier: Optional[str]
-    command_step_if: Optional[str]
+    step_if: Optional[str]
     key: Optional[str]
     label: Optional[str]
     matrix: Optional[Union[List[Union[int, bool, str]], MatrixClass]]
@@ -1299,7 +1299,7 @@ class CommandStep:
         env: Optional[Dict[str, Any]],
         id: Optional[str],
         identifier: Optional[str],
-        command_step_if: Optional[str],
+        step_if: Optional[str],
         key: Optional[str],
         label: Optional[str],
         matrix: Optional[Union[List[Union[int, bool, str]], MatrixClass]],
@@ -1332,7 +1332,7 @@ class CommandStep:
         self.env = env
         self.id = id
         self.identifier = identifier
-        self.command_step_if = command_step_if
+        self.step_if = step_if
         self.key = key
         self.label = label
         self.matrix = matrix
@@ -1411,7 +1411,7 @@ class CommandStep:
         )
         id = from_union([from_str, from_none], obj.get("id"))
         identifier = from_union([from_str, from_none], obj.get("identifier"))
-        command_step_if = from_union([from_str, from_none], obj.get("if"))
+        step_if = from_union([from_str, from_none], obj.get("if"))
         key = from_union([from_str, from_none], obj.get("key"))
         label = from_union([from_str, from_none], obj.get("label"))
         matrix = from_union(
@@ -1481,7 +1481,7 @@ class CommandStep:
             env,
             id,
             identifier,
-            command_step_if,
+            step_if,
             key,
             label,
             matrix,
@@ -1587,8 +1587,8 @@ class CommandStep:
             result["id"] = from_union([from_str, from_none], self.id)
         if self.identifier is not None:
             result["identifier"] = from_union([from_str, from_none], self.identifier)
-        if self.command_step_if is not None:
-            result["if"] = from_union([from_str, from_none], self.command_step_if)
+        if self.step_if is not None:
+            result["if"] = from_union([from_str, from_none], self.step_if)
         if self.key is not None:
             result["key"] = from_union([from_str, from_none], self.key)
         if self.label is not None:
@@ -1683,7 +1683,7 @@ class InputStep:
     fields: Optional[List[Field]]
     id: Optional[str]
     identifier: Optional[str]
-    input_step_if: Optional[str]
+    step_if: Optional[str]
     input: Optional[str]
     """The label of the input step"""
 
@@ -1701,7 +1701,7 @@ class InputStep:
         fields: Optional[List[Field]],
         id: Optional[str],
         identifier: Optional[str],
-        input_step_if: Optional[str],
+        step_if: Optional[str],
         input: Optional[str],
         key: Optional[str],
         label: Optional[str],
@@ -1715,7 +1715,7 @@ class InputStep:
         self.fields = fields
         self.id = id
         self.identifier = identifier
-        self.input_step_if = input_step_if
+        self.step_if = step_if
         self.input = input
         self.key = key
         self.label = label
@@ -1748,7 +1748,7 @@ class InputStep:
         )
         id = from_union([from_str, from_none], obj.get("id"))
         identifier = from_union([from_str, from_none], obj.get("identifier"))
-        input_step_if = from_union([from_str, from_none], obj.get("if"))
+        step_if = from_union([from_str, from_none], obj.get("if"))
         input = from_union([from_str, from_none], obj.get("input"))
         key = from_union([from_str, from_none], obj.get("key"))
         label = from_union([from_str, from_none], obj.get("label"))
@@ -1762,7 +1762,7 @@ class InputStep:
             fields,
             id,
             identifier,
-            input_step_if,
+            step_if,
             input,
             key,
             label,
@@ -1809,8 +1809,8 @@ class InputStep:
             result["id"] = from_union([from_str, from_none], self.id)
         if self.identifier is not None:
             result["identifier"] = from_union([from_str, from_none], self.identifier)
-        if self.input_step_if is not None:
-            result["if"] = from_union([from_str, from_none], self.input_step_if)
+        if self.step_if is not None:
+            result["if"] = from_union([from_str, from_none], self.step_if)
         if self.input is not None:
             result["input"] = from_union([from_str, from_none], self.input)
         if self.key is not None:
@@ -1987,7 +1987,7 @@ class TriggerStep:
     depends_on: Optional[Union[List[Union[DependsOnClass, str]], str]]
     id: Optional[str]
     identifier: Optional[str]
-    trigger_step_if: Optional[str]
+    step_if: Optional[str]
     key: Optional[str]
     label: Optional[str]
     name: Optional[str]
@@ -2007,7 +2007,7 @@ class TriggerStep:
         depends_on: Optional[Union[List[Union[DependsOnClass, str]], str]],
         id: Optional[str],
         identifier: Optional[str],
-        trigger_step_if: Optional[str],
+        step_if: Optional[str],
         key: Optional[str],
         label: Optional[str],
         name: Optional[str],
@@ -2025,7 +2025,7 @@ class TriggerStep:
         self.depends_on = depends_on
         self.id = id
         self.identifier = identifier
-        self.trigger_step_if = trigger_step_if
+        self.step_if = step_if
         self.key = key
         self.label = label
         self.name = name
@@ -2060,7 +2060,7 @@ class TriggerStep:
         )
         id = from_union([from_str, from_none], obj.get("id"))
         identifier = from_union([from_str, from_none], obj.get("identifier"))
-        trigger_step_if = from_union([from_str, from_none], obj.get("if"))
+        step_if = from_union([from_str, from_none], obj.get("if"))
         key = from_union([from_str, from_none], obj.get("key"))
         label = from_union([from_str, from_none], obj.get("label"))
         name = from_union([from_str, from_none], obj.get("name"))
@@ -2084,7 +2084,7 @@ class TriggerStep:
             depends_on,
             id,
             identifier,
-            trigger_step_if,
+            step_if,
             key,
             label,
             name,
@@ -2140,8 +2140,8 @@ class TriggerStep:
             result["id"] = from_union([from_str, from_none], self.id)
         if self.identifier is not None:
             result["identifier"] = from_union([from_str, from_none], self.identifier)
-        if self.trigger_step_if is not None:
-            result["if"] = from_union([from_str, from_none], self.trigger_step_if)
+        if self.step_if is not None:
+            result["if"] = from_union([from_str, from_none], self.step_if)
         if self.key is not None:
             result["key"] = from_union([from_str, from_none], self.key)
         if self.label is not None:
@@ -2195,7 +2195,7 @@ class WaitStep:
     depends_on: Optional[Union[List[Union[DependsOnClass, str]], str]]
     id: Optional[str]
     identifier: Optional[str]
-    wait_step_if: Optional[str]
+    step_if: Optional[str]
     key: Optional[str]
     label: Optional[str]
     name: Optional[str]
@@ -2211,7 +2211,7 @@ class WaitStep:
         depends_on: Optional[Union[List[Union[DependsOnClass, str]], str]],
         id: Optional[str],
         identifier: Optional[str],
-        wait_step_if: Optional[str],
+        step_if: Optional[str],
         key: Optional[str],
         label: Optional[str],
         name: Optional[str],
@@ -2224,7 +2224,7 @@ class WaitStep:
         self.depends_on = depends_on
         self.id = id
         self.identifier = identifier
-        self.wait_step_if = wait_step_if
+        self.step_if = step_if
         self.key = key
         self.label = label
         self.name = name
@@ -2257,7 +2257,7 @@ class WaitStep:
         )
         id = from_union([from_str, from_none], obj.get("id"))
         identifier = from_union([from_str, from_none], obj.get("identifier"))
-        wait_step_if = from_union([from_str, from_none], obj.get("if"))
+        step_if = from_union([from_str, from_none], obj.get("if"))
         key = from_union([from_str, from_none], obj.get("key"))
         label = from_union([from_none, from_str], obj.get("label"))
         name = from_union([from_none, from_str], obj.get("name"))
@@ -2270,7 +2270,7 @@ class WaitStep:
             depends_on,
             id,
             identifier,
-            wait_step_if,
+            step_if,
             key,
             label,
             name,
@@ -2320,8 +2320,8 @@ class WaitStep:
             result["id"] = from_union([from_str, from_none], self.id)
         if self.identifier is not None:
             result["identifier"] = from_union([from_str, from_none], self.identifier)
-        if self.wait_step_if is not None:
-            result["if"] = from_union([from_str, from_none], self.wait_step_if)
+        if self.step_if is not None:
+            result["if"] = from_union([from_str, from_none], self.step_if)
         if self.key is not None:
             result["key"] = from_union([from_str, from_none], self.key)
         if self.label is not None:
