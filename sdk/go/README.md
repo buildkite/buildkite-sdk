@@ -33,6 +33,5 @@ func main() {
 	})
 
 	fmt.Println(pipeline.ToJSON())
-	fmt.Println(pipeline.ToYAML())
 }
 ```

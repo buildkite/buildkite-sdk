@@ -2,8 +2,6 @@ package buildkite
 
 import (
 	"encoding/json"
-
-	"gopkg.in/yaml.v3"
 )
 
 func NewPipeline() *Pipeline {
@@ -47,14 +45,6 @@ func (p *Pipeline) AddNotify(notify *PipelineNotify) {
 
 func (p *Pipeline) ToJSON() (string, error) {
 	data, err := json.MarshalIndent(p, "", "    ")
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-func (p *Pipeline) ToYAML() (string, error) {
-	data, err := yaml.Marshal(p)
 	if err != nil {
 		return "", err
 	}

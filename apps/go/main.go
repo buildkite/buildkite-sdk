@@ -37,20 +37,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to write to file: %v", err)
 	}
-
-	yaml, err := pipeline.ToYAML()
-	if err != nil {
-		log.Fatalf("Failed to serialize JSON: %v", err)
-	}
-
-	yamlFile, err := os.Create("../../out/apps/go/pipeline.yaml")
-	if err != nil {
-		log.Fatalf("Failed to create file: %v", err)
-	}
-	defer yamlFile.Close()
-
-	_, err = yamlFile.WriteString(yaml)
-	if err != nil {
-		log.Fatalf("Failed to write to file: %v", err)
-	}
 }
