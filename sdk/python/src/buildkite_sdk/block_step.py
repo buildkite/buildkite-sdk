@@ -1,11 +1,12 @@
-from typing import Optional, List, Union, TypedDict
+from typing import List, Optional, TypedDict, Union
+
+from buildkite_sdk.schema import BlockStep as _block_step
 from buildkite_sdk.types import (
     BlockedStateEnum,
     DependsOn,
     SelectField,
     TextField,
 )
-from buildkite_sdk.schema import BlockStep as _block_step
 
 
 class BlockStepArgs(TypedDict, total=False):
@@ -17,7 +18,7 @@ class BlockStepArgs(TypedDict, total=False):
     fields: Optional[List[Union[SelectField, TextField]]]
     id: Optional[str]
     identifier: Optional[str]
-    block_step_if: Optional[str]
+    step_if: Optional[str]
     key: Optional[str]
     label: Optional[str]
     name: Optional[str]
@@ -33,7 +34,7 @@ def BlockStep(
     fields: Optional[List[Union[SelectField, TextField]]] = None,
     id: Optional[str] = None,
     identifier: Optional[str] = None,
-    block_step_if: Optional[str] = None,
+    step_if: Optional[str] = None,
     key: Optional[str] = None,
     label: Optional[str] = None,
     name: Optional[str] = None,
@@ -48,7 +49,7 @@ def BlockStep(
         fields=fields,
         id=id,
         identifier=identifier,
-        block_step_if=block_step_if,
+        step_if=step_if,
         key=key,
         label=label,
         name=name,
