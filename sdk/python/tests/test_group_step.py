@@ -35,7 +35,7 @@ def test_step_if():
     expected = {"steps": [{
         "group": "my-group",
         "steps": [
-            {"commands": "command1", "step_if": "true == true"},
+            {"if": "true == true", "commands": "command1"},
         ],
     }]}
     assert pipeline.to_json() == json.dumps(expected, indent="    ")
