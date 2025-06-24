@@ -16,7 +16,7 @@ type WaitStep struct {
 	Wait                   *string
 }
 
-func (step WaitStep) toPipelineStep() *PipelineStep {
+func (step WaitStep) ToPipelineStep() *PipelineStep {
 	label := "~"
 	if step.Wait != nil {
 		label = *step.Wait

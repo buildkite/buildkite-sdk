@@ -22,7 +22,7 @@ type TriggerStep struct {
 	Trigger                string
 }
 
-func (step TriggerStep) toPipelineStep() *PipelineStep {
+func (step TriggerStep) ToPipelineStep() *PipelineStep {
 	triggerStep := &PipelineStep{
 		ID:         step.ID,
 		Identifier: step.Identifier,

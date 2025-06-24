@@ -82,7 +82,7 @@ type InputStep struct {
 	Prompt                 *string
 }
 
-func (step InputStep) toPipelineStep() *PipelineStep {
+func (step InputStep) ToPipelineStep() *PipelineStep {
 	fields := make([]field, len(step.Fields))
 	for i, field := range step.Fields {
 		fields[i] = field.toSchema()

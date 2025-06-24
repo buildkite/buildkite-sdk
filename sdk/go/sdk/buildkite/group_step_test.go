@@ -15,8 +15,8 @@ func TestGroupStep(t *testing.T) {
 		}
 
 		pipeline.AddStep(GroupStep{
-			Steps: []PipelineStep{
-				*cmdStep.toPipelineStep(),
+			Steps: []GroupStepStep{
+				cmdStep,
 			},
 		})
 
@@ -48,8 +48,8 @@ func TestGroupStep(t *testing.T) {
 		}
 
 		pipeline.AddStep(GroupStep{
-			Steps: []PipelineStep{
-				*cmdStep.toPipelineStep(),
+			Steps: []GroupStepStep{
+				cmdStep,
 			},
 			Group:                  Value("group"),
 			If:                     Value("if"),
@@ -116,10 +116,10 @@ func TestGroupStep(t *testing.T) {
 		}
 
 		pipeline.AddStep(GroupStep{
-			Steps: []PipelineStep{
-				*cmdStep1.toPipelineStep(),
-				*waitStep.toPipelineStep(),
-				*cmdStep2.toPipelineStep(),
+			Steps: []GroupStepStep{
+				cmdStep1,
+				waitStep,
+				cmdStep2,
 			},
 		})
 
