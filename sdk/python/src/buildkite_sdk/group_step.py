@@ -1,4 +1,5 @@
 from typing import Optional, List, Union, TypedDict
+from collections.abc import Sequence
 from buildkite_sdk.schema import PurpleStep
 from buildkite_sdk.types import (
     DependsOn,
@@ -22,7 +23,7 @@ from .wait_step import WaitStepArgs
 
 class GroupStepArgs(TypedDict):
     group: str
-    steps: List[
+    steps: Sequence[
         Union[
             BlockStepArgs,
             CommandStepArgs,
@@ -101,7 +102,7 @@ def _step_to_purple_step(
 
 def GroupStep(
     group: str,
-    steps: List[
+    steps: Sequence[
         Union[
             _group_step_class,
             _block_step,
