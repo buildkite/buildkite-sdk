@@ -18,11 +18,11 @@ type Pipeline struct {
 }
 
 type pipelineStep interface {
-	toPipelineStep() *PipelineStep
+	ToPipelineStep() *PipelineStep
 }
 
 func (p *Pipeline) AddStep(step pipelineStep) {
-	p.Steps = append(p.Steps, step.toPipelineStep())
+	p.Steps = append(p.Steps, step.ToPipelineStep())
 }
 
 func (p *Pipeline) AddAgent(key string, value any) {

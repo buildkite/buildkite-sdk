@@ -34,7 +34,7 @@ type CommandStep struct {
 	TimeoutInMinutes       *int64
 }
 
-func (step CommandStep) toPipelineStep() *PipelineStep {
+func (step CommandStep) ToPipelineStep() *PipelineStep {
 	notify := make([]schema.BlockStepNotify, len(step.Notify))
 	for i, item := range step.Notify {
 		notify[i] = *item.toSchema()
