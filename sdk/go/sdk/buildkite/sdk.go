@@ -2,8 +2,10 @@ package buildkite
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
-	"gopkg.in/yaml.v3"
+	"github.com/itchyny/json2yaml"
 )
 
 func NewPipeline() *Pipeline {
@@ -54,9 +56,16 @@ func (p *Pipeline) ToJSON() (string, error) {
 }
 
 func (p *Pipeline) ToYAML() (string, error) {
-	data, err := yaml.Marshal(p)
+	data, err := p.ToJSON()
 	if err != nil {
 		return "", err
 	}
-	return string(data), nil
+
+	var output strings.Builder
+	input := strings.NewReader(data)
+	if err := json2yaml.Convert(&output, input); err != nil {
+		return "", fmt.Errorf("converting JSON to YAML: %v", err)
+	}
+
+	return output.String(), nil
 }
