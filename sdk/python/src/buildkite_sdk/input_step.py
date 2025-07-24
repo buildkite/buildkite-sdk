@@ -17,6 +17,7 @@ class InputStepArgs(TypedDict):
     label: Optional[str]
     name: Optional[str]
     prompt: Optional[str]
+    blocked_state: Optional[str]
 
 
 def InputStep(
@@ -32,6 +33,7 @@ def InputStep(
     label: Optional[str] = None,
     name: Optional[str] = None,
     prompt: Optional[str] = None,
+    blocked_state: Optional[str] = None,
 ) -> _input_step:
     return _input_step(
         allow_dependency_failure=allow_dependency_failure,
@@ -46,5 +48,6 @@ def InputStep(
         label=label,
         name=name,
         prompt=prompt,
+        blocked_state=blocked_state,
         type=None,
     )

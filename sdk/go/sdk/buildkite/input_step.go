@@ -70,6 +70,7 @@ func (i InputSelectField) toSchema() field {
 type InputStep struct {
 	AllowDependencyFailure *bool
 	Branches               []string
+	BlockedState           *string
 	DependsOn              DependsOn
 	Fields                 []Field
 	ID                     *string
@@ -93,14 +94,15 @@ func (step InputStep) ToPipelineStep() *PipelineStep {
 			String: step.Input,
 		},
 
-		Fields:     fields,
-		ID:         step.ID,
-		Identifier: step.Identifier,
-		If:         step.If,
-		Key:        step.Key,
-		Label:      step.Label,
-		Name:       step.Name,
-		Prompt:     step.Prompt,
+		Fields:       fields,
+		ID:           step.ID,
+		Identifier:   step.Identifier,
+		If:           step.If,
+		Key:          step.Key,
+		Label:        step.Label,
+		Name:         step.Name,
+		Prompt:       step.Prompt,
+		BlockedState: (*schema.BlockedState)(step.BlockedState),
 	}
 
 	if step.AllowDependencyFailure != nil {
