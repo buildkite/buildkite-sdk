@@ -13,4 +13,5 @@ export interface InputStep {
     label?: string;
     name?: string;
     prompt?: string;
+    blocked_state: 'passed' | 'failed' | 'running'
 }

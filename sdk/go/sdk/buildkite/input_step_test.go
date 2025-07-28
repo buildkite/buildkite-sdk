@@ -94,6 +94,7 @@ func TestInputStep(t *testing.T) {
 		pipeline.AddStep(InputStep{
 			AllowDependencyFailure: Value(true),
 			Branches:               []string{"main"},
+			BlockedState:           Value("passed"),
 			DependsOn:              DependsOnString("build"),
 			ID:                     Value("id"),
 			Identifier:             Value("identifier"),
@@ -148,6 +149,7 @@ func TestInputStep(t *testing.T) {
     "steps": [
         {
             "allow_dependency_failure": true,
+            "blocked_state": "passed",
             "branches": [
                 "main"
             ],

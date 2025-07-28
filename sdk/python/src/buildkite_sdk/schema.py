@@ -1692,6 +1692,7 @@ class InputStep:
     name: Optional[str]
     prompt: Optional[str]
     type: Optional[InputType]
+    blocked_state: Optional[str]
 
     def __init__(
         self,
@@ -1707,10 +1708,12 @@ class InputStep:
         label: Optional[str],
         name: Optional[str],
         prompt: Optional[str],
+        blocked_state: Optional[str],
         type: Optional[InputType],
     ) -> None:
         self.allow_dependency_failure = allow_dependency_failure
         self.branches = branches
+        self.blocked_state = blocked_state
         self.depends_on = depends_on
         self.fields = fields
         self.id = id
@@ -1754,10 +1757,12 @@ class InputStep:
         label = from_union([from_str, from_none], obj.get("label"))
         name = from_union([from_str, from_none], obj.get("name"))
         prompt = from_union([from_str, from_none], obj.get("prompt"))
+        blocked_state = from_union([from_str, from_none], obj.get("blocked_state"))
         type = from_union([InputType, from_none], obj.get("type"))
         return InputStep(
             allow_dependency_failure,
             branches,
+            blocked_state,
             depends_on,
             fields,
             id,
@@ -1821,6 +1826,8 @@ class InputStep:
             result["name"] = from_union([from_str, from_none], self.name)
         if self.prompt is not None:
             result["prompt"] = from_union([from_str, from_none], self.prompt)
+        if self.blocked_state is not None:
+            result["blocked_state"] = from_union([from_str, from_none], self.blocked_state)
         if self.type is not None:
             result["type"] = from_union(
                 [lambda x: to_enum(InputType, x), from_none], self.type

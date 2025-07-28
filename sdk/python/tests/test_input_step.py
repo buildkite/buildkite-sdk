@@ -19,8 +19,9 @@ def test_input_step_typed_dict():
     pipeline = Pipeline()
     pipeline.add_step({
         "fields": [{ "key": "my-input-key" }],
-        "input": "My Input"
+        "input": "My Input",
+        "blocked_state": "passed",
     })
 
-    expected = {"steps": [{ "fields": [{ "key": "my-input-key" }], "input": "My Input" }]}
+    expected = {"steps": [{ "fields": [{ "key": "my-input-key" }], "input": "My Input", "blocked_state": "passed" }]}
     assert pipeline.to_json() == json.dumps(expected, indent="    ")
