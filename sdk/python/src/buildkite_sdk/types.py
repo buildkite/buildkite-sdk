@@ -47,7 +47,7 @@ class DependsOn(_depends_on_class):
         step: str,
         allow_failure: Optional[bool] = None,
     ) -> None:
-        super.__init__(
+        super().__init__(
             self,
             allow_failure,
             step,
