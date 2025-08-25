@@ -25,6 +25,32 @@
           "description": "Whether to proceed with this step and further steps if a step named in the depends_on attribute fails",
           "default": false
         },
+        "image": {
+          "type": "string",
+          "description": "(Kubernetes stack only) The container image to use for this pipeline or step",
+          "examples": [
+            "node:18-alpine",
+            "python:3.11",
+            "ubuntu:22.04"
+          ]
+        },
+        "allowedTeams": {
+          "description": "A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          ],
+          "examples": [
+            "frontend-team",
+            "96176d08-f503-413f-8423-96094953b9e7",
+            ["frontend-team", "backend-team", "96176d08-f503-413f-8423-96094953b9e7"]
+          ]
+        },
         "agents": {
           "oneOf": [
             { "$ref": "#/definitions/agentsObject" },
@@ -499,6 +525,143 @@
             "key",
             "options"
           ]
+        },
+        "fields": {
+          "type": "array",
+          "description": "A list of input fields required to be filled out before unblocking the step",
+          "items": {
+            "oneOf": [
+              {"$ref": "#/definitions/textField"},
+              {"$ref": "#/definitions/selectField"}
+            ]
+          }
+        },
+        "if_changed": {
+          "type": "string",
+          "description": "Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.",
+          "examples": [
+            "**.go",
+            "go.mod",
+            "go.sum",
+            "fixtures/**"
+          ]
+        },
+        "matrixElement": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "integer"},
+            {"type": "boolean"}
+          ]
+        },
+        "prompt": {
+          "type": "string",
+          "description": "The instructional message displayed in the dialog box when the unblock step is activated",
+          "examples": [
+            "Release to production?"
+          ]
+        },
+        "skip": {
+          "anyOf": [
+            { "type": "boolean" },
+            { "type": "string" }
+          ],
+          "description": "Whether this step should be skipped. Passing a string provides a reason for skipping this command",
+          "examples": [
+            true,
+            false,
+            "My reason"
+          ]
+        },
+        "softFailObject": {
+          "type": "object",
+          "properties": {
+            "exit_status": {
+              "description": "The exit status number that will cause this job to soft-fail",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [ "*" ]
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          }
+        },
+        "softFailList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/softFailObject"
+          }
+        },
+        "softFail": {
+          "description": "The conditions for marking the step as a soft-fail.",
+          "anyOf": [
+            {
+              "enum": [true, false, "true", "false"]
+            },
+            {
+              "$ref": "#/definitions/softFailList"
+            }
+          ]
+        },
+        "blockStep": {
+          "type": "object",
+          "properties": {
+            "allow_dependency_failure": {
+              "$ref": "#/definitions/allowDependencyFailure"
+            },
+            "block": {
+              "type": "string",
+              "description": "The label of the block step"
+            },
+            "blocked_state": {
+              "type": "string",
+              "default": "passed",
+              "description": "The state that the build is set to when the build is blocked by this block step",
+              "enum": [ "passed", "failed", "running" ]
+            },
+            "branches": {
+              "$ref": "#/definitions/branches"
+            },
+            "depends_on": {
+              "$ref": "#/definitions/dependsOn"
+            },
+            "fields": {
+              "$ref": "#/definitions/fields"
+            },
+            "if": {
+              "$ref": "#/definitions/if"
+            },
+            "key": {
+              "$ref": "#/definitions/key"
+            },
+            "identifier": {
+              "$ref": "#/definitions/blockStep/properties/key"
+            },
+            "id": {
+              "$ref": "#/definitions/blockStep/properties/key",
+              "deprecated": true
+            },
+            "label": {
+              "$ref": "#/definitions/blockStep/properties/block"
+            },
+            "name": {
+              "$ref": "#/definitions/blockStep/properties/block"
+            },
+            "prompt": {
+              "$ref": "#/definitions/prompt"
+            },
+            "allowed_teams": {
+              "$ref": "#/definitions/allowedTeams"
+            },
+            "type": {
+              "type": "string",
+              "enum": [ "block" ]
+            }
+          },
+          "additionalProperties": false
         }
     },
     "properties": {}
