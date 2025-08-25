@@ -14,8 +14,12 @@ func main() {
 		panic(fmt.Errorf("reading pipeline schema: %v", err))
 	}
 
-	for name := range pipelineSchema.Definitions {
-		property, err := types.PropertyDefinitionToValue(pipelineSchema.Definitions, name)
+	generator := types.PipelineSchemaGenerator{
+		Definitions: pipelineSchema.Definitions,
+	}
+
+	for name, prop := range pipelineSchema.Definitions {
+		property, err := generator.PropertyDefinitionToValue(name, prop)
 		if err != nil {
 			panic(fmt.Errorf("converting property definition to a value: %v", err))
 		}

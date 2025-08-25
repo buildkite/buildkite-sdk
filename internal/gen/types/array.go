@@ -7,15 +7,20 @@ import (
 )
 
 type Array struct {
-	Name PropertyName
-	Type Value
+	Name      PropertyName
+	Type      Value
+	Reference bool
 }
 
 func (a Array) IsReference() bool {
-	return false
+	return a.Reference
 }
 
 func (a Array) GoStructType() string {
+	if a.IsReference() {
+		return fmt.Sprintf("[]%s", a.Type.GoStructType())
+	}
+
 	switch a.Type.(type) {
 	case String:
 		return "[]string"
