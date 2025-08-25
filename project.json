@@ -137,8 +137,8 @@
             "options": {
                 "commands": ["node ./release.js $VERSION_FROM $VERSION_TO"],
                 "env": {
-                    "VERSION_FROM": "0.3.1",
-                    "VERSION_TO": "0.3.2"
+                    "VERSION_FROM": "0.3.2",
+                    "VERSION_TO": "0.3.3"
                 }
             }
         }
