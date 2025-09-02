@@ -10,6 +10,10 @@ func (Number) IsReference() bool {
 	return false
 }
 
+func (Number) IsPrimative() bool {
+	return true
+}
+
 func (n Number) Go() (string, error) {
 	return fmt.Sprintf("type %s = int", n.Name.ToTitleCase()), nil
 }

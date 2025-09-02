@@ -48,6 +48,19 @@
                 "infra:format"
             ]
         },
+        "gen:types-go": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rm -rf sdk/go2/sdk",
+                    "mkdir sdk/go2/sdk",
+                    "./internal/gen/mybinary go sdk/go2/sdk",
+                    "~/go/bin/goimports -w ./sdk/go2/sdk",
+                    "gofmt ./sdk/go2/sdk"
+                ],
+                "parallel": false
+            }
+        },
         "gen:types": {
             "executor": "nx:run-commands",
             "options": {

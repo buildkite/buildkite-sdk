@@ -8,6 +8,10 @@ func (n Null) IsReference() bool {
 	return n.Reference
 }
 
+func (Null) IsPrimative() bool {
+	return false
+}
+
 func (Null) GoStructKey(isUnion bool) string {
 	return "Null"
 }

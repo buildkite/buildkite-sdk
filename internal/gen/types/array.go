@@ -16,6 +16,10 @@ func (a Array) IsReference() bool {
 	return a.Reference
 }
 
+func (Array) IsPrimative() bool {
+	return false
+}
+
 func (a Array) GoStructType() string {
 	if a.IsReference() {
 		return fmt.Sprintf("[]%s", a.Type.GoStructType())
@@ -55,7 +59,8 @@ func (a Array) GoStructKey(isUnion bool) string {
 }
 
 func (a Array) Go() (string, error) {
-	if union, ok := a.Type.(Union); ok {
+	union, ok := a.Type.(Union)
+	if !a.IsReference() && ok {
 		item := Union{
 			Name:            NewPropertyName(fmt.Sprintf("%sUnion", a.Name.Value)),
 			Description:     union.Description,

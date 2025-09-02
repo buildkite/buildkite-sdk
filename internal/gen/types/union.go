@@ -16,6 +16,10 @@ func (u Union) IsReference() bool {
 	return false
 }
 
+func (u Union) IsPrimative() bool {
+	return false
+}
+
 func (u Union) GoStructKey(isUnion bool) string {
 	return u.Name.ToTitleCase()
 }
@@ -55,8 +59,9 @@ func (u Union) Go() (string, error) {
 		// Object
 		if obj, ok := typ.(Object); ok {
 			nestedObj := Object{
-				Name:       NewPropertyName(fmt.Sprintf("%sObject", obj.Name.Value)),
-				Properties: obj.Properties,
+				Name:                 NewPropertyName(fmt.Sprintf("%sObject", obj.Name.Value)),
+				Properties:           obj.Properties,
+				AdditionalProperties: obj.AdditionalProperties,
 			}
 
 			objLines, err := nestedObj.Go()
@@ -64,6 +69,7 @@ func (u Union) Go() (string, error) {
 				return "", fmt.Errorf("generating object lines for union [%s]: %v", u.Name.Value, err)
 			}
 
+			titleCaseType = nestedObj.GoStructType()
 			lines.AddLines(objLines)
 		}
 

@@ -10,6 +10,10 @@ func (s String) IsReference() bool {
 	return false
 }
 
+func (String) IsPrimative() bool {
+	return true
+}
+
 func (s String) Go() (string, error) {
 	return fmt.Sprintf("type %s = string", s.Name.ToTitleCase()), nil
 }

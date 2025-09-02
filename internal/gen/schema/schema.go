@@ -13,20 +13,15 @@ type PipelineSchema struct {
 	Type        string                        `json:"type,omitempty"`
 	Required    []string                      `json:"required,omitempty"`
 	Definitions map[string]PropertyDefinition `json:"definitions,omitempty"`
-
-	// TODO: actually implement this
-	Properties map[string]SchemaProperty `json:"properties,omitempty"`
+	Properties  map[string]SchemaProperty     `json:"properties,omitempty"`
 }
 
 type SchemaProperty struct {
-	Ref         string                  `json:"$ref,omitempty"`
-	Type        string                  `json:"type,omitempty"`
-	Description string                  `json:"description,omitempty"`
-	Items       PropertyDefinitionItems `json:"items,omitempty"`
+	Ref PropertyReferenceString `json:"$ref,omitempty"`
 }
 
 func ReadSchema() (PipelineSchema, error) {
-	file, err := os.ReadFile("schema.json")
+	file, err := os.ReadFile("internal/gen/schema.json")
 	if err != nil {
 		return PipelineSchema{}, fmt.Errorf("reading schema file: %v", err)
 	}
