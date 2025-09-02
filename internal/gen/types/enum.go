@@ -49,6 +49,10 @@ func (e Enum) IsReference() bool {
 	return false
 }
 
+func (Enum) IsPrimative() bool {
+	return false
+}
+
 func (e Enum) GoStructType() string {
 	return e.Name.ToTitleCase()
 }

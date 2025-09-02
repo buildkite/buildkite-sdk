@@ -2,13 +2,50 @@ package types
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/buildkite/pipeline-sdk/internal/gen/schema"
 	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
+	"github.com/iancoleman/orderedmap"
 )
 
 type PipelineSchemaGenerator struct {
 	Definitions map[string]schema.PropertyDefinition
+	Properties  map[string]schema.SchemaProperty
+}
+
+func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
+	goStruct := utils.NewGoStruct("Pipeline", nil)
+
+	for name, prop := range p.Properties {
+		structKey := utils.DashCaseToTitleCase(name)
+		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
+		goStruct.AddItem(structKey, structType, name, false)
+	}
+
+	return goStruct.Write()
+}
+
+func (p PipelineSchemaGenerator) ResolveReference(ref schema.PropertyReferenceString) schema.PropertyDefinition {
+	keys := ref.Keys()
+	firstKey := keys[0]
+	currentDef := p.Definitions[firstKey]
+
+	if len(keys) == 1 {
+		return currentDef
+	}
+
+	// Nested references contain 'properties' in they keys slice
+	// so we skip it here to get the actual reference.
+	for _, key := range keys[2:] {
+		currentDef = currentDef.Properties[key]
+	}
+
+	if currentDef.Ref != "" {
+		return p.ResolveReference(currentDef.Ref)
+	}
+
+	return currentDef
 }
 
 func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property schema.PropertyDefinition) (Value, error) {
@@ -63,7 +100,7 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 			}
 
 			refName := property.Items.Ref.Name()
-			property := p.Definitions[refName]
+			property := p.ResolveReference(property.Items.Ref)
 			arrayType, err := p.PropertyDefinitionToValue(refName, property)
 			if err != nil {
 				return nil, fmt.Errorf("finding ref def: %v", err)
@@ -94,42 +131,63 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 
 	// Object
 	if property.Type == "object" {
-		properties := make(map[string]Value, len(property.Properties))
+		properties := orderedmap.New()
 		for name, prop := range property.Properties {
 			if prop.Ref != "" {
-				refName := prop.Ref.Name()
-				refProp := p.Definitions[refName]
-
-				if prop.Ref.IsNested() {
-					refProp = property.Properties[refName]
-					if refProp.Ref != "" {
-						refProp = p.Definitions[refProp.Ref.Name()]
-					}
-
-					fmt.Println(refName)
-					fmt.Println(refProp.Ref)
-				}
-
-				refVal, err := p.PropertyDefinitionToValue(refName, refProp)
+				refProp := p.ResolveReference(prop.Ref)
+				refVal, err := p.PropertyDefinitionToValue(name, refProp)
 				if err != nil {
 					return nil, fmt.Errorf("converting reference for [%s]: %v", propertyName.Value, err)
 				}
-				properties[name] = PropertyReference{
-					Name: refName,
-					Ref:  string(prop.Ref),
+
+				properties.Set(name, PropertyReference{
+					Name: name,
+					Ref:  prop.Ref,
 					Type: refVal,
-				}
+				})
 				continue
 			}
 
+			var propName string
+			switch prop.Type {
+			case "string":
+				fallthrough
+			case "integer":
+				fallthrough
+			case "boolean":
+				propName = name
+			default:
+				propName = fmt.Sprintf("%s%s", propertyName.Value, utils.DashCaseToTitleCase(name))
+			}
+
 			objProp, err := p.PropertyDefinitionToValue(
-				fmt.Sprintf("%s%s", propertyName.Value, utils.DashCaseToTitleCase(name)),
+				propName,
 				prop,
 			)
 			if err != nil {
 				return nil, fmt.Errorf("converting object property to value [%s]: %v", propertyName.Value, err)
 			}
-			properties[name] = objProp
+			properties.Set(name, objProp)
+		}
+		properties.SortKeys(sort.Strings)
+
+		if property.AdditionalProperties.Type != "" {
+			propDef := schema.PropertyDefinition{
+				Type:        schema.PropertyType(property.AdditionalProperties.Type),
+				Description: property.AdditionalProperties.Description,
+				Items:       property.AdditionalProperties.Items,
+			}
+
+			additionalProperties, err := p.PropertyDefinitionToValue("", propDef)
+			if err != nil {
+				return nil, fmt.Errorf("determing type of additional properties: %v", err)
+			}
+
+			return Object{
+				Name:                 propertyName,
+				Properties:           properties,
+				AdditionalProperties: &additionalProperties,
+			}, nil
 		}
 
 		return Object{
@@ -175,7 +233,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 			refName := item.Ref.Name()
 			typeIdentifiers = append(typeIdentifiers, PropertyReference{
 				Name: refName,
-				Ref:  string(item.Ref),
+				Ref:  item.Ref,
 			})
 			continue
 		}
@@ -193,18 +251,36 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 
 		// Object
 		if item.Type == "object" {
-			properties := make(map[string]Value, len(item.Properties))
+			properties := orderedmap.New()
 			for name, prop := range item.Properties {
-				propMap := make(map[string]schema.PropertyDefinition, 1)
-				propMap[name] = prop
 				objProp, err := p.PropertyDefinitionToValue(
 					name,
-					propMap[name],
+					prop,
 				)
 				if err != nil {
 					return Union{}, fmt.Errorf("converting object property to value [%s]: %v", propertyName.Value, err)
 				}
-				properties[name] = objProp
+				properties.Set(name, objProp)
+			}
+
+			if item.AdditionalProperties.Type != "" {
+				propDef := schema.PropertyDefinition{
+					Type:        schema.PropertyType(item.AdditionalProperties.Type),
+					Description: item.AdditionalProperties.Description,
+					Items:       item.AdditionalProperties.Items,
+				}
+
+				additionalProperties, err := p.PropertyDefinitionToValue("", propDef)
+				if err != nil {
+					return Union{}, fmt.Errorf("determing type of additional properties: %v", err)
+				}
+
+				typeIdentifiers = append(typeIdentifiers, Object{
+					Name:                 propertyName,
+					Properties:           properties,
+					AdditionalProperties: &additionalProperties,
+				})
+				continue
 			}
 
 			typeIdentifiers = append(typeIdentifiers, Object{
@@ -315,4 +391,5 @@ type Value interface {
 	GoStructKey(isUnion bool) string
 
 	IsReference() bool
+	IsPrimative() bool
 }

@@ -10,6 +10,10 @@ func (b Boolean) IsReference() bool {
 	return false
 }
 
+func (Boolean) IsPrimative() bool {
+	return true
+}
+
 func (Boolean) GoStructType() string {
 	return "bool"
 }
