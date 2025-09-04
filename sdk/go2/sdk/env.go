@@ -3,4 +3,4 @@
 
 package buildkite
 
-type Env = map[string]string
+type Env = map[string]interface{}

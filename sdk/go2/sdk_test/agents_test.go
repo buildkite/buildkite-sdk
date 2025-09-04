@@ -27,7 +27,7 @@ func TestAgents(t *testing.T) {
 	})
 
 	t.Run("AgentsObject", func(t *testing.T) {
-		agents := map[string]string{
+		agents := map[string]interface{}{
 			"one": "two",
 		}
 		testVal := testAgents{

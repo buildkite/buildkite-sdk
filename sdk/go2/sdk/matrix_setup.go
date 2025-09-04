@@ -5,7 +5,7 @@ package buildkite
 
 import "encoding/json"
 
-type MatrixSetupObject = map[string]string
+type MatrixSetupObject = map[string][]MatrixElement
 type MatrixSetupValues interface {
 	MatrixElementList | MatrixSetupObject
 }

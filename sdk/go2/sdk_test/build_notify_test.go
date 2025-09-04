@@ -112,7 +112,7 @@ func TestBuildNotify(t *testing.T) {
 	})
 
 	t.Run("NotifyGithubCheck", func(t *testing.T) {
-		value := map[string]string{"foo": "bar"}
+		value := map[string]interface{}{"foo": "bar"}
 		val := testBuildNotify{
 			Notify: []buildkite.BuildNotifyUnion{
 				{

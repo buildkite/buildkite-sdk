@@ -6,26 +6,26 @@ package buildkite
 import "encoding/json"
 
 type DependsOnListObjectAllowFailureValues interface {
-	string | bool
+	bool | string
 }
 type DependsOnListObjectAllowFailure struct {
-	String *string
 	Bool   *bool
+	String *string
 }
 
 func (e DependsOnListObjectAllowFailure) MarshalJSON() ([]byte, error) {
-	if e.String != nil {
-		return json.Marshal(e.String)
-	}
 	if e.Bool != nil {
 		return json.Marshal(e.Bool)
+	}
+	if e.String != nil {
+		return json.Marshal(e.String)
 	}
 	return json.Marshal(nil)
 }
 
 type DependsOnListObject struct {
-	Step         *string                          `json:"step,omitempty"`
 	AllowFailure *DependsOnListObjectAllowFailure `json:"allow_failure,omitempty"`
+	Step         *string                          `json:"step,omitempty"`
 }
 type DependsOnListUnionValues interface {
 	string | DependsOnListObject

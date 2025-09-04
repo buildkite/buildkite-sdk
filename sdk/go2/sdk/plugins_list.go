@@ -5,7 +5,7 @@ package buildkite
 
 import "encoding/json"
 
-type PluginsListObject = map[string]string
+type PluginsListObject = map[string]interface{}
 type PluginsListUnionValues interface {
 	string | PluginsListObject
 }

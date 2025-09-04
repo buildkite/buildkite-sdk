@@ -3,4 +3,4 @@
 
 package buildkite
 
-type AgentsObject = map[string]string
+type AgentsObject = map[string]interface{}

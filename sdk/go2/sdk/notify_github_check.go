@@ -3,7 +3,7 @@
 
 package buildkite
 
-type NotifyGithubCheckGithubCheck = map[string]string
+type NotifyGithubCheckGithubCheck = map[string]interface{}
 type NotifyGithubCheck struct {
 	GithubCheck *NotifyGithubCheckGithubCheck `json:"github_check,omitempty"`
 }

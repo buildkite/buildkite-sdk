@@ -24,19 +24,19 @@ func (e CommandStepManualRetryObjectAllowed) MarshalJSON() ([]byte, error) {
 }
 
 type CommandStepManualRetryObjectPermitOnPassedValues interface {
-	string | bool
+	bool | string
 }
 type CommandStepManualRetryObjectPermitOnPassed struct {
-	String *string
 	Bool   *bool
+	String *string
 }
 
 func (e CommandStepManualRetryObjectPermitOnPassed) MarshalJSON() ([]byte, error) {
-	if e.String != nil {
-		return json.Marshal(e.String)
-	}
 	if e.Bool != nil {
 		return json.Marshal(e.Bool)
+	}
+	if e.String != nil {
+		return json.Marshal(e.String)
 	}
 	return json.Marshal(nil)
 }

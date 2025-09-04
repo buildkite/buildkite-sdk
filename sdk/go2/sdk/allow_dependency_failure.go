@@ -6,19 +6,19 @@ package buildkite
 import "encoding/json"
 
 type AllowDependencyFailureValues interface {
-	bool | string
+	string | bool
 }
 type AllowDependencyFailure struct {
-	Bool   *bool
 	String *string
+	Bool   *bool
 }
 
 func (e AllowDependencyFailure) MarshalJSON() ([]byte, error) {
-	if e.Bool != nil {
-		return json.Marshal(e.Bool)
-	}
 	if e.String != nil {
 		return json.Marshal(e.String)
+	}
+	if e.Bool != nil {
+		return json.Marshal(e.Bool)
 	}
 	return json.Marshal(nil)
 }

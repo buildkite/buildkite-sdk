@@ -36,16 +36,34 @@ type PropertyAdditionalProperties struct {
 	Items       PropertyDefinitionItems `json:"items,omitempty"`
 }
 
-func (p PropertyAdditionalProperties) UnmarshalJSON(data []byte) error {
+func (p *PropertyAdditionalProperties) UnmarshalJSON(data []byte) error {
+	fmt.Println("here we are")
 	// Try unmarshaling as a boolean
 	var b bool
 	if err := json.Unmarshal(data, &b); err == nil {
+		*p = PropertyAdditionalProperties{}
 		return nil
 	}
 
 	// If not a boolean, try unmarshaling as an object
-	var obj map[string]interface{}
+	var obj map[string]any
 	if err := json.Unmarshal(data, &obj); err == nil {
+		var items PropertyDefinitionItems
+		itemsString, err := json.Marshal(obj["items"])
+		if err != nil {
+			return fmt.Errorf("marshal additional properties items: %v", err)
+		}
+
+		err = json.Unmarshal(itemsString, &items)
+		if err != nil {
+			return fmt.Errorf("unmarhsaling additional properties: %v", err)
+		}
+
+		*p = PropertyAdditionalProperties{
+			Type:        obj["type"].(string),
+			Description: obj["description"].(string),
+			Items:       items,
+		}
 		return nil
 	}
 
