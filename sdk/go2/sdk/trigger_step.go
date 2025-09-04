@@ -23,7 +23,7 @@ func (e TriggerStepAsync) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
-type TriggerStepBuildMetaData = map[string]string
+type TriggerStepBuildMetaData = map[string]interface{}
 type TriggerStepBuild struct {
 	Branch   *string                   `json:"branch,omitempty"`
 	Commit   *string                   `json:"commit,omitempty"`

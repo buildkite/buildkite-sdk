@@ -141,4 +141,112 @@ func TestBlockStep(t *testing.T) {
 		}
 		CheckResult(t, val, `{"type":"block"}`)
 	})
+
+	t.Run("All", func(t *testing.T) {
+		allowDependencyFailure := true
+		allowedTeams := "allowedTeams"
+		block := "block"
+		blockedState := buildkite.BlockStepBlockedStateValues["passed"]
+		branches := "branch"
+		dependsOn := "step"
+		fieldsText := "textField"
+		fields := []buildkite.FieldsUnion{
+			{
+				TextField: &buildkite.TextField{
+					Text: &fieldsText,
+				},
+			},
+		}
+		id := "id"
+		identifier := "identifier"
+		ifValue := "if"
+		key := "key"
+		label := "label"
+		name := "name"
+		prompt := "prompt"
+		typeValue := buildkite.BlockStepTypeValues["block"]
+
+		val := buildkite.BlockStep{
+			AllowDependencyFailure: &buildkite.AllowDependencyFailure{
+				Bool: &allowDependencyFailure,
+			},
+			AllowedTeams: &buildkite.AllowedTeams{
+				String: &allowedTeams,
+			},
+			Block:        &block,
+			BlockedState: &blockedState,
+			Branches: &buildkite.Branches{
+				String: &branches,
+			},
+			DependsOn: &buildkite.DependsOn{
+				String: &dependsOn,
+			},
+			Fields:     &fields,
+			Id:         &id,
+			Identifier: &identifier,
+			If:         &ifValue,
+			Key:        &key,
+			Label:      &label,
+			Name:       &name,
+			Prompt:     &prompt,
+			Type:       &typeValue,
+		}
+		CheckResult(t, val, `{"allow_dependency_failure":true,"allowed_teams":"allowedTeams","block":"block","blocked_state":"passed","branches":"branch","depends_on":"step","fields":[{"text":"textField"}],"id":"id","identifier":"identifier","if":"if","key":"key","label":"label","name":"name","prompt":"prompt","type":"block"}`)
+
+	})
+}
+
+func TestNestedBlockStep(t *testing.T) {
+	allowDependencyFailure := true
+	allowedTeams := "allowedTeams"
+	block := "block"
+	blockedState := buildkite.BlockStepBlockedStateValues["passed"]
+	branches := "branch"
+	dependsOn := "step"
+	fieldsText := "textField"
+	fields := []buildkite.FieldsUnion{
+		{
+			TextField: &buildkite.TextField{
+				Text: &fieldsText,
+			},
+		},
+	}
+	id := "id"
+	identifier := "identifier"
+	ifValue := "if"
+	key := "key"
+	label := "label"
+	name := "name"
+	prompt := "prompt"
+	typeValue := buildkite.BlockStepTypeValues["block"]
+
+	val := buildkite.NestedBlockStep{
+		Block: &buildkite.BlockStep{
+			AllowDependencyFailure: &buildkite.AllowDependencyFailure{
+				Bool: &allowDependencyFailure,
+			},
+			AllowedTeams: &buildkite.AllowedTeams{
+				String: &allowedTeams,
+			},
+			Block:        &block,
+			BlockedState: &blockedState,
+			Branches: &buildkite.Branches{
+				String: &branches,
+			},
+			DependsOn: &buildkite.DependsOn{
+				String: &dependsOn,
+			},
+			Fields:     &fields,
+			Id:         &id,
+			Identifier: &identifier,
+			If:         &ifValue,
+			Key:        &key,
+			Label:      &label,
+			Name:       &name,
+			Prompt:     &prompt,
+			Type:       &typeValue,
+		},
+	}
+	CheckResult(t, val, `{"block":{"allow_dependency_failure":true,"allowed_teams":"allowedTeams","block":"block","blocked_state":"passed","branches":"branch","depends_on":"step","fields":[{"text":"textField"}],"id":"id","identifier":"identifier","if":"if","key":"key","label":"label","name":"name","prompt":"prompt","type":"block"}}`)
+
 }

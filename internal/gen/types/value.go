@@ -171,6 +171,7 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 		}
 		properties.SortKeys(sort.Strings)
 
+		fmt.Println(property.AdditionalProperties.Type)
 		if property.AdditionalProperties.Type != "" {
 			propDef := schema.PropertyDefinition{
 				Type:        schema.PropertyType(property.AdditionalProperties.Type),

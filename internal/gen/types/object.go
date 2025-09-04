@@ -39,7 +39,7 @@ func (o Object) Go() (string, error) {
 			return fmt.Sprintf("type %s = map[string]%s", o.Name.ToTitleCase(), prop.GoStructType()), nil
 		}
 
-		return fmt.Sprintf("type %s = map[string]string", o.Name.ToTitleCase()), nil
+		return fmt.Sprintf("type %s = map[string]interface{}", o.Name.ToTitleCase()), nil
 	}
 
 	codeBlock := utils.NewCodeBlock()

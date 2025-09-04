@@ -3,4 +3,4 @@
 
 package buildkite
 
-type PluginsObject = map[string]string
+type PluginsObject = map[string]interface{}
