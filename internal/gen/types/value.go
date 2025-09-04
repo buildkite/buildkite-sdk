@@ -14,16 +14,35 @@ type PipelineSchemaGenerator struct {
 	Properties  map[string]schema.SchemaProperty
 }
 
+var pipelineToJSONFn = `func (p Pipeline) ToJSON() (string, error) {
+    rawJSON, err := json.Marshal(p)
+	if err != nil {
+	    return "", err
+	}
+	return string(rawJSON), nil
+}`
+
 func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 	goStruct := utils.NewGoStruct("Pipeline", nil)
 
 	for name, prop := range p.Properties {
 		structKey := utils.DashCaseToTitleCase(name)
 		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
-		goStruct.AddItem(structKey, structType, name, false)
+		goStruct.AddItem(structKey, structType, name, true)
 	}
 
-	return goStruct.Write()
+	structString, err := goStruct.Write()
+	if err != nil {
+		return "", fmt.Errorf("generating pipeline struct")
+	}
+
+	codeBlock := utils.NewCodeBlock(
+		structString,
+		"",
+		pipelineToJSONFn,
+	)
+
+	return codeBlock.String(), nil
 }
 
 func (p PipelineSchemaGenerator) ResolveReference(ref schema.PropertyReferenceString) schema.PropertyDefinition {
