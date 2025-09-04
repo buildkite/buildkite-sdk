@@ -3,10 +3,20 @@
 
 package buildkite
 
+import "encoding/json"
+
 type Pipeline struct {
-	Notify BuildNotify   `json:"notify,omitempty"`
-	Image  Image         `json:"image,omitempty"`
-	Steps  PipelineSteps `json:"steps,omitempty"`
-	Env    Env           `json:"env,omitempty"`
-	Agents Agents        `json:"agents,omitempty"`
+	Notify *BuildNotify   `json:"notify,omitempty"`
+	Image  *Image         `json:"image,omitempty"`
+	Steps  *PipelineSteps `json:"steps,omitempty"`
+	Env    *Env           `json:"env,omitempty"`
+	Agents *Agents        `json:"agents,omitempty"`
+}
+
+func (p Pipeline) ToJSON() (string, error) {
+	rawJSON, err := json.Marshal(p)
+	if err != nil {
+		return "", err
+	}
+	return string(rawJSON), nil
 }

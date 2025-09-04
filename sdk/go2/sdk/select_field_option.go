@@ -6,19 +6,19 @@ package buildkite
 import "encoding/json"
 
 type SelectFieldOptionRequiredValues interface {
-	bool | string
+	string | bool
 }
 type SelectFieldOptionRequired struct {
-	Bool   *bool
 	String *string
+	Bool   *bool
 }
 
 func (e SelectFieldOptionRequired) MarshalJSON() ([]byte, error) {
-	if e.Bool != nil {
-		return json.Marshal(e.Bool)
-	}
 	if e.String != nil {
 		return json.Marshal(e.String)
+	}
+	if e.Bool != nil {
+		return json.Marshal(e.Bool)
 	}
 	return json.Marshal(nil)
 }
