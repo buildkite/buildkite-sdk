@@ -9,6 +9,7 @@
         "pipeline-release": "nx gen:pipeline-release",
         "types": "nx gen:types",
         "types-go": "nx gen:types-go",
+        "types-ts": "nx gen:types-ts",
         "test": "nx test:all",
         "build": "nx build:all",
         "docs": "nx docs:all",

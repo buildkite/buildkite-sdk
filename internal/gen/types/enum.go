@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
 )
@@ -53,6 +54,7 @@ func (Enum) IsPrimative() bool {
 	return false
 }
 
+// Go
 func (e Enum) GoStructType() string {
 	return e.Name.ToTitleCase()
 }
@@ -134,4 +136,37 @@ func (e Enum) Go() (string, error) {
 	)
 
 	return lines.String(), nil
+}
+
+// TypeScript
+func (e Enum) TypeScript() (string, error) {
+	parts := make([]string, len(e.Values))
+	for i, val := range e.Values {
+		if _, ok := val.(string); ok {
+			parts[i] = fmt.Sprintf("'%v'", val)
+			continue
+		}
+
+		parts[i] = fmt.Sprintf("%v", val)
+	}
+	values := strings.Join(parts, " | ")
+	return fmt.Sprintf("export type %s = %s", e.Name.ToTitleCase(), values), nil
+}
+
+func (e Enum) TypeScriptInterfaceKey() string {
+	return e.Name.Value
+}
+
+func (e Enum) TypeScriptInterfaceType() string {
+	parts := make([]string, len(e.Values))
+	for i, val := range e.Values {
+		if _, ok := val.(string); ok {
+			parts[i] = fmt.Sprintf("'%v'", val)
+			continue
+		}
+
+		parts[i] = fmt.Sprintf("%v", val)
+	}
+
+	return strings.Join(parts, " | ")
 }

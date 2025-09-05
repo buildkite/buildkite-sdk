@@ -2,6 +2,8 @@ package types
 
 import (
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
 )
@@ -20,6 +22,7 @@ func (u Union) IsPrimative() bool {
 	return false
 }
 
+// Go
 func (u Union) GoStructKey(isUnion bool) string {
 	return u.Name.ToTitleCase()
 }
@@ -117,4 +120,52 @@ func (u Union) Go() (string, error) {
 	)
 
 	return lines.String(), nil
+}
+
+// TypeScript
+func (u Union) TypeScriptInterfaceKey() string {
+	return u.Name.Value
+}
+
+func (u Union) TypeScriptInterfaceType() string {
+	parts := make([]string, len(u.TypeIdentifiers))
+	for i, typ := range u.TypeIdentifiers {
+		if obj, ok := typ.(Object); ok {
+			block := utils.NewTypeScriptInterface("")
+			for _, name := range obj.Properties.Keys() {
+				prop, _ := obj.Properties.Get(name)
+				val := prop.(Value)
+				required := slices.Contains(obj.Required, name)
+
+				block.AddItem(name, val.TypeScriptInterfaceType(), required)
+			}
+
+			res, _ := block.WriteUnionObject()
+			parts[i] = res
+			continue
+		}
+
+		parts[i] = typ.TypeScriptInterfaceType()
+	}
+	return strings.Join(parts, " | ")
+}
+
+func (u Union) TypeScript() (string, error) {
+	codeBlock := utils.NewCodeBlock(
+		fmt.Sprintf("export type %s = %s", u.Name.ToTitleCase(), u.TypeScriptInterfaceType()),
+	)
+
+	return codeBlock.String(), nil
+}
+
+func (u Union) TypeScriptImports() string {
+	var imports []string
+	for _, typ := range u.TypeIdentifiers {
+		if ref, ok := typ.(PropertyReference); ok {
+			imports = append(imports,
+				fmt.Sprintf("import {%s} from \"./%s.ts\"", ref.TypeScriptInterfaceType(), ref.Name),
+			)
+		}
+	}
+	return strings.Join(imports, "\n")
 }
