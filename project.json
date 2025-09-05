@@ -61,6 +61,17 @@
                 "parallel": false
             }
         },
+        "gen:types-ts": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rm -rf sdk/typescript2/src",
+                    "mkdir sdk/typescript2/src",
+                    "./internal/gen/mybinary ts sdk/typescript2/src"
+                ],
+                "parallel": false
+            }
+        },
         "gen:types": {
             "executor": "nx:run-commands",
             "options": {

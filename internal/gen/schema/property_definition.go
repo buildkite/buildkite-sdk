@@ -37,7 +37,6 @@ type PropertyAdditionalProperties struct {
 }
 
 func (p *PropertyAdditionalProperties) UnmarshalJSON(data []byte) error {
-	fmt.Println("here we are")
 	// Try unmarshaling as a boolean
 	var b bool
 	if err := json.Unmarshal(data, &b); err == nil {
@@ -103,4 +102,5 @@ type PropertyDefinition struct {
 	Properties           map[string]PropertyDefinition `json:"properties,omitempty"`
 	AdditionalProperties PropertyAdditionalProperties  `json:"additionalProperties"`
 	Examples             []any                         `json:"examples,omitempty"`
+	Required             []string                      `json:"required"`
 }

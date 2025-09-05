@@ -207,12 +207,14 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 				Name:                 propertyName,
 				Properties:           properties,
 				AdditionalProperties: &additionalProperties,
+				Required:             property.Required,
 			}, nil
 		}
 
 		return Object{
 			Name:       propertyName,
 			Properties: properties,
+			Required:   property.Required,
 		}, nil
 	}
 
@@ -299,6 +301,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 					Name:                 propertyName,
 					Properties:           properties,
 					AdditionalProperties: &additionalProperties,
+					Required:             item.Required,
 				})
 				continue
 			}
@@ -306,6 +309,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 			typeIdentifiers = append(typeIdentifiers, Object{
 				Name:       propertyName,
 				Properties: properties,
+				Required:   item.Required,
 			})
 			continue
 		}
@@ -406,9 +410,15 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 }
 
 type Value interface {
+	// Go
 	Go() (string, error)
 	GoStructType() string
 	GoStructKey(isUnion bool) string
+
+	// TypeScript
+	TypeScript() (string, error)
+	TypeScriptInterfaceKey() string
+	TypeScriptInterfaceType() string
 
 	IsReference() bool
 	IsPrimative() bool

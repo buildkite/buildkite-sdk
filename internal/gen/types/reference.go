@@ -26,6 +26,7 @@ func (p PropertyReference) IsNested() bool {
 	return len(parts) > 3
 }
 
+// Go
 func (p PropertyReference) Go() (string, error) {
 	return utils.CamelCaseToTitleCase(p.Name), nil
 }
@@ -48,6 +49,22 @@ func (p PropertyReference) GoStructType() string {
 }
 
 func (p PropertyReference) GoStructKey(isUnion bool) string {
+	if strings.Contains(p.Name, "_") {
+		return utils.DashCaseToTitleCase(p.Name)
+	}
+
+	return utils.CamelCaseToTitleCase(p.Name)
+}
+
+func (p PropertyReference) TypeScript() (string, error) {
+	return p.Name, nil
+}
+
+func (p PropertyReference) TypeScriptInterfaceKey() string {
+	return p.Name
+}
+
+func (p PropertyReference) TypeScriptInterfaceType() string {
 	if strings.Contains(p.Name, "_") {
 		return utils.DashCaseToTitleCase(p.Name)
 	}

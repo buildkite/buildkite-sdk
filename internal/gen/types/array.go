@@ -20,6 +20,7 @@ func (Array) IsPrimative() bool {
 	return false
 }
 
+// Go
 func (a Array) GoStructType() string {
 	if a.IsReference() {
 		return fmt.Sprintf("[]%s", a.Type.GoStructType())
@@ -81,4 +82,38 @@ func (a Array) Go() (string, error) {
 	}
 
 	return fmt.Sprintf("type %s = []%s", a.Name.ToTitleCase(), a.Type.GoStructType()), nil
+}
+
+// TypeScript
+func (a Array) TypeScript() (string, error) {
+	if union, ok := a.Type.(Union); ok {
+		codeBlock := utils.NewCodeBlock(
+			fmt.Sprintf("export type %s = (%s)[]", a.Name.ToTitleCase(), union.TypeScriptInterfaceType()),
+		)
+
+		return codeBlock.String(), nil
+	}
+
+	return fmt.Sprintf("export type %s = %s[]", a.Name.ToTitleCase(), a.Type.TypeScriptInterfaceType()), nil
+}
+
+func (a Array) TypeScriptInterfaceType() string {
+	if a.IsReference() {
+		return fmt.Sprintf("%s[]", a.Type.GoStructType())
+	}
+
+	switch a.Type.(type) {
+	case String:
+		return "string[]"
+	case Boolean:
+		return "boolean[]"
+	case Number:
+		return "number[]"
+	default:
+		return fmt.Sprintf("%s[]", a.Name.ToTitleCase())
+	}
+}
+
+func (a Array) TypeScriptInterfaceKey() string {
+	return a.Name.ToTitleCase()
 }
