@@ -145,9 +145,9 @@ export interface CommandStepManualRetryObject {
 export type CommandStepNotify = (NotifySimple | NotifyBasecamp | NotifySlack | NotifyGithubCommitStatus | NotifyGithubCheck)[]
 export type DependsOn = string | DependsOnList
 export type DependsOnList = (string | { 
-	step?: string
-
 	allow_failure?: true | false | 'true' | 'false'
+
+	step?: string
 })[]
 export type Env = Record<string, any>
 export type Fields = (TextField | SelectField)[]
