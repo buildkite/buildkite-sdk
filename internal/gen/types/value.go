@@ -288,6 +288,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 				}
 				properties.Set(name, objProp)
 			}
+			properties.SortKeys(sort.Strings)
 
 			if item.AdditionalProperties.Type != "" {
 				propDef := schema.PropertyDefinition{
