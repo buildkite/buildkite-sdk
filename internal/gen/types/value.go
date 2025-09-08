@@ -10,8 +10,8 @@ import (
 )
 
 type PipelineSchemaGenerator struct {
-	Definitions map[string]schema.PropertyDefinition
-	Properties  map[string]schema.SchemaProperty
+	Definitions *orderedmap.OrderedMap
+	Properties  *orderedmap.OrderedMap
 }
 
 var pipelineToJSONFn = `func (p Pipeline) ToJSON() (string, error) {
@@ -25,7 +25,10 @@ var pipelineToJSONFn = `func (p Pipeline) ToJSON() (string, error) {
 func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 	goStruct := utils.NewGoStruct("Pipeline", nil)
 
-	for name, prop := range p.Properties {
+	for _, name := range p.Properties.Keys() {
+		val, _ := p.Properties.Get(name)
+		prop := val.(schema.SchemaProperty)
+
 		structKey := utils.DashCaseToTitleCase(name)
 		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
 		goStruct.AddItem(structKey, structType, name, true)
@@ -48,7 +51,8 @@ func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 func (p PipelineSchemaGenerator) ResolveReference(ref schema.PropertyReferenceString) schema.PropertyDefinition {
 	keys := ref.Keys()
 	firstKey := keys[0]
-	currentDef := p.Definitions[firstKey]
+	val, _ := p.Definitions.Get(firstKey)
+	currentDef := val.(schema.PropertyDefinition)
 
 	if len(keys) == 1 {
 		return currentDef
@@ -347,7 +351,9 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 				}
 
 				refName := item.Items.Ref.Name()
-				property := p.Definitions[refName]
+				val, _ := p.Definitions.Get(refName)
+				property := val.(schema.PropertyDefinition)
+
 				arrayType, err := p.PropertyDefinitionToValue(refName, property)
 				if err != nil {
 					return Union{}, fmt.Errorf("finding ref def: %v", err)
