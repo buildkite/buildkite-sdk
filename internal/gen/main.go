@@ -4,20 +4,24 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"sort"
 
 	"github.com/buildkite/pipeline-sdk/internal/gen/schema"
 	"github.com/buildkite/pipeline-sdk/internal/gen/types"
 	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
+	"github.com/iancoleman/orderedmap"
 )
 
 func generateTypeScriptTypes(
-	pipelineSchema schema.PipelineSchema,
 	generator types.PipelineSchemaGenerator,
 	outDir string,
 ) error {
 	codeBlock := utils.NewCodeBlock()
 
-	for name, prop := range pipelineSchema.Definitions {
+	for _, name := range generator.Definitions.Keys() {
+		val, _ := generator.Definitions.Get(name)
+		prop := val.(schema.PropertyDefinition)
+
 		property, err := generator.PropertyDefinitionToValue(name, prop)
 		if err != nil {
 			return fmt.Errorf("converting property definition to a value: %v", err)
@@ -46,13 +50,25 @@ func generateTypes(outDir, language string) error {
 		return fmt.Errorf("reading pipeline schema: %v", err)
 	}
 
+	definitions := orderedmap.New()
+	for key, prop := range pipelineSchema.Definitions {
+		definitions.Set(key, prop)
+	}
+	definitions.SortKeys(sort.Strings)
+
+	properties := orderedmap.New()
+	for key, prop := range pipelineSchema.Properties {
+		properties.Set(key, prop)
+	}
+	properties.SortKeys(sort.Strings)
+
 	generator := types.PipelineSchemaGenerator{
-		Definitions: pipelineSchema.Definitions,
-		Properties:  pipelineSchema.Properties,
+		Definitions: definitions,
+		Properties:  properties,
 	}
 
 	if language == "ts" {
-		return generateTypeScriptTypes(pipelineSchema, generator, outDir)
+		return generateTypeScriptTypes(generator, outDir)
 	}
 
 	for name, prop := range pipelineSchema.Definitions {
