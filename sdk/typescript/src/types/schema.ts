@@ -411,3 +411,14 @@ export interface WaitStep {
 
 	wait?: string
 }
+export interface BuildkitePipeline { 
+	agents?: Agents
+
+	env?: Env
+
+	image?: Image
+
+	notify?: BuildNotify
+
+	steps?: PipelineSteps
+}

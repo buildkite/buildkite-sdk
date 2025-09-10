@@ -35,8 +35,23 @@ func generateTypeScriptTypes(
 		codeBlock.AddLines(contents)
 	}
 
+	pipelineInterface := utils.NewTypeScriptInterface("BuildkitePipeline")
+	for _, name := range generator.Properties.Keys() {
+		val, _ := generator.Properties.Get(name)
+		prop := val.(schema.SchemaProperty)
+
+		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
+		pipelineInterface.AddItem(name, structType, false)
+	}
+
+	pipelineString, err := pipelineInterface.Write()
+	if err != nil {
+		return fmt.Errorf("generating pipeline interface: %v", err)
+	}
+	codeBlock.AddLines(pipelineString)
+
 	file := utils.NewTypeScriptFile(path.Join(outDir, "schema.ts"), nil, codeBlock)
-	err := file.Write()
+	err = file.Write()
 	if err != nil {
 		return fmt.Errorf("writing ts schema file: %v", err)
 	}
