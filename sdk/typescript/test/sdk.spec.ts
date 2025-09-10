@@ -1,4 +1,4 @@
-import * as buildkite from "./sdk";
+import * as buildkite from "../src/index";
 
 describe("toJSON()", () => {
     it("should render the pipeline steps", () => {

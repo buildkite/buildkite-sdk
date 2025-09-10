@@ -65,9 +65,9 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": [
-                    "rm -rf sdk/typescript2/src",
-                    "mkdir sdk/typescript2/src",
-                    "./internal/gen/mybinary ts sdk/typescript2/src"
+                    "rm -rf sdk/typescript/src/types",
+                    "mkdir sdk/typescript/src/types",
+                    "./internal/gen/mybinary ts sdk/typescript/src/types"
                 ],
                 "parallel": false
             }
