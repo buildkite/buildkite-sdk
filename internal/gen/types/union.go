@@ -169,3 +169,48 @@ func (u Union) TypeScriptImports() string {
 	}
 	return strings.Join(imports, "\n")
 }
+
+// Python
+func (u Union) Python() (string, error) {
+	codeBlock := utils.NewCodeBlock()
+
+	parts := make([]string, len(u.TypeIdentifiers))
+	for i, typ := range u.TypeIdentifiers {
+		// Nested Object
+		if obj, ok := typ.(Object); ok {
+			nestedObj := Object{
+				Name:                 NewPropertyName(fmt.Sprintf("%sObject", obj.Name.Value)),
+				Properties:           obj.Properties,
+				AdditionalProperties: obj.AdditionalProperties,
+			}
+
+			objLines, err := nestedObj.Python()
+			if err != nil {
+				return "", fmt.Errorf("generating object lines for union [%s]: %v", u.Name.Value, err)
+			}
+
+			codeBlock.AddLines(objLines)
+			parts[i] = nestedObj.PythonClassType()
+			continue
+		}
+
+		parts[i] = typ.PythonClassType()
+	}
+
+	codeBlock.AddLines(fmt.Sprintf("type %s = Union[%s]", u.Name.ToTitleCase(), strings.Join(parts, ",")))
+	return codeBlock.String(), nil
+}
+
+func (u Union) PythonClassKey() string {
+	return utils.CamelCaseToSnakeCase(u.Name.Value)
+}
+
+func (u Union) PythonClassType() string {
+	codeBlock := utils.NewCodeBlock()
+	parts := make([]string, len(u.TypeIdentifiers))
+	for i, typ := range u.TypeIdentifiers {
+		parts[i] = typ.PythonClassType()
+	}
+	codeBlock.AddLines(fmt.Sprintf("Union[%s]", strings.Join(parts, ",")))
+	return codeBlock.String()
+}

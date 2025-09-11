@@ -71,3 +71,25 @@ func (p PropertyReference) TypeScriptInterfaceType() string {
 
 	return utils.CamelCaseToTitleCase(p.Name)
 }
+
+// Python
+func (p PropertyReference) Python() (string, error) {
+	return "", nil
+}
+
+func (p PropertyReference) PythonClassKey() string {
+	return utils.CamelCaseToSnakeCase(p.Name)
+}
+
+func (p PropertyReference) PythonClassType() string {
+	switch p.Type.(type) {
+	case String:
+		return p.Type.PythonClassType()
+	case Number:
+		return p.Type.PythonClassType()
+	case Boolean:
+		return p.Type.PythonClassType()
+	}
+
+	return utils.CamelCaseToTitleCase(p.Ref.Name())
+}

@@ -170,3 +170,35 @@ func (e Enum) TypeScriptInterfaceType() string {
 
 	return strings.Join(parts, " | ")
 }
+
+// Python
+func (e Enum) Python() (string, error) {
+	return fmt.Sprintf("type %s = %s", e.Name.ToTitleCase(), e.PythonClassType()), nil
+}
+
+func (e Enum) PythonClassKey() string {
+	return utils.CamelCaseToTitleCase(e.Name.Value)
+}
+
+func (e Enum) PythonClassType() string {
+	parts := make([]string, len(e.Values))
+	for i, val := range e.Values {
+		if val == true {
+			parts[i] = "True"
+			continue
+		}
+
+		if val == false {
+			parts[i] = "False"
+			continue
+		}
+
+		if _, ok := val.(string); ok {
+			parts[i] = fmt.Sprintf("Literal['%v']", val)
+			continue
+		}
+
+		parts[i] = fmt.Sprintf("%v", val)
+	}
+	return fmt.Sprintf("Union[%s]", strings.Join(parts, ","))
+}

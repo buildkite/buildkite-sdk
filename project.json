@@ -61,6 +61,17 @@
                 "parallel": false
             }
         },
+        "gen:types-py": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rm -rf sdk/python2/src/buildkite_sdk",
+                    "mkdir sdk/python2/src/buildkite_sdk",
+                    "./internal/gen/mybinary py sdk/python2/src/buildkite_sdk"
+                ],
+                "parallel": false
+            }
+        },
         "gen:types-ts": {
             "executor": "nx:run-commands",
             "options": {

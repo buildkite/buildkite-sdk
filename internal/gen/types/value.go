@@ -194,7 +194,6 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 		}
 		properties.SortKeys(sort.Strings)
 
-		fmt.Println(property.AdditionalProperties.Type)
 		if property.AdditionalProperties.Type != "" {
 			propDef := schema.PropertyDefinition{
 				Type:        schema.PropertyType(property.AdditionalProperties.Type),
@@ -426,6 +425,11 @@ type Value interface {
 	TypeScript() (string, error)
 	TypeScriptInterfaceKey() string
 	TypeScriptInterfaceType() string
+
+	// Python
+	Python() (string, error)
+	PythonClassKey() string
+	PythonClassType() string
 
 	IsReference() bool
 	IsPrimative() bool
