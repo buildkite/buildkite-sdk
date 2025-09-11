@@ -1,6 +1,10 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
+)
 
 type Boolean struct {
 	Name PropertyName
@@ -43,4 +47,17 @@ func (b Boolean) TypeScriptInterfaceKey() string {
 
 func (b Boolean) TypeScriptInterfaceType() string {
 	return "boolean"
+}
+
+// Python
+func (b Boolean) Python() (string, error) {
+	return fmt.Sprintf("type %s = bool", b.Name.ToTitleCase()), nil
+}
+
+func (b Boolean) PythonClassKey() string {
+	return utils.CamelCaseToSnakeCase(b.Name.Value)
+}
+
+func (b Boolean) PythonClassType() string {
+	return "bool"
 }

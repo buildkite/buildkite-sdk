@@ -136,6 +136,11 @@ func (o Object) Go() (string, error) {
 func (o Object) TypeScript() (string, error) {
 	keys := o.Properties.Keys()
 	if len(keys) == 0 {
+		if o.AdditionalProperties != nil {
+			prop := *o.AdditionalProperties
+			return fmt.Sprintf("export type %s = Record<string, %s>", o.Name.ToTitleCase(), prop.TypeScriptInterfaceType()), nil
+		}
+
 		return fmt.Sprintf("export type %s = Record<string, any>", o.Name.ToTitleCase()), nil
 	}
 
@@ -251,4 +256,93 @@ func (o Object) TypeScriptImports() string {
 		}
 	}
 	return strings.Join(imports, "\n")
+}
+
+// Python
+func (o Object) Python() (string, error) {
+	keys := o.Properties.Keys()
+	if len(keys) == 0 {
+		if o.AdditionalProperties != nil {
+			prop := *o.AdditionalProperties
+			return fmt.Sprintf("type %s = Dict[str, %s]", o.Name.ToTitleCase(), prop.PythonClassType()), nil
+		}
+
+		return fmt.Sprintf("type %s = Dict[str, Any]", o.Name.ToTitleCase()), nil
+	}
+
+	codeBlock := utils.NewCodeBlock()
+	pyClass := utils.NewPythonClass(o.Name.ToTitleCase())
+	for _, name := range keys {
+		// Reserved words
+		if name == "async" {
+			pyClass.AddItem("pipeline_async", "Optional[Union[True,False,Literal['true'],Literal['false']]] = Field(alias='async')", true)
+			continue
+		}
+
+		if name == "if" {
+			pyClass.AddItem("pipeline_if", "Optional[If] = Field(alias='if')", true)
+			continue
+		}
+
+		if name == "with" {
+			pyClass.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject] = Field(alias='with')", true)
+			continue
+		}
+
+		prop, _ := o.Properties.Get(name)
+		val := prop.(Value)
+
+		structType := val.PythonClassType()
+		required := slices.Contains(o.Required, name)
+
+		if obj, ok := val.(Object); ok {
+			keys := obj.Properties.Keys()
+			if len(keys) == 0 {
+				pyClass.AddItem(name, "Dict[str, Any]", required)
+				continue
+			}
+
+			pyClass := utils.NewPythonClass(structType)
+			for _, propName := range keys {
+				nestedProp, _ := obj.Properties.Get(propName)
+				nestedVal := nestedProp.(Value)
+				nestedRequired := slices.Contains(obj.Required, propName)
+				pyClass.AddItem(propName, nestedVal.PythonClassType(), nestedRequired)
+			}
+
+			nestedObjectClass, err := pyClass.Write()
+			if err != nil {
+				return "", fmt.Errorf("writing nested class [%s]: %v", o.Name.Value, err)
+			}
+			codeBlock.AddLines(nestedObjectClass)
+		}
+
+		pyClass.AddItem(name, structType, required)
+	}
+
+	pyClassString, err := pyClass.Write()
+	if err != nil {
+		return "", fmt.Errorf("writing python class: %v", err)
+	}
+
+	codeBlock.AddLines(pyClassString)
+	return codeBlock.String(), nil
+}
+
+func (o Object) PythonClassKey() string {
+	return utils.CamelCaseToSnakeCase(o.Name.Value)
+}
+
+func (o Object) PythonClassType() string {
+	keys := o.Properties.Keys()
+	if len(keys) == 0 {
+		if o.AdditionalProperties != nil {
+			prop := *o.AdditionalProperties
+			return fmt.Sprintf("Dict[str, %s]", prop.PythonClassType())
+		}
+
+		return "Dict[str, Any]"
+	}
+
+	return o.Name.ToTitleCase()
 }

@@ -1,6 +1,10 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
+)
 
 type Number struct {
 	Name PropertyName
@@ -42,4 +46,17 @@ func (n Number) TypeScriptInterfaceKey() string {
 
 func (n Number) TypeScriptInterfaceType() string {
 	return "number"
+}
+
+// Python
+func (n Number) Python() (string, error) {
+	return fmt.Sprintf("type %s = int", n.Name.ToTitleCase()), nil
+}
+
+func (n Number) PythonClassKey() string {
+	return utils.CamelCaseToTitleCase(n.Name.Value)
+}
+
+func (n Number) PythonClassType() string {
+	return "int"
 }

@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
 )
@@ -116,4 +117,46 @@ func (a Array) TypeScriptInterfaceType() string {
 
 func (a Array) TypeScriptInterfaceKey() string {
 	return a.Name.ToTitleCase()
+}
+
+// Python
+func (a Array) Python() (string, error) {
+	codeBlock := utils.NewCodeBlock()
+	listType := a.Type.PythonClassType()
+
+	if union, ok := a.Type.(Union); ok {
+		var unionTypeParts []string
+		for _, typ := range union.TypeIdentifiers {
+			if obj, ok := typ.(Object); ok {
+				nestedObj := Object{
+					Name:                 NewPropertyName(fmt.Sprintf("%sObject", obj.Name.Value)),
+					Properties:           obj.Properties,
+					AdditionalProperties: obj.AdditionalProperties,
+				}
+
+				objLines, err := nestedObj.Python()
+				if err != nil {
+					return "", fmt.Errorf("generating object lines for union [%s]: %v", a.Name.Value, err)
+				}
+
+				codeBlock.AddLines(objLines)
+				unionTypeParts = append(unionTypeParts, nestedObj.PythonClassType())
+				continue
+			}
+
+			unionTypeParts = append(unionTypeParts, typ.PythonClassType())
+		}
+		listType = strings.Join(unionTypeParts, ",")
+	}
+
+	codeBlock.AddLines(fmt.Sprintf("type %s = List[%s]", a.Name.ToTitleCase(), listType))
+	return codeBlock.String(), nil
+}
+
+func (a Array) PythonClassKey() string {
+	return utils.CamelCaseToSnakeCase(a.Name.Value)
+}
+
+func (a Array) PythonClassType() string {
+	return fmt.Sprintf("List[%s]", a.Type.PythonClassType())
 }
