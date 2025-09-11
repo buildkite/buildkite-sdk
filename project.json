@@ -48,6 +48,41 @@
                 "infra:format"
             ]
         },
+        "gen:types-go": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rm -rf sdk/go2/sdk",
+                    "mkdir sdk/go2/sdk",
+                    "./internal/gen/mybinary go sdk/go2/sdk",
+                    "~/go/bin/goimports -w ./sdk/go2/sdk",
+                    "gofmt ./sdk/go2/sdk"
+                ],
+                "parallel": false
+            }
+        },
+        "gen:types-py": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rm -rf sdk/python2/src/buildkite_sdk",
+                    "mkdir sdk/python2/src/buildkite_sdk",
+                    "./internal/gen/mybinary py sdk/python2/src/buildkite_sdk"
+                ],
+                "parallel": false
+            }
+        },
+        "gen:types-ts": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "rm -rf sdk/typescript/src/types",
+                    "mkdir sdk/typescript/src/types",
+                    "./internal/gen/mybinary ts sdk/typescript/src/types"
+                ],
+                "parallel": false
+            }
+        },
         "gen:types": {
             "executor": "nx:run-commands",
             "options": {
