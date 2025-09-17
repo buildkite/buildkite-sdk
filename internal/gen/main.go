@@ -32,7 +32,7 @@ func generatePythonTypes(
 			return fmt.Errorf("generating files contents for [%s]", name)
 		}
 
-		codeBlock.AddLines(contents)
+		codeBlock.AddLines(contents, "")
 	}
 
 	file := utils.NewPythonFile(path.Join(outDir, "schema.py"), codeBlock)

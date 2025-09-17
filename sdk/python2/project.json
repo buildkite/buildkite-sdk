@@ -65,7 +65,7 @@
             ],
             "options": {
                 "commands": ["uv run pytest tests/"],
-                "cwd": "sdk/python",
+                "cwd": "sdk/python2",
                 "parallel": false
             },
             "dependsOn": ["install"]

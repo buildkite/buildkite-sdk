@@ -194,11 +194,12 @@ func (e Enum) PythonClassType() string {
 		}
 
 		if _, ok := val.(string); ok {
-			parts[i] = fmt.Sprintf("Literal['%v']", val)
+			parts[i] = fmt.Sprintf("'%v'", val)
 			continue
 		}
 
 		parts[i] = fmt.Sprintf("%v", val)
 	}
-	return fmt.Sprintf("Union[%s]", strings.Join(parts, ","))
+
+	return fmt.Sprintf("Literal[%s]", strings.Join(parts, ","))
 }
