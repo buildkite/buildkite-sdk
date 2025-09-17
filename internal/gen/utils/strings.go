@@ -24,6 +24,21 @@ func CamelCaseToSnakeCase(s string) string {
 	return builder.String()
 }
 
+func TitleCaseToSnakeCase(s string) string {
+	var builder strings.Builder
+	for i, r := range s {
+		if unicode.IsUpper(r) {
+			if i > 0 {
+				builder.WriteRune('_')
+			}
+			builder.WriteRune(unicode.ToLower(r))
+		} else {
+			builder.WriteRune(r)
+		}
+	}
+	return builder.String()
+}
+
 func CamelCaseToTitleCase(str string) string {
 	caser := cases.Title(language.English, cases.NoLower)
 	return caser.String(str)

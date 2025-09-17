@@ -272,20 +272,25 @@ func (o Object) Python() (string, error) {
 
 	codeBlock := utils.NewCodeBlock()
 	pyClass := utils.NewPythonClass(o.Name.ToTitleCase())
+	pyTypedDict := utils.NewPythonClass(fmt.Sprintf("%sDict", o.Name.ToTitleCase()))
+
 	for _, name := range keys {
 		// Reserved words
 		if name == "async" {
-			pyClass.AddItem("pipeline_async", "Optional[Union[True,False,Literal['true'],Literal['false']]] = Field(alias='async')", true)
+			pyTypedDict.AddItem("pipeline_async", "Literal[True, False, 'true', 'false']", "", "async", false)
+			pyClass.AddItem("pipeline_async", "Literal[True, False, 'true', 'false']", "", "async", false)
 			continue
 		}
 
 		if name == "if" {
-			pyClass.AddItem("pipeline_if", "Optional[If] = Field(alias='if')", true)
+			pyTypedDict.AddItem("pipeline_if", "If", "", "if", false)
+			pyClass.AddItem("pipeline_if", "If", "", "if", false)
 			continue
 		}
 
 		if name == "with" {
-			pyClass.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject] = Field(alias='with')", true)
+			pyTypedDict.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", true)
+			pyClass.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", true)
 			continue
 		}
 
@@ -293,38 +298,75 @@ func (o Object) Python() (string, error) {
 		val := prop.(Value)
 
 		structType := val.PythonClassType()
+		dictStructType := structType
 		required := slices.Contains(o.Required, name)
 
+		// Object
 		if obj, ok := val.(Object); ok {
 			keys := obj.Properties.Keys()
 			if len(keys) == 0 {
-				pyClass.AddItem(name, "Dict[str, Any]", required)
+				pyTypedDict.AddItem(name, "Dict[str, Any]", "", "", required)
+				pyClass.AddItem(name, "Dict[str, Any]", "", "", required)
 				continue
 			}
 
-			pyClass := utils.NewPythonClass(structType)
+			nestedPyClass := utils.NewPythonClass(structType)
+			nestedPyTypeDict := utils.NewPythonClass(fmt.Sprintf("%sDict", structType))
 			for _, propName := range keys {
 				nestedProp, _ := obj.Properties.Get(propName)
 				nestedVal := nestedProp.(Value)
+				nestedType := nestedVal.PythonClassType()
 				nestedRequired := slices.Contains(obj.Required, propName)
-				pyClass.AddItem(propName, nestedVal.PythonClassType(), nestedRequired)
+
+				nestedDictType := nestedType
+				if obj, ok := nestedVal.(Object); ok {
+					if len(obj.Properties.Keys()) > 0 {
+						nestedDictType = fmt.Sprintf("%sDict", nestedType)
+					}
+				}
+
+				nestedPyTypeDict.AddItem(propName, nestedDictType, "", "", nestedRequired)
+				nestedPyClass.AddItem(propName, nestedType, "", "", nestedRequired)
 			}
 
-			nestedObjectClass, err := pyClass.Write()
+			nestedObjectClass, err := nestedPyClass.Write()
 			if err != nil {
 				return "", fmt.Errorf("writing nested class [%s]: %v", o.Name.Value, err)
 			}
 			codeBlock.AddLines(nestedObjectClass)
+
+			nestedObjectTypedDict, err := nestedPyTypeDict.WriteTypedDict()
+			if err != nil {
+				return "", fmt.Errorf("writing nested class [%s]: %v", o.Name.Value, err)
+			}
+			codeBlock.AddLines(nestedObjectTypedDict)
 		}
 
-		pyClass.AddItem(name, structType, required)
+		// PropertyReference
+		constructorName := ""
+		if ref, ok := val.(PropertyReference); ok {
+			if obj, ok := ref.Type.(Object); ok {
+				if len(obj.Properties.Keys()) > 0 {
+					dictStructType = fmt.Sprintf("%sDict", structType)
+					constructorName = structType
+				}
+			}
+		}
+
+		pyTypedDict.AddItem(name, dictStructType, "", "", required)
+		pyClass.AddItem(name, structType, constructorName, "", required)
 	}
+
+	pyTypedDictString, err := pyTypedDict.WriteTypedDict()
+	if err != nil {
+		return "", fmt.Errorf("writing python typed dict: %v", err)
+	}
+	codeBlock.AddLines(pyTypedDictString, "")
 
 	pyClassString, err := pyClass.Write()
 	if err != nil {
 		return "", fmt.Errorf("writing python class: %v", err)
 	}
-
 	codeBlock.AddLines(pyClassString)
 	return codeBlock.String(), nil
 }
