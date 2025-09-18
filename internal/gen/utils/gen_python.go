@@ -53,12 +53,12 @@ func NewPythonFile(
 }
 
 var pythonClassTemplate = `class {{.Name}}(BaseModel):{{ range .Items}}
-	{{.Name}}: {{if eq false .Required }}Optional[{{.Value}}]{{if .Alias}} = Field(serialization_alias='{{.Alias}}'){{else}} = None{{end}}{{else}}{{.Value}}{{if .Alias}} = Field(serialization_alias='{{.Alias}}'){{end}}{{end}}{{end}}
+	{{.Name}}: {{if eq false .Required }}Optional[{{.Value}}]{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{else}} = None{{end}}{{else}}{{.Value}}{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{end}}{{end}}{{end}}
 
 	@classmethod
 	def from_dict(cls, data: {{.Name}}Dict) -> {{.Name}}:
 	    return cls(
-			{{range .Items}}{{.Name}}={{if .ConstructorName}}{{.ConstructorName}}.from_dict(data['{{.Name}}']){{else}}data['{{.Name}}']{{end}}{{if eq false .Required }} if '{{.Name}}' in data else None{{end}},
+			{{range .Items}}{{.Name}}={{if .IsObjectArray}}list(map({{.ConstructorName}}.from_dict, data['{{.Name}}'])){{else}}{{if .ConstructorName}}{{.ConstructorName}}.from_dict(data['{{.Name}}']){{else}}data['{{.Name}}']{{end}}{{end}}{{if eq false .Required }} if '{{.Name}}' in data else None{{end}},
 			{{end}}
 		)`
 
@@ -71,6 +71,7 @@ type PythonClassItem struct {
 	Value           string
 	ConstructorName string
 	Required        bool
+	IsObjectArray   bool
 }
 
 type PythonClass struct {
@@ -78,13 +79,14 @@ type PythonClass struct {
 	Items []PythonClassItem
 }
 
-func (p *PythonClass) AddItem(name, value, constructorName, alias string, required bool) {
+func (p *PythonClass) AddItem(name, value, constructorName, alias string, required, isObjectArray bool) {
 	p.Items = append(p.Items, PythonClassItem{
 		Name:            name,
 		Alias:           alias,
 		Value:           value,
 		ConstructorName: constructorName,
 		Required:        required,
+		IsObjectArray:   isObjectArray,
 	})
 }
 
@@ -114,49 +116,4 @@ func (p PythonClass) WriteTypedDict() (string, error) {
 
 func NewPythonClass(name string) *PythonClass {
 	return &PythonClass{Name: name}
-}
-
-var pythonDictToClassTemplate = `def {{.Name}}(args: {{.ArgsType}}) -> {{.ReturnType}}:
-	return {{.ReturnType}}(
-		{{range .Items}}{{.Name}}={{if .ConstructorName}}{{.ConstructorName}}(args.get('{{.Name}}', {})){{else}}args.get('{{.Name}}', None){{end}},
-		{{end}}
-	)`
-
-type PythonDictToClassFunctionItem struct {
-	Name            string
-	ConstructorName string
-}
-
-type PythonDictToClassFunction struct {
-	Name       string
-	ReturnType string
-	ArgsType   string
-	Items      []PythonDictToClassFunctionItem
-}
-
-func (p *PythonDictToClassFunction) AddItem(name, constructorName string) {
-	p.Items = append(p.Items, PythonDictToClassFunctionItem{
-		Name:            name,
-		ConstructorName: constructorName,
-	})
-}
-
-func (p PythonDictToClassFunction) Write() (string, error) {
-	tmp := template.Must(template.New("pytypeddicttoclass").Parse(pythonDictToClassTemplate))
-
-	res := &bytes.Buffer{}
-	err := tmp.Execute(res, p)
-	if err != nil {
-		return "", fmt.Errorf("writing out typed dict template: %v", err)
-	}
-
-	return res.String(), nil
-}
-
-func NewPythonDictToClassFunction(name, argsType, returnType string) *PythonDictToClassFunction {
-	return &PythonDictToClassFunction{
-		Name:       name,
-		ArgsType:   argsType,
-		ReturnType: returnType,
-	}
 }

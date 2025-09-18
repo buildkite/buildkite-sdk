@@ -256,9 +256,16 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 		// Reference
 		if item.Ref != "" {
 			refName := item.Ref.Name()
+			refDef := p.ResolveReference(item.Ref)
+			refTyp, err := p.PropertyDefinitionToValue(refName, refDef)
+			if err != nil {
+				return Union{}, fmt.Errorf("looking up reference type: %v", err)
+			}
+
 			typeIdentifiers = append(typeIdentifiers, PropertyReference{
 				Name: refName,
 				Ref:  item.Ref,
+				Type: refTyp,
 			})
 			continue
 		}

@@ -33,7 +33,7 @@ class AutomaticRetry(BaseModel):
 			limit=data['limit'] if 'limit' in data else None,
 			signal=data['signal'] if 'signal' in data else None,
 			signal_reason=data['signal_reason'] if 'signal_reason' in data else None,
-
+			
 		)
 
 type AutomaticRetryList = List[AutomaticRetry]
@@ -65,7 +65,7 @@ class BlockStep(BaseModel):
 	fields: Optional[Fields] = None
 	id: Optional[str] = None
 	identifier: Optional[str] = None
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 	key: Optional[str] = None
 	label: Optional[str] = None
 	name: Optional[str] = None
@@ -90,12 +90,12 @@ class BlockStep(BaseModel):
 			name=data['name'] if 'name' in data else None,
 			prompt=data['prompt'] if 'prompt' in data else None,
 			type=data['type'] if 'type' in data else None,
-
+			
 		)
 
 type Branches = Union[str,List[str]]
 
-type BuildNotify = List[Union[NotifySimple,NotifyEmail,NotifyBasecamp,NotifySlack,NotifyWebhook,NotifyPagerduty,NotifyGithubCommitStatus,NotifyGithubCheck]]
+type BuildNotify = List[Union[NotifySimple,NotifyEmailDict,NotifyEmail,NotifyBasecampDict,NotifyBasecamp,NotifySlackDict,NotifySlack,NotifyWebhookDict,NotifyWebhook,NotifyPagerdutyDict,NotifyPagerduty,NotifyGithubCommitStatusDict,NotifyGithubCommitStatus,NotifyGithubCheckDict,NotifyGithubCheck]]
 
 class CacheObjectDict(TypedDict):
 	name: NotRequired[str]
@@ -113,7 +113,7 @@ class CacheObject(BaseModel):
 			name=data['name'] if 'name' in data else None,
 			paths=data['paths'] if 'paths' in data else None,
 			size=data['size'] if 'size' in data else None,
-
+			
 		)
 type Cache = Union[str,List[str],CacheObject]
 
@@ -128,7 +128,7 @@ class CommandStepRetry(BaseModel):
 	    return cls(
 			automatic=data['automatic'] if 'automatic' in data else None,
 			manual=data['manual'] if 'manual' in data else None,
-
+			
 		)
 class CommandStepRetryDict(TypedDict):
 	automatic: NotRequired[CommandStepAutomaticRetry]
@@ -144,7 +144,7 @@ class CommandStepSignature(BaseModel):
 			algorithm=data['algorithm'] if 'algorithm' in data else None,
 			signed_fields=data['signed_fields'] if 'signed_fields' in data else None,
 			value=data['value'] if 'value' in data else None,
-
+			
 		)
 class CommandStepSignatureDict(TypedDict):
 	algorithm: NotRequired[str]
@@ -177,8 +177,8 @@ class CommandStepDict(TypedDict):
 	parallelism: NotRequired[int]
 	plugins: NotRequired[Plugins]
 	priority: NotRequired[int]
-	retry: NotRequired[CommandStepRetry]
-	signature: NotRequired[CommandStepSignature]
+	retry: NotRequired[CommandStepRetryDict]
+	signature: NotRequired[CommandStepSignatureDict]
 	skip: NotRequired[Skip]
 	soft_fail: NotRequired[SoftFail]
 	timeout_in_minutes: NotRequired[int]
@@ -200,7 +200,7 @@ class CommandStep(BaseModel):
 	env: Optional[Env] = None
 	id: Optional[str] = None
 	identifier: Optional[str] = None
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 	if_changed: Optional[str] = None
 	image: Optional[str] = None
 	key: Optional[str] = None
@@ -247,13 +247,13 @@ class CommandStep(BaseModel):
 			parallelism=data['parallelism'] if 'parallelism' in data else None,
 			plugins=data['plugins'] if 'plugins' in data else None,
 			priority=data['priority'] if 'priority' in data else None,
-			retry=data['retry'] if 'retry' in data else None,
-			signature=data['signature'] if 'signature' in data else None,
+			retry=CommandStepRetry.from_dict(data['retry']) if 'retry' in data else None,
+			signature=CommandStepSignature.from_dict(data['signature']) if 'signature' in data else None,
 			skip=data['skip'] if 'skip' in data else None,
 			soft_fail=data['soft_fail'] if 'soft_fail' in data else None,
 			timeout_in_minutes=data['timeout_in_minutes'] if 'timeout_in_minutes' in data else None,
 			type=data['type'] if 'type' in data else None,
-
+			
 		)
 
 type CommandStepAutomaticRetry = Union[Literal[True,False,'true','false'],AutomaticRetry,AutomaticRetryList]
@@ -278,10 +278,10 @@ class CommandStepManualRetryObject(BaseModel):
 			allowed=data['allowed'] if 'allowed' in data else None,
 			permit_on_passed=data['permit_on_passed'] if 'permit_on_passed' in data else None,
 			reason=data['reason'] if 'reason' in data else None,
-
+			
 		)
 
-type CommandStepNotify = List[Union[NotifySimple,NotifyBasecamp,NotifySlack,NotifyGithubCommitStatus,NotifyGithubCheck]]
+type CommandStepNotify = List[Union[NotifySimple,NotifyBasecampDict,NotifyBasecamp,NotifySlackDict,NotifySlack,NotifyGithubCommitStatusDict,NotifyGithubCommitStatus,NotifyGithubCheckDict,NotifyGithubCheck]]
 
 type DependsOn = Union[str,DependsOnList]
 
@@ -298,13 +298,13 @@ class DependsOnListObject(BaseModel):
 	    return cls(
 			allow_failure=data['allow_failure'] if 'allow_failure' in data else None,
 			step=data['step'] if 'step' in data else None,
-
+			
 		)
-type DependsOnList = List[Union[str,DependsOnListObject]]
+type DependsOnList = List[Union[str,DependsOnListObject,DependsOnListObjectDict]]
 
 type Env = Dict[str, Any]
 
-type Fields = List[Union[TextField,SelectField]]
+type Fields = List[Union[TextFieldDict,TextField,SelectFieldDict,SelectField]]
 
 class GroupStepDict(TypedDict):
 	allow_dependency_failure: NotRequired[AllowDependencyFailure]
@@ -327,7 +327,7 @@ class GroupStep(BaseModel):
 	group: str
 	id: Optional[str] = None
 	identifier: Optional[str] = None
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 	if_changed: Optional[str] = None
 	key: Optional[str] = None
 	label: Optional[str] = None
@@ -352,10 +352,10 @@ class GroupStep(BaseModel):
 			notify=data['notify'] if 'notify' in data else None,
 			skip=data['skip'] if 'skip' in data else None,
 			steps=data['steps'],
-
+			
 		)
 
-type GroupSteps = List[Union[BlockStep,NestedBlockStep,StringBlockStep,InputStep,NestedInputStep,StringInputStep,CommandStep,NestedCommandStep,WaitStep,NestedWaitStep,StringWaitStep,TriggerStep,NestedTriggerStep]]
+type GroupSteps = List[Union[BlockStepDict,BlockStep,NestedBlockStepDict,NestedBlockStep,StringBlockStep,InputStepDict,InputStep,NestedInputStepDict,NestedInputStep,StringInputStep,CommandStepDict,CommandStep,NestedCommandStepDict,NestedCommandStep,WaitStepDict,WaitStep,NestedWaitStepDict,NestedWaitStep,StringWaitStep,TriggerStepDict,TriggerStep,NestedTriggerStepDict,NestedTriggerStep]]
 
 type If = str
 
@@ -387,7 +387,7 @@ class InputStep(BaseModel):
 	fields: Optional[Fields] = None
 	id: Optional[str] = None
 	identifier: Optional[str] = None
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 	input: Optional[str] = None
 	key: Optional[str] = None
 	label: Optional[str] = None
@@ -412,7 +412,7 @@ class InputStep(BaseModel):
 			name=data['name'] if 'name' in data else None,
 			prompt=data['prompt'] if 'prompt' in data else None,
 			type=data['type'] if 'type' in data else None,
-
+			
 		)
 
 type Key = str
@@ -437,7 +437,7 @@ class MatrixAdjustments(BaseModel):
 			skip=data['skip'] if 'skip' in data else None,
 			soft_fail=data['soft_fail'] if 'soft_fail' in data else None,
 			matrix_with=data['matrix_with'],
-
+			
 		)
 
 type MatrixAdjustmentsWithObject = Dict[str, str]
@@ -447,7 +447,7 @@ type MatrixElement = Union[str,int,bool]
 type MatrixElementList = List[Union[str,int,bool]]
 
 class MatrixObjectDict(TypedDict):
-	adjustments: NotRequired[List[MatrixAdjustments]]
+	adjustments: NotRequired[List[MatrixAdjustmentsDict]]
 	setup: MatrixSetup
 
 class MatrixObject(BaseModel):
@@ -457,9 +457,9 @@ class MatrixObject(BaseModel):
 	@classmethod
 	def from_dict(cls, data: MatrixObjectDict) -> MatrixObject:
 	    return cls(
-			adjustments=data['adjustments'] if 'adjustments' in data else None,
+			adjustments=list(map(MatrixAdjustments.from_dict, data['adjustments'])) if 'adjustments' in data else None,
 			setup=data['setup'],
-
+			
 		)
 
 type MatrixSetupObject = Dict[str, List[Union[str,int,bool]]]
@@ -475,7 +475,7 @@ class NestedBlockStep(BaseModel):
 	def from_dict(cls, data: NestedBlockStepDict) -> NestedBlockStep:
 	    return cls(
 			block=BlockStep.from_dict(data['block']) if 'block' in data else None,
-
+			
 		)
 
 class NestedCommandStepDict(TypedDict):
@@ -494,7 +494,7 @@ class NestedCommandStep(BaseModel):
 			command=CommandStep.from_dict(data['command']) if 'command' in data else None,
 			commands=CommandStep.from_dict(data['commands']) if 'commands' in data else None,
 			script=CommandStep.from_dict(data['script']) if 'script' in data else None,
-
+			
 		)
 
 class NestedInputStepDict(TypedDict):
@@ -507,7 +507,7 @@ class NestedInputStep(BaseModel):
 	def from_dict(cls, data: NestedInputStepDict) -> NestedInputStep:
 	    return cls(
 			input=InputStep.from_dict(data['input']) if 'input' in data else None,
-
+			
 		)
 
 class NestedTriggerStepDict(TypedDict):
@@ -520,7 +520,7 @@ class NestedTriggerStep(BaseModel):
 	def from_dict(cls, data: NestedTriggerStepDict) -> NestedTriggerStep:
 	    return cls(
 			trigger=TriggerStep.from_dict(data['trigger']) if 'trigger' in data else None,
-
+			
 		)
 
 class NestedWaitStepDict(TypedDict):
@@ -536,7 +536,7 @@ class NestedWaitStep(BaseModel):
 	    return cls(
 			wait=WaitStep.from_dict(data['wait']) if 'wait' in data else None,
 			waiter=WaitStep.from_dict(data['waiter']) if 'waiter' in data else None,
-
+			
 		)
 
 class NotifyBasecampDict(TypedDict):
@@ -545,14 +545,14 @@ class NotifyBasecampDict(TypedDict):
 
 class NotifyBasecamp(BaseModel):
 	basecamp_campfire: Optional[str] = None
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 
 	@classmethod
 	def from_dict(cls, data: NotifyBasecampDict) -> NotifyBasecamp:
 	    return cls(
 			basecamp_campfire=data['basecamp_campfire'] if 'basecamp_campfire' in data else None,
 			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-
+			
 		)
 
 class NotifyEmailDict(TypedDict):
@@ -561,14 +561,14 @@ class NotifyEmailDict(TypedDict):
 
 class NotifyEmail(BaseModel):
 	email: Optional[str] = None
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 
 	@classmethod
 	def from_dict(cls, data: NotifyEmailDict) -> NotifyEmail:
 	    return cls(
 			email=data['email'] if 'email' in data else None,
 			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-
+			
 		)
 
 class NotifyGithubCheckDict(TypedDict):
@@ -581,7 +581,7 @@ class NotifyGithubCheck(BaseModel):
 	def from_dict(cls, data: NotifyGithubCheckDict) -> NotifyGithubCheck:
 	    return cls(
 			github_check=data['github_check'] if 'github_check' in data else None,
-
+			
 		)
 
 class NotifyGithubCommitStatusGithubCommitStatus(BaseModel):
@@ -591,24 +591,24 @@ class NotifyGithubCommitStatusGithubCommitStatus(BaseModel):
 	def from_dict(cls, data: NotifyGithubCommitStatusGithubCommitStatusDict) -> NotifyGithubCommitStatusGithubCommitStatus:
 	    return cls(
 			context=data['context'] if 'context' in data else None,
-
+			
 		)
 class NotifyGithubCommitStatusGithubCommitStatusDict(TypedDict):
 	context: NotRequired[str]
 class NotifyGithubCommitStatusDict(TypedDict):
-	github_commit_status: NotRequired[NotifyGithubCommitStatusGithubCommitStatus]
+	github_commit_status: NotRequired[NotifyGithubCommitStatusGithubCommitStatusDict]
 	pipeline_if: NotRequired[If]
 
 class NotifyGithubCommitStatus(BaseModel):
 	github_commit_status: Optional[NotifyGithubCommitStatusGithubCommitStatus] = None
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 
 	@classmethod
 	def from_dict(cls, data: NotifyGithubCommitStatusDict) -> NotifyGithubCommitStatus:
 	    return cls(
-			github_commit_status=data['github_commit_status'] if 'github_commit_status' in data else None,
+			github_commit_status=NotifyGithubCommitStatusGithubCommitStatus.from_dict(data['github_commit_status']) if 'github_commit_status' in data else None,
 			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-
+			
 		)
 
 class NotifyPagerdutyDict(TypedDict):
@@ -616,7 +616,7 @@ class NotifyPagerdutyDict(TypedDict):
 	pagerduty_change_event: NotRequired[str]
 
 class NotifyPagerduty(BaseModel):
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 	pagerduty_change_event: Optional[str] = None
 
 	@classmethod
@@ -624,7 +624,7 @@ class NotifyPagerduty(BaseModel):
 	    return cls(
 			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
 			pagerduty_change_event=data['pagerduty_change_event'] if 'pagerduty_change_event' in data else None,
-
+			
 		)
 
 type NotifySimple = Literal['github_check','github_commit_status']
@@ -634,7 +634,7 @@ class NotifySlackDict(TypedDict):
 	slack: NotRequired[Union[str,NotifySlackObject]]
 
 class NotifySlack(BaseModel):
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 	slack: Optional[Union[str,NotifySlackObject]] = None
 
 	@classmethod
@@ -642,7 +642,7 @@ class NotifySlack(BaseModel):
 	    return cls(
 			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
 			slack=data['slack'] if 'slack' in data else None,
-
+			
 		)
 
 class NotifySlackObjectDict(TypedDict):
@@ -658,7 +658,7 @@ class NotifySlackObject(BaseModel):
 	    return cls(
 			channels=data['channels'] if 'channels' in data else None,
 			message=data['message'] if 'message' in data else None,
-
+			
 		)
 
 class NotifyWebhookDict(TypedDict):
@@ -666,7 +666,7 @@ class NotifyWebhookDict(TypedDict):
 	webhook: NotRequired[str]
 
 class NotifyWebhook(BaseModel):
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 	webhook: Optional[str] = None
 
 	@classmethod
@@ -674,10 +674,10 @@ class NotifyWebhook(BaseModel):
 	    return cls(
 			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
 			webhook=data['webhook'] if 'webhook' in data else None,
-
+			
 		)
 
-type PipelineSteps = List[Union[BlockStep,NestedBlockStep,StringBlockStep,InputStep,NestedInputStep,StringInputStep,CommandStep,NestedCommandStep,WaitStep,NestedWaitStep,StringWaitStep,TriggerStep,NestedTriggerStep,GroupStep]]
+type PipelineSteps = List[Union[BlockStepDict,BlockStep,NestedBlockStepDict,NestedBlockStep,StringBlockStep,InputStepDict,InputStep,NestedInputStepDict,NestedInputStep,StringInputStep,CommandStepDict,CommandStep,NestedCommandStepDict,NestedCommandStep,WaitStepDict,WaitStep,NestedWaitStepDict,NestedWaitStep,StringWaitStep,TriggerStepDict,TriggerStep,NestedTriggerStepDict,NestedTriggerStep,GroupStepDict,GroupStep]]
 
 type Plugins = Union[PluginsList,PluginsObject]
 
@@ -693,7 +693,7 @@ class SelectFieldDict(TypedDict):
 	hint: NotRequired[str]
 	key: str
 	multiple: NotRequired[Literal[True,False,'true','false']]
-	options: List[SelectFieldOption]
+	options: List[SelectFieldOptionDict]
 	required: NotRequired[Literal[True,False,'true','false']]
 	select: NotRequired[str]
 
@@ -713,10 +713,10 @@ class SelectField(BaseModel):
 			hint=data['hint'] if 'hint' in data else None,
 			key=data['key'],
 			multiple=data['multiple'] if 'multiple' in data else None,
-			options=data['options'],
+			options=list(map(SelectFieldOption.from_dict, data['options'])),
 			required=data['required'] if 'required' in data else None,
 			select=data['select'] if 'select' in data else None,
-
+			
 		)
 
 class SelectFieldOptionDict(TypedDict):
@@ -738,7 +738,7 @@ class SelectFieldOption(BaseModel):
 			label=data['label'],
 			required=data['required'] if 'required' in data else None,
 			value=data['value'],
-
+			
 		)
 
 type Skip = Union[bool,str]
@@ -757,7 +757,7 @@ class SoftFailObject(BaseModel):
 	def from_dict(cls, data: SoftFailObjectDict) -> SoftFailObject:
 	    return cls(
 			exit_status=data['exit_status'] if 'exit_status' in data else None,
-
+			
 		)
 
 type StringBlockStep = Literal['block']
@@ -791,7 +791,7 @@ class TextField(BaseModel):
 			key=data['key'],
 			required=data['required'] if 'required' in data else None,
 			text=data['text'] if 'text' in data else None,
-
+			
 		)
 
 class TriggerStepBuild(BaseModel):
@@ -809,7 +809,7 @@ class TriggerStepBuild(BaseModel):
 			env=data['env'] if 'env' in data else None,
 			message=data['message'] if 'message' in data else None,
 			meta_data=data['meta_data'] if 'meta_data' in data else None,
-
+			
 		)
 class TriggerStepBuildDict(TypedDict):
 	branch: NotRequired[str]
@@ -821,7 +821,7 @@ class TriggerStepDict(TypedDict):
 	allow_dependency_failure: NotRequired[AllowDependencyFailure]
 	pipeline_async: NotRequired[Literal[True, False, 'true', 'false']]
 	branches: NotRequired[Branches]
-	build: NotRequired[TriggerStepBuild]
+	build: NotRequired[TriggerStepBuildDict]
 	depends_on: NotRequired[DependsOn]
 	id: NotRequired[str]
 	identifier: NotRequired[str]
@@ -837,13 +837,13 @@ class TriggerStepDict(TypedDict):
 
 class TriggerStep(BaseModel):
 	allow_dependency_failure: Optional[AllowDependencyFailure] = None
-	pipeline_async: Optional[Literal[True, False, 'true', 'false']] = Field(serialization_alias='async')
+	pipeline_async: Optional[Literal[True, False, 'true', 'false']] = Field(serialization_alias='async', default=None)
 	branches: Optional[Branches] = None
 	build: Optional[TriggerStepBuild] = None
 	depends_on: Optional[DependsOn] = None
 	id: Optional[str] = None
 	identifier: Optional[str] = None
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 	if_changed: Optional[str] = None
 	key: Optional[str] = None
 	label: Optional[str] = None
@@ -859,7 +859,7 @@ class TriggerStep(BaseModel):
 			allow_dependency_failure=data['allow_dependency_failure'] if 'allow_dependency_failure' in data else None,
 			pipeline_async=data['pipeline_async'] if 'pipeline_async' in data else None,
 			branches=data['branches'] if 'branches' in data else None,
-			build=data['build'] if 'build' in data else None,
+			build=TriggerStepBuild.from_dict(data['build']) if 'build' in data else None,
 			depends_on=data['depends_on'] if 'depends_on' in data else None,
 			id=data['id'] if 'id' in data else None,
 			identifier=data['identifier'] if 'identifier' in data else None,
@@ -872,7 +872,7 @@ class TriggerStep(BaseModel):
 			soft_fail=data['soft_fail'] if 'soft_fail' in data else None,
 			trigger=data['trigger'],
 			type=data['type'] if 'type' in data else None,
-
+			
 		)
 
 class WaitStepDict(TypedDict):
@@ -896,7 +896,7 @@ class WaitStep(BaseModel):
 	depends_on: Optional[DependsOn] = None
 	id: Optional[str] = None
 	identifier: Optional[str] = None
-	pipeline_if: Optional[If] = Field(serialization_alias='if')
+	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
 	key: Optional[str] = None
 	label: Optional[str] = None
 	name: Optional[str] = None
@@ -918,6 +918,6 @@ class WaitStep(BaseModel):
 			name=data['name'] if 'name' in data else None,
 			type=data['type'] if 'type' in data else None,
 			wait=data['wait'] if 'wait' in data else None,
-
+			
 		)
 
