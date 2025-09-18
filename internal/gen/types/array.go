@@ -141,8 +141,19 @@ func (a Array) Python() (string, error) {
 				}
 
 				codeBlock.AddLines(objLines)
-				unionTypeParts = append(unionTypeParts, nestedObj.PythonClassType())
+				unionType := nestedObj.PythonClassType()
+				unionTypeParts = append(unionTypeParts, unionType)
+				if len(obj.Properties.Keys()) > 0 {
+					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sDict", unionType))
+				}
+
 				continue
+			}
+
+			if ref, ok := typ.(PropertyReference); ok {
+				if _, ok := ref.Type.(Object); ok {
+					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sDict", typ.PythonClassType()))
+				}
 			}
 
 			unionTypeParts = append(unionTypeParts, typ.PythonClassType())

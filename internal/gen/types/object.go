@@ -277,20 +277,20 @@ func (o Object) Python() (string, error) {
 	for _, name := range keys {
 		// Reserved words
 		if name == "async" {
-			pyTypedDict.AddItem("pipeline_async", "Literal[True, False, 'true', 'false']", "", "async", false)
-			pyClass.AddItem("pipeline_async", "Literal[True, False, 'true', 'false']", "", "async", false)
+			pyTypedDict.AddItem("pipeline_async", "Literal[True, False, 'true', 'false']", "", "async", false, false)
+			pyClass.AddItem("pipeline_async", "Literal[True, False, 'true', 'false']", "", "async", false, false)
 			continue
 		}
 
 		if name == "if" {
-			pyTypedDict.AddItem("pipeline_if", "If", "", "if", false)
-			pyClass.AddItem("pipeline_if", "If", "", "if", false)
+			pyTypedDict.AddItem("pipeline_if", "If", "", "if", false, false)
+			pyClass.AddItem("pipeline_if", "If", "", "if", false, false)
 			continue
 		}
 
 		if name == "with" {
-			pyTypedDict.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", true)
-			pyClass.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", true)
+			pyTypedDict.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", true, false)
+			pyClass.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", true, false)
 			continue
 		}
 
@@ -299,17 +299,21 @@ func (o Object) Python() (string, error) {
 
 		structType := val.PythonClassType()
 		dictStructType := structType
+		constructorName := ""
+		isObjectArray := false
 		required := slices.Contains(o.Required, name)
 
 		// Object
 		if obj, ok := val.(Object); ok {
 			keys := obj.Properties.Keys()
 			if len(keys) == 0 {
-				pyTypedDict.AddItem(name, "Dict[str, Any]", "", "", required)
-				pyClass.AddItem(name, "Dict[str, Any]", "", "", required)
+				pyTypedDict.AddItem(name, "Dict[str, Any]", "", "", required, isObjectArray)
+				pyClass.AddItem(name, "Dict[str, Any]", "", "", required, isObjectArray)
 				continue
 			}
 
+			dictStructType = fmt.Sprintf("%sDict", dictStructType)
+			constructorName = structType
 			nestedPyClass := utils.NewPythonClass(structType)
 			nestedPyTypeDict := utils.NewPythonClass(fmt.Sprintf("%sDict", structType))
 			for _, propName := range keys {
@@ -325,8 +329,8 @@ func (o Object) Python() (string, error) {
 					}
 				}
 
-				nestedPyTypeDict.AddItem(propName, nestedDictType, "", "", nestedRequired)
-				nestedPyClass.AddItem(propName, nestedType, "", "", nestedRequired)
+				nestedPyTypeDict.AddItem(propName, nestedDictType, "", "", nestedRequired, false)
+				nestedPyClass.AddItem(propName, nestedType, "", "", nestedRequired, false)
 			}
 
 			nestedObjectClass, err := nestedPyClass.Write()
@@ -343,7 +347,6 @@ func (o Object) Python() (string, error) {
 		}
 
 		// PropertyReference
-		constructorName := ""
 		if ref, ok := val.(PropertyReference); ok {
 			if obj, ok := ref.Type.(Object); ok {
 				if len(obj.Properties.Keys()) > 0 {
@@ -353,8 +356,19 @@ func (o Object) Python() (string, error) {
 			}
 		}
 
-		pyTypedDict.AddItem(name, dictStructType, "", "", required)
-		pyClass.AddItem(name, structType, constructorName, "", required)
+		// Array
+		if array, ok := val.(Array); ok {
+			if obj, ok := array.Type.(Object); ok {
+				if len(obj.Properties.Keys()) > 0 {
+					dictStructType = fmt.Sprintf("List[%sDict]", obj.PythonClassType())
+					constructorName = obj.PythonClassType()
+					isObjectArray = true
+				}
+			}
+		}
+
+		pyTypedDict.AddItem(name, dictStructType, "", "", required, isObjectArray)
+		pyClass.AddItem(name, structType, constructorName, "", required, isObjectArray)
 	}
 
 	pyTypedDictString, err := pyTypedDict.WriteTypedDict()
