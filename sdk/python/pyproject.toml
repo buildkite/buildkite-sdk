@@ -19,6 +19,8 @@ dependencies = [
   "pydantic>=2.11.7",
   "pyyaml",
   "jsoncomparison",
+  "requests",
+  "jsonschema",
 ]
 
 [tool.hatch.build.targets.wheel]
