@@ -14,11 +14,13 @@ type AllowDependencyFailure = Literal[True,False,'true','false']
 
 type AllowedTeams = Union[str,List[str]]
 
-class AutomaticRetryDict(TypedDict):
-	exit_status: NotRequired[Union[Literal['*'],int,List[int]]]
-	limit: NotRequired[int]
-	signal: NotRequired[str]
-	signal_reason: NotRequired[Literal['*','none','agent_refused','agent_stop','cancel','process_run_error','signature_rejected']]
+AutomaticRetryDict = TypedDict('AutomaticRetryDict',{
+	'exit_status': NotRequired[Union[Literal['*'],int,List[int]]],
+	'limit': NotRequired['int'],
+	'signal': NotRequired['str'],
+	'signal_reason': NotRequired[Literal['*','none','agent_refused','agent_stop','cancel','process_run_error','signature_rejected']],
+	
+})
 
 class AutomaticRetry(BaseModel):
 	exit_status: Optional[Union[Literal['*'],int,List[int]]] = None
@@ -28,32 +30,31 @@ class AutomaticRetry(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: AutomaticRetryDict) -> AutomaticRetry:
-	    return cls(
-			exit_status=data['exit_status'] if 'exit_status' in data else None,
-			limit=data['limit'] if 'limit' in data else None,
-			signal=data['signal'] if 'signal' in data else None,
-			signal_reason=data['signal_reason'] if 'signal_reason' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-type AutomaticRetryList = List[AutomaticRetry]
+type AutomaticRetryList = List[Union[AutomaticRetry,AutomaticRetryDict]]
 
-class BlockStepDict(TypedDict):
-	allow_dependency_failure: NotRequired[AllowDependencyFailure]
-	allowed_teams: NotRequired[AllowedTeams]
-	block: NotRequired[str]
-	blocked_state: NotRequired[Literal['passed','failed','running']]
-	branches: NotRequired[Branches]
-	depends_on: NotRequired[DependsOn]
-	fields: NotRequired[Fields]
-	id: NotRequired[str]
-	identifier: NotRequired[str]
-	pipeline_if: NotRequired[If]
-	key: NotRequired[str]
-	label: NotRequired[str]
-	name: NotRequired[str]
-	prompt: NotRequired[str]
-	type: NotRequired[Literal['block']]
+BlockStepDict = TypedDict('BlockStepDict',{
+	'allow_dependency_failure': NotRequired['AllowDependencyFailure'],
+	'allowed_teams': NotRequired['AllowedTeams'],
+	'block': NotRequired['str'],
+	'blocked_state': NotRequired[Literal['passed','failed','running']],
+	'branches': NotRequired['Branches'],
+	'depends_on': NotRequired['DependsOn'],
+	'fields': NotRequired['Fields'],
+	'id': NotRequired['str'],
+	'identifier': NotRequired['str'],
+	'if': NotRequired['If'],
+	'key': NotRequired['str'],
+	'label': NotRequired['str'],
+	'name': NotRequired['str'],
+	'prompt': NotRequired['str'],
+	'type': NotRequired[Literal['block']],
+	
+})
 
 class BlockStep(BaseModel):
 	allow_dependency_failure: Optional[AllowDependencyFailure] = None
@@ -74,33 +75,21 @@ class BlockStep(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: BlockStepDict) -> BlockStep:
-	    return cls(
-			allow_dependency_failure=data['allow_dependency_failure'] if 'allow_dependency_failure' in data else None,
-			allowed_teams=data['allowed_teams'] if 'allowed_teams' in data else None,
-			block=data['block'] if 'block' in data else None,
-			blocked_state=data['blocked_state'] if 'blocked_state' in data else None,
-			branches=data['branches'] if 'branches' in data else None,
-			depends_on=data['depends_on'] if 'depends_on' in data else None,
-			fields=data['fields'] if 'fields' in data else None,
-			id=data['id'] if 'id' in data else None,
-			identifier=data['identifier'] if 'identifier' in data else None,
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			key=data['key'] if 'key' in data else None,
-			label=data['label'] if 'label' in data else None,
-			name=data['name'] if 'name' in data else None,
-			prompt=data['prompt'] if 'prompt' in data else None,
-			type=data['type'] if 'type' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type Branches = Union[str,List[str]]
 
 type BuildNotify = List[Union[NotifySimple,NotifyEmailDict,NotifyEmail,NotifyBasecampDict,NotifyBasecamp,NotifySlackDict,NotifySlack,NotifyWebhookDict,NotifyWebhook,NotifyPagerdutyDict,NotifyPagerduty,NotifyGithubCommitStatusDict,NotifyGithubCommitStatus,NotifyGithubCheckDict,NotifyGithubCheck]]
 
-class CacheObjectDict(TypedDict):
-	name: NotRequired[str]
-	paths: NotRequired[List[str]]
-	size: NotRequired[str]
+CacheObjectDict = TypedDict('CacheObjectDict',{
+	'name': NotRequired['str'],
+	'paths': NotRequired['List[str]'],
+	'size': NotRequired['str'],
+	
+})
 
 class CacheObject(BaseModel):
 	name: Optional[str] = None
@@ -109,12 +98,10 @@ class CacheObject(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: CacheObjectDict) -> CacheObject:
-	    return cls(
-			name=data['name'] if 'name' in data else None,
-			paths=data['paths'] if 'paths' in data else None,
-			size=data['size'] if 'size' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 type Cache = Union[str,List[str],CacheObject]
 
 type CancelOnBuildFailing = Literal[True,False,'true','false']
@@ -125,14 +112,15 @@ class CommandStepRetry(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: CommandStepRetryDict) -> CommandStepRetry:
-	    return cls(
-			automatic=data['automatic'] if 'automatic' in data else None,
-			manual=data['manual'] if 'manual' in data else None,
-			
-		)
-class CommandStepRetryDict(TypedDict):
-	automatic: NotRequired[CommandStepAutomaticRetry]
-	manual: NotRequired[CommandStepManualRetry]
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+CommandStepRetryDict = TypedDict('CommandStepRetryDict',{
+	'automatic': NotRequired['CommandStepAutomaticRetry'],
+	'manual': NotRequired['CommandStepManualRetry'],
+	
+})
 class CommandStepSignature(BaseModel):
 	algorithm: Optional[str] = None
 	signed_fields: Optional[List[str]] = None
@@ -140,49 +128,51 @@ class CommandStepSignature(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: CommandStepSignatureDict) -> CommandStepSignature:
-	    return cls(
-			algorithm=data['algorithm'] if 'algorithm' in data else None,
-			signed_fields=data['signed_fields'] if 'signed_fields' in data else None,
-			value=data['value'] if 'value' in data else None,
-			
-		)
-class CommandStepSignatureDict(TypedDict):
-	algorithm: NotRequired[str]
-	signed_fields: NotRequired[List[str]]
-	value: NotRequired[str]
-class CommandStepDict(TypedDict):
-	agents: NotRequired[Agents]
-	allow_dependency_failure: NotRequired[AllowDependencyFailure]
-	artifact_paths: NotRequired[Union[str,List[str]]]
-	branches: NotRequired[Branches]
-	cache: NotRequired[Cache]
-	cancel_on_build_failing: NotRequired[CancelOnBuildFailing]
-	command: NotRequired[CommandStepCommand]
-	commands: NotRequired[CommandStepCommand]
-	concurrency: NotRequired[int]
-	concurrency_group: NotRequired[str]
-	concurrency_method: NotRequired[Literal['ordered','eager']]
-	depends_on: NotRequired[DependsOn]
-	env: NotRequired[Env]
-	id: NotRequired[str]
-	identifier: NotRequired[str]
-	pipeline_if: NotRequired[If]
-	if_changed: NotRequired[str]
-	image: NotRequired[str]
-	key: NotRequired[str]
-	label: NotRequired[str]
-	matrix: NotRequired[Matrix]
-	name: NotRequired[str]
-	notify: NotRequired[CommandStepNotify]
-	parallelism: NotRequired[int]
-	plugins: NotRequired[Plugins]
-	priority: NotRequired[int]
-	retry: NotRequired[CommandStepRetryDict]
-	signature: NotRequired[CommandStepSignatureDict]
-	skip: NotRequired[Skip]
-	soft_fail: NotRequired[SoftFail]
-	timeout_in_minutes: NotRequired[int]
-	type: NotRequired[Literal['script','command','commands']]
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+CommandStepSignatureDict = TypedDict('CommandStepSignatureDict',{
+	'algorithm': NotRequired['str'],
+	'signed_fields': NotRequired['List[str]'],
+	'value': NotRequired['str'],
+	
+})
+CommandStepDict = TypedDict('CommandStepDict',{
+	'agents': NotRequired['Agents'],
+	'allow_dependency_failure': NotRequired['AllowDependencyFailure'],
+	'artifact_paths': NotRequired['Union[str,List[str]]'],
+	'branches': NotRequired['Branches'],
+	'cache': NotRequired['Cache'],
+	'cancel_on_build_failing': NotRequired['CancelOnBuildFailing'],
+	'command': NotRequired['CommandStepCommand'],
+	'commands': NotRequired['CommandStepCommand'],
+	'concurrency': NotRequired['int'],
+	'concurrency_group': NotRequired['str'],
+	'concurrency_method': NotRequired[Literal['ordered','eager']],
+	'depends_on': NotRequired['DependsOn'],
+	'env': NotRequired['Env'],
+	'id': NotRequired['str'],
+	'identifier': NotRequired['str'],
+	'if': NotRequired['If'],
+	'if_changed': NotRequired['str'],
+	'image': NotRequired['str'],
+	'key': NotRequired['str'],
+	'label': NotRequired['str'],
+	'matrix': NotRequired['Matrix'],
+	'name': NotRequired['str'],
+	'notify': NotRequired['CommandStepNotify'],
+	'parallelism': NotRequired['int'],
+	'plugins': NotRequired['Plugins'],
+	'priority': NotRequired['int'],
+	'retry': NotRequired['CommandStepRetryDict'],
+	'signature': NotRequired['CommandStepSignatureDict'],
+	'skip': NotRequired['Skip'],
+	'soft_fail': NotRequired['SoftFail'],
+	'timeout_in_minutes': NotRequired['int'],
+	'type': NotRequired[Literal['script','command','commands']],
+	
+})
 
 class CommandStep(BaseModel):
 	agents: Optional[Agents] = None
@@ -220,52 +210,23 @@ class CommandStep(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: CommandStepDict) -> CommandStep:
-	    return cls(
-			agents=data['agents'] if 'agents' in data else None,
-			allow_dependency_failure=data['allow_dependency_failure'] if 'allow_dependency_failure' in data else None,
-			artifact_paths=data['artifact_paths'] if 'artifact_paths' in data else None,
-			branches=data['branches'] if 'branches' in data else None,
-			cache=data['cache'] if 'cache' in data else None,
-			cancel_on_build_failing=data['cancel_on_build_failing'] if 'cancel_on_build_failing' in data else None,
-			command=data['command'] if 'command' in data else None,
-			commands=data['commands'] if 'commands' in data else None,
-			concurrency=data['concurrency'] if 'concurrency' in data else None,
-			concurrency_group=data['concurrency_group'] if 'concurrency_group' in data else None,
-			concurrency_method=data['concurrency_method'] if 'concurrency_method' in data else None,
-			depends_on=data['depends_on'] if 'depends_on' in data else None,
-			env=data['env'] if 'env' in data else None,
-			id=data['id'] if 'id' in data else None,
-			identifier=data['identifier'] if 'identifier' in data else None,
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			if_changed=data['if_changed'] if 'if_changed' in data else None,
-			image=data['image'] if 'image' in data else None,
-			key=data['key'] if 'key' in data else None,
-			label=data['label'] if 'label' in data else None,
-			matrix=data['matrix'] if 'matrix' in data else None,
-			name=data['name'] if 'name' in data else None,
-			notify=data['notify'] if 'notify' in data else None,
-			parallelism=data['parallelism'] if 'parallelism' in data else None,
-			plugins=data['plugins'] if 'plugins' in data else None,
-			priority=data['priority'] if 'priority' in data else None,
-			retry=CommandStepRetry.from_dict(data['retry']) if 'retry' in data else None,
-			signature=CommandStepSignature.from_dict(data['signature']) if 'signature' in data else None,
-			skip=data['skip'] if 'skip' in data else None,
-			soft_fail=data['soft_fail'] if 'soft_fail' in data else None,
-			timeout_in_minutes=data['timeout_in_minutes'] if 'timeout_in_minutes' in data else None,
-			type=data['type'] if 'type' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-type CommandStepAutomaticRetry = Union[Literal[True,False,'true','false'],AutomaticRetry,AutomaticRetryList]
+type CommandStepAutomaticRetry = Union[Literal[True,False,'true','false'],AutomaticRetryDict,AutomaticRetry,AutomaticRetryList]
 
 type CommandStepCommand = Union[List[str],str]
 
-type CommandStepManualRetry = Union[Literal[True,False,'true','false'],CommandStepManualRetryObject]
+type CommandStepManualRetry = Union[Literal[True,False,'true','false'],CommandStepManualRetryObjectDict,CommandStepManualRetryObject]
 
-class CommandStepManualRetryObjectDict(TypedDict):
-	allowed: NotRequired[Literal[True,False,'true','false']]
-	permit_on_passed: NotRequired[Literal[True,False,'true','false']]
-	reason: NotRequired[str]
+CommandStepManualRetryObjectDict = TypedDict('CommandStepManualRetryObjectDict',{
+	'allowed': NotRequired[Literal[True,False,'true','false']],
+	'permit_on_passed': NotRequired[Literal[True,False,'true','false']],
+	'reason': NotRequired['str'],
+	
+})
 
 class CommandStepManualRetryObject(BaseModel):
 	allowed: Optional[Literal[True,False,'true','false']] = None
@@ -274,20 +235,20 @@ class CommandStepManualRetryObject(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: CommandStepManualRetryObjectDict) -> CommandStepManualRetryObject:
-	    return cls(
-			allowed=data['allowed'] if 'allowed' in data else None,
-			permit_on_passed=data['permit_on_passed'] if 'permit_on_passed' in data else None,
-			reason=data['reason'] if 'reason' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type CommandStepNotify = List[Union[NotifySimple,NotifyBasecampDict,NotifyBasecamp,NotifySlackDict,NotifySlack,NotifyGithubCommitStatusDict,NotifyGithubCommitStatus,NotifyGithubCheckDict,NotifyGithubCheck]]
 
 type DependsOn = Union[str,DependsOnList]
 
-class DependsOnListObjectDict(TypedDict):
-	allow_failure: NotRequired[Literal[True,False,'true','false']]
-	step: NotRequired[str]
+DependsOnListObjectDict = TypedDict('DependsOnListObjectDict',{
+	'allow_failure': NotRequired[Literal[True,False,'true','false']],
+	'step': NotRequired['str'],
+	
+})
 
 class DependsOnListObject(BaseModel):
 	allow_failure: Optional[Literal[True,False,'true','false']] = None
@@ -295,31 +256,32 @@ class DependsOnListObject(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: DependsOnListObjectDict) -> DependsOnListObject:
-	    return cls(
-			allow_failure=data['allow_failure'] if 'allow_failure' in data else None,
-			step=data['step'] if 'step' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 type DependsOnList = List[Union[str,DependsOnListObject,DependsOnListObjectDict]]
 
 type Env = Dict[str, Any]
 
 type Fields = List[Union[TextFieldDict,TextField,SelectFieldDict,SelectField]]
 
-class GroupStepDict(TypedDict):
-	allow_dependency_failure: NotRequired[AllowDependencyFailure]
-	depends_on: NotRequired[DependsOn]
-	group: str
-	id: NotRequired[str]
-	identifier: NotRequired[str]
-	pipeline_if: NotRequired[If]
-	if_changed: NotRequired[str]
-	key: NotRequired[str]
-	label: NotRequired[str]
-	name: NotRequired[str]
-	notify: NotRequired[BuildNotify]
-	skip: NotRequired[Skip]
-	steps: GroupSteps
+GroupStepDict = TypedDict('GroupStepDict',{
+	'allow_dependency_failure': NotRequired['AllowDependencyFailure'],
+	'depends_on': NotRequired['DependsOn'],
+	'group': 'str',
+	'id': NotRequired['str'],
+	'identifier': NotRequired['str'],
+	'if': NotRequired['If'],
+	'if_changed': NotRequired['str'],
+	'key': NotRequired['str'],
+	'label': NotRequired['str'],
+	'name': NotRequired['str'],
+	'notify': NotRequired['BuildNotify'],
+	'skip': NotRequired['Skip'],
+	'steps': 'GroupSteps',
+	
+})
 
 class GroupStep(BaseModel):
 	allow_dependency_failure: Optional[AllowDependencyFailure] = None
@@ -338,22 +300,10 @@ class GroupStep(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: GroupStepDict) -> GroupStep:
-	    return cls(
-			allow_dependency_failure=data['allow_dependency_failure'] if 'allow_dependency_failure' in data else None,
-			depends_on=data['depends_on'] if 'depends_on' in data else None,
-			group=data['group'],
-			id=data['id'] if 'id' in data else None,
-			identifier=data['identifier'] if 'identifier' in data else None,
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			if_changed=data['if_changed'] if 'if_changed' in data else None,
-			key=data['key'] if 'key' in data else None,
-			label=data['label'] if 'label' in data else None,
-			name=data['name'] if 'name' in data else None,
-			notify=data['notify'] if 'notify' in data else None,
-			skip=data['skip'] if 'skip' in data else None,
-			steps=data['steps'],
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type GroupSteps = List[Union[BlockStepDict,BlockStep,NestedBlockStepDict,NestedBlockStep,StringBlockStep,InputStepDict,InputStep,NestedInputStepDict,NestedInputStep,StringInputStep,CommandStepDict,CommandStep,NestedCommandStepDict,NestedCommandStep,WaitStepDict,WaitStep,NestedWaitStepDict,NestedWaitStep,StringWaitStep,TriggerStepDict,TriggerStep,NestedTriggerStepDict,NestedTriggerStep]]
 
@@ -363,21 +313,23 @@ type IfChanged = str
 
 type Image = str
 
-class InputStepDict(TypedDict):
-	allow_dependency_failure: NotRequired[AllowDependencyFailure]
-	allowed_teams: NotRequired[AllowedTeams]
-	branches: NotRequired[Branches]
-	depends_on: NotRequired[DependsOn]
-	fields: NotRequired[Fields]
-	id: NotRequired[str]
-	identifier: NotRequired[str]
-	pipeline_if: NotRequired[If]
-	input: NotRequired[str]
-	key: NotRequired[str]
-	label: NotRequired[str]
-	name: NotRequired[str]
-	prompt: NotRequired[str]
-	type: NotRequired[Literal['input']]
+InputStepDict = TypedDict('InputStepDict',{
+	'allow_dependency_failure': NotRequired['AllowDependencyFailure'],
+	'allowed_teams': NotRequired['AllowedTeams'],
+	'branches': NotRequired['Branches'],
+	'depends_on': NotRequired['DependsOn'],
+	'fields': NotRequired['Fields'],
+	'id': NotRequired['str'],
+	'identifier': NotRequired['str'],
+	'if': NotRequired['If'],
+	'input': NotRequired['str'],
+	'key': NotRequired['str'],
+	'label': NotRequired['str'],
+	'name': NotRequired['str'],
+	'prompt': NotRequired['str'],
+	'type': NotRequired[Literal['input']],
+	
+})
 
 class InputStep(BaseModel):
 	allow_dependency_failure: Optional[AllowDependencyFailure] = None
@@ -397,34 +349,23 @@ class InputStep(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: InputStepDict) -> InputStep:
-	    return cls(
-			allow_dependency_failure=data['allow_dependency_failure'] if 'allow_dependency_failure' in data else None,
-			allowed_teams=data['allowed_teams'] if 'allowed_teams' in data else None,
-			branches=data['branches'] if 'branches' in data else None,
-			depends_on=data['depends_on'] if 'depends_on' in data else None,
-			fields=data['fields'] if 'fields' in data else None,
-			id=data['id'] if 'id' in data else None,
-			identifier=data['identifier'] if 'identifier' in data else None,
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			input=data['input'] if 'input' in data else None,
-			key=data['key'] if 'key' in data else None,
-			label=data['label'] if 'label' in data else None,
-			name=data['name'] if 'name' in data else None,
-			prompt=data['prompt'] if 'prompt' in data else None,
-			type=data['type'] if 'type' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type Key = str
 
 type Label = str
 
-type Matrix = Union[MatrixElementList,MatrixObject]
+type Matrix = Union[MatrixElementList,MatrixObjectDict,MatrixObject]
 
-class MatrixAdjustmentsDict(TypedDict):
-	skip: NotRequired[Skip]
-	soft_fail: NotRequired[SoftFail]
-	matrix_with: Union[MatrixElementList,MatrixAdjustmentsWithObject]
+MatrixAdjustmentsDict = TypedDict('MatrixAdjustmentsDict',{
+	'skip': NotRequired['Skip'],
+	'soft_fail': NotRequired['SoftFail'],
+	'with': 'Union[MatrixElementList,MatrixAdjustmentsWithObject]',
+	
+})
 
 class MatrixAdjustments(BaseModel):
 	skip: Optional[Skip] = None
@@ -433,12 +374,10 @@ class MatrixAdjustments(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: MatrixAdjustmentsDict) -> MatrixAdjustments:
-	    return cls(
-			skip=data['skip'] if 'skip' in data else None,
-			soft_fail=data['soft_fail'] if 'soft_fail' in data else None,
-			matrix_with=data['matrix_with'],
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type MatrixAdjustmentsWithObject = Dict[str, str]
 
@@ -446,9 +385,11 @@ type MatrixElement = Union[str,int,bool]
 
 type MatrixElementList = List[Union[str,int,bool]]
 
-class MatrixObjectDict(TypedDict):
-	adjustments: NotRequired[List[MatrixAdjustmentsDict]]
-	setup: MatrixSetup
+MatrixObjectDict = TypedDict('MatrixObjectDict',{
+	'adjustments': NotRequired['List[MatrixAdjustmentsDict]'],
+	'setup': 'MatrixSetup',
+	
+})
 
 class MatrixObject(BaseModel):
 	adjustments: Optional[List[MatrixAdjustments]] = None
@@ -456,32 +397,35 @@ class MatrixObject(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: MatrixObjectDict) -> MatrixObject:
-	    return cls(
-			adjustments=list(map(MatrixAdjustments.from_dict, data['adjustments'])) if 'adjustments' in data else None,
-			setup=data['setup'],
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type MatrixSetupObject = Dict[str, List[Union[str,int,bool]]]
 type MatrixSetup = Union[MatrixElementList,Dict[str, List[Union[str,int,bool]]]]
 
-class NestedBlockStepDict(TypedDict):
-	block: NotRequired[BlockStepDict]
+NestedBlockStepDict = TypedDict('NestedBlockStepDict',{
+	'block': NotRequired['BlockStepDict'],
+	
+})
 
 class NestedBlockStep(BaseModel):
 	block: Optional[BlockStep] = None
 
 	@classmethod
 	def from_dict(cls, data: NestedBlockStepDict) -> NestedBlockStep:
-	    return cls(
-			block=BlockStep.from_dict(data['block']) if 'block' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NestedCommandStepDict(TypedDict):
-	command: NotRequired[CommandStepDict]
-	commands: NotRequired[CommandStepDict]
-	script: NotRequired[CommandStepDict]
+NestedCommandStepDict = TypedDict('NestedCommandStepDict',{
+	'command': NotRequired['CommandStepDict'],
+	'commands': NotRequired['CommandStepDict'],
+	'script': NotRequired['CommandStepDict'],
+	
+})
 
 class NestedCommandStep(BaseModel):
 	command: Optional[CommandStep] = None
@@ -490,42 +434,46 @@ class NestedCommandStep(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: NestedCommandStepDict) -> NestedCommandStep:
-	    return cls(
-			command=CommandStep.from_dict(data['command']) if 'command' in data else None,
-			commands=CommandStep.from_dict(data['commands']) if 'commands' in data else None,
-			script=CommandStep.from_dict(data['script']) if 'script' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NestedInputStepDict(TypedDict):
-	input: NotRequired[InputStepDict]
+NestedInputStepDict = TypedDict('NestedInputStepDict',{
+	'input': NotRequired['InputStepDict'],
+	
+})
 
 class NestedInputStep(BaseModel):
 	input: Optional[InputStep] = None
 
 	@classmethod
 	def from_dict(cls, data: NestedInputStepDict) -> NestedInputStep:
-	    return cls(
-			input=InputStep.from_dict(data['input']) if 'input' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NestedTriggerStepDict(TypedDict):
-	trigger: NotRequired[TriggerStepDict]
+NestedTriggerStepDict = TypedDict('NestedTriggerStepDict',{
+	'trigger': NotRequired['TriggerStepDict'],
+	
+})
 
 class NestedTriggerStep(BaseModel):
 	trigger: Optional[TriggerStep] = None
 
 	@classmethod
 	def from_dict(cls, data: NestedTriggerStepDict) -> NestedTriggerStep:
-	    return cls(
-			trigger=TriggerStep.from_dict(data['trigger']) if 'trigger' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NestedWaitStepDict(TypedDict):
-	wait: NotRequired[WaitStepDict]
-	waiter: NotRequired[WaitStepDict]
+NestedWaitStepDict = TypedDict('NestedWaitStepDict',{
+	'wait': NotRequired['WaitStepDict'],
+	'waiter': NotRequired['WaitStepDict'],
+	
+})
 
 class NestedWaitStep(BaseModel):
 	wait: Optional[WaitStep] = None
@@ -533,15 +481,16 @@ class NestedWaitStep(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: NestedWaitStepDict) -> NestedWaitStep:
-	    return cls(
-			wait=WaitStep.from_dict(data['wait']) if 'wait' in data else None,
-			waiter=WaitStep.from_dict(data['waiter']) if 'waiter' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NotifyBasecampDict(TypedDict):
-	basecamp_campfire: NotRequired[str]
-	pipeline_if: NotRequired[If]
+NotifyBasecampDict = TypedDict('NotifyBasecampDict',{
+	'basecamp_campfire': NotRequired['str'],
+	'if': NotRequired['If'],
+	
+})
 
 class NotifyBasecamp(BaseModel):
 	basecamp_campfire: Optional[str] = None
@@ -549,15 +498,16 @@ class NotifyBasecamp(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: NotifyBasecampDict) -> NotifyBasecamp:
-	    return cls(
-			basecamp_campfire=data['basecamp_campfire'] if 'basecamp_campfire' in data else None,
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NotifyEmailDict(TypedDict):
-	email: NotRequired[str]
-	pipeline_if: NotRequired[If]
+NotifyEmailDict = TypedDict('NotifyEmailDict',{
+	'email': NotRequired['str'],
+	'if': NotRequired['If'],
+	
+})
 
 class NotifyEmail(BaseModel):
 	email: Optional[str] = None
@@ -565,39 +515,44 @@ class NotifyEmail(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: NotifyEmailDict) -> NotifyEmail:
-	    return cls(
-			email=data['email'] if 'email' in data else None,
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NotifyGithubCheckDict(TypedDict):
-	github_check: NotRequired[Dict[str, Any]]
+NotifyGithubCheckDict = TypedDict('NotifyGithubCheckDict',{
+	'github_check': NotRequired['Dict[str, Any]'],
+	
+})
 
 class NotifyGithubCheck(BaseModel):
 	github_check: Optional[Dict[str, Any]] = None
 
 	@classmethod
 	def from_dict(cls, data: NotifyGithubCheckDict) -> NotifyGithubCheck:
-	    return cls(
-			github_check=data['github_check'] if 'github_check' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 class NotifyGithubCommitStatusGithubCommitStatus(BaseModel):
 	context: Optional[str] = None
 
 	@classmethod
 	def from_dict(cls, data: NotifyGithubCommitStatusGithubCommitStatusDict) -> NotifyGithubCommitStatusGithubCommitStatus:
-	    return cls(
-			context=data['context'] if 'context' in data else None,
-			
-		)
-class NotifyGithubCommitStatusGithubCommitStatusDict(TypedDict):
-	context: NotRequired[str]
-class NotifyGithubCommitStatusDict(TypedDict):
-	github_commit_status: NotRequired[NotifyGithubCommitStatusGithubCommitStatusDict]
-	pipeline_if: NotRequired[If]
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+NotifyGithubCommitStatusGithubCommitStatusDict = TypedDict('NotifyGithubCommitStatusGithubCommitStatusDict',{
+	'context': NotRequired['str'],
+	
+})
+NotifyGithubCommitStatusDict = TypedDict('NotifyGithubCommitStatusDict',{
+	'github_commit_status': NotRequired['NotifyGithubCommitStatusGithubCommitStatusDict'],
+	'if': NotRequired['If'],
+	
+})
 
 class NotifyGithubCommitStatus(BaseModel):
 	github_commit_status: Optional[NotifyGithubCommitStatusGithubCommitStatus] = None
@@ -605,15 +560,16 @@ class NotifyGithubCommitStatus(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: NotifyGithubCommitStatusDict) -> NotifyGithubCommitStatus:
-	    return cls(
-			github_commit_status=NotifyGithubCommitStatusGithubCommitStatus.from_dict(data['github_commit_status']) if 'github_commit_status' in data else None,
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NotifyPagerdutyDict(TypedDict):
-	pipeline_if: NotRequired[If]
-	pagerduty_change_event: NotRequired[str]
+NotifyPagerdutyDict = TypedDict('NotifyPagerdutyDict',{
+	'if': NotRequired['If'],
+	'pagerduty_change_event': NotRequired['str'],
+	
+})
 
 class NotifyPagerduty(BaseModel):
 	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
@@ -621,17 +577,18 @@ class NotifyPagerduty(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: NotifyPagerdutyDict) -> NotifyPagerduty:
-	    return cls(
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			pagerduty_change_event=data['pagerduty_change_event'] if 'pagerduty_change_event' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type NotifySimple = Literal['github_check','github_commit_status']
 
-class NotifySlackDict(TypedDict):
-	pipeline_if: NotRequired[If]
-	slack: NotRequired[Union[str,NotifySlackObject]]
+NotifySlackDict = TypedDict('NotifySlackDict',{
+	'if': NotRequired['If'],
+	'slack': NotRequired['Union[str,NotifySlackObjectDict]'],
+	
+})
 
 class NotifySlack(BaseModel):
 	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
@@ -639,15 +596,16 @@ class NotifySlack(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: NotifySlackDict) -> NotifySlack:
-	    return cls(
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			slack=data['slack'] if 'slack' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NotifySlackObjectDict(TypedDict):
-	channels: NotRequired[List[str]]
-	message: NotRequired[str]
+NotifySlackObjectDict = TypedDict('NotifySlackObjectDict',{
+	'channels': NotRequired['List[str]'],
+	'message': NotRequired['str'],
+	
+})
 
 class NotifySlackObject(BaseModel):
 	channels: Optional[List[str]] = None
@@ -655,15 +613,16 @@ class NotifySlackObject(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: NotifySlackObjectDict) -> NotifySlackObject:
-	    return cls(
-			channels=data['channels'] if 'channels' in data else None,
-			message=data['message'] if 'message' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class NotifyWebhookDict(TypedDict):
-	pipeline_if: NotRequired[If]
-	webhook: NotRequired[str]
+NotifyWebhookDict = TypedDict('NotifyWebhookDict',{
+	'if': NotRequired['If'],
+	'webhook': NotRequired['str'],
+	
+})
 
 class NotifyWebhook(BaseModel):
 	pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
@@ -671,11 +630,10 @@ class NotifyWebhook(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: NotifyWebhookDict) -> NotifyWebhook:
-	    return cls(
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			webhook=data['webhook'] if 'webhook' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type PipelineSteps = List[Union[BlockStepDict,BlockStep,NestedBlockStepDict,NestedBlockStep,StringBlockStep,InputStepDict,InputStep,NestedInputStepDict,NestedInputStep,StringInputStep,CommandStepDict,CommandStep,NestedCommandStepDict,NestedCommandStep,WaitStepDict,WaitStep,NestedWaitStepDict,NestedWaitStep,StringWaitStep,TriggerStepDict,TriggerStep,NestedTriggerStepDict,NestedTriggerStep,GroupStepDict,GroupStep]]
 
@@ -688,14 +646,16 @@ type PluginsObject = Dict[str, Any]
 
 type Prompt = str
 
-class SelectFieldDict(TypedDict):
-	default: NotRequired[Union[str,List[str]]]
-	hint: NotRequired[str]
-	key: str
-	multiple: NotRequired[Literal[True,False,'true','false']]
-	options: List[SelectFieldOptionDict]
-	required: NotRequired[Literal[True,False,'true','false']]
-	select: NotRequired[str]
+SelectFieldDict = TypedDict('SelectFieldDict',{
+	'default': NotRequired['Union[str,List[str]]'],
+	'hint': NotRequired['str'],
+	'key': 'str',
+	'multiple': NotRequired[Literal[True,False,'true','false']],
+	'options': 'List[SelectFieldOptionDict]',
+	'required': NotRequired[Literal[True,False,'true','false']],
+	'select': NotRequired['str'],
+	
+})
 
 class SelectField(BaseModel):
 	default: Optional[Union[str,List[str]]] = None
@@ -708,22 +668,18 @@ class SelectField(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: SelectFieldDict) -> SelectField:
-	    return cls(
-			default=data['default'] if 'default' in data else None,
-			hint=data['hint'] if 'hint' in data else None,
-			key=data['key'],
-			multiple=data['multiple'] if 'multiple' in data else None,
-			options=list(map(SelectFieldOption.from_dict, data['options'])),
-			required=data['required'] if 'required' in data else None,
-			select=data['select'] if 'select' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class SelectFieldOptionDict(TypedDict):
-	hint: NotRequired[str]
-	label: str
-	required: NotRequired[Literal[True,False,'true','false']]
-	value: str
+SelectFieldOptionDict = TypedDict('SelectFieldOptionDict',{
+	'hint': NotRequired['str'],
+	'label': 'str',
+	'required': NotRequired[Literal[True,False,'true','false']],
+	'value': 'str',
+	
+})
 
 class SelectFieldOption(BaseModel):
 	hint: Optional[str] = None
@@ -733,32 +689,31 @@ class SelectFieldOption(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: SelectFieldOptionDict) -> SelectFieldOption:
-	    return cls(
-			hint=data['hint'] if 'hint' in data else None,
-			label=data['label'],
-			required=data['required'] if 'required' in data else None,
-			value=data['value'],
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type Skip = Union[bool,str]
 
 type SoftFail = Union[Literal[True,False,'true','false'],SoftFailList]
 
-type SoftFailList = List[SoftFailObject]
+type SoftFailList = List[Union[SoftFailObject,SoftFailObjectDict]]
 
-class SoftFailObjectDict(TypedDict):
-	exit_status: NotRequired[Union[Literal['*'],int]]
+SoftFailObjectDict = TypedDict('SoftFailObjectDict',{
+	'exit_status': NotRequired[Union[Literal['*'],int]],
+	
+})
 
 class SoftFailObject(BaseModel):
 	exit_status: Optional[Union[Literal['*'],int]] = None
 
 	@classmethod
 	def from_dict(cls, data: SoftFailObjectDict) -> SoftFailObject:
-	    return cls(
-			exit_status=data['exit_status'] if 'exit_status' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type StringBlockStep = Literal['block']
 
@@ -766,13 +721,15 @@ type StringInputStep = Literal['input']
 
 type StringWaitStep = Literal['wait','waiter']
 
-class TextFieldDict(TypedDict):
-	default: NotRequired[str]
-	format: NotRequired[str]
-	hint: NotRequired[str]
-	key: str
-	required: NotRequired[Literal[True,False,'true','false']]
-	text: NotRequired[str]
+TextFieldDict = TypedDict('TextFieldDict',{
+	'default': NotRequired['str'],
+	'format': NotRequired['str'],
+	'hint': NotRequired['str'],
+	'key': 'str',
+	'required': NotRequired[Literal[True,False,'true','false']],
+	'text': NotRequired['str'],
+	
+})
 
 class TextField(BaseModel):
 	default: Optional[str] = None
@@ -784,15 +741,10 @@ class TextField(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: TextFieldDict) -> TextField:
-	    return cls(
-			default=data['default'] if 'default' in data else None,
-			format=data['format'] if 'format' in data else None,
-			hint=data['hint'] if 'hint' in data else None,
-			key=data['key'],
-			required=data['required'] if 'required' in data else None,
-			text=data['text'] if 'text' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 class TriggerStepBuild(BaseModel):
 	branch: Optional[str] = None
@@ -803,37 +755,37 @@ class TriggerStepBuild(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: TriggerStepBuildDict) -> TriggerStepBuild:
-	    return cls(
-			branch=data['branch'] if 'branch' in data else None,
-			commit=data['commit'] if 'commit' in data else None,
-			env=data['env'] if 'env' in data else None,
-			message=data['message'] if 'message' in data else None,
-			meta_data=data['meta_data'] if 'meta_data' in data else None,
-			
-		)
-class TriggerStepBuildDict(TypedDict):
-	branch: NotRequired[str]
-	commit: NotRequired[str]
-	env: NotRequired[Env]
-	message: NotRequired[str]
-	meta_data: NotRequired[Dict[str, Any]]
-class TriggerStepDict(TypedDict):
-	allow_dependency_failure: NotRequired[AllowDependencyFailure]
-	pipeline_async: NotRequired[Literal[True, False, 'true', 'false']]
-	branches: NotRequired[Branches]
-	build: NotRequired[TriggerStepBuildDict]
-	depends_on: NotRequired[DependsOn]
-	id: NotRequired[str]
-	identifier: NotRequired[str]
-	pipeline_if: NotRequired[If]
-	if_changed: NotRequired[str]
-	key: NotRequired[str]
-	label: NotRequired[str]
-	name: NotRequired[str]
-	skip: NotRequired[Skip]
-	soft_fail: NotRequired[SoftFail]
-	trigger: str
-	type: NotRequired[Literal['trigger']]
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+TriggerStepBuildDict = TypedDict('TriggerStepBuildDict',{
+	'branch': NotRequired['str'],
+	'commit': NotRequired['str'],
+	'env': NotRequired['Env'],
+	'message': NotRequired['str'],
+	'meta_data': NotRequired['Dict[str, Any]'],
+	
+})
+TriggerStepDict = TypedDict('TriggerStepDict',{
+	'allow_dependency_failure': NotRequired['AllowDependencyFailure'],
+	'async': NotRequired[Literal[True, False, 'true', 'false']],
+	'branches': NotRequired['Branches'],
+	'build': NotRequired['TriggerStepBuildDict'],
+	'depends_on': NotRequired['DependsOn'],
+	'id': NotRequired['str'],
+	'identifier': NotRequired['str'],
+	'if': NotRequired['If'],
+	'if_changed': NotRequired['str'],
+	'key': NotRequired['str'],
+	'label': NotRequired['str'],
+	'name': NotRequired['str'],
+	'skip': NotRequired['Skip'],
+	'soft_fail': NotRequired['SoftFail'],
+	'trigger': 'str',
+	'type': NotRequired[Literal['trigger']],
+	
+})
 
 class TriggerStep(BaseModel):
 	allow_dependency_failure: Optional[AllowDependencyFailure] = None
@@ -855,39 +807,26 @@ class TriggerStep(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: TriggerStepDict) -> TriggerStep:
-	    return cls(
-			allow_dependency_failure=data['allow_dependency_failure'] if 'allow_dependency_failure' in data else None,
-			pipeline_async=data['pipeline_async'] if 'pipeline_async' in data else None,
-			branches=data['branches'] if 'branches' in data else None,
-			build=TriggerStepBuild.from_dict(data['build']) if 'build' in data else None,
-			depends_on=data['depends_on'] if 'depends_on' in data else None,
-			id=data['id'] if 'id' in data else None,
-			identifier=data['identifier'] if 'identifier' in data else None,
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			if_changed=data['if_changed'] if 'if_changed' in data else None,
-			key=data['key'] if 'key' in data else None,
-			label=data['label'] if 'label' in data else None,
-			name=data['name'] if 'name' in data else None,
-			skip=data['skip'] if 'skip' in data else None,
-			soft_fail=data['soft_fail'] if 'soft_fail' in data else None,
-			trigger=data['trigger'],
-			type=data['type'] if 'type' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
-class WaitStepDict(TypedDict):
-	allow_dependency_failure: NotRequired[AllowDependencyFailure]
-	branches: NotRequired[Branches]
-	continue_on_failure: NotRequired[Literal[True,False,'true','false']]
-	depends_on: NotRequired[DependsOn]
-	id: NotRequired[str]
-	identifier: NotRequired[str]
-	pipeline_if: NotRequired[If]
-	key: NotRequired[str]
-	label: NotRequired[str]
-	name: NotRequired[str]
-	type: NotRequired[Literal['wait','waiter']]
-	wait: NotRequired[str]
+WaitStepDict = TypedDict('WaitStepDict',{
+	'allow_dependency_failure': NotRequired['AllowDependencyFailure'],
+	'branches': NotRequired['Branches'],
+	'continue_on_failure': NotRequired[Literal[True,False,'true','false']],
+	'depends_on': NotRequired['DependsOn'],
+	'id': NotRequired['str'],
+	'identifier': NotRequired['str'],
+	'if': NotRequired['If'],
+	'key': NotRequired['str'],
+	'label': NotRequired['str'],
+	'name': NotRequired['str'],
+	'type': NotRequired[Literal['wait','waiter']],
+	'wait': NotRequired['str'],
+	
+})
 
 class WaitStep(BaseModel):
 	allow_dependency_failure: Optional[AllowDependencyFailure] = None
@@ -905,19 +844,8 @@ class WaitStep(BaseModel):
 
 	@classmethod
 	def from_dict(cls, data: WaitStepDict) -> WaitStep:
-	    return cls(
-			allow_dependency_failure=data['allow_dependency_failure'] if 'allow_dependency_failure' in data else None,
-			branches=data['branches'] if 'branches' in data else None,
-			continue_on_failure=data['continue_on_failure'] if 'continue_on_failure' in data else None,
-			depends_on=data['depends_on'] if 'depends_on' in data else None,
-			id=data['id'] if 'id' in data else None,
-			identifier=data['identifier'] if 'identifier' in data else None,
-			pipeline_if=data['pipeline_if'] if 'pipeline_if' in data else None,
-			key=data['key'] if 'key' in data else None,
-			label=data['label'] if 'label' in data else None,
-			name=data['name'] if 'name' in data else None,
-			type=data['type'] if 'type' in data else None,
-			wait=data['wait'] if 'wait' in data else None,
-			
-		)
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 

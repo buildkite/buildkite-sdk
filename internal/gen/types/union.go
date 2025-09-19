@@ -174,8 +174,8 @@ func (u Union) TypeScriptImports() string {
 func (u Union) Python() (string, error) {
 	codeBlock := utils.NewCodeBlock()
 
-	parts := make([]string, len(u.TypeIdentifiers))
-	for i, typ := range u.TypeIdentifiers {
+	var parts []string
+	for _, typ := range u.TypeIdentifiers {
 		// Nested Object
 		if obj, ok := typ.(Object); ok {
 			nestedObj := Object{
@@ -190,11 +190,19 @@ func (u Union) Python() (string, error) {
 			}
 
 			codeBlock.AddLines(objLines)
-			parts[i] = nestedObj.PythonClassType()
+			parts = append(parts, nestedObj.PythonClassType())
 			continue
 		}
 
-		parts[i] = typ.PythonClassType()
+		if ref, ok := typ.(PropertyReference); ok {
+			if obj, ok := ref.Type.(Object); ok {
+				if len(obj.Properties.Keys()) > 0 {
+					parts = append(parts, fmt.Sprintf("%sDict", typ.PythonClassType()))
+				}
+			}
+		}
+
+		parts = append(parts, typ.PythonClassType())
 	}
 
 	codeBlock.AddLines(fmt.Sprintf("type %s = Union[%s]", u.Name.ToTitleCase(), strings.Join(parts, ",")))

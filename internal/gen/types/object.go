@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/buildkite/pipeline-sdk/internal/gen/schema"
 	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
 	"github.com/iancoleman/orderedmap"
 )
@@ -277,19 +278,19 @@ func (o Object) Python() (string, error) {
 	for _, name := range keys {
 		// Reserved words
 		if name == "async" {
-			pyTypedDict.AddItem("pipeline_async", "Literal[True, False, 'true', 'false']", "", "async", false, false)
+			pyTypedDict.AddItem("async", "Literal[True, False, 'true', 'false']", "", "async", false, false)
 			pyClass.AddItem("pipeline_async", "Literal[True, False, 'true', 'false']", "", "async", false, false)
 			continue
 		}
 
 		if name == "if" {
-			pyTypedDict.AddItem("pipeline_if", "If", "", "if", false, false)
+			pyTypedDict.AddItem("if", "If", "", "if", false, false)
 			pyClass.AddItem("pipeline_if", "If", "", "if", false, false)
 			continue
 		}
 
 		if name == "with" {
-			pyTypedDict.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", true, false)
+			pyTypedDict.AddItem("with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", true, false)
 			pyClass.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", true, false)
 			continue
 		}
@@ -365,6 +366,43 @@ func (o Object) Python() (string, error) {
 					isObjectArray = true
 				}
 			}
+		}
+
+		// Union
+		if union, ok := val.(Union); ok {
+			typeIdentifiers := make([]Value, len(union.TypeIdentifiers))
+			for i, typ := range union.TypeIdentifiers {
+				if obj, ok := typ.(Object); ok {
+					typeIdentifiers[i] = Object{
+						Name:                 NewPropertyName(fmt.Sprintf("%sDict", obj.Name.Value)),
+						Properties:           obj.Properties,
+						AdditionalProperties: obj.AdditionalProperties,
+						Required:             obj.Required,
+					}
+					continue
+				}
+
+				if ref, ok := typ.(PropertyReference); ok {
+					fmt.Println(ref.Name)
+					typeIdentifiers[i] = PropertyReference{
+						Name: fmt.Sprintf("%sDict", ref.Name),
+						Ref:  schema.PropertyReferenceString(fmt.Sprintf("%sDict", ref.Name)),
+						Type: ref.Type,
+					}
+					continue
+				}
+
+				typeIdentifiers[i] = typ
+			}
+
+			newUnion := Union{
+				Name:            union.Name,
+				Description:     union.Description,
+				TypeIdentifiers: typeIdentifiers,
+			}
+
+			fmt.Println(newUnion.PythonClassType())
+			dictStructType = newUnion.PythonClassType()
 		}
 
 		pyTypedDict.AddItem(name, dictStructType, "", "", required, isObjectArray)
