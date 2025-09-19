@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"strings"
 	"text/template"
 )
 
@@ -57,13 +58,18 @@ var pythonClassTemplate = `class {{.Name}}(BaseModel):{{ range .Items}}
 
 	@classmethod
 	def from_dict(cls, data: {{.Name}}Dict) -> {{.Name}}:
-	    return cls(
-			{{range .Items}}{{.Name}}={{if .IsObjectArray}}list(map({{.ConstructorName}}.from_dict, data['{{.Name}}'])){{else}}{{if .ConstructorName}}{{.ConstructorName}}.from_dict(data['{{.Name}}']){{else}}data['{{.Name}}']{{end}}{{end}}{{if eq false .Required }} if '{{.Name}}' in data else None{{end}},
-			{{end}}
-		)`
+		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})`
 
-var pythonTypedDictTemplate = `class {{.Name}}(TypedDict):{{ range .Items}}
-	{{.Name}}: {{if eq false .Required }}NotRequired[{{.Value}}]{{else}}{{.Value}}{{end}}{{end}}`
+var pythonTypedDictTemplate = `{{.Name}} = TypedDict('{{.Name}}',{
+	{{ range .Items}}'{{.Name}}': {{if eq false .Required }}NotRequired[{{.Value}}]{{else}}{{.Value}}{{end}},
+	{{end}}
+})`
+
+// var foo = `class {{.Name}}(TypedDict):{{ range .Items}}
+// 	{{.Name}}: {{if eq false .Required }}NotRequired[{{.Value}}]{{else}}{{.Value}}{{end}}{{end}}`
 
 type PythonClassItem struct {
 	Name            string
@@ -105,8 +111,24 @@ func (p PythonClass) Write() (string, error) {
 func (p PythonClass) WriteTypedDict() (string, error) {
 	tmp := template.Must(template.New("pytypeddict").Parse(pythonTypedDictTemplate))
 
+	data := p
+	for i, item := range data.Items {
+		if !strings.Contains(item.Value, "Literal") {
+			data.Items[i] = PythonClassItem{
+				Name:            item.Name,
+				Alias:           item.Alias,
+				Value:           fmt.Sprintf("'%s'", item.Value),
+				ConstructorName: item.ConstructorName,
+				Required:        item.Required,
+				IsObjectArray:   item.IsObjectArray,
+			}
+			continue
+		}
+		data.Items[i] = item
+	}
+
 	res := &bytes.Buffer{}
-	err := tmp.Execute(res, p)
+	err := tmp.Execute(res, data)
 	if err != nil {
 		return "", fmt.Errorf("writing out typed dict template: %v", err)
 	}

@@ -435,7 +435,7 @@ class TestBlockStepDict(TestRunner):
     def test_if(self):
         pipeline = Pipeline(
             steps=[
-                BlockStep.from_dict({'block': 'a label', 'pipeline_if': 'build.message !~ /skip tests/'})
+                BlockStep.from_dict({'block': 'a label', 'if': 'build.message !~ /skip tests/'})
             ]
         )
         self.validator.check_result(pipeline, {'steps': [{'block': 'a label', 'if': 'build.message !~ /skip tests/'}]})

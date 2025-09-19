@@ -162,6 +162,11 @@ func (a Array) Python() (string, error) {
 		listType = strings.Join(unionTypeParts, ",")
 	}
 
+	if _, ok := a.Type.(Object); ok {
+		listLength = 2
+		listType = fmt.Sprintf("%s,%sDict", listType, listType)
+	}
+
 	pyType := fmt.Sprintf("type %s = List[Union[%s]]", a.Name.ToTitleCase(), listType)
 	if listLength == 1 {
 		pyType = fmt.Sprintf("type %s = List[%s]", a.Name.ToTitleCase(), listType)

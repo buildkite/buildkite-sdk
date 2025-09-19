@@ -1,2 +1,2 @@
-from .pipeline import Pipeline
+from .pipeline import Pipeline, PipelineDict
 from .schema import *

@@ -1,16 +1,27 @@
 from .schema import Env, Agents, BlockStepDict, BuildNotify, Image, BlockStep, NestedBlockStep,StringBlockStep,InputStep,NestedInputStep,StringInputStep,CommandStep,NestedCommandStep,WaitStep,NestedWaitStep,StringWaitStep,TriggerStep,NestedTriggerStep,GroupStep
-from typing import Optional, List, Any, Literal
+from typing import Optional, List, Any, TypedDict, NotRequired
 from pydantic import BaseModel
 import json
 
 type Step = BlockStepDict | StringBlockStep | BlockStep | NestedBlockStep | InputStep | NestedInputStep | StringInputStep | CommandStep | NestedCommandStep | WaitStep | NestedWaitStep | StringWaitStep | TriggerStep | NestedTriggerStep | GroupStep
+
+class PipelineDict(TypedDict):
+    env: NotRequired[Env]
+    agents: NotRequired[Agents]
+    notify: NotRequired[BuildNotify]
+    image: NotRequired[Image]
+    steps: List[Step]
 
 class Pipeline(BaseModel):
     env: Optional[Env] = None
     agents: Optional[Agents] = None
     notify: Optional[BuildNotify] = None
     image: Optional[Image] = None
-    steps: Optional[List[Step]] = None
+    steps: List[Step] = []
+
+    @classmethod
+    def from_dict(cls, data: PipelineDict):
+        return cls(**data)
 
     def add_agent(self, key: str, value: Any):
         if self.agents == None:
@@ -30,15 +41,12 @@ class Pipeline(BaseModel):
         self.notify = notify
 
     def add_step(self, step: Step):
-        if self.steps == None:
-            self.steps = []
         self.steps.append(step)
 
     def to_json(self):
         return self.model_dump(
             by_alias=True,
             exclude_none=True,
-            exclude_unset=True,
         )
 
     def to_json_string(self):
