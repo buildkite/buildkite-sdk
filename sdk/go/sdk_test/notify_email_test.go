@@ -3,7 +3,7 @@ package sdk_test
 import (
 	"testing"
 
-	buildkite "github.com/buildkite/pipeline-sdk/sdk/go2/sdk"
+	buildkite "github.com/buildkite/pipeline-sdk/sdk/go/sdk/buildkite"
 )
 
 func TestNotifyEmail(t *testing.T) {
