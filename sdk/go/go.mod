@@ -1,4 +1,4 @@
-module github.com/buildkite/pipeline-sdk/sdk/go2
+module github.com/buildkite/pipeline-sdk/sdk/go
 
 go 1.24.5
 
