@@ -65,9 +65,9 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": [
-                    "rm -rf sdk/python2/src/buildkite_sdk/schema.py",
-                    "touch sdk/python2/src/buildkite_sdk/schema.py",
-                    "./internal/gen/mybinary py sdk/python2/src/buildkite_sdk"
+                    "rm -rf sdk/python/src/buildkite_sdk/schema.py",
+                    "touch sdk/python/src/buildkite_sdk/schema.py",
+                    "./internal/gen/mybinary py sdk/python/src/buildkite_sdk"
                 ],
                 "parallel": false
             }
