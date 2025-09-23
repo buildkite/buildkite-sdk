@@ -75,8 +75,9 @@
                     "rm -rf sdk/go/sdk/buildkite",
                     "mkdir sdk/go/sdk/buildkite",
                     "go install golang.org/x/tools/cmd/goimports@latest",
+                    "export PATH=\"$HOME/go/bin:$PATH\"",
                     "./internal/gen/type-gen go sdk/go/sdk/buildkite",
-                    "~/go/bin/goimports -w ./sdk/go/sdk/buildkite",
+                    "goimports -w ./sdk/go/sdk/buildkite",
                     "gofmt ./sdk/go/sdk/buildkite"
                 ],
                 "parallel": false
