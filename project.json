@@ -74,6 +74,7 @@
                 "commands": [
                     "rm -rf sdk/go/sdk/buildkite",
                     "mkdir sdk/go/sdk/buildkite",
+                    "go install golang.org/x/tools/cmd/goimports@latest",
                     "./internal/gen/type-gen go sdk/go/sdk/buildkite",
                     "~/go/bin/goimports -w ./sdk/go/sdk/buildkite",
                     "gofmt ./sdk/go/sdk/buildkite"
@@ -81,7 +82,7 @@
                 "parallel": false
             }
         },
-        "gen:types-py": {
+        "gen:types-python": {
             "executor": "nx:run-commands",
             "options": {
                 "commands": [
@@ -92,7 +93,7 @@
                 "parallel": false
             }
         },
-        "gen:types-ts": {
+        "gen:types-typescript": {
             "executor": "nx:run-commands",
             "options": {
                 "commands": [
