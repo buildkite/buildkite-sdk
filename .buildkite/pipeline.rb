@@ -40,6 +40,7 @@ pipeline.add_step(
   commands: [
     "mise trust",
     "nx gen:build",
+    "chmod +x internal/gen/type-gen"
   ]
 )
 
