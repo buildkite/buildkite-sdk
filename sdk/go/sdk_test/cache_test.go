@@ -43,7 +43,7 @@ func TestCache(t *testing.T) {
 				Size:  &size,
 				Name:  &name,
 			}
-			CheckResult(t, testVal, `{"paths":["one","two"],"size":"string","name":"name"}`)
+			CheckResult(t, testVal, `{"name":"name","paths":["one","two"],"size":"string"}`)
 		})
 	})
 
