@@ -23,6 +23,25 @@ pipeline.add_step(
   ]
 )
 
+pipeline.add_step(
+  key: "build-gen",
+  label: ":go: Build Gen",
+  plugins: [
+    *plugins,
+    { "artifacts#v1.9.2": {
+      upload: ["node_modules"],
+      compressed: "node_modules.tgz"
+    }},
+    { "artifacts#v1.9.2": {
+      upload: ["internal/gen/type-gen"],
+    }}
+  ],
+  commands: [
+    "mise trust",
+    "nx gen:build",
+  ]
+)
+
 language_plugins = [
   *plugins,
   { "artifacts#v1.9.2": {
@@ -71,7 +90,12 @@ language_targets.each do |target|
       {
         key: "#{target[:key]}-diff",
         label: ":git: Diff",
-        plugins: language_plugins,
+        plugins: [
+          *language_plugins,
+          { "artifacts#v1.9.2": {
+            download: ["internal/gen/type-gen"],
+          }}
+        ],
         commands: [
           "mise trust",
           "nx install #{target[:sdk_label]}",

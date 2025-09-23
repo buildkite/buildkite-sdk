@@ -48,6 +48,15 @@
                 "infra:format"
             ]
         },
+        "gen:build": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "cd internal/gen && go build -o type-gen"
+                ],
+                "parallel": false
+            }
+        },
         "gen:types-ruby": {
             "executor": "nx:run-commands",
             "options": {
@@ -64,7 +73,7 @@
                 "commands": [
                     "rm -rf sdk/go/sdk/buildkite",
                     "mkdir sdk/go/sdk/buildkite",
-                    "./internal/gen/mybinary go sdk/go/sdk/buildkite",
+                    "./internal/gen/type-gen go sdk/go/sdk/buildkite",
                     "~/go/bin/goimports -w ./sdk/go/sdk/buildkite",
                     "gofmt ./sdk/go/sdk/buildkite"
                 ],
@@ -77,7 +86,7 @@
                 "commands": [
                     "rm -rf sdk/python/src/buildkite_sdk/schema.py",
                     "touch sdk/python/src/buildkite_sdk/schema.py",
-                    "./internal/gen/mybinary py sdk/python/src/buildkite_sdk"
+                    "./internal/gen/type-gen py sdk/python/src/buildkite_sdk"
                 ],
                 "parallel": false
             }
@@ -88,7 +97,7 @@
                 "commands": [
                     "rm -rf sdk/typescript/src/types",
                     "mkdir sdk/typescript/src/types",
-                    "./internal/gen/mybinary ts sdk/typescript/src/types"
+                    "./internal/gen/type-gen ts sdk/typescript/src/types"
                 ],
                 "parallel": false
             }
