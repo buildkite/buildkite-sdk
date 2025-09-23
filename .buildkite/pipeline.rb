@@ -75,7 +75,7 @@ language_targets.each do |target|
         commands: [
           "mise trust",
           "nx install #{target[:sdk_label]}",
-          "nx gen:types-#{key}",
+          "nx gen:types-#{target[:key]}",
           "exit $(git diff --exit-code)",
         ],
       },
