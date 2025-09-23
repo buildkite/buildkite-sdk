@@ -39,6 +39,7 @@
         "@swc/helpers": "~0.5.11",
         "@types/jest": "^29.5.12",
         "@types/node": "18.16.9",
+        "ajv": "^8.17.1",
         "esbuild": "^0.19.2",
         "eslint": "^9.8.0",
         "eslint-config-prettier": "^9.0.0",

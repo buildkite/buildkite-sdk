@@ -1,5 +1,5 @@
 import { Pipeline, PipelineSteps, BuildkitePipeline } from '../src/index'
-import Ajv from 'ajv'
+import { Ajv } from 'ajv'
 
 export type PipelineStepValidator = (step: PipelineSteps[0]) => void
 export type PipelineSchemaValidator = (pipeline: BuildkitePipeline) => void
