@@ -52,7 +52,8 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": [
-                    "cd internal/gen && go build -o type-gen"
+                    "cd internal/gen && go build -o type-gen",
+                    "chmod +x internal/gen/type-gen"
                 ],
                 "parallel": false
             }
