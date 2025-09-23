@@ -25,6 +25,7 @@ pipeline.add_step(
 
 pipeline.add_step(
   key: "build-gen",
+  depends_on: ["install"],
   label: ":go: Build Gen",
   plugins: [
     *plugins,
