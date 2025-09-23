@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/buildkite/pipeline-sdk/internal/gen/schema"
-	"github.com/buildkite/pipeline-sdk/internal/gen/types"
-	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
+	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
+	"github.com/buildkite/buildkite-sdk/internal/gen/types"
+	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
 func generateGoTypes(

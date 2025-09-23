@@ -6,9 +6,9 @@ package buildkite
 import "encoding/json"
 
 type CacheObject struct {
+	Name  *string  `json:"name,omitempty"`
 	Paths []string `json:"paths,omitempty"`
 	Size  *string  `json:"size,omitempty"`
-	Name  *string  `json:"name,omitempty"`
 }
 type CacheValues interface {
 	string | []string | CacheObject

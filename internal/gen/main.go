@@ -6,8 +6,8 @@ import (
 	"path"
 	"sort"
 
-	"github.com/buildkite/pipeline-sdk/internal/gen/schema"
-	"github.com/buildkite/pipeline-sdk/internal/gen/types"
+	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
+	"github.com/buildkite/buildkite-sdk/internal/gen/types"
 	"github.com/iancoleman/orderedmap"
 )
 
