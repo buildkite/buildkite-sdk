@@ -221,7 +221,7 @@ export interface MatrixAdjustments {
 
 	with: MatrixElementList | MatrixAdjustmentsWithObject
 }
-export type MatrixAdjustmentsWithObject = Record<string, any>
+export type MatrixAdjustmentsWithObject = Record<string, string>
 export type MatrixElement = string | number | boolean
 export type MatrixElementList = (string | number | boolean)[]
 export interface MatrixObject { 
