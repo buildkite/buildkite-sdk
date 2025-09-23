@@ -21,6 +21,7 @@ dependencies = [
   "jsoncomparison",
   "requests",
   "jsonschema",
+  "pyyaml",
 ]
 
 [tool.hatch.build.targets.wheel]
