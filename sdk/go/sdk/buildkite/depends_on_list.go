@@ -31,8 +31,8 @@ type DependsOnListUnionValues interface {
 	string | DependsOnListObject
 }
 type DependsOnListUnion struct {
-	String        *string
 	DependsOnList *DependsOnListObject
+	String        *string
 }
 
 func (e DependsOnListUnion) MarshalJSON() ([]byte, error) {

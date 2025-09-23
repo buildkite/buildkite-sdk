@@ -10,19 +10,19 @@ type PipelineStepsUnionValues interface {
 }
 type PipelineStepsUnion struct {
 	BlockStep         *BlockStep
-	NestedBlockStep   *NestedBlockStep
-	StringBlockStep   *StringBlockStep
-	InputStep         *InputStep
-	NestedInputStep   *NestedInputStep
-	StringInputStep   *StringInputStep
 	CommandStep       *CommandStep
+	GroupStep         *GroupStep
+	InputStep         *InputStep
+	NestedBlockStep   *NestedBlockStep
 	NestedCommandStep *NestedCommandStep
-	WaitStep          *WaitStep
+	NestedInputStep   *NestedInputStep
+	NestedTriggerStep *NestedTriggerStep
 	NestedWaitStep    *NestedWaitStep
+	StringBlockStep   *StringBlockStep
+	StringInputStep   *StringInputStep
 	StringWaitStep    *StringWaitStep
 	TriggerStep       *TriggerStep
-	NestedTriggerStep *NestedTriggerStep
-	GroupStep         *GroupStep
+	WaitStep          *WaitStep
 }
 
 func (e PipelineStepsUnion) MarshalJSON() ([]byte, error) {

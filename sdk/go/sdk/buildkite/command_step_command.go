@@ -9,8 +9,8 @@ type CommandStepCommandValues interface {
 	[]string | string
 }
 type CommandStepCommand struct {
-	StringArray []string
 	String      *string
+	StringArray []string
 }
 
 func (e CommandStepCommand) MarshalJSON() ([]byte, error) {

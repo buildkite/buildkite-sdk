@@ -10,18 +10,18 @@ type GroupStepsUnionValues interface {
 }
 type GroupStepsUnion struct {
 	BlockStep         *BlockStep
-	NestedBlockStep   *NestedBlockStep
-	StringBlockStep   *StringBlockStep
-	InputStep         *InputStep
-	NestedInputStep   *NestedInputStep
-	StringInputStep   *StringInputStep
 	CommandStep       *CommandStep
+	InputStep         *InputStep
+	NestedBlockStep   *NestedBlockStep
 	NestedCommandStep *NestedCommandStep
-	WaitStep          *WaitStep
+	NestedInputStep   *NestedInputStep
+	NestedTriggerStep *NestedTriggerStep
 	NestedWaitStep    *NestedWaitStep
+	StringBlockStep   *StringBlockStep
+	StringInputStep   *StringInputStep
 	StringWaitStep    *StringWaitStep
 	TriggerStep       *TriggerStep
-	NestedTriggerStep *NestedTriggerStep
+	WaitStep          *WaitStep
 }
 
 func (e GroupStepsUnion) MarshalJSON() ([]byte, error) {

@@ -6,19 +6,19 @@ package buildkite
 import "encoding/json"
 
 type CommandStepManualRetryEnumValues interface {
-	string | bool
+	bool | string
 }
 type CommandStepManualRetryEnum struct {
-	String *string
 	Bool   *bool
+	String *string
 }
 
 func (e CommandStepManualRetryEnum) MarshalJSON() ([]byte, error) {
-	if e.String != nil {
-		return json.Marshal(e.String)
-	}
 	if e.Bool != nil {
 		return json.Marshal(e.Bool)
+	}
+	if e.String != nil {
+		return json.Marshal(e.String)
 	}
 	return json.Marshal(nil)
 }

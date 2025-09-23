@@ -15,8 +15,8 @@ type SoftFailObjectExitStatusValues interface {
 	SoftFailObjectExitStatusEnum | int
 }
 type SoftFailObjectExitStatus struct {
-	SoftFailObjectExitStatusEnum *SoftFailObjectExitStatusEnum
 	Int                          *int
+	SoftFailObjectExitStatusEnum *SoftFailObjectExitStatusEnum
 }
 
 func (e SoftFailObjectExitStatus) MarshalJSON() ([]byte, error) {

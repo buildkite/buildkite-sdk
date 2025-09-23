@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"text/template"
+
+	"github.com/iancoleman/orderedmap"
 )
 
 type FileWriter interface {
@@ -70,13 +73,18 @@ type GoStructItem struct {
 	TagName string
 }
 
-type GoStruct struct {
+type goStructTemplateArgs struct {
 	Name  string
 	Items []GoStructItem
 }
 
+type GoStruct struct {
+	Name  string
+	Items *orderedmap.OrderedMap
+}
+
 func (g *GoStruct) AddItem(key, val, tagName string, isPointer bool) {
-	g.Items = append(g.Items, GoStructItem{
+	g.Items.Set(key, GoStructItem{
 		Name:    key,
 		Value:   val,
 		Pointer: isPointer,
@@ -88,7 +96,19 @@ func (g GoStruct) Write() (string, error) {
 	tmp := template.Must(template.New("struct").Parse(goStructTemplate))
 
 	res := &bytes.Buffer{}
-	err := tmp.Execute(res, g)
+
+	g.Items.SortKeys(sort.Strings)
+	keys := g.Items.Keys()
+	items := make([]GoStructItem, len(keys))
+	for i, key := range keys {
+		item, _ := g.Items.Get(key)
+		items[i] = item.(GoStructItem)
+	}
+
+	err := tmp.Execute(res, goStructTemplateArgs{
+		Name:  g.Name,
+		Items: items,
+	})
 	if err != nil {
 		return "", fmt.Errorf("writing out template: %v", err)
 	}
@@ -99,7 +119,7 @@ func (g GoStruct) Write() (string, error) {
 func NewGoStruct(name string, items []GoStructItem) *GoStruct {
 	return &GoStruct{
 		Name:  name,
-		Items: items,
+		Items: orderedmap.New(),
 	}
 }
 

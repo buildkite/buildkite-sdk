@@ -27,9 +27,9 @@ type CommandStepAutomaticRetryValues interface {
 	CommandStepAutomaticRetryEnum | AutomaticRetry | AutomaticRetryList
 }
 type CommandStepAutomaticRetry struct {
-	CommandStepAutomaticRetryEnum *CommandStepAutomaticRetryEnum
 	AutomaticRetry                *AutomaticRetry
 	AutomaticRetryList            *AutomaticRetryList
+	CommandStepAutomaticRetryEnum *CommandStepAutomaticRetryEnum
 }
 
 func (e CommandStepAutomaticRetry) MarshalJSON() ([]byte, error) {

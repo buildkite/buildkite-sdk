@@ -9,8 +9,8 @@ type DependsOnValues interface {
 	string | DependsOnList
 }
 type DependsOn struct {
-	String        *string
 	DependsOnList *DependsOnList
+	String        *string
 }
 
 func (e DependsOn) MarshalJSON() ([]byte, error) {
