@@ -69,6 +69,17 @@ language_targets.each do |target|
     group: "#{target[:icon]} #{target[:label]}",
     steps: [
       {
+        key: "#{target[:key]}-diff",
+        label: ":git: Diff",
+        plugins: language_plugins,
+        commands: [
+          "mise trust",
+          "nx install #{target[:sdk_label]}",
+          "nx gen:types-#{key}",
+          "exit $(git diff --exit-code)",
+        ],
+      },
+      {
         key: "#{target[:key]}-test",
         label: ":test_tube: Test",
         plugins: language_plugins,
