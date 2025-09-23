@@ -48,6 +48,16 @@
                 "infra:format"
             ]
         },
+        "gen:types-ruby": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "echo 'Ruby type generation not implemented'",
+                    "exit 0"
+                ],
+                "parallel": false
+            }
+        },
         "gen:types-go": {
             "executor": "nx:run-commands",
             "options": {
