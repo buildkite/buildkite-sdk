@@ -29,7 +29,7 @@ pipeline.add_step(
   plugins: [
     *plugins,
     { "artifacts#v1.9.2": {
-      upload: ["node_modules"],
+      download: ["node_modules"],
       compressed: "node_modules.tgz"
     }},
     { "artifacts#v1.9.2": {
@@ -83,7 +83,7 @@ language_targets = [
 
 language_targets.each do |target|
   pipeline.add_step(
-    depends_on: "install",
+    depends_on: ["install", "build-gen"],
     key: "#{target[:key]}",
     group: "#{target[:icon]} #{target[:label]}",
     steps: [
