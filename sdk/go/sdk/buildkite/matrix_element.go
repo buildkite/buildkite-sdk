@@ -9,9 +9,9 @@ type MatrixElementValues interface {
 	string | int | bool
 }
 type MatrixElement struct {
-	String *string
-	Int    *int
 	Bool   *bool
+	Int    *int
+	String *string
 }
 
 func (e MatrixElement) MarshalJSON() ([]byte, error) {

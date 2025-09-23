@@ -10,8 +10,8 @@ type PluginsListUnionValues interface {
 	string | PluginsListObject
 }
 type PluginsListUnion struct {
-	String      *string
 	PluginsList *PluginsListObject
+	String      *string
 }
 
 func (e PluginsListUnion) MarshalJSON() ([]byte, error) {

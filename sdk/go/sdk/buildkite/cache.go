@@ -14,9 +14,9 @@ type CacheValues interface {
 	string | []string | CacheObject
 }
 type Cache struct {
+	Cache       *CacheObject
 	String      *string
 	StringArray []string
-	Cache       *CacheObject
 }
 
 func (e Cache) MarshalJSON() ([]byte, error) {

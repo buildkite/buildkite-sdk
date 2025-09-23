@@ -9,14 +9,14 @@ type BuildNotifyUnionValues interface {
 	NotifySimple | NotifyEmail | NotifyBasecamp | NotifySlack | NotifyWebhook | NotifyPagerduty | NotifyGithubCommitStatus | NotifyGithubCheck
 }
 type BuildNotifyUnion struct {
-	NotifySimple             *NotifySimple
-	NotifyEmail              *NotifyEmail
 	NotifyBasecamp           *NotifyBasecamp
+	NotifyEmail              *NotifyEmail
+	NotifyGithubCheck        *NotifyGithubCheck
+	NotifyGithubCommitStatus *NotifyGithubCommitStatus
+	NotifyPagerduty          *NotifyPagerduty
+	NotifySimple             *NotifySimple
 	NotifySlack              *NotifySlack
 	NotifyWebhook            *NotifyWebhook
-	NotifyPagerduty          *NotifyPagerduty
-	NotifyGithubCommitStatus *NotifyGithubCommitStatus
-	NotifyGithubCheck        *NotifyGithubCheck
 }
 
 func (e BuildNotifyUnion) MarshalJSON() ([]byte, error) {

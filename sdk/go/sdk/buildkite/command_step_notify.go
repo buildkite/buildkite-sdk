@@ -9,11 +9,11 @@ type CommandStepNotifyUnionValues interface {
 	NotifySimple | NotifyBasecamp | NotifySlack | NotifyGithubCommitStatus | NotifyGithubCheck
 }
 type CommandStepNotifyUnion struct {
-	NotifySimple             *NotifySimple
 	NotifyBasecamp           *NotifyBasecamp
-	NotifySlack              *NotifySlack
-	NotifyGithubCommitStatus *NotifyGithubCommitStatus
 	NotifyGithubCheck        *NotifyGithubCheck
+	NotifyGithubCommitStatus *NotifyGithubCommitStatus
+	NotifySimple             *NotifySimple
+	NotifySlack              *NotifySlack
 }
 
 func (e CommandStepNotifyUnion) MarshalJSON() ([]byte, error) {

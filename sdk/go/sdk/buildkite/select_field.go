@@ -24,7 +24,7 @@ func (e SelectFieldDefault) MarshalJSON() ([]byte, error) {
 }
 
 type SelectFieldMultipleValues interface {
-	bool | string
+	string | bool
 }
 type SelectFieldMultiple struct {
 	Bool   *bool
@@ -32,11 +32,11 @@ type SelectFieldMultiple struct {
 }
 
 func (e SelectFieldMultiple) MarshalJSON() ([]byte, error) {
-	if e.Bool != nil {
-		return json.Marshal(e.Bool)
-	}
 	if e.String != nil {
 		return json.Marshal(e.String)
+	}
+	if e.Bool != nil {
+		return json.Marshal(e.Bool)
 	}
 	return json.Marshal(nil)
 }

@@ -9,8 +9,8 @@ type AgentsValues interface {
 	AgentsObject | AgentsList
 }
 type Agents struct {
-	AgentsObject *AgentsObject
 	AgentsList   *AgentsList
+	AgentsObject *AgentsObject
 }
 
 func (e Agents) MarshalJSON() ([]byte, error) {

@@ -9,8 +9,8 @@ type FieldsUnionValues interface {
 	TextField | SelectField
 }
 type FieldsUnion struct {
-	TextField   *TextField
 	SelectField *SelectField
+	TextField   *TextField
 }
 
 func (e FieldsUnion) MarshalJSON() ([]byte, error) {

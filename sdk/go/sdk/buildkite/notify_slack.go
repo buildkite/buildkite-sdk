@@ -9,8 +9,8 @@ type NotifySlackSlackValues interface {
 	string | NotifySlackObject
 }
 type NotifySlackSlack struct {
-	String            *string
 	NotifySlackObject *NotifySlackObject
+	String            *string
 }
 
 func (e NotifySlackSlack) MarshalJSON() ([]byte, error) {

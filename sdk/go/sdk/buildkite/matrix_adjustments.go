@@ -9,8 +9,8 @@ type MatrixAdjustmentsWithValues interface {
 	MatrixElementList | MatrixAdjustmentsWithObject
 }
 type MatrixAdjustmentsWith struct {
-	MatrixElementList           *MatrixElementList
 	MatrixAdjustmentsWithObject *MatrixAdjustmentsWithObject
+	MatrixElementList           *MatrixElementList
 }
 
 func (e MatrixAdjustmentsWith) MarshalJSON() ([]byte, error) {
