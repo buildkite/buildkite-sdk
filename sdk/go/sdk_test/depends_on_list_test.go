@@ -65,7 +65,7 @@ func TestDependsOnList(t *testing.T) {
 					Bool: &val,
 				},
 			}
-			CheckResult(t, testVal, `{"step":"step","allow_failure":true}`)
+			CheckResult(t, testVal, `{"allow_failure":true,"step":"step"}`)
 		})
 	})
 

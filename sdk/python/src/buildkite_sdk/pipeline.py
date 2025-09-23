@@ -2,6 +2,7 @@ from .schema import Env, Agents, BlockStepDict, BuildNotify, Image, BlockStep, N
 from typing import Optional, List, Any, TypedDict, NotRequired
 from pydantic import BaseModel
 import json
+import yaml
 
 type Step = BlockStepDict | StringBlockStep | BlockStep | NestedBlockStep | InputStep | NestedInputStep | StringInputStep | CommandStep | NestedCommandStep | WaitStep | NestedWaitStep | StringWaitStep | TriggerStep | NestedTriggerStep | GroupStep
 
@@ -52,3 +53,6 @@ class Pipeline(BaseModel):
     def to_json_string(self):
         pipeline_json = self.to_json()
         return json.dumps(pipeline_json)
+
+    def to_yaml_string(self):
+        return yaml.dump(self)
