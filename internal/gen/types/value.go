@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/buildkite/pipeline-sdk/internal/gen/schema"
-	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
+	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
+	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 	"github.com/iancoleman/orderedmap"
 )
 
@@ -14,12 +14,68 @@ type PipelineSchemaGenerator struct {
 	Properties  *orderedmap.OrderedMap
 }
 
-var pipelineToJSONFn = `func (p Pipeline) ToJSON() (string, error) {
+var pipelineFunctions = `func (p Pipeline) ToJSON() (string, error) {
     rawJSON, err := json.Marshal(p)
 	if err != nil {
 	    return "", err
 	}
 	return string(rawJSON), nil
+}
+
+func (p *Pipeline) AddStep(step PipelineStepsUnion) {
+	steps := p.Steps
+	if steps == nil {
+		steps = &[]PipelineStepsUnion{}
+	}
+
+	newSteps := append(*steps, step)
+	p.Steps = &newSteps
+}
+
+func (p *Pipeline) AddAgent(key string, value any) {
+	agents := map[string]interface{}{}
+	if p.Agents != nil {
+		agents = *p.Agents.AgentsObject
+	}
+
+	agents[key] = value
+	p.Agents = &Agents{
+		AgentsObject: &agents,
+	}
+}
+
+func (p *Pipeline) AddEnvironmentVariable(key string, value any) {
+	env := *p.Env
+	if p.Env == nil {
+		env = map[string]interface{}{}
+	}
+
+	env[key] = value
+	p.Env = &env
+}
+
+func (p *Pipeline) AddNotify(notify BuildNotifyUnion) {
+	foo := []BuildNotifyUnion{notify}
+	p.Notify = &foo
+}
+
+func (p *Pipeline) ToYAML() (string, error) {
+	data, err := p.ToJSON()
+	if err != nil {
+		return "", err
+	}
+
+	var output strings.Builder
+	input := strings.NewReader(data)
+	if err := json2yaml.Convert(&output, input); err != nil {
+		return "", fmt.Errorf("converting JSON to YAML: %v", err)
+	}
+
+	return output.String(), nil
+}
+
+func NewPipeline() *Pipeline {
+	return &Pipeline{}
 }`
 
 func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
@@ -42,7 +98,7 @@ func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 	codeBlock := utils.NewCodeBlock(
 		structString,
 		"",
-		pipelineToJSONFn,
+		pipelineFunctions,
 	)
 
 	return codeBlock.String(), nil

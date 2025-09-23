@@ -24,8 +24,8 @@ func (e DependsOnListObjectAllowFailure) MarshalJSON() ([]byte, error) {
 }
 
 type DependsOnListObject struct {
-	Step         *string                          `json:"step,omitempty"`
 	AllowFailure *DependsOnListObjectAllowFailure `json:"allow_failure,omitempty"`
+	Step         *string                          `json:"step,omitempty"`
 }
 type DependsOnListUnionValues interface {
 	string | DependsOnListObject

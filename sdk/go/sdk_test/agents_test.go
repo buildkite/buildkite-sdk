@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	buildkite "github.com/buildkite/pipeline-sdk/sdk/go/sdk/buildkite"
+	buildkite "github.com/buildkite/buildkite-sdk/sdk/go/sdk/buildkite"
 	"github.com/stretchr/testify/assert"
 )
 

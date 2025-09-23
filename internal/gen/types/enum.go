@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
+	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
 func parseEnumValue(val any) EnumValue {

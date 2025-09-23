@@ -5,7 +5,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/buildkite/pipeline-sdk/internal/gen/utils"
+	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
 type Union struct {

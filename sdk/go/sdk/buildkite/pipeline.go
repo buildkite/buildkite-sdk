@@ -3,14 +3,20 @@
 
 package buildkite
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"github.com/itchyny/json2yaml"
+)
 
 type Pipeline struct {
-	Notify *BuildNotify   `json:"notify,omitempty"`
-	Image  *Image         `json:"image,omitempty"`
-	Steps  *PipelineSteps `json:"steps,omitempty"`
-	Env    *Env           `json:"env,omitempty"`
 	Agents *Agents        `json:"agents,omitempty"`
+	Env    *Env           `json:"env,omitempty"`
+	Image  *Image         `json:"image,omitempty"`
+	Notify *BuildNotify   `json:"notify,omitempty"`
+	Steps  *PipelineSteps `json:"steps,omitempty"`
 }
 
 func (p Pipeline) ToJSON() (string, error) {
@@ -19,4 +25,60 @@ func (p Pipeline) ToJSON() (string, error) {
 		return "", err
 	}
 	return string(rawJSON), nil
+}
+
+func (p *Pipeline) AddStep(step PipelineStepsUnion) {
+	steps := p.Steps
+	if steps == nil {
+		steps = &[]PipelineStepsUnion{}
+	}
+
+	newSteps := append(*steps, step)
+	p.Steps = &newSteps
+}
+
+func (p *Pipeline) AddAgent(key string, value any) {
+	agents := map[string]interface{}{}
+	if p.Agents != nil {
+		agents = *p.Agents.AgentsObject
+	}
+
+	agents[key] = value
+	p.Agents = &Agents{
+		AgentsObject: &agents,
+	}
+}
+
+func (p *Pipeline) AddEnvironmentVariable(key string, value any) {
+	env := *p.Env
+	if p.Env == nil {
+		env = map[string]interface{}{}
+	}
+
+	env[key] = value
+	p.Env = &env
+}
+
+func (p *Pipeline) AddNotify(notify BuildNotifyUnion) {
+	foo := []BuildNotifyUnion{notify}
+	p.Notify = &foo
+}
+
+func (p *Pipeline) ToYAML() (string, error) {
+	data, err := p.ToJSON()
+	if err != nil {
+		return "", err
+	}
+
+	var output strings.Builder
+	input := strings.NewReader(data)
+	if err := json2yaml.Convert(&output, input); err != nil {
+		return "", fmt.Errorf("converting JSON to YAML: %v", err)
+	}
+
+	return output.String(), nil
+}
+
+func NewPipeline() *Pipeline {
+	return &Pipeline{}
 }
