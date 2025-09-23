@@ -2,9 +2,11 @@ package types
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
+	"github.com/iancoleman/orderedmap"
 )
 
 func parseEnumValue(val any) EnumValue {
@@ -76,16 +78,17 @@ func (e Enum) Go() (string, error) {
 		fmt.Sprintf("func (e %s) MarshalJSON() ([]byte, error) {", displayName),
 	)
 
-	enumTypes := map[string]string{}
+	enumTypes := orderedmap.New()
 	for _, val := range e.Values {
 		parsed := parseEnumValue(val)
 		typ := parsed.Type.GoStructType()
-		enumTypes[typ] = typ
+		enumTypes.Set(typ, typ)
 	}
+	enumTypes.SortKeys(sort.Strings)
 
 	// If there is only one type in the values.
-	if len(enumTypes) == 1 {
-		for typ := range enumTypes {
+	if len(enumTypes.Keys()) == 1 {
+		for _, typ := range enumTypes.Keys() {
 			if typ != "string" {
 				panic("type not supported in single enum")
 			}
@@ -106,7 +109,7 @@ func (e Enum) Go() (string, error) {
 		}
 	}
 
-	for typ := range enumTypes {
+	for _, typ := range enumTypes.Keys() {
 		titleCaseType := utils.CamelCaseToTitleCase(typ)
 
 		enumInterface.AddItem(typ)
