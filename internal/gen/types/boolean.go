@@ -7,7 +7,12 @@ import (
 )
 
 type Boolean struct {
-	Name PropertyName
+	Name        PropertyName
+	Description string
+}
+
+func (b Boolean) GetDescription() string {
+	return b.Description
 }
 
 func (b Boolean) IsReference() bool {
@@ -51,7 +56,13 @@ func (b Boolean) TypeScriptInterfaceType() string {
 
 // Python
 func (b Boolean) Python() (string, error) {
-	return fmt.Sprintf("type %s = bool", b.Name.ToTitleCase()), nil
+	block := utils.NewCodeBlock()
+	if b.Description != "" {
+		block.AddLines(fmt.Sprintf("# %s", b.Description))
+	}
+
+	block.AddLines(fmt.Sprintf("type %s = bool", b.Name.ToTitleCase()))
+	return block.String(), nil
 }
 
 func (b Boolean) PythonClassKey() string {

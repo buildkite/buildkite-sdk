@@ -7,7 +7,12 @@ import (
 )
 
 type String struct {
-	Name PropertyName
+	Name        PropertyName
+	Description string
+}
+
+func (s String) GetDescription() string {
+	return s.Description
 }
 
 func (s String) IsReference() bool {
@@ -50,7 +55,13 @@ func (String) TypeScriptInterfaceType() string {
 
 // Python
 func (s String) Python() (string, error) {
-	return fmt.Sprintf("type %s = str", s.Name.ToTitleCase()), nil
+	block := utils.NewCodeBlock()
+	if s.Description != "" {
+		block.AddLines(fmt.Sprintf("# %s", s.Description))
+	}
+
+	block.AddLines(fmt.Sprintf("type %s = str", s.Name.ToTitleCase()))
+	return block.String(), nil
 }
 
 func (s String) PythonClassKey() string {

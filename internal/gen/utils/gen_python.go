@@ -53,26 +53,24 @@ func NewPythonFile(
 	}
 }
 
-var pythonClassTemplate = `class {{.Name}}(BaseModel):{{ range .Items}}
-	{{.Name}}: {{if eq false .Required }}Optional[{{.Value}}]{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{else}} = None{{end}}{{else}}{{.Value}}{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{end}}{{end}}{{end}}
+var pythonClassTemplate = `{{if ne "" .Description}}{{printf "# %s\n" .Description}}{{end}}class {{.Name}}(BaseModel):{{ range .Items}}
+    {{if ne "" .Description}}{{printf "# %s\n    " .Description}}{{end}}{{.Name}}: {{if eq false .Required }}Optional[{{.Value}}]{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{else}} = None{{end}}{{else}}{{.Value}}{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{end}}{{end}}{{end}}
 
-	@classmethod
-	def from_dict(cls, data: {{.Name}}Dict) -> {{.Name}}:
-		pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-		pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
-		matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-		return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})`
+    @classmethod
+    def from_dict(cls, data: {{.Name}}Dict) -> {{.Name}}:
+        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
+        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})`
 
-var pythonTypedDictTemplate = `{{.Name}} = TypedDict('{{.Name}}',{
-	{{ range .Items}}'{{.Name}}': {{if eq false .Required }}NotRequired[{{.Value}}]{{else}}{{.Value}}{{end}},
-	{{end}}
+var pythonTypedDictTemplate = `{{if ne "" .Description}}{{printf "# %s\n" .Description}}{{end}}{{.Name}} = TypedDict('{{.Name}}',{
+    {{ range .Items}}{{if ne "" .Description}}{{printf "# %s\n    " .Description}}{{end}}'{{.Name}}': {{if eq false .Required }}NotRequired[{{.Value}}]{{else}}{{.Value}}{{end}},
+    {{end}}
 })`
-
-// var foo = `class {{.Name}}(TypedDict):{{ range .Items}}
-// 	{{.Name}}: {{if eq false .Required }}NotRequired[{{.Value}}]{{else}}{{.Value}}{{end}}{{end}}`
 
 type PythonClassItem struct {
 	Name            string
+	Description     string
 	Alias           string
 	Value           string
 	ConstructorName string
@@ -81,13 +79,15 @@ type PythonClassItem struct {
 }
 
 type PythonClass struct {
-	Name  string
-	Items []PythonClassItem
+	Name        string
+	Description string
+	Items       []PythonClassItem
 }
 
-func (p *PythonClass) AddItem(name, value, constructorName, alias string, required, isObjectArray bool) {
+func (p *PythonClass) AddItem(name, value, constructorName, alias, description string, required, isObjectArray bool) {
 	p.Items = append(p.Items, PythonClassItem{
 		Name:            name,
+		Description:     description,
 		Alias:           alias,
 		Value:           value,
 		ConstructorName: constructorName,
@@ -116,6 +116,7 @@ func (p PythonClass) WriteTypedDict() (string, error) {
 		if !strings.Contains(item.Value, "Literal") {
 			data.Items[i] = PythonClassItem{
 				Name:            item.Name,
+				Description:     item.Description,
 				Alias:           item.Alias,
 				Value:           fmt.Sprintf("'%s'", item.Value),
 				ConstructorName: item.ConstructorName,
@@ -136,6 +137,9 @@ func (p PythonClass) WriteTypedDict() (string, error) {
 	return res.String(), nil
 }
 
-func NewPythonClass(name string) *PythonClass {
-	return &PythonClass{Name: name}
+func NewPythonClass(name, description string) *PythonClass {
+	return &PythonClass{
+		Name:        name,
+		Description: description,
+	}
 }

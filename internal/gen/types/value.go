@@ -157,8 +157,9 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 			}
 
 			return Array{
-				Name: propertyName,
-				Type: union,
+				Name:        propertyName,
+				Description: property.Description,
+				Type:        union,
 			}, nil
 		}
 		if property.Items.OneOf != nil {
@@ -168,8 +169,9 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 			}
 
 			return Array{
-				Name: propertyName,
-				Type: union,
+				Name:        propertyName,
+				Description: property.Description,
+				Type:        union,
 			}, nil
 		}
 
@@ -186,22 +188,25 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 			}
 
 			return Array{
-				Name:      propertyName,
-				Type:      arrayType,
-				Reference: true,
+				Name:        propertyName,
+				Description: property.Description,
+				Type:        arrayType,
+				Reference:   true,
 			}, nil
 		}
 
 		switch property.Items.Type {
 		case "string":
 			return Array{
-				Name: propertyName,
-				Type: String{},
+				Name:        propertyName,
+				Description: property.Description,
+				Type:        String{},
 			}, nil
 		case "integer":
 			return Array{
-				Name: propertyName,
-				Type: Number{},
+				Name:        propertyName,
+				Description: property.Description,
+				Type:        Number{},
 			}, nil
 		default:
 			panic(fmt.Sprintf("unsupported array type [%s]", propertyName.Value))
@@ -264,6 +269,7 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 
 			return Object{
 				Name:                 propertyName,
+				Description:          propDef.Description,
 				Properties:           properties,
 				AdditionalProperties: &additionalProperties,
 				Required:             property.Required,
@@ -271,30 +277,34 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 		}
 
 		return Object{
-			Name:       propertyName,
-			Properties: properties,
-			Required:   property.Required,
+			Name:        propertyName,
+			Description: property.Description,
+			Properties:  properties,
+			Required:    property.Required,
 		}, nil
 	}
 
 	// String
 	if property.Type == "string" {
 		return String{
-			Name: propertyName,
+			Name:        propertyName,
+			Description: property.Description,
 		}, nil
 	}
 
 	// Number
 	if property.Type == "integer" {
 		return Number{
-			Name: propertyName,
+			Name:        propertyName,
+			Description: property.Description,
 		}, nil
 	}
 
 	// Boolean
 	if property.Type == "boolean" {
 		return Boolean{
-			Name: propertyName,
+			Name:        propertyName,
+			Description: property.Description,
 		}, nil
 	}
 
@@ -449,21 +459,24 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 
 		if item.Type == "string" {
 			typeIdentifiers = append(typeIdentifiers, String{
-				Name: propertyName,
+				Name:        propertyName,
+				Description: item.Description,
 			})
 			continue
 		}
 
 		if item.Type == "integer" {
 			typeIdentifiers = append(typeIdentifiers, Number{
-				Name: propertyName,
+				Name:        propertyName,
+				Description: item.Description,
 			})
 			continue
 		}
 
 		if item.Type == "boolean" {
 			typeIdentifiers = append(typeIdentifiers, Boolean{
-				Name: propertyName,
+				Name:        propertyName,
+				Description: item.Description,
 			})
 			continue
 		}
@@ -479,6 +492,8 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 }
 
 type Value interface {
+	GetDescription() string
+
 	// Go
 	Go() (string, error)
 	GoStructType() string

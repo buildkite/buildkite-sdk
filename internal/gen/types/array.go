@@ -8,9 +8,14 @@ import (
 )
 
 type Array struct {
-	Name      PropertyName
-	Type      Value
-	Reference bool
+	Name        PropertyName
+	Description string
+	Type        Value
+	Reference   bool
+}
+
+func (a Array) GetDescription() string {
+	return a.Description
 }
 
 func (a Array) IsReference() bool {
@@ -170,6 +175,10 @@ func (a Array) Python() (string, error) {
 	pyType := fmt.Sprintf("type %s = List[Union[%s]]", a.Name.ToTitleCase(), listType)
 	if listLength == 1 {
 		pyType = fmt.Sprintf("type %s = List[%s]", a.Name.ToTitleCase(), listType)
+	}
+
+	if a.Description != "" {
+		codeBlock.AddLines(fmt.Sprintf("# %s", a.Description))
 	}
 
 	codeBlock.AddLines(pyType)

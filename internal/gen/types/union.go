@@ -14,6 +14,10 @@ type Union struct {
 	TypeIdentifiers []Value
 }
 
+func (u Union) GetDescription() string {
+	return u.Description
+}
+
 func (u Union) IsReference() bool {
 	return false
 }
@@ -203,6 +207,10 @@ func (u Union) Python() (string, error) {
 		}
 
 		parts = append(parts, typ.PythonClassType())
+	}
+
+	if u.Description != "" {
+		codeBlock.AddLines(fmt.Sprintf("# %s", u.Description))
 	}
 
 	codeBlock.AddLines(fmt.Sprintf("type %s = Union[%s]", u.Name.ToTitleCase(), strings.Join(parts, ",")))

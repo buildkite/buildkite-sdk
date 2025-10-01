@@ -10,6 +10,10 @@ func (c *codeBlock) AddLines(lines ...string) {
 	c.lines = append(c.lines, lines...)
 }
 
+func (c codeBlock) Length() int {
+	return len(c.lines)
+}
+
 func (c codeBlock) String() string {
 	return strings.Join(c.lines, "\n")
 }

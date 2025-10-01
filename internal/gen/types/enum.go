@@ -48,6 +48,10 @@ type Enum struct {
 	Default     any
 }
 
+func (e Enum) GetDescription() string {
+	return e.Description
+}
+
 func (e Enum) IsReference() bool {
 	return false
 }
@@ -176,7 +180,13 @@ func (e Enum) TypeScriptInterfaceType() string {
 
 // Python
 func (e Enum) Python() (string, error) {
-	return fmt.Sprintf("type %s = %s", e.Name.ToTitleCase(), e.PythonClassType()), nil
+	block := utils.NewCodeBlock()
+	if e.Description != "" {
+		block.AddLines(fmt.Sprintf("# %s", e.Description))
+	}
+
+	block.AddLines(fmt.Sprintf("type %s = %s", e.Name.ToTitleCase(), e.PythonClassType()))
+	return block.String(), nil
 }
 
 func (e Enum) PythonClassKey() string {

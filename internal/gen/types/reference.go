@@ -13,6 +13,10 @@ type PropertyReference struct {
 	Type Value
 }
 
+func (p PropertyReference) GetDescription() string {
+	return p.Type.GetDescription()
+}
+
 func (p PropertyReference) IsReference() bool {
 	return true
 }
