@@ -3,7 +3,9 @@
 
 package buildkite
 
+// Configuration for multi-dimension Build Matrix
 type MatrixObject struct {
+	// An adjustment to a Build Matrix
 	Adjustments []MatrixAdjustments `json:"adjustments,omitempty"`
 	Setup       *MatrixSetup        `json:"setup,omitempty"`
 }

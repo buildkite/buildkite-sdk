@@ -10,9 +10,13 @@ type CacheObject struct {
 	Paths []string `json:"paths,omitempty"`
 	Size  *string  `json:"size,omitempty"`
 }
+
+// The paths for the caches to be used in the step
 type CacheValues interface {
 	string | []string | CacheObject
 }
+
+// The paths for the caches to be used in the step
 type Cache struct {
 	Cache       *CacheObject
 	String      *string

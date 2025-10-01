@@ -11,9 +11,12 @@ var SoftFailObjectExitStatusEnumValues = map[string]SoftFailObjectExitStatusEnum
 	"*": "*",
 }
 
+// The exit status number that will cause this job to soft-fail
 type SoftFailObjectExitStatusValues interface {
 	SoftFailObjectExitStatusEnum | int
 }
+
+// The exit status number that will cause this job to soft-fail
 type SoftFailObjectExitStatus struct {
 	Int                          *int
 	SoftFailObjectExitStatusEnum *SoftFailObjectExitStatusEnum
@@ -30,5 +33,6 @@ func (e SoftFailObjectExitStatus) MarshalJSON() ([]byte, error) {
 }
 
 type SoftFailObject struct {
+	// The exit status number that will cause this job to soft-fail
 	ExitStatus *SoftFailObjectExitStatus `json:"exit_status,omitempty"`
 }

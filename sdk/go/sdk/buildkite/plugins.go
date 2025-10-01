@@ -9,7 +9,9 @@ type PluginsValues interface {
 	PluginsList | PluginsObject
 }
 type Plugins struct {
-	PluginsList   *PluginsList
+	// Array of plugins for this step
+	PluginsList *PluginsList
+	// A map of plugins for this step. Deprecated: please use the array syntax.
 	PluginsObject *PluginsObject
 }
 

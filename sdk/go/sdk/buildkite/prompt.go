@@ -3,4 +3,5 @@
 
 package buildkite
 
+// The instructional message displayed in the dialog box when the unblock step is activated
 type Prompt = string

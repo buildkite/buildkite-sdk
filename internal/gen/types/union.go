@@ -41,8 +41,8 @@ func (u Union) Go() (string, error) {
 	displayName := u.Name.ToTitleCase()
 	unionValuesName := fmt.Sprintf("%sValues", displayName)
 
-	unionInterface := utils.NewGoConstraintInterface(unionValuesName)
-	unionDefinition := utils.NewGoStruct(displayName, nil)
+	unionInterface := utils.NewGoConstraintInterface(unionValuesName, u.Description)
+	unionDefinition := utils.NewGoStruct(displayName, u.Description, nil)
 
 	unionMarshalFunction := utils.NewCodeBlock(
 		fmt.Sprintf("func (e %s) MarshalJSON() ([]byte, error) {", displayName),
@@ -99,7 +99,7 @@ func (u Union) Go() (string, error) {
 		}
 
 		unionInterface.AddItem(titleCaseType)
-		unionDefinition.AddItem(structKey, titleCaseType, "", isPointer)
+		unionDefinition.AddItem(structKey, titleCaseType, "", typ.GetDescription(), isPointer)
 		unionMarshalFunction.AddLines(
 			fmt.Sprintf("    if e.%s != nil {\n        return json.Marshal(e.%s)\n    }", structKey, structKey),
 		)

@@ -3,4 +3,5 @@
 
 package buildkite
 
+// Query rules to target specific agents in k=v format
 type AgentsList = []string

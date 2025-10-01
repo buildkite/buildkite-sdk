@@ -42,23 +42,32 @@ func (o Object) GoStructKey(isUnion bool) string {
 func (o Object) Go() (string, error) {
 	keys := o.Properties.Keys()
 	if len(keys) == 0 {
-		if o.AdditionalProperties != nil {
-			prop := *o.AdditionalProperties
-			return fmt.Sprintf("type %s = map[string]%s", o.Name.ToTitleCase(), prop.GoStructType()), nil
+		block := utils.NewCodeBlock()
+
+		if o.Description != "" {
+			block.AddLines(fmt.Sprintf("// %s", o.Description))
 		}
 
-		return fmt.Sprintf("type %s = map[string]interface{}", o.Name.ToTitleCase()), nil
+		if o.AdditionalProperties != nil {
+			prop := *o.AdditionalProperties
+			block.AddLines(fmt.Sprintf("type %s = map[string]%s", o.Name.ToTitleCase(), prop.GoStructType()))
+			return block.String(), nil
+		}
+
+		block.AddLines(fmt.Sprintf("type %s = map[string]interface{}", o.Name.ToTitleCase()))
+		return block.String(), nil
 	}
 
 	codeBlock := utils.NewCodeBlock()
 
-	objectStruct := utils.NewGoStruct(o.Name.ToTitleCase(), nil)
+	objectStruct := utils.NewGoStruct(o.Name.ToTitleCase(), o.Description, nil)
 	for _, name := range keys {
 		prop, _ := o.Properties.Get(name)
 		val := prop.(Value)
 
 		structKey := val.GoStructKey(false)
 		structType := val.GoStructType()
+		description := val.GetDescription()
 		isPointer := true
 
 		// Array
@@ -73,6 +82,7 @@ func (o Object) Go() (string, error) {
 			nestedObjName := NewPropertyName(fmt.Sprintf("%s%s", o.Name.ToTitleCase(), structKey))
 			nestedObj := Object{
 				Name:                 nestedObjName,
+				Description:          obj.Description,
 				Properties:           obj.Properties,
 				AdditionalProperties: obj.AdditionalProperties,
 			}
@@ -123,7 +133,7 @@ func (o Object) Go() (string, error) {
 			codeBlock.AddLines(unionLines)
 		}
 
-		objectStruct.AddItem(structKey, structType, name, isPointer)
+		objectStruct.AddItem(structKey, structType, name, description, isPointer)
 	}
 
 	structLines, err := objectStruct.Write()

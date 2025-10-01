@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// The step keys for a step to depend on
 type DependsOnValues interface {
 	string | DependsOnList
 }
+
+// The step keys for a step to depend on
 type DependsOn struct {
 	DependsOnList *DependsOnList
 	String        *string

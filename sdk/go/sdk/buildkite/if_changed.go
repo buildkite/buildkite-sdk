@@ -3,4 +3,5 @@
 
 package buildkite
 
+// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
 type IfChanged = string

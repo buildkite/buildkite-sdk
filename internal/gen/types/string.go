@@ -25,7 +25,13 @@ func (String) IsPrimative() bool {
 
 // Go
 func (s String) Go() (string, error) {
-	return fmt.Sprintf("type %s = string", s.Name.ToTitleCase()), nil
+	block := utils.NewCodeBlock()
+	if s.Description != "" {
+		block.AddLines(fmt.Sprintf("// %s", s.Description))
+	}
+
+	block.AddLines(fmt.Sprintf("type %s = string", s.Name.ToTitleCase()))
+	return block.String(), nil
 }
 
 func (s String) GoStructType() string {

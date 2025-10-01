@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// Continue to the next steps, even if the previous group of steps fail
 type WaitStepContinueOnFailureValues interface {
 	bool | string
 }
+
+// Continue to the next steps, even if the previous group of steps fail
 type WaitStepContinueOnFailure struct {
 	Bool   *bool
 	String *string
@@ -31,16 +34,27 @@ var WaitStepTypeValues = map[string]WaitStepType{
 }
 
 type WaitStep struct {
-	AllowDependencyFailure *AllowDependencyFailure    `json:"allow_dependency_failure,omitempty"`
-	Branches               *Branches                  `json:"branches,omitempty"`
-	ContinueOnFailure      *WaitStepContinueOnFailure `json:"continue_on_failure,omitempty"`
-	DependsOn              *DependsOn                 `json:"depends_on,omitempty"`
-	Id                     *string                    `json:"id,omitempty"`
-	Identifier             *string                    `json:"identifier,omitempty"`
-	If                     *string                    `json:"if,omitempty"`
-	Key                    *string                    `json:"key,omitempty"`
-	Label                  *string                    `json:"label,omitempty"`
-	Name                   *string                    `json:"name,omitempty"`
-	Type                   *WaitStepType              `json:"type,omitempty"`
-	Wait                   *string                    `json:"wait,omitempty"`
+	// Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+	AllowDependencyFailure *AllowDependencyFailure `json:"allow_dependency_failure,omitempty"`
+	// Which branches will include this step in their builds
+	Branches *Branches `json:"branches,omitempty"`
+	// Continue to the next steps, even if the previous group of steps fail
+	ContinueOnFailure *WaitStepContinueOnFailure `json:"continue_on_failure,omitempty"`
+	// The step keys for a step to depend on
+	DependsOn *DependsOn `json:"depends_on,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Id *string `json:"id,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Identifier *string `json:"identifier,omitempty"`
+	// A boolean expression that omits the step when false
+	If *string `json:"if,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Key *string `json:"key,omitempty"`
+	// Waits for previous steps to pass before continuing
+	Label *string `json:"label,omitempty"`
+	// Waits for previous steps to pass before continuing
+	Name *string       `json:"name,omitempty"`
+	Type *WaitStepType `json:"type,omitempty"`
+	// Waits for previous steps to pass before continuing
+	Wait *string `json:"wait,omitempty"`
 }

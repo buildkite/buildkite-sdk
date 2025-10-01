@@ -9,6 +9,7 @@ type MatrixAdjustmentsWithValues interface {
 	MatrixElementList | MatrixAdjustmentsWithObject
 }
 type MatrixAdjustmentsWith struct {
+	// Build Matrix dimension element
 	MatrixAdjustmentsWithObject *MatrixAdjustmentsWithObject
 	MatrixElementList           *MatrixElementList
 }
@@ -23,8 +24,11 @@ func (e MatrixAdjustmentsWith) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// An adjustment to a Build Matrix
 type MatrixAdjustments struct {
-	Skip     *Skip                  `json:"skip,omitempty"`
+	// Whether this step should be skipped. Passing a string provides a reason for skipping this command
+	Skip *Skip `json:"skip,omitempty"`
+	// The conditions for marking the step as a soft-fail.
 	SoftFail *SoftFail              `json:"soft_fail,omitempty"`
 	With     *MatrixAdjustmentsWith `json:"with,omitempty"`
 }

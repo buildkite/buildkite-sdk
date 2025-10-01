@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
 type AllowDependencyFailureValues interface {
 	bool | string
 }
+
+// Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
 type AllowDependencyFailure struct {
 	Bool   *bool
 	String *string

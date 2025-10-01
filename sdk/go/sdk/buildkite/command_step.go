@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// The glob path/s of artifacts to upload once this step has finished running
 type CommandStepArtifactPathsValues interface {
 	string | []string
 }
+
+// The glob path/s of artifacts to upload once this step has finished running
 type CommandStepArtifactPaths struct {
 	String      *string
 	StringArray []string
@@ -25,19 +28,28 @@ func (e CommandStepArtifactPaths) MarshalJSON() ([]byte, error) {
 
 type CommandStepConcurrencyMethod string
 
+// Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
 var CommandStepConcurrencyMethodValues = map[string]CommandStepConcurrencyMethod{
 	"ordered": "ordered",
 	"eager":   "eager",
 }
 
+// The conditions for retrying this step.
 type CommandStepRetry struct {
+	// Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
 	Automatic *CommandStepAutomaticRetry `json:"automatic,omitempty"`
-	Manual    *CommandStepManualRetry    `json:"manual,omitempty"`
+	// Whether to allow a job to be retried manually
+	Manual *CommandStepManualRetry `json:"manual,omitempty"`
 }
+
+// The signature of the command step, generally injected by agents at pipeline upload
 type CommandStepSignature struct {
-	Algorithm    *string  `json:"algorithm,omitempty"`
+	// The algorithm used to generate the signature
+	Algorithm *string `json:"algorithm,omitempty"`
+	// The fields that were signed to form the signature value
 	SignedFields []string `json:"signed_fields,omitempty"`
-	Value        *string  `json:"value,omitempty"`
+	// The signature value, a JWS compact signature with a detached body
+	Value *string `json:"value,omitempty"`
 }
 type CommandStepType string
 
@@ -48,36 +60,64 @@ var CommandStepTypeValues = map[string]CommandStepType{
 }
 
 type CommandStep struct {
-	Agents                 *Agents                       `json:"agents,omitempty"`
-	AllowDependencyFailure *AllowDependencyFailure       `json:"allow_dependency_failure,omitempty"`
-	ArtifactPaths          *CommandStepArtifactPaths     `json:"artifact_paths,omitempty"`
-	Branches               *Branches                     `json:"branches,omitempty"`
-	Cache                  *Cache                        `json:"cache,omitempty"`
-	CancelOnBuildFailing   *CancelOnBuildFailing         `json:"cancel_on_build_failing,omitempty"`
-	Command                *CommandStepCommand           `json:"command,omitempty"`
-	Commands               *CommandStepCommand           `json:"commands,omitempty"`
-	Concurrency            *int                          `json:"concurrency,omitempty"`
-	ConcurrencyGroup       *string                       `json:"concurrency_group,omitempty"`
-	ConcurrencyMethod      *CommandStepConcurrencyMethod `json:"concurrency_method,omitempty"`
-	DependsOn              *DependsOn                    `json:"depends_on,omitempty"`
-	Env                    *Env                          `json:"env,omitempty"`
-	Id                     *string                       `json:"id,omitempty"`
-	Identifier             *string                       `json:"identifier,omitempty"`
-	If                     *string                       `json:"if,omitempty"`
-	IfChanged              *string                       `json:"if_changed,omitempty"`
-	Image                  *string                       `json:"image,omitempty"`
-	Key                    *string                       `json:"key,omitempty"`
-	Label                  *string                       `json:"label,omitempty"`
-	Matrix                 *Matrix                       `json:"matrix,omitempty"`
-	Name                   *string                       `json:"name,omitempty"`
-	Notify                 *CommandStepNotify            `json:"notify,omitempty"`
-	Parallelism            *int                          `json:"parallelism,omitempty"`
-	Plugins                *Plugins                      `json:"plugins,omitempty"`
-	Priority               *int                          `json:"priority,omitempty"`
-	Retry                  *CommandStepRetry             `json:"retry,omitempty"`
-	Signature              *CommandStepSignature         `json:"signature,omitempty"`
-	Skip                   *Skip                         `json:"skip,omitempty"`
-	SoftFail               *SoftFail                     `json:"soft_fail,omitempty"`
-	TimeoutInMinutes       *int                          `json:"timeout_in_minutes,omitempty"`
-	Type                   *CommandStepType              `json:"type,omitempty"`
+	Agents *Agents `json:"agents,omitempty"`
+	// Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+	AllowDependencyFailure *AllowDependencyFailure `json:"allow_dependency_failure,omitempty"`
+	// The glob path/s of artifacts to upload once this step has finished running
+	ArtifactPaths *CommandStepArtifactPaths `json:"artifact_paths,omitempty"`
+	// Which branches will include this step in their builds
+	Branches *Branches `json:"branches,omitempty"`
+	// The paths for the caches to be used in the step
+	Cache *Cache `json:"cache,omitempty"`
+	// Whether to cancel the job as soon as the build is marked as failing
+	CancelOnBuildFailing *CancelOnBuildFailing `json:"cancel_on_build_failing,omitempty"`
+	// The commands to run on the agent
+	Command *CommandStepCommand `json:"command,omitempty"`
+	// The commands to run on the agent
+	Commands *CommandStepCommand `json:"commands,omitempty"`
+	// The maximum number of jobs created from this step that are allowed to run at the same time. If you use this attribute, you must also define concurrency_group.
+	Concurrency *int `json:"concurrency,omitempty"`
+	// A unique name for the concurrency group that you are creating with the concurrency attribute
+	ConcurrencyGroup *string `json:"concurrency_group,omitempty"`
+	// Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
+	ConcurrencyMethod *CommandStepConcurrencyMethod `json:"concurrency_method,omitempty"`
+	// The step keys for a step to depend on
+	DependsOn *DependsOn `json:"depends_on,omitempty"`
+	// Environment variables for this step
+	Env *Env `json:"env,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Id *string `json:"id,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Identifier *string `json:"identifier,omitempty"`
+	// A boolean expression that omits the step when false
+	If *string `json:"if,omitempty"`
+	// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+	IfChanged *string `json:"if_changed,omitempty"`
+	// (Kubernetes stack only) The container image to use for this pipeline or step
+	Image *string `json:"image,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Key *string `json:"key,omitempty"`
+	// The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+	Label  *string `json:"label,omitempty"`
+	Matrix *Matrix `json:"matrix,omitempty"`
+	// The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+	Name *string `json:"name,omitempty"`
+	// Array of notification options for this step
+	Notify *CommandStepNotify `json:"notify,omitempty"`
+	// The number of parallel jobs that will be created based on this step
+	Parallelism *int     `json:"parallelism,omitempty"`
+	Plugins     *Plugins `json:"plugins,omitempty"`
+	// Priority of the job, higher priorities are assigned to agents
+	Priority *int `json:"priority,omitempty"`
+	// The conditions for retrying this step.
+	Retry *CommandStepRetry `json:"retry,omitempty"`
+	// The signature of the command step, generally injected by agents at pipeline upload
+	Signature *CommandStepSignature `json:"signature,omitempty"`
+	// Whether this step should be skipped. Passing a string provides a reason for skipping this command
+	Skip *Skip `json:"skip,omitempty"`
+	// The conditions for marking the step as a soft-fail.
+	SoftFail *SoftFail `json:"soft_fail,omitempty"`
+	// The number of minutes to time out a job
+	TimeoutInMinutes *int             `json:"timeout_in_minutes,omitempty"`
+	Type             *CommandStepType `json:"type,omitempty"`
 }

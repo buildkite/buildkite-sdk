@@ -25,7 +25,13 @@ func (Number) IsPrimative() bool {
 
 // Go
 func (n Number) Go() (string, error) {
-	return fmt.Sprintf("type %s = int", n.Name.ToTitleCase()), nil
+	block := utils.NewCodeBlock()
+	if n.Description != "" {
+		block.AddLines(fmt.Sprintf("// %s", n.Description))
+	}
+
+	block.AddLines(fmt.Sprintf("type %s = int", n.Name.ToTitleCase()))
+	return block.String(), nil
 }
 
 func (Number) GoStructType() string {

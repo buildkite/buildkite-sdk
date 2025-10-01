@@ -23,9 +23,12 @@ func (e SoftFailEnum) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// The conditions for marking the step as a soft-fail.
 type SoftFailValues interface {
 	SoftFailEnum | SoftFailList
 }
+
+// The conditions for marking the step as a soft-fail.
 type SoftFail struct {
 	SoftFailEnum *SoftFailEnum
 	SoftFailList *SoftFailList

@@ -3,4 +3,5 @@
 
 package buildkite
 
+// Environment variables for this step
 type Env = map[string]interface{}

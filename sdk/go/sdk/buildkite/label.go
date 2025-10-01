@@ -3,4 +3,5 @@
 
 package buildkite
 
+// The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
 type Label = string

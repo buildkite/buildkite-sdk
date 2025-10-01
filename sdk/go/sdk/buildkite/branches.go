@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// Which branches will include this step in their builds
 type BranchesValues interface {
 	string | []string
 }
+
+// Which branches will include this step in their builds
 type Branches struct {
 	String      *string
 	StringArray []string

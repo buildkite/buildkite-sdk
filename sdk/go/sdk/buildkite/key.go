@@ -3,4 +3,5 @@
 
 package buildkite
 
+// A unique identifier for a step, must not resemble a UUID
 type Key = string

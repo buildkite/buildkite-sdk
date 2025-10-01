@@ -79,7 +79,7 @@ func NewPipeline() *Pipeline {
 }`
 
 func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
-	goStruct := utils.NewGoStruct("Pipeline", nil)
+	goStruct := utils.NewGoStruct("Pipeline", "", nil)
 
 	for _, name := range p.Properties.Keys() {
 		val, _ := p.Properties.Get(name)
@@ -87,7 +87,7 @@ func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 
 		structKey := utils.DashCaseToTitleCase(name)
 		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
-		goStruct.AddItem(structKey, structType, name, true)
+		goStruct.AddItem(structKey, structType, name, "", true)
 	}
 
 	structString, err := goStruct.Write()

@@ -11,9 +11,12 @@ var AutomaticRetryExitStatusEnumValues = map[string]AutomaticRetryExitStatusEnum
 	"*": "*",
 }
 
+// The exit status number that will cause this job to retry
 type AutomaticRetryExitStatusValues interface {
 	AutomaticRetryExitStatusEnum | int | []int
 }
+
+// The exit status number that will cause this job to retry
 type AutomaticRetryExitStatus struct {
 	AutomaticRetryExitStatusEnum *AutomaticRetryExitStatusEnum
 	Int                          *int
@@ -35,6 +38,7 @@ func (e AutomaticRetryExitStatus) MarshalJSON() ([]byte, error) {
 
 type AutomaticRetrySignalReason string
 
+// The exit signal reason, if any, that may be retried
 var AutomaticRetrySignalReasonValues = map[string]AutomaticRetrySignalReason{
 	"*":                  "*",
 	"none":               "none",
@@ -46,8 +50,12 @@ var AutomaticRetrySignalReasonValues = map[string]AutomaticRetrySignalReason{
 }
 
 type AutomaticRetry struct {
-	ExitStatus   *AutomaticRetryExitStatus   `json:"exit_status,omitempty"`
-	Limit        *int                        `json:"limit,omitempty"`
-	Signal       *string                     `json:"signal,omitempty"`
+	// The exit status number that will cause this job to retry
+	ExitStatus *AutomaticRetryExitStatus `json:"exit_status,omitempty"`
+	// The number of times this job can be retried
+	Limit *int `json:"limit,omitempty"`
+	// The exit signal, if any, that may be retried
+	Signal *string `json:"signal,omitempty"`
+	// The exit signal reason, if any, that may be retried
 	SignalReason *AutomaticRetrySignalReason `json:"signal_reason,omitempty"`
 }

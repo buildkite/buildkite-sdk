@@ -10,7 +10,8 @@ type MatrixValues interface {
 }
 type Matrix struct {
 	MatrixElementList *MatrixElementList
-	MatrixObject      *MatrixObject
+	// Configuration for multi-dimension Build Matrix
+	MatrixObject *MatrixObject
 }
 
 func (e Matrix) MarshalJSON() ([]byte, error) {

@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// The value of the option(s) that will be pre-selected in the dropdown
 type SelectFieldDefaultValues interface {
 	string | []string
 }
+
+// The value of the option(s) that will be pre-selected in the dropdown
 type SelectFieldDefault struct {
 	String      *string
 	StringArray []string
@@ -23,9 +26,12 @@ func (e SelectFieldDefault) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// Whether more than one option may be selected
 type SelectFieldMultipleValues interface {
 	bool | string
 }
+
+// Whether more than one option may be selected
 type SelectFieldMultiple struct {
 	Bool   *bool
 	String *string
@@ -41,9 +47,12 @@ func (e SelectFieldMultiple) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// Whether the field is required for form submission
 type SelectFieldRequiredValues interface {
 	bool | string
 }
+
+// Whether the field is required for form submission
 type SelectFieldRequired struct {
 	Bool   *bool
 	String *string
@@ -60,11 +69,17 @@ func (e SelectFieldRequired) MarshalJSON() ([]byte, error) {
 }
 
 type SelectField struct {
-	Default  *SelectFieldDefault  `json:"default,omitempty"`
-	Hint     *string              `json:"hint,omitempty"`
-	Key      *string              `json:"key,omitempty"`
+	// The value of the option(s) that will be pre-selected in the dropdown
+	Default *SelectFieldDefault `json:"default,omitempty"`
+	// The explanatory text that is shown after the label
+	Hint *string `json:"hint,omitempty"`
+	// The meta-data key that stores the field's input
+	Key *string `json:"key,omitempty"`
+	// Whether more than one option may be selected
 	Multiple *SelectFieldMultiple `json:"multiple,omitempty"`
 	Options  []SelectFieldOption  `json:"options,omitempty"`
+	// Whether the field is required for form submission
 	Required *SelectFieldRequired `json:"required,omitempty"`
-	Select   *string              `json:"select,omitempty"`
+	// The text input name
+	Select *string `json:"select,omitempty"`
 }

@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// A list of steps
 type PipelineStepsUnionValues interface {
 	BlockStep | NestedBlockStep | StringBlockStep | InputStep | NestedInputStep | StringInputStep | CommandStep | NestedCommandStep | WaitStep | NestedWaitStep | StringWaitStep | TriggerStep | NestedTriggerStep | GroupStep
 }
+
+// A list of steps
 type PipelineStepsUnion struct {
 	BlockStep         *BlockStep
 	CommandStep       *CommandStep
@@ -18,11 +21,14 @@ type PipelineStepsUnion struct {
 	NestedInputStep   *NestedInputStep
 	NestedTriggerStep *NestedTriggerStep
 	NestedWaitStep    *NestedWaitStep
-	StringBlockStep   *StringBlockStep
-	StringInputStep   *StringInputStep
-	StringWaitStep    *StringWaitStep
-	TriggerStep       *TriggerStep
-	WaitStep          *WaitStep
+	// Pauses the execution of a build and waits on a user to unblock it
+	StringBlockStep *StringBlockStep
+	// Pauses the execution of a build and waits on a user to unblock it
+	StringInputStep *StringInputStep
+	// Waits for previous steps to pass before continuing
+	StringWaitStep *StringWaitStep
+	TriggerStep    *TriggerStep
+	WaitStep       *WaitStep
 }
 
 func (e PipelineStepsUnion) MarshalJSON() ([]byte, error) {
@@ -71,4 +77,5 @@ func (e PipelineStepsUnion) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// A list of steps
 type PipelineSteps = []PipelineStepsUnion

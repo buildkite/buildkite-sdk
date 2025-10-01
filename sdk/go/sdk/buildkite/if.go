@@ -3,4 +3,5 @@
 
 package buildkite
 
+// A boolean expression that omits the step when false
 type If = string

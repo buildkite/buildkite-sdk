@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// The commands to run on the agent
 type CommandStepCommandValues interface {
 	[]string | string
 }
+
+// The commands to run on the agent
 type CommandStepCommand struct {
 	String      *string
 	StringArray []string

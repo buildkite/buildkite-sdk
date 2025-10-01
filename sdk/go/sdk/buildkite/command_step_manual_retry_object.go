@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// Whether or not this job can be retried manually
 type CommandStepManualRetryObjectAllowedValues interface {
 	bool | string
 }
+
+// Whether or not this job can be retried manually
 type CommandStepManualRetryObjectAllowed struct {
 	Bool   *bool
 	String *string
@@ -23,9 +26,12 @@ func (e CommandStepManualRetryObjectAllowed) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// Whether or not this job can be retried after it has passed
 type CommandStepManualRetryObjectPermitOnPassedValues interface {
 	bool | string
 }
+
+// Whether or not this job can be retried after it has passed
 type CommandStepManualRetryObjectPermitOnPassed struct {
 	Bool   *bool
 	String *string
@@ -42,7 +48,10 @@ func (e CommandStepManualRetryObjectPermitOnPassed) MarshalJSON() ([]byte, error
 }
 
 type CommandStepManualRetryObject struct {
-	Allowed        *CommandStepManualRetryObjectAllowed        `json:"allowed,omitempty"`
+	// Whether or not this job can be retried manually
+	Allowed *CommandStepManualRetryObjectAllowed `json:"allowed,omitempty"`
+	// Whether or not this job can be retried after it has passed
 	PermitOnPassed *CommandStepManualRetryObjectPermitOnPassed `json:"permit_on_passed,omitempty"`
-	Reason         *string                                     `json:"reason,omitempty"`
+	// A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
+	Reason *string `json:"reason,omitempty"`
 }

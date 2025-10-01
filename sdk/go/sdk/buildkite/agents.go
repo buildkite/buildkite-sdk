@@ -9,7 +9,9 @@ type AgentsValues interface {
 	AgentsObject | AgentsList
 }
 type Agents struct {
-	AgentsList   *AgentsList
+	// Query rules to target specific agents in k=v format
+	AgentsList *AgentsList
+	// Query rules to target specific agents
 	AgentsObject *AgentsObject
 }
 

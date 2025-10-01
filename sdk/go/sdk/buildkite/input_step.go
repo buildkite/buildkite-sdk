@@ -10,18 +10,31 @@ var InputStepTypeValues = map[string]InputStepType{
 }
 
 type InputStep struct {
+	// Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
 	AllowDependencyFailure *AllowDependencyFailure `json:"allow_dependency_failure,omitempty"`
-	AllowedTeams           *AllowedTeams           `json:"allowed_teams,omitempty"`
-	Branches               *Branches               `json:"branches,omitempty"`
-	DependsOn              *DependsOn              `json:"depends_on,omitempty"`
-	Fields                 *Fields                 `json:"fields,omitempty"`
-	Id                     *string                 `json:"id,omitempty"`
-	Identifier             *string                 `json:"identifier,omitempty"`
-	If                     *string                 `json:"if,omitempty"`
-	Input                  *string                 `json:"input,omitempty"`
-	Key                    *string                 `json:"key,omitempty"`
-	Label                  *string                 `json:"label,omitempty"`
-	Name                   *string                 `json:"name,omitempty"`
-	Prompt                 *string                 `json:"prompt,omitempty"`
-	Type                   *InputStepType          `json:"type,omitempty"`
+	// A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
+	AllowedTeams *AllowedTeams `json:"allowed_teams,omitempty"`
+	// Which branches will include this step in their builds
+	Branches *Branches `json:"branches,omitempty"`
+	// The step keys for a step to depend on
+	DependsOn *DependsOn `json:"depends_on,omitempty"`
+	// A list of input fields required to be filled out before unblocking the step
+	Fields *Fields `json:"fields,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Id *string `json:"id,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Identifier *string `json:"identifier,omitempty"`
+	// A boolean expression that omits the step when false
+	If *string `json:"if,omitempty"`
+	// The label of the input step
+	Input *string `json:"input,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Key *string `json:"key,omitempty"`
+	// The label of the input step
+	Label *string `json:"label,omitempty"`
+	// The label of the input step
+	Name *string `json:"name,omitempty"`
+	// The instructional message displayed in the dialog box when the unblock step is activated
+	Prompt *string        `json:"prompt,omitempty"`
+	Type   *InputStepType `json:"type,omitempty"`
 }

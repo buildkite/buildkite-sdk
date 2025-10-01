@@ -75,8 +75,8 @@ func (e Enum) Go() (string, error) {
 	displayName := e.Name.ToTitleCase()
 	enumDefinitionName := e.GoStructType()
 
-	enumInterface := utils.NewGoConstraintInterface(fmt.Sprintf("%sValues", enumDefinitionName))
-	enumDefinition := utils.NewGoStruct(enumDefinitionName, nil)
+	enumInterface := utils.NewGoConstraintInterface(fmt.Sprintf("%sValues", enumDefinitionName), e.Description)
+	enumDefinition := utils.NewGoStruct(enumDefinitionName, e.Description, nil)
 
 	enumMarshalFunction := utils.NewCodeBlock(
 		fmt.Sprintf("func (e %s) MarshalJSON() ([]byte, error) {", displayName),
@@ -99,6 +99,7 @@ func (e Enum) Go() (string, error) {
 
 			lines.AddLines(
 				fmt.Sprintf("type %s %s", enumDefinitionName, typ),
+				fmt.Sprintf(fmt.Sprintf("// %s", e.Description)),
 				fmt.Sprintf("var %sValues = map[string]%s{", enumDefinitionName, enumDefinitionName),
 			)
 
@@ -109,15 +110,15 @@ func (e Enum) Go() (string, error) {
 			}
 
 			lines.AddLines("}")
-			return lines.String(), nil
 		}
+		return lines.String(), nil
 	}
 
 	for _, typ := range enumTypes.Keys() {
 		titleCaseType := utils.CamelCaseToTitleCase(typ)
 
 		enumInterface.AddItem(typ)
-		enumDefinition.AddItem(titleCaseType, typ, "", true)
+		enumDefinition.AddItem(titleCaseType, typ, "", "", true)
 
 		enumMarshalFunction.AddLines(
 			fmt.Sprintf("    if e.%s != nil {\n        return json.Marshal(e.%s)\n    }", titleCaseType, titleCaseType),

@@ -37,7 +37,13 @@ func (b Boolean) GoStructKey(isUnion bool) string {
 }
 
 func (b Boolean) Go() (string, error) {
-	return fmt.Sprintf("type %s = string", b.Name.ToTitleCase()), nil
+	block := utils.NewCodeBlock()
+	if b.Description != "" {
+		block.AddLines(fmt.Sprintf("// %s", b.Description))
+	}
+
+	block.AddLines(fmt.Sprintf("type %s = string", b.Name.ToTitleCase()))
+	return block.String(), nil
 }
 
 // TypeScript

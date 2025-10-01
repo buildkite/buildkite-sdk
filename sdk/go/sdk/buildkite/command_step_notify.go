@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// Array of notification options for this step
 type CommandStepNotifyUnionValues interface {
 	NotifySimple | NotifyBasecamp | NotifySlack | NotifyGithubCommitStatus | NotifyGithubCheck
 }
+
+// Array of notification options for this step
 type CommandStepNotifyUnion struct {
 	NotifyBasecamp           *NotifyBasecamp
 	NotifyGithubCheck        *NotifyGithubCheck
@@ -35,4 +38,5 @@ func (e CommandStepNotifyUnion) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// Array of notification options for this step
 type CommandStepNotify = []CommandStepNotifyUnion

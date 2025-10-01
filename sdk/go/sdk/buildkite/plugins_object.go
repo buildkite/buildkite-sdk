@@ -3,4 +3,5 @@
 
 package buildkite
 
+// A map of plugins for this step. Deprecated: please use the array syntax.
 type PluginsObject = map[string]interface{}

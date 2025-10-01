@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// A list of input fields required to be filled out before unblocking the step
 type FieldsUnionValues interface {
 	TextField | SelectField
 }
+
+// A list of input fields required to be filled out before unblocking the step
 type FieldsUnion struct {
 	SelectField *SelectField
 	TextField   *TextField
@@ -23,4 +26,5 @@ func (e FieldsUnion) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// A list of input fields required to be filled out before unblocking the step
 type Fields = []FieldsUnion

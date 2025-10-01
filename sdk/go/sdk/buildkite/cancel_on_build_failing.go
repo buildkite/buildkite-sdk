@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// Whether to cancel the job as soon as the build is marked as failing
 type CancelOnBuildFailingValues interface {
 	bool | string
 }
+
+// Whether to cancel the job as soon as the build is marked as failing
 type CancelOnBuildFailing struct {
 	Bool   *bool
 	String *string

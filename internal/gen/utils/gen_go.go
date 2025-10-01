@@ -62,33 +62,37 @@ func NewGoFile(packageName, name string, imports []string, contents *codeBlock) 
 }
 
 // Struct
-var goStructTemplate = "type {{.Name}} struct { {{ range .Items}}\n" +
-	"    {{ .Name }}  {{if .Pointer}}*{{end}}{{ .Value }} {{if .TagName}}`json:\"{{.TagName}},omitempty\"`{{end}}" +
+var goStructTemplate = `{{if ne "" .Description}}{{printf "// %s\n" .Description}}{{end}}type {{.Name}} struct { {{ range .Items}}{{printf "\n"}}` +
+	`    {{if ne "" .Description}}{{printf "// %s    \n" .Description}}{{end}}` + "{{ .Name }} {{if .Pointer}}*{{end}}{{ .Value }} {{if .TagName}}`json:\"{{.TagName}},omitempty\"`{{end}}" +
 	"{{end}}\n}"
 
 type GoStructItem struct {
-	Name    string
-	Value   string
-	Pointer bool
-	TagName string
+	Name        string
+	Description string
+	Value       string
+	Pointer     bool
+	TagName     string
 }
 
 type goStructTemplateArgs struct {
-	Name  string
-	Items []GoStructItem
+	Name        string
+	Description string
+	Items       []GoStructItem
 }
 
 type GoStruct struct {
-	Name  string
-	Items *orderedmap.OrderedMap
+	Name        string
+	Description string
+	Items       *orderedmap.OrderedMap
 }
 
-func (g *GoStruct) AddItem(key, val, tagName string, isPointer bool) {
+func (g *GoStruct) AddItem(key, val, tagName, description string, isPointer bool) {
 	g.Items.Set(key, GoStructItem{
-		Name:    key,
-		Value:   val,
-		Pointer: isPointer,
-		TagName: tagName,
+		Name:        key,
+		Description: description,
+		Value:       val,
+		Pointer:     isPointer,
+		TagName:     tagName,
 	})
 }
 
@@ -106,8 +110,9 @@ func (g GoStruct) Write() (string, error) {
 	}
 
 	err := tmp.Execute(res, goStructTemplateArgs{
-		Name:  g.Name,
-		Items: items,
+		Name:        g.Name,
+		Description: g.Description,
+		Items:       items,
 	})
 	if err != nil {
 		return "", fmt.Errorf("writing out template: %v", err)
@@ -116,21 +121,23 @@ func (g GoStruct) Write() (string, error) {
 	return res.String(), nil
 }
 
-func NewGoStruct(name string, items []GoStructItem) *GoStruct {
+func NewGoStruct(name, description string, items []GoStructItem) *GoStruct {
 	return &GoStruct{
-		Name:  name,
-		Items: orderedmap.New(),
+		Name:        name,
+		Description: description,
+		Items:       orderedmap.New(),
 	}
 }
 
 // Constraint Interface
-var goConstraintInterfaceTemplate = `type {{.Name}} interface {
+var goConstraintInterfaceTemplate = `{{if ne "" .Description}}{{printf "// %s\n" .Description}}{{end}}type {{.Name}} interface {
 	{{.Items}}
 }`
 
 type GoConstraintInterface struct {
-	Name  string
-	Items []string
+	Name        string
+	Description string
+	Items       []string
 }
 
 func (g *GoConstraintInterface) AddItem(item string) {
@@ -140,11 +147,13 @@ func (g *GoConstraintInterface) AddItem(item string) {
 func (g *GoConstraintInterface) Write() (string, error) {
 	tmp := template.Must(template.New("interface").Parse(goConstraintInterfaceTemplate))
 	args := struct {
-		Name  string
-		Items string
+		Name        string
+		Description string
+		Items       string
 	}{
-		Name:  g.Name,
-		Items: strings.Join(g.Items, " | "),
+		Name:        g.Name,
+		Description: g.Description,
+		Items:       strings.Join(g.Items, " | "),
 	}
 
 	res := &bytes.Buffer{}
@@ -156,6 +165,9 @@ func (g *GoConstraintInterface) Write() (string, error) {
 	return res.String(), nil
 }
 
-func NewGoConstraintInterface(name string) *GoConstraintInterface {
-	return &GoConstraintInterface{Name: name}
+func NewGoConstraintInterface(name, description string) *GoConstraintInterface {
+	return &GoConstraintInterface{
+		Name:        name,
+		Description: description,
+	}
 }

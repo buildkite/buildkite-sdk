@@ -5,6 +5,7 @@ package buildkite
 
 type StringWaitStep string
 
+// Waits for previous steps to pass before continuing
 var StringWaitStepValues = map[string]StringWaitStep{
 	"wait":   "wait",
 	"waiter": "waiter",

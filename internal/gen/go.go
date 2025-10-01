@@ -24,7 +24,7 @@ func generateGoTypes(
 		fileName := fmt.Sprintf("%s/%s.go", outDir, utils.CamelCaseToSnakeCase(name))
 		contents, err := property.Go()
 		if err != nil {
-			return fmt.Errorf("generating files contents for [%s]", fileName)
+			return fmt.Errorf("generating files contents for [%s]: %v", fileName, err)
 		}
 
 		file := utils.NewGoFile(

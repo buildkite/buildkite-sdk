@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// Whether to continue the build without waiting for the triggered step to complete
 type TriggerStepAsyncValues interface {
 	bool | string
 }
+
+// Whether to continue the build without waiting for the triggered step to complete
 type TriggerStepAsync struct {
 	Bool   *bool
 	String *string
@@ -23,12 +26,20 @@ func (e TriggerStepAsync) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// Meta-data for the build
 type TriggerStepBuildMetaData = map[string]interface{}
+
+// Properties of the build that will be created when the step is triggered
 type TriggerStepBuild struct {
-	Branch   *string                   `json:"branch,omitempty"`
-	Commit   *string                   `json:"commit,omitempty"`
-	Env      *Env                      `json:"env,omitempty"`
-	Message  *string                   `json:"message,omitempty"`
+	// The branch for the build
+	Branch *string `json:"branch,omitempty"`
+	// The commit hash for the build
+	Commit *string `json:"commit,omitempty"`
+	// Environment variables for this step
+	Env *Env `json:"env,omitempty"`
+	// The message for the build (supports emoji)
+	Message *string `json:"message,omitempty"`
+	// Meta-data for the build
 	MetaData *TriggerStepBuildMetaData `json:"meta_data,omitempty"`
 }
 type TriggerStepType string
@@ -38,20 +49,35 @@ var TriggerStepTypeValues = map[string]TriggerStepType{
 }
 
 type TriggerStep struct {
+	// Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
 	AllowDependencyFailure *AllowDependencyFailure `json:"allow_dependency_failure,omitempty"`
-	Async                  *TriggerStepAsync       `json:"async,omitempty"`
-	Branches               *Branches               `json:"branches,omitempty"`
-	Build                  *TriggerStepBuild       `json:"build,omitempty"`
-	DependsOn              *DependsOn              `json:"depends_on,omitempty"`
-	Id                     *string                 `json:"id,omitempty"`
-	Identifier             *string                 `json:"identifier,omitempty"`
-	If                     *string                 `json:"if,omitempty"`
-	IfChanged              *string                 `json:"if_changed,omitempty"`
-	Key                    *string                 `json:"key,omitempty"`
-	Label                  *string                 `json:"label,omitempty"`
-	Name                   *string                 `json:"name,omitempty"`
-	Skip                   *Skip                   `json:"skip,omitempty"`
-	SoftFail               *SoftFail               `json:"soft_fail,omitempty"`
-	Trigger                *string                 `json:"trigger,omitempty"`
-	Type                   *TriggerStepType        `json:"type,omitempty"`
+	// Whether to continue the build without waiting for the triggered step to complete
+	Async *TriggerStepAsync `json:"async,omitempty"`
+	// Which branches will include this step in their builds
+	Branches *Branches `json:"branches,omitempty"`
+	// Properties of the build that will be created when the step is triggered
+	Build *TriggerStepBuild `json:"build,omitempty"`
+	// The step keys for a step to depend on
+	DependsOn *DependsOn `json:"depends_on,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Id *string `json:"id,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Identifier *string `json:"identifier,omitempty"`
+	// A boolean expression that omits the step when false
+	If *string `json:"if,omitempty"`
+	// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+	IfChanged *string `json:"if_changed,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Key *string `json:"key,omitempty"`
+	// The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+	Label *string `json:"label,omitempty"`
+	// The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+	Name *string `json:"name,omitempty"`
+	// Whether this step should be skipped. Passing a string provides a reason for skipping this command
+	Skip *Skip `json:"skip,omitempty"`
+	// The conditions for marking the step as a soft-fail.
+	SoftFail *SoftFail `json:"soft_fail,omitempty"`
+	// The slug of the pipeline to create a build
+	Trigger *string          `json:"trigger,omitempty"`
+	Type    *TriggerStepType `json:"type,omitempty"`
 }

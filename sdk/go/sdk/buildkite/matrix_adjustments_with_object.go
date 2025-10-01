@@ -3,4 +3,5 @@
 
 package buildkite
 
+// Build Matrix dimension element
 type MatrixAdjustmentsWithObject = map[string]string

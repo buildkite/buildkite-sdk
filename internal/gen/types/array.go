@@ -66,6 +66,9 @@ func (a Array) GoStructKey(isUnion bool) string {
 }
 
 func (a Array) Go() (string, error) {
+	lines := utils.NewCodeBlock()
+	description := fmt.Sprintf("// %s", a.Description)
+
 	union, ok := a.Type.(Union)
 	if !a.IsReference() && ok {
 		item := Union{
@@ -74,20 +77,27 @@ func (a Array) Go() (string, error) {
 			TypeIdentifiers: union.TypeIdentifiers,
 		}
 
-		lines := utils.NewCodeBlock()
 		itemLines, err := item.Go()
 		if err != nil {
 			return "", fmt.Errorf("generating lines for union in array [%s]: %v", a.Name.Value, err)
 		}
 
-		lines.AddLines(
-			itemLines,
-			fmt.Sprintf("type %s = []%sUnion", a.Name.ToTitleCase(), a.Type.GoStructType()),
-		)
+		lines.AddLines(itemLines)
+
+		if description != "" {
+			lines.AddLines(description)
+		}
+
+		lines.AddLines(fmt.Sprintf("type %s = []%sUnion", a.Name.ToTitleCase(), a.Type.GoStructType()))
 		return lines.String(), nil
 	}
 
-	return fmt.Sprintf("type %s = []%s", a.Name.ToTitleCase(), a.Type.GoStructType()), nil
+	if description != "" {
+		lines.AddLines(description)
+	}
+
+	lines.AddLines(fmt.Sprintf("type %s = []%s", a.Name.ToTitleCase(), a.Type.GoStructType()))
+	return lines.String(), nil
 }
 
 // TypeScript

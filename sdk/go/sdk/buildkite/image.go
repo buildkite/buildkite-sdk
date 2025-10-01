@@ -3,4 +3,5 @@
 
 package buildkite
 
+// (Kubernetes stack only) The container image to use for this pipeline or step
 type Image = string

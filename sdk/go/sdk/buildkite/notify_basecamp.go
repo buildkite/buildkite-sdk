@@ -5,5 +5,6 @@ package buildkite
 
 type NotifyBasecamp struct {
 	BasecampCampfire *string `json:"basecamp_campfire,omitempty"`
-	If               *string `json:"if,omitempty"`
+	// A boolean expression that omits the step when false
+	If *string `json:"if,omitempty"`
 }

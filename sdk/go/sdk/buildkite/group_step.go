@@ -4,17 +4,30 @@
 package buildkite
 
 type GroupStep struct {
+	// Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
 	AllowDependencyFailure *AllowDependencyFailure `json:"allow_dependency_failure,omitempty"`
-	DependsOn              *DependsOn              `json:"depends_on,omitempty"`
-	Group                  *string                 `json:"group,omitempty"`
-	Id                     *string                 `json:"id,omitempty"`
-	Identifier             *string                 `json:"identifier,omitempty"`
-	If                     *string                 `json:"if,omitempty"`
-	IfChanged              *string                 `json:"if_changed,omitempty"`
-	Key                    *string                 `json:"key,omitempty"`
-	Label                  *string                 `json:"label,omitempty"`
-	Name                   *string                 `json:"name,omitempty"`
-	Notify                 *BuildNotify            `json:"notify,omitempty"`
-	Skip                   *Skip                   `json:"skip,omitempty"`
-	Steps                  *GroupSteps             `json:"steps,omitempty"`
+	// The step keys for a step to depend on
+	DependsOn *DependsOn `json:"depends_on,omitempty"`
+	// The name to give to this group of steps
+	Group *string `json:"group,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Id *string `json:"id,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Identifier *string `json:"identifier,omitempty"`
+	// A boolean expression that omits the step when false
+	If *string `json:"if,omitempty"`
+	// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+	IfChanged *string `json:"if_changed,omitempty"`
+	// A unique identifier for a step, must not resemble a UUID
+	Key *string `json:"key,omitempty"`
+	// The name to give to this group of steps
+	Label *string `json:"label,omitempty"`
+	// The name to give to this group of steps
+	Name *string `json:"name,omitempty"`
+	// Array of notification options for this step
+	Notify *BuildNotify `json:"notify,omitempty"`
+	// Whether this step should be skipped. Passing a string provides a reason for skipping this command
+	Skip *Skip `json:"skip,omitempty"`
+	// A list of steps
+	Steps *GroupSteps `json:"steps,omitempty"`
 }

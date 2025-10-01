@@ -4,6 +4,7 @@
 package buildkite
 
 type NotifyWebhook struct {
+	// A boolean expression that omits the step when false
 	If      *string `json:"if,omitempty"`
 	Webhook *string `json:"webhook,omitempty"`
 }

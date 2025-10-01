@@ -4,6 +4,7 @@
 package buildkite
 
 type NotifyPagerduty struct {
+	// A boolean expression that omits the step when false
 	If                   *string `json:"if,omitempty"`
 	PagerdutyChangeEvent *string `json:"pagerduty_change_event,omitempty"`
 }

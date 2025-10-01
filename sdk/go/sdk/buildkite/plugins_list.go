@@ -6,9 +6,13 @@ package buildkite
 import "encoding/json"
 
 type PluginsListObject = map[string]interface{}
+
+// Array of plugins for this step
 type PluginsListUnionValues interface {
 	string | PluginsListObject
 }
+
+// Array of plugins for this step
 type PluginsListUnion struct {
 	PluginsList *PluginsListObject
 	String      *string
@@ -24,4 +28,5 @@ func (e PluginsListUnion) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// Array of plugins for this step
 type PluginsList = []PluginsListUnion

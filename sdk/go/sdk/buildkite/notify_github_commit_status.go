@@ -4,9 +4,11 @@
 package buildkite
 
 type NotifyGithubCommitStatusGithubCommitStatus struct {
+	// GitHub commit status name
 	Context *string `json:"context,omitempty"`
 }
 type NotifyGithubCommitStatus struct {
 	GithubCommitStatus *NotifyGithubCommitStatusGithubCommitStatus `json:"github_commit_status,omitempty"`
-	If                 *string                                     `json:"if,omitempty"`
+	// A boolean expression that omits the step when false
+	If *string `json:"if,omitempty"`
 }

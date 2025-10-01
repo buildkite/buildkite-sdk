@@ -3,4 +3,5 @@
 
 package buildkite
 
+// Query rules to target specific agents
 type AgentsObject = map[string]interface{}

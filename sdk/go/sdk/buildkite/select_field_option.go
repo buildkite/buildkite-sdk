@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// Whether the field is required for form submission
 type SelectFieldOptionRequiredValues interface {
 	bool | string
 }
+
+// Whether the field is required for form submission
 type SelectFieldOptionRequired struct {
 	Bool   *bool
 	String *string
@@ -24,8 +27,12 @@ func (e SelectFieldOptionRequired) MarshalJSON() ([]byte, error) {
 }
 
 type SelectFieldOption struct {
-	Hint     *string                    `json:"hint,omitempty"`
-	Label    *string                    `json:"label,omitempty"`
+	// The text displayed directly under the select field’s label
+	Hint *string `json:"hint,omitempty"`
+	// The text displayed on the select list item
+	Label *string `json:"label,omitempty"`
+	// Whether the field is required for form submission
 	Required *SelectFieldOptionRequired `json:"required,omitempty"`
-	Value    *string                    `json:"value,omitempty"`
+	// The value to be stored as meta-data
+	Value *string `json:"value,omitempty"`
 }

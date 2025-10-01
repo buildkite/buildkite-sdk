@@ -23,9 +23,12 @@ func (e CommandStepManualRetryEnum) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+// Whether to allow a job to be retried manually
 type CommandStepManualRetryValues interface {
 	CommandStepManualRetryEnum | CommandStepManualRetryObject
 }
+
+// Whether to allow a job to be retried manually
 type CommandStepManualRetry struct {
 	CommandStepManualRetryEnum   *CommandStepManualRetryEnum
 	CommandStepManualRetryObject *CommandStepManualRetryObject

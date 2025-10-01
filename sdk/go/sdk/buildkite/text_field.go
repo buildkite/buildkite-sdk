@@ -5,9 +5,12 @@ package buildkite
 
 import "encoding/json"
 
+// Whether the field is required for form submission
 type TextFieldRequiredValues interface {
 	bool | string
 }
+
+// Whether the field is required for form submission
 type TextFieldRequired struct {
 	Bool   *bool
 	String *string
@@ -24,10 +27,16 @@ func (e TextFieldRequired) MarshalJSON() ([]byte, error) {
 }
 
 type TextField struct {
-	Default  *string            `json:"default,omitempty"`
-	Format   *string            `json:"format,omitempty"`
-	Hint     *string            `json:"hint,omitempty"`
-	Key      *string            `json:"key,omitempty"`
+	// The value that is pre-filled in the text field
+	Default *string `json:"default,omitempty"`
+	// The format must be a regular expression implicitly anchored to the beginning and end of the input and is functionally equivalent to the HTML5 pattern attribute.
+	Format *string `json:"format,omitempty"`
+	// The explanatory text that is shown after the label
+	Hint *string `json:"hint,omitempty"`
+	// The meta-data key that stores the field's input
+	Key *string `json:"key,omitempty"`
+	// Whether the field is required for form submission
 	Required *TextFieldRequired `json:"required,omitempty"`
-	Text     *string            `json:"text,omitempty"`
+	// The text input name
+	Text *string `json:"text,omitempty"`
 }

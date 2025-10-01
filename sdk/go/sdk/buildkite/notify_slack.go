@@ -24,6 +24,7 @@ func (e NotifySlackSlack) MarshalJSON() ([]byte, error) {
 }
 
 type NotifySlack struct {
+	// A boolean expression that omits the step when false
 	If    *string           `json:"if,omitempty"`
 	Slack *NotifySlackSlack `json:"slack,omitempty"`
 }
