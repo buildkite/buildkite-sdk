@@ -7,13 +7,19 @@ import (
 	"github.com/buildkite/buildkite-sdk/sdk/go/sdk/buildkite"
 )
 
+func value[T any](val T) *T {
+	return &val
+}
+
 func main() {
 	pipeline := buildkite.NewPipeline()
 
-	pipeline.AddStep(buildkite.CommandStep{
-		Label: buildkite.Value("some-label"),
-		Commands: []string{
-			"echo 'Hello, world!'",
+	pipeline.AddStep(buildkite.PipelineStepsUnion{
+		CommandStep: &buildkite.CommandStep{
+			Label: value("some-label"),
+			Commands: &buildkite.CommandStepCommand{
+				String: value("echo 'Hello, world!"),
+			},
 		},
 	})
 

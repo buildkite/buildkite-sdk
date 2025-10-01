@@ -7,7 +7,7 @@ def generate_json():
         label="some-label",
         commands="echo 'Hello, world!'",
     ))
-    return pipeline.to_json()
+    return pipeline.to_json_string()
 
 def generate_yaml():
     pipeline = Pipeline()
@@ -15,7 +15,7 @@ def generate_yaml():
         label="some-label",
         commands="echo 'Hello, world!'",
     ))
-    return pipeline.to_yaml()
+    return pipeline.to_yaml_string()
 
 makedirs("../../out/apps/python", exist_ok=True)
 
