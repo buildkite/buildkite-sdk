@@ -144,7 +144,6 @@ class CacheObject(BaseModel):
         pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
         return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
-
 # The paths for the caches to be used in the step
 type Cache = Union[str,List[str],CacheObject]
 
@@ -600,7 +599,6 @@ class MatrixObject(BaseModel):
         return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
 
 type MatrixSetupObject = Dict[str, List[Union[str,int,bool]]]
-
 type MatrixSetup = Union[MatrixElementList,Dict[str, List[Union[str,int,bool]]]]
 
 NestedBlockStepDict = TypedDict('NestedBlockStepDict',{
