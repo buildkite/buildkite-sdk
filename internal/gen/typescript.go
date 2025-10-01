@@ -29,16 +29,16 @@ func generateTypeScriptTypes(
 			return fmt.Errorf("generating files contents for [%s]", name)
 		}
 
-		codeBlock.AddLines(contents)
+		codeBlock.AddLines(contents, "")
 	}
 
-	pipelineInterface := utils.NewTypeScriptInterface("BuildkitePipeline")
+	pipelineInterface := utils.NewTypeScriptInterface("BuildkitePipeline", "")
 	for _, name := range generator.Properties.Keys() {
 		val, _ := generator.Properties.Get(name)
 		prop := val.(schema.SchemaProperty)
 
 		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
-		pipelineInterface.AddItem(name, structType, false)
+		pipelineInterface.AddItem(name, structType, "", false)
 	}
 
 	pipelineString, err := pipelineInterface.Write()

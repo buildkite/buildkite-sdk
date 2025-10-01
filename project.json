@@ -100,7 +100,8 @@
                 "commands": [
                     "rm -rf sdk/typescript/src/types",
                     "mkdir sdk/typescript/src/types",
-                    "./internal/gen/type-gen ts sdk/typescript/src/types"
+                    "./internal/gen/type-gen ts sdk/typescript/src/types",
+                    "npx prettier --write ./sdk/typescript/src/types/schema.ts"
                 ],
                 "parallel": false
             }

@@ -2,423 +2,598 @@
 // *** WARNING: Do not edit by hand unless you're certain you know what you are doing! ***
 
 export type Agents = AgentsObject | AgentsList
+
+// Query rules to target specific agents in k=v format
 export type AgentsList = string[]
+
+// Query rules to target specific agents
 export type AgentsObject = Record<string, any>
+
+// Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
 export type AllowDependencyFailure = true | false | 'true' | 'false'
+
+// A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
 export type AllowedTeams = string | string[]
-export interface AutomaticRetry { 
-	exit_status?: '*' | number | number[]
 
-	limit?: number
-
-	signal?: string
-
-	signal_reason?: '*' | 'none' | 'agent_refused' | 'agent_stop' | 'cancel' | 'process_run_error' | 'signature_rejected'
+export interface AutomaticRetry {
+  // The exit status number that will cause this job to retry
+  exit_status?: '*' | number | number[]
+  // The number of times this job can be retried
+  limit?: number
+  // The exit signal, if any, that may be retried
+  signal?: string
+  // The exit signal reason, if any, that may be retried
+  signal_reason?:
+    | '*'
+    | 'none'
+    | 'agent_refused'
+    | 'agent_stop'
+    | 'cancel'
+    | 'process_run_error'
+    | 'signature_rejected'
 }
+
 export type AutomaticRetryList = AutomaticRetry[]
-export interface BlockStep { 
-	allow_dependency_failure?: AllowDependencyFailure
 
-	allowed_teams?: AllowedTeams
-
-	block?: string
-
-	blocked_state?: 'passed' | 'failed' | 'running'
-
-	branches?: Branches
-
-	depends_on?: DependsOn
-
-	fields?: Fields
-
-	id?: string
-
-	identifier?: string
-
-	if?: string
-
-	key?: string
-
-	label?: string
-
-	name?: string
-
-	prompt?: string
-
-	type?: 'block'
+export interface BlockStep {
+  // Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+  allow_dependency_failure?: AllowDependencyFailure
+  // A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
+  allowed_teams?: AllowedTeams
+  // The label of the block step
+  block?: string
+  // The state that the build is set to when the build is blocked by this block step
+  blocked_state?: 'passed' | 'failed' | 'running'
+  // Which branches will include this step in their builds
+  branches?: Branches
+  // The step keys for a step to depend on
+  depends_on?: DependsOn
+  // A list of input fields required to be filled out before unblocking the step
+  fields?: Fields
+  // A unique identifier for a step, must not resemble a UUID
+  id?: string
+  // A unique identifier for a step, must not resemble a UUID
+  identifier?: string
+  // A boolean expression that omits the step when false
+  if?: string
+  // A unique identifier for a step, must not resemble a UUID
+  key?: string
+  // The label of the block step
+  label?: string
+  // The label of the block step
+  name?: string
+  // The instructional message displayed in the dialog box when the unblock step is activated
+  prompt?: string
+  type?: 'block'
 }
+
+// Which branches will include this step in their builds
 export type Branches = string | string[]
-export type BuildNotify = (NotifySimple | NotifyEmail | NotifyBasecamp | NotifySlack | NotifyWebhook | NotifyPagerduty | NotifyGithubCommitStatus | NotifyGithubCheck)[]
-export type Cache = string | string[] | { 
-	name?: string
 
-	paths: string[]
+// Array of notification options for this step
+export type BuildNotify = (
+  | NotifySimple
+  | NotifyEmail
+  | NotifyBasecamp
+  | NotifySlack
+  | NotifyWebhook
+  | NotifyPagerduty
+  | NotifyGithubCommitStatus
+  | NotifyGithubCheck
+)[]
 
-	size?: string
-}
+// The paths for the caches to be used in the step
+export type Cache =
+  | string
+  | string[]
+  | {
+      name?: string
+
+      paths: string[]
+
+      size?: string
+    }
+
+// Whether to cancel the job as soon as the build is marked as failing
 export type CancelOnBuildFailing = true | false | 'true' | 'false'
-export interface CommandStep { 
-	agents?: Agents
 
-	allow_dependency_failure?: AllowDependencyFailure
+export interface CommandStep {
+  agents?: Agents
+  // Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+  allow_dependency_failure?: AllowDependencyFailure
+  // The glob path/s of artifacts to upload once this step has finished running
+  artifact_paths?: string | string[]
+  // Which branches will include this step in their builds
+  branches?: Branches
+  // The paths for the caches to be used in the step
+  cache?: Cache
+  // Whether to cancel the job as soon as the build is marked as failing
+  cancel_on_build_failing?: CancelOnBuildFailing
+  // The commands to run on the agent
+  command?: CommandStepCommand
+  // The commands to run on the agent
+  commands?: CommandStepCommand
+  // The maximum number of jobs created from this step that are allowed to run at the same time. If you use this attribute, you must also define concurrency_group.
+  concurrency?: number
+  // A unique name for the concurrency group that you are creating with the concurrency attribute
+  concurrency_group?: string
+  // Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
+  concurrency_method?: 'ordered' | 'eager'
+  // The step keys for a step to depend on
+  depends_on?: DependsOn
+  // Environment variables for this step
+  env?: Env
+  // A unique identifier for a step, must not resemble a UUID
+  id?: string
+  // A unique identifier for a step, must not resemble a UUID
+  identifier?: string
+  // A boolean expression that omits the step when false
+  if?: string
+  // Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+  if_changed?: string
+  // (Kubernetes stack only) The container image to use for this pipeline or step
+  image?: string
+  // A unique identifier for a step, must not resemble a UUID
+  key?: string
+  // The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+  label?: string
+  matrix?: Matrix
+  // The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+  name?: string
+  // Array of notification options for this step
+  notify?: CommandStepNotify
+  // The number of parallel jobs that will be created based on this step
+  parallelism?: number
+  plugins?: Plugins
+  // Priority of the job, higher priorities are assigned to agents
+  priority?: number
+  // The conditions for retrying this step.
+  retry?: {
+    // Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
+    automatic?: CommandStepAutomaticRetry
 
-	artifact_paths?: string | string[]
+    // Whether to allow a job to be retried manually
+    manual?: CommandStepManualRetry
+  }
+  // The signature of the command step, generally injected by agents at pipeline upload
+  signature?: {
+    // The algorithm used to generate the signature
+    algorithm?: string
 
-	branches?: Branches
+    // The fields that were signed to form the signature value
+    signed_fields?: string[]
 
-	cache?: Cache
-
-	cancel_on_build_failing?: CancelOnBuildFailing
-
-	command?: CommandStepCommand
-
-	commands?: CommandStepCommand
-
-	concurrency?: number
-
-	concurrency_group?: string
-
-	concurrency_method?: 'ordered' | 'eager'
-
-	depends_on?: DependsOn
-
-	env?: Env
-
-	id?: string
-
-	identifier?: string
-
-	if?: string
-
-	if_changed?: string
-
-	image?: string
-
-	key?: string
-
-	label?: string
-
-	matrix?: Matrix
-
-	name?: string
-
-	notify?: CommandStepNotify
-
-	parallelism?: number
-
-	plugins?: Plugins
-
-	priority?: number
-
-	retry?: { 
-	automatic?: CommandStepAutomaticRetry
-
-	manual?: CommandStepManualRetry
+    // The signature value, a JWS compact signature with a detached body
+    value?: string
+  }
+  // Whether this step should be skipped. Passing a string provides a reason for skipping this command
+  skip?: Skip
+  // The conditions for marking the step as a soft-fail.
+  soft_fail?: SoftFail
+  // The number of minutes to time out a job
+  timeout_in_minutes?: number
+  type?: 'script' | 'command' | 'commands'
 }
 
-	signature?: { 
-	algorithm?: string
+// Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
+export type CommandStepAutomaticRetry =
+  | true
+  | false
+  | 'true'
+  | 'false'
+  | AutomaticRetry
+  | AutomaticRetryList
 
-	signed_fields?: string[]
-
-	value?: string
-}
-
-	skip?: Skip
-
-	soft_fail?: SoftFail
-
-	timeout_in_minutes?: number
-
-	type?: 'script' | 'command' | 'commands'
-}
-export type CommandStepAutomaticRetry = true | false | 'true' | 'false' | AutomaticRetry | AutomaticRetryList
+// The commands to run on the agent
 export type CommandStepCommand = string[] | string
-export type CommandStepManualRetry = true | false | 'true' | 'false' | CommandStepManualRetryObject
-export interface CommandStepManualRetryObject { 
-	allowed?: true | false | 'true' | 'false'
 
-	permit_on_passed?: true | false | 'true' | 'false'
+// Whether to allow a job to be retried manually
+export type CommandStepManualRetry =
+  | true
+  | false
+  | 'true'
+  | 'false'
+  | CommandStepManualRetryObject
 
-	reason?: string
+export interface CommandStepManualRetryObject {
+  // Whether or not this job can be retried manually
+  allowed?: true | false | 'true' | 'false'
+  // Whether or not this job can be retried after it has passed
+  permit_on_passed?: true | false | 'true' | 'false'
+  // A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
+  reason?: string
 }
-export type CommandStepNotify = (NotifySimple | NotifyBasecamp | NotifySlack | NotifyGithubCommitStatus | NotifyGithubCheck)[]
+
+// Array of notification options for this step
+export type CommandStepNotify = (
+  | NotifySimple
+  | NotifyBasecamp
+  | NotifySlack
+  | NotifyGithubCommitStatus
+  | NotifyGithubCheck
+)[]
+
+// The step keys for a step to depend on
 export type DependsOn = string | DependsOnList
-export type DependsOnList = (string | { 
-	allow_failure?: true | false | 'true' | 'false'
 
-	step?: string
-})[]
+export type DependsOnList = (
+  | string
+  | {
+      allow_failure?: true | false | 'true' | 'false'
+
+      step?: string
+    }
+)[]
+
+// Environment variables for this step
 export type Env = Record<string, any>
+
+// A list of input fields required to be filled out before unblocking the step
 export type Fields = (TextField | SelectField)[]
-export interface GroupStep { 
-	allow_dependency_failure?: AllowDependencyFailure
 
-	depends_on?: DependsOn
-
-	group: string
-
-	id?: string
-
-	identifier?: string
-
-	if?: string
-
-	if_changed?: string
-
-	key?: string
-
-	label?: string
-
-	name?: string
-
-	notify?: BuildNotify
-
-	skip?: Skip
-
-	steps: GroupSteps
+export interface GroupStep {
+  // Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+  allow_dependency_failure?: AllowDependencyFailure
+  // The step keys for a step to depend on
+  depends_on?: DependsOn
+  // The name to give to this group of steps
+  group: string
+  // A unique identifier for a step, must not resemble a UUID
+  id?: string
+  // A unique identifier for a step, must not resemble a UUID
+  identifier?: string
+  // A boolean expression that omits the step when false
+  if?: string
+  // Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+  if_changed?: string
+  // A unique identifier for a step, must not resemble a UUID
+  key?: string
+  // The name to give to this group of steps
+  label?: string
+  // The name to give to this group of steps
+  name?: string
+  // Array of notification options for this step
+  notify?: BuildNotify
+  // Whether this step should be skipped. Passing a string provides a reason for skipping this command
+  skip?: Skip
+  // A list of steps
+  steps: GroupSteps
 }
-export type GroupSteps = (BlockStep | NestedBlockStep | StringBlockStep | InputStep | NestedInputStep | StringInputStep | CommandStep | NestedCommandStep | WaitStep | NestedWaitStep | StringWaitStep | TriggerStep | NestedTriggerStep)[]
+
+// A list of steps
+export type GroupSteps = (
+  | BlockStep
+  | NestedBlockStep
+  | StringBlockStep
+  | InputStep
+  | NestedInputStep
+  | StringInputStep
+  | CommandStep
+  | NestedCommandStep
+  | WaitStep
+  | NestedWaitStep
+  | StringWaitStep
+  | TriggerStep
+  | NestedTriggerStep
+)[]
+
+// A boolean expression that omits the step when false
 export type If = string
+
+// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
 export type IfChanged = string
+
+// (Kubernetes stack only) The container image to use for this pipeline or step
 export type Image = string
-export interface InputStep { 
-	allow_dependency_failure?: AllowDependencyFailure
 
-	allowed_teams?: AllowedTeams
-
-	branches?: Branches
-
-	depends_on?: DependsOn
-
-	fields?: Fields
-
-	id?: string
-
-	identifier?: string
-
-	if?: string
-
-	input?: string
-
-	key?: string
-
-	label?: string
-
-	name?: string
-
-	prompt?: string
-
-	type?: 'input'
+export interface InputStep {
+  // Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+  allow_dependency_failure?: AllowDependencyFailure
+  // A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
+  allowed_teams?: AllowedTeams
+  // Which branches will include this step in their builds
+  branches?: Branches
+  // The step keys for a step to depend on
+  depends_on?: DependsOn
+  // A list of input fields required to be filled out before unblocking the step
+  fields?: Fields
+  // A unique identifier for a step, must not resemble a UUID
+  id?: string
+  // A unique identifier for a step, must not resemble a UUID
+  identifier?: string
+  // A boolean expression that omits the step when false
+  if?: string
+  // The label of the input step
+  input?: string
+  // A unique identifier for a step, must not resemble a UUID
+  key?: string
+  // The label of the input step
+  label?: string
+  // The label of the input step
+  name?: string
+  // The instructional message displayed in the dialog box when the unblock step is activated
+  prompt?: string
+  type?: 'input'
 }
+
+// A unique identifier for a step, must not resemble a UUID
 export type Key = string
+
+// The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
 export type Label = string
+
 export type Matrix = MatrixElementList | MatrixObject
-export interface MatrixAdjustments { 
-	skip?: Skip
 
-	soft_fail?: SoftFail
-
-	with: MatrixElementList | MatrixAdjustmentsWithObject
+// An adjustment to a Build Matrix
+export interface MatrixAdjustments {
+  // Whether this step should be skipped. Passing a string provides a reason for skipping this command
+  skip?: Skip
+  // The conditions for marking the step as a soft-fail.
+  soft_fail?: SoftFail
+  with: MatrixElementList | MatrixAdjustmentsWithObject
 }
+
+// Build Matrix dimension element
 export type MatrixAdjustmentsWithObject = Record<string, string>
+
 export type MatrixElement = string | number | boolean
+
 export type MatrixElementList = (string | number | boolean)[]
-export interface MatrixObject { 
-	adjustments?: MatrixAdjustments[]
 
-	setup: MatrixSetup
-}
-export type MatrixSetup = MatrixElementList | { }
-export interface NestedBlockStep { 
-	block?: BlockStep
-}
-export interface NestedCommandStep { 
-	command?: CommandStep
-
-	commands?: CommandStep
-
-	script?: CommandStep
-}
-export interface NestedInputStep { 
-	input?: InputStep
-}
-export interface NestedTriggerStep { 
-	trigger?: TriggerStep
-}
-export interface NestedWaitStep { 
-	wait?: WaitStep
-
-	waiter?: WaitStep
-}
-export interface NotifyBasecamp { 
-	basecamp_campfire?: string
-
-	if?: string
-}
-export interface NotifyEmail { 
-	email?: string
-
-	if?: string
-}
-export interface NotifyGithubCheck { 
-	github_check?: Record<string,any>
-}
-export interface NotifyGithubCommitStatus { 
-	github_commit_status?: { 
-	context?: string
+// Configuration for multi-dimension Build Matrix
+export interface MatrixObject {
+  // An adjustment to a Build Matrix
+  adjustments?: MatrixAdjustments[]
+  setup: MatrixSetup
 }
 
-	if?: string
-}
-export interface NotifyPagerduty { 
-	if?: string
+export type MatrixSetup = MatrixElementList | {}
 
-	pagerduty_change_event?: string
+export interface NestedBlockStep {
+  block?: BlockStep
 }
+
+export interface NestedCommandStep {
+  command?: CommandStep
+  commands?: CommandStep
+  script?: CommandStep
+}
+
+export interface NestedInputStep {
+  input?: InputStep
+}
+
+export interface NestedTriggerStep {
+  trigger?: TriggerStep
+}
+
+export interface NestedWaitStep {
+  wait?: WaitStep
+  waiter?: WaitStep
+}
+
+export interface NotifyBasecamp {
+  basecamp_campfire?: string
+  // A boolean expression that omits the step when false
+  if?: string
+}
+
+export interface NotifyEmail {
+  email?: string
+  // A boolean expression that omits the step when false
+  if?: string
+}
+
+export interface NotifyGithubCheck {
+  github_check?: Record<string, any>
+}
+
+export interface NotifyGithubCommitStatus {
+  github_commit_status?: {
+    // GitHub commit status name
+    context?: string
+  }
+  // A boolean expression that omits the step when false
+  if?: string
+}
+
+export interface NotifyPagerduty {
+  // A boolean expression that omits the step when false
+  if?: string
+  pagerduty_change_event?: string
+}
+
 export type NotifySimple = 'github_check' | 'github_commit_status'
-export interface NotifySlack { 
-	if?: string
 
-	slack?: string | NotifySlackObject
+export interface NotifySlack {
+  // A boolean expression that omits the step when false
+  if?: string
+  slack?: string | NotifySlackObject
 }
-export interface NotifySlackObject { 
-	channels?: string[]
 
-	message?: string
+export interface NotifySlackObject {
+  channels?: string[]
+  message?: string
 }
-export interface NotifyWebhook { 
-	if?: string
 
-	webhook?: string
+export interface NotifyWebhook {
+  // A boolean expression that omits the step when false
+  if?: string
+  webhook?: string
 }
-export type PipelineSteps = (BlockStep | NestedBlockStep | StringBlockStep | InputStep | NestedInputStep | StringInputStep | CommandStep | NestedCommandStep | WaitStep | NestedWaitStep | StringWaitStep | TriggerStep | NestedTriggerStep | GroupStep)[]
+
+// A list of steps
+export type PipelineSteps = (
+  | BlockStep
+  | NestedBlockStep
+  | StringBlockStep
+  | InputStep
+  | NestedInputStep
+  | StringInputStep
+  | CommandStep
+  | NestedCommandStep
+  | WaitStep
+  | NestedWaitStep
+  | StringWaitStep
+  | TriggerStep
+  | NestedTriggerStep
+  | GroupStep
+)[]
+
 export type Plugins = PluginsList | PluginsObject
-export type PluginsList = (string | { })[]
+
+// Array of plugins for this step
+export type PluginsList = (string | {})[]
+
+// A map of plugins for this step. Deprecated: please use the array syntax.
 export type PluginsObject = Record<string, any>
+
+// The instructional message displayed in the dialog box when the unblock step is activated
 export type Prompt = string
-export interface SelectField { 
-	default?: string | string[]
 
-	hint?: string
-
-	key: string
-
-	multiple?: true | false | 'true' | 'false'
-
-	options: SelectFieldOption[]
-
-	required?: true | false | 'true' | 'false'
-
-	select?: string
+export interface SelectField {
+  // The value of the option(s) that will be pre-selected in the dropdown
+  default?: string | string[]
+  // The explanatory text that is shown after the label
+  hint?: string
+  // The meta-data key that stores the field's input
+  key: string
+  // Whether more than one option may be selected
+  multiple?: true | false | 'true' | 'false'
+  options: SelectFieldOption[]
+  // Whether the field is required for form submission
+  required?: true | false | 'true' | 'false'
+  // The text input name
+  select?: string
 }
-export interface SelectFieldOption { 
-	hint?: string
 
-	label: string
-
-	required?: true | false | 'true' | 'false'
-
-	value: string
+export interface SelectFieldOption {
+  // The text displayed directly under the select field’s label
+  hint?: string
+  // The text displayed on the select list item
+  label: string
+  // Whether the field is required for form submission
+  required?: true | false | 'true' | 'false'
+  // The value to be stored as meta-data
+  value: string
 }
+
+// Whether this step should be skipped. Passing a string provides a reason for skipping this command
 export type Skip = boolean | string
+
+// The conditions for marking the step as a soft-fail.
 export type SoftFail = true | false | 'true' | 'false' | SoftFailList
+
 export type SoftFailList = SoftFailObject[]
-export interface SoftFailObject { 
-	exit_status?: '*' | number
+
+export interface SoftFailObject {
+  // The exit status number that will cause this job to soft-fail
+  exit_status?: '*' | number
 }
+
+// Pauses the execution of a build and waits on a user to unblock it
 export type StringBlockStep = 'block'
+
+// Pauses the execution of a build and waits on a user to unblock it
 export type StringInputStep = 'input'
+
+// Waits for previous steps to pass before continuing
 export type StringWaitStep = 'wait' | 'waiter'
-export interface TextField { 
-	default?: string
 
-	format?: string
-
-	hint?: string
-
-	key: string
-
-	required?: true | false | 'true' | 'false'
-
-	text?: string
-}
-export interface TriggerStep { 
-	allow_dependency_failure?: AllowDependencyFailure
-
-	async?: true | false | 'true' | 'false'
-
-	branches?: Branches
-
-	build?: { 
-	branch?: string
-
-	commit?: string
-
-	env?: Env
-
-	message?: string
-
-	meta_data?: Record<string, any>
+export interface TextField {
+  // The value that is pre-filled in the text field
+  default?: string
+  // The format must be a regular expression implicitly anchored to the beginning and end of the input and is functionally equivalent to the HTML5 pattern attribute.
+  format?: string
+  // The explanatory text that is shown after the label
+  hint?: string
+  // The meta-data key that stores the field's input
+  key: string
+  // Whether the field is required for form submission
+  required?: true | false | 'true' | 'false'
+  // The text input name
+  text?: string
 }
 
-	depends_on?: DependsOn
+export interface TriggerStep {
+  // Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+  allow_dependency_failure?: AllowDependencyFailure
+  // Whether to continue the build without waiting for the triggered step to complete
+  async?: true | false | 'true' | 'false'
+  // Which branches will include this step in their builds
+  branches?: Branches
+  // Properties of the build that will be created when the step is triggered
+  build?: {
+    // The branch for the build
+    branch?: string
 
-	id?: string
+    // The commit hash for the build
+    commit?: string
 
-	identifier?: string
+    // Environment variables for this step
+    env?: Env
 
-	if?: string
+    // The message for the build (supports emoji)
+    message?: string
 
-	if_changed?: string
-
-	key?: string
-
-	label?: string
-
-	name?: string
-
-	skip?: Skip
-
-	soft_fail?: SoftFail
-
-	trigger: string
-
-	type?: 'trigger'
+    // Meta-data for the build
+    meta_data?: Record<string, any>
+  }
+  // The step keys for a step to depend on
+  depends_on?: DependsOn
+  // A unique identifier for a step, must not resemble a UUID
+  id?: string
+  // A unique identifier for a step, must not resemble a UUID
+  identifier?: string
+  // A boolean expression that omits the step when false
+  if?: string
+  // Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+  if_changed?: string
+  // A unique identifier for a step, must not resemble a UUID
+  key?: string
+  // The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+  label?: string
+  // The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+  name?: string
+  // Whether this step should be skipped. Passing a string provides a reason for skipping this command
+  skip?: Skip
+  // The conditions for marking the step as a soft-fail.
+  soft_fail?: SoftFail
+  // The slug of the pipeline to create a build
+  trigger: string
+  type?: 'trigger'
 }
-export interface WaitStep { 
-	allow_dependency_failure?: AllowDependencyFailure
 
-	branches?: Branches
-
-	continue_on_failure?: true | false | 'true' | 'false'
-
-	depends_on?: DependsOn
-
-	id?: string
-
-	identifier?: string
-
-	if?: string
-
-	key?: string
-
-	label?: string
-
-	name?: string
-
-	type?: 'wait' | 'waiter'
-
-	wait?: string
+export interface WaitStep {
+  // Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+  allow_dependency_failure?: AllowDependencyFailure
+  // Which branches will include this step in their builds
+  branches?: Branches
+  // Continue to the next steps, even if the previous group of steps fail
+  continue_on_failure?: true | false | 'true' | 'false'
+  // The step keys for a step to depend on
+  depends_on?: DependsOn
+  // A unique identifier for a step, must not resemble a UUID
+  id?: string
+  // A unique identifier for a step, must not resemble a UUID
+  identifier?: string
+  // A boolean expression that omits the step when false
+  if?: string
+  // A unique identifier for a step, must not resemble a UUID
+  key?: string
+  // Waits for previous steps to pass before continuing
+  label?: string
+  // Waits for previous steps to pass before continuing
+  name?: string
+  type?: 'wait' | 'waiter'
+  // Waits for previous steps to pass before continuing
+  wait?: string
 }
-export interface BuildkitePipeline { 
-	agents?: Agents
 
-	env?: Env
-
-	image?: Image
-
-	notify?: BuildNotify
-
-	steps?: PipelineSteps
+export interface BuildkitePipeline {
+  agents?: Agents
+  env?: Env
+  image?: Image
+  notify?: BuildNotify
+  steps?: PipelineSteps
 }

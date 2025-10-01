@@ -135,13 +135,13 @@ func (u Union) TypeScriptInterfaceType() string {
 	parts := make([]string, len(u.TypeIdentifiers))
 	for i, typ := range u.TypeIdentifiers {
 		if obj, ok := typ.(Object); ok {
-			block := utils.NewTypeScriptInterface("")
+			block := utils.NewTypeScriptInterface("", obj.Description)
 			for _, name := range obj.Properties.Keys() {
 				prop, _ := obj.Properties.Get(name)
 				val := prop.(Value)
 				required := slices.Contains(obj.Required, name)
 
-				block.AddItem(name, val.TypeScriptInterfaceType(), required)
+				block.AddItem(name, val.TypeScriptInterfaceType(), val.GetDescription(), required)
 			}
 
 			res, _ := block.WriteUnionObject()
@@ -155,11 +155,16 @@ func (u Union) TypeScriptInterfaceType() string {
 }
 
 func (u Union) TypeScript() (string, error) {
-	codeBlock := utils.NewCodeBlock(
+	block := utils.NewCodeBlock()
+	if u.Description != "" {
+		block.AddLines(fmt.Sprintf("// %s", u.Description))
+	}
+
+	block.AddLines(
 		fmt.Sprintf("export type %s = %s", u.Name.ToTitleCase(), u.TypeScriptInterfaceType()),
 	)
 
-	return codeBlock.String(), nil
+	return block.String(), nil
 }
 
 func (u Union) TypeScriptImports() string {
@@ -184,6 +189,7 @@ func (u Union) Python() (string, error) {
 		if obj, ok := typ.(Object); ok {
 			nestedObj := Object{
 				Name:                 NewPropertyName(fmt.Sprintf("%sObject", obj.Name.Value)),
+				Description:          obj.Description,
 				Properties:           obj.Properties,
 				AdditionalProperties: obj.AdditionalProperties,
 			}

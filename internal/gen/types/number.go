@@ -42,7 +42,13 @@ func (n Number) GoStructKey(isUnion bool) string {
 
 // TypeScript
 func (n Number) TypeScript() (string, error) {
-	return fmt.Sprintf("type %s = number", n.Name.ToTitleCase()), nil
+	block := utils.NewCodeBlock()
+	if n.Description != "" {
+		block.AddLines(fmt.Sprintf("// %s", n.Description))
+	}
+
+	block.AddLines(fmt.Sprintf("type %s = number", n.Name.ToTitleCase()))
+	return block.String(), nil
 }
 
 func (n Number) TypeScriptInterfaceKey() string {

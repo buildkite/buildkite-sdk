@@ -92,15 +92,22 @@ func (a Array) Go() (string, error) {
 
 // TypeScript
 func (a Array) TypeScript() (string, error) {
+	block := utils.NewCodeBlock()
+
+	if a.Description != "" {
+		block.AddLines(fmt.Sprintf("// %s", a.Description))
+	}
+
 	if union, ok := a.Type.(Union); ok {
-		codeBlock := utils.NewCodeBlock(
+		block.AddLines(
 			fmt.Sprintf("export type %s = (%s)[]", a.Name.ToTitleCase(), union.TypeScriptInterfaceType()),
 		)
 
-		return codeBlock.String(), nil
+		return block.String(), nil
 	}
 
-	return fmt.Sprintf("export type %s = %s[]", a.Name.ToTitleCase(), a.Type.TypeScriptInterfaceType()), nil
+	block.AddLines(fmt.Sprintf("export type %s = %s[]", a.Name.ToTitleCase(), a.Type.TypeScriptInterfaceType()))
+	return block.String(), nil
 }
 
 func (a Array) TypeScriptInterfaceType() string {

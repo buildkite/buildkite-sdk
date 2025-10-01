@@ -42,7 +42,13 @@ func (s String) GoStructKey(isUnion bool) string {
 
 // TypeScript
 func (s String) TypeScript() (string, error) {
-	return fmt.Sprintf("export type %s = string", s.Name.ToTitleCase()), nil
+	block := utils.NewCodeBlock()
+	if s.Description != "" {
+		block.AddLines(fmt.Sprintf("// %s", s.Description))
+	}
+
+	block.AddLines(fmt.Sprintf("export type %s = string", s.Name.ToTitleCase()))
+	return block.String(), nil
 }
 
 func (s String) TypeScriptInterfaceKey() string {

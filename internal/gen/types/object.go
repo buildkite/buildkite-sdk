@@ -142,15 +142,23 @@ func (o Object) Go() (string, error) {
 func (o Object) TypeScript() (string, error) {
 	keys := o.Properties.Keys()
 	if len(keys) == 0 {
-		if o.AdditionalProperties != nil {
-			prop := *o.AdditionalProperties
-			return fmt.Sprintf("export type %s = Record<string, %s>", o.Name.ToTitleCase(), prop.TypeScriptInterfaceType()), nil
+		block := utils.NewCodeBlock()
+
+		if o.Description != "" {
+			block.AddLines(fmt.Sprintf("// %s", o.Description))
 		}
 
-		return fmt.Sprintf("export type %s = Record<string, any>", o.Name.ToTitleCase()), nil
+		if o.AdditionalProperties != nil {
+			prop := *o.AdditionalProperties
+			block.AddLines(fmt.Sprintf("export type %s = Record<string, %s>", o.Name.ToTitleCase(), prop.TypeScriptInterfaceType()))
+			return block.String(), nil
+		}
+
+		block.AddLines(fmt.Sprintf("export type %s = Record<string, any>", o.Name.ToTitleCase()))
+		return block.String(), nil
 	}
 
-	tsInterface := utils.NewTypeScriptInterface(o.Name.ToTitleCase())
+	tsInterface := utils.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description)
 	for _, name := range keys {
 		prop, _ := o.Properties.Get(name)
 		val := prop.(Value)
@@ -162,16 +170,16 @@ func (o Object) TypeScript() (string, error) {
 		if ref, ok := val.(PropertyReference); ok {
 			switch ref.Type.(type) {
 			case String:
-				tsInterface.AddItem(name, "string", required)
+				tsInterface.AddItem(name, "string", val.GetDescription(), required)
 				continue
 			case Number:
-				tsInterface.AddItem(name, "number", required)
+				tsInterface.AddItem(name, "number", val.GetDescription(), required)
 				continue
 			case Boolean:
-				tsInterface.AddItem(name, "boolean", required)
+				tsInterface.AddItem(name, "boolean", val.GetDescription(), required)
 				continue
 			default:
-				tsInterface.AddItem(name, utils.CamelCaseToTitleCase(ref.Ref.Name()), required)
+				tsInterface.AddItem(name, utils.CamelCaseToTitleCase(ref.Ref.Name()), val.GetDescription(), required)
 				continue
 			}
 		}
@@ -180,33 +188,34 @@ func (o Object) TypeScript() (string, error) {
 		if obj, ok := val.(Object); ok {
 			keys := obj.Properties.Keys()
 			if len(keys) == 0 {
-				tsInterface.AddItem(name, "Record<string,any>", required)
+				tsInterface.AddItem(name, "Record<string,any>", obj.Description, required)
 				continue
 			}
 
-			tsObject := utils.NewTypeScriptInterface("")
+			tsObject := utils.NewTypeScriptInterface("", obj.Description)
 			for _, propName := range keys {
 				nestedProp, _ := obj.Properties.Get(propName)
 				nestedVal := nestedProp.(Value)
+				nestedDescription := nestedVal.GetDescription()
 				nestedRequired := slices.Contains(obj.Required, propName)
 
 				if ref, ok := nestedVal.(PropertyReference); ok {
 					switch ref.Type.(type) {
 					case String:
-						tsObject.AddItem(propName, "string", required)
+						tsObject.AddItem(propName, "string", nestedDescription, required)
 						continue
 					case Number:
-						tsObject.AddItem(propName, "number", required)
+						tsObject.AddItem(propName, "number", nestedDescription, required)
 						continue
 					case Boolean:
-						tsObject.AddItem(propName, "boolean", required)
+						tsObject.AddItem(propName, "boolean", nestedDescription, required)
 						continue
 					default:
-						tsObject.AddItem(propName, utils.CamelCaseToTitleCase(ref.Ref.Name()), required)
+						tsObject.AddItem(propName, utils.CamelCaseToTitleCase(ref.Ref.Name()), nestedDescription, required)
 						continue
 					}
 				}
-				tsObject.AddItem(propName, nestedVal.TypeScriptInterfaceType(), nestedRequired)
+				tsObject.AddItem(propName, nestedVal.TypeScriptInterfaceType(), nestedDescription, nestedRequired)
 			}
 
 			objString, err := tsObject.WriteUnionObject()
@@ -214,11 +223,11 @@ func (o Object) TypeScript() (string, error) {
 				return "", fmt.Errorf("generating nested object: %v", err)
 			}
 
-			tsInterface.AddItem(name, objString, required)
+			tsInterface.AddItem(name, objString, obj.Description, required)
 			continue
 		}
 
-		tsInterface.AddItem(name, structType, required)
+		tsInterface.AddItem(name, structType, val.GetDescription(), required)
 	}
 
 	tsInterfaceString, err := tsInterface.Write()

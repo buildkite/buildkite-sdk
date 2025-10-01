@@ -157,7 +157,14 @@ func (e Enum) TypeScript() (string, error) {
 		parts[i] = fmt.Sprintf("%v", val)
 	}
 	values := strings.Join(parts, " | ")
-	return fmt.Sprintf("export type %s = %s", e.Name.ToTitleCase(), values), nil
+
+	block := utils.NewCodeBlock()
+	if e.Description != "" {
+		block.AddLines(fmt.Sprintf("// %s", e.Description))
+	}
+
+	block.AddLines(fmt.Sprintf("export type %s = %s", e.Name.ToTitleCase(), values))
+	return block.String(), nil
 }
 
 func (e Enum) TypeScriptInterfaceKey() string {
