@@ -1,4 +1,4 @@
-import { DependsOn } from './types'
+import { DependsOn } from "./types";
 
 export interface WaitStep {
     allow_dependency_failure?: boolean;
