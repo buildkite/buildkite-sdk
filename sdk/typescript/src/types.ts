@@ -97,7 +97,7 @@ export interface SoftFail {
     /**
      * The exit status number that will cause this job to soft-fail
      */
-    exit_status?: '*' | number;
+    exit_status?: "*" | number;
 }
 
 /**
@@ -161,10 +161,7 @@ export interface Retry {
      * Whether to allow a job to retry automatically. If set to true, the retry conditions are
      * set to the default value.
      */
-    automatic?:
-        | boolean
-        | AutomaticRetry
-        | AutomaticRetry[];
+    automatic?: boolean | AutomaticRetry | AutomaticRetry[];
     /**
      * Whether to allow a job to be retried manually
      */
@@ -175,7 +172,7 @@ export interface AutomaticRetry {
     /**
      * The exit status number that will cause this job to retry
      */
-    exit_status?: number[] | '*' | number;
+    exit_status?: number[] | "*" | number;
     /**
      * The number of times this job can be retried
      */

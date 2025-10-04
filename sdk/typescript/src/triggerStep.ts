@@ -1,4 +1,4 @@
-import { Build, DependsOn, SoftFail } from './types'
+import { Build, DependsOn, SoftFail } from "./types";
 
 export interface TriggerStep {
     allow_dependency_failure?: boolean;
