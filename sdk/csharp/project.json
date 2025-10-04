@@ -1,0 +1,90 @@
+{
+    "name": "sdk-csharp",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "library",
+    "sourceRoot": "sdk/csharp/src",
+    "tags": [],
+    "targets": {
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["dotnet clean", "rimraf bin", "rimraf obj"],
+                "cwd": "sdk/csharp"
+            },
+            "cache": false
+        },
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "dotnet restore Buildkite.Sdk.csproj",
+                    "dotnet restore test/Buildkite.Sdk.Tests.csproj"
+                ],
+                "cwd": "sdk/csharp",
+                "parallel": false
+            }
+        },
+        "format": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["dotnet format"],
+                "cwd": "sdk/csharp"
+            },
+            "cache": false
+        },
+        "build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{workspaceRoot}/dist/sdks/csharp"],
+            "options": {
+                "commands": [
+                    "rimraf ../../dist/sdks/csharp",
+                    "mkdir -p ../../dist/sdks/csharp",
+                    "dotnet build Buildkite.Sdk.csproj --configuration Release --no-restore",
+                    "dotnet build test/Buildkite.Sdk.Tests.csproj --configuration Release --no-restore",
+                    "dotnet pack Buildkite.Sdk.csproj --configuration Release --output ../../dist/sdks/csharp --no-restore"
+                ],
+                "cwd": "sdk/csharp",
+                "parallel": false
+            },
+            "cache": false
+        },
+        "docs:build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{workspaceRoot}/dist/docs/csharp"],
+            "options": {
+                "commands": ["dotnet tool restore", "dotnet docfx docfx.json"],
+                "cwd": "sdk/csharp",
+                "parallel": false
+            },
+            "cache": false
+        },
+        "docs:serve": {
+            "executor": "@nx/web:file-server",
+            "options": {
+                "port": 8083,
+                "buildTarget": "docs:build"
+            }
+        },
+        "test": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "dotnet test test/Buildkite.Sdk.Tests.csproj --no-restore --verbosity normal --logger trx --results-directory ../../reports/sdk/csharp"
+                ],
+                "cwd": "sdk/csharp",
+                "parallel": false
+            },
+            "outputs": ["{workspaceRoot}/reports/sdk/csharp"],
+            "dependsOn": ["install"]
+        },
+        "publish": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "dotnet nuget push ../../dist/sdks/csharp/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate"
+                ],
+                "cwd": "sdk/csharp"
+            }
+        }
+    }
+}

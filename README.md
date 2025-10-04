@@ -4,7 +4,7 @@
 
 A multi-language SDK for [Buildkite](https://buildkite.com)! 🪁
 
-Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema) and generates and publishes packages for TypeScript or JavaScript, Python, Go, and Ruby.
+Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema) and generates and publishes packages for TypeScript or JavaScript, Python, Go, Ruby, and C#.
 
 ## Installing and using the SDKs
 
@@ -16,9 +16,10 @@ Learn more about how to set up the Buildkite SDK for each langauge, and use it t
 
 To work on the SDK, you'll need current versions of the following tools:
 
-- [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+- [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/), [.NET](https://dotnet.microsoft.com/download)
 - For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
 - For Ruby: [Bundler](https://bundler.io/)
+- For C#: [.NET SDK](https://dotnet.microsoft.com/download)
 
 See `mise.toml` for details. (We also recommend [Mise](https://mise.jdx.dev/) for tool-version management.) If you're on a Mac, and you use [Homebrew](https://brew.sh/), you can run `brew bundle` and `mise install` to get all you need:
 
@@ -121,6 +122,7 @@ All SDKs version on the same cadence. To publish a new version (of all SDKs), fo
     -   https://pypi.org/project/buildkite-sdk/
     -   https://pkg.go.dev/github.com/buildkite/buildkite-sdk/sdk/go (this usually takes a minute or two)
     -   https://rubygems.org/gems/buildkite-sdk
+    -   https://www.nuget.org/packages/Buildkite.Sdk
 
 ### Required environment variables
 
@@ -128,7 +130,8 @@ The following environment variables are required for releasing and publishing:
 
 -   `GITHUB_TOKEN` for creating GitHub releases (with `@octokit/rest`)
 -   `NPM_TOKEN` for publishing to npm (with `npm publish`)
--   `PYPI_TOKEN` fror publishing to PyPI (with `uv publish`)
+-   `PYPI_TOKEN` for publishing to PyPI (with `uv publish`)
 -   `GEM_HOST_API_KEY` for publishing to RubyGems (with `gem push`)
+-   `NUGET_API_KEY` for publishing to NuGet (with `dotnet nuget push`)
 
 See the `publish:all` and `release:all` tasks in `./project.json` for details.

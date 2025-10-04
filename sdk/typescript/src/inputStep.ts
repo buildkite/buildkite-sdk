@@ -1,4 +1,4 @@
-import { DependsOn, Field } from './types'
+import { DependsOn, Field } from "./types";
 
 export interface InputStep {
     input: string;
@@ -13,5 +13,5 @@ export interface InputStep {
     label?: string;
     name?: string;
     prompt?: string;
-    blocked_state: 'passed' | 'failed' | 'running'
+    blocked_state: "passed" | "failed" | "running";
 }

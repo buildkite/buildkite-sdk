@@ -8,7 +8,7 @@ import {
     Retry,
     Signature,
     SoftFail,
-} from './types'
+} from "./types";
 
 export interface CommandStep {
     agents?: string[] | { [key: string]: any };

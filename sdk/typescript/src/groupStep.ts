@@ -1,9 +1,9 @@
-import { BlockStep } from './blockStep'
-import { CommandStep } from './commandStep'
-import { InputStep } from './inputStep'
-import { TriggerStep } from './triggerStep'
-import { WaitStep } from './waitStep'
-import { DependsOn, Notify, NotifyEnum } from './types'
+import { BlockStep } from "./blockStep";
+import { CommandStep } from "./commandStep";
+import { InputStep } from "./inputStep";
+import { TriggerStep } from "./triggerStep";
+import { WaitStep } from "./waitStep";
+import { DependsOn, Notify, NotifyEnum } from "./types";
 
 export interface GroupStep {
     group: string;

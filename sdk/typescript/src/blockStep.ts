@@ -1,4 +1,4 @@
-import { BlockedState, DependsOn, Field } from './types'
+import { BlockedState, DependsOn, Field } from "./types";
 
 export interface BlockStep {
     block: string;

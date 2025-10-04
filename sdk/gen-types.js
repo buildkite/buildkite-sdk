@@ -10,6 +10,7 @@ const {
     PythonTargetLanguage,
     GoTargetLanguage,
     RubyTargetLanguage,
+    CSharpTargetLanguage,
 } = require("quicktype-core");
 
 async function genTypes() {
@@ -40,6 +41,7 @@ async function genTypes() {
     const python = new PythonTargetLanguage("Python", ["python"], "py");
     const go = new GoTargetLanguage("Go", ["go"], "go");
     const ruby = new RubyTargetLanguage("Ruby", ["ruby"], "rb");
+    const csharp = new CSharpTargetLanguage("CSharp", ["csharp"], "cs");
 
     const opts = {
         typescript: {
@@ -58,10 +60,18 @@ async function genTypes() {
             path: "./sdk/ruby/lib/schema.rb",
             options: undefined,
         },
+        cs: {
+            path: "./sdk/csharp/src/Buildkite.Sdk/Schema.cs",
+            options: {
+                namespace: "Buildkite.Sdk.Schema",
+                framework: "SystemTextJson"
+            },
+        },
     };
 
-    for await (lang of [typescript, python, go, ruby]) {
-        const langOpts = opts[lang.name];
+    for await (lang of [typescript, python, go, ruby, csharp]) {
+        const langName = lang.names[0]; // Use the first name from the names array
+        const langOpts = opts[langName.toLowerCase()];
         let { lines } = await quicktype({
             lang,
             inputData,
@@ -69,7 +79,7 @@ async function genTypes() {
         });
 
         // Go formatter seems a bit buggy.
-        if (lang.name === "go") {
+        if (langName.toLowerCase() === "go") {
             lines = lines.map((line) => {
                 if (line.match(/Command[s]?\W+\*Branches/)) {
                     return line.replace("*Branches    ", "*CommandUnion");
@@ -94,7 +104,7 @@ async function genEnvVars() {
 
     const text = await result.text();
     let { variables } = yaml.parse(text);
-    const langs = ["typescript", "python", "go", "ruby"];
+    const langs = ["typescript", "python", "go", "ruby", "csharp"];
 
     const opts = {
         typescript: {
@@ -111,6 +121,10 @@ async function genEnvVars() {
         },
         ruby: {
             path: "./sdk/ruby/lib/environment.rb",
+            options: undefined,
+        },
+        csharp: {
+            path: "./sdk/csharp/src/Buildkite.Sdk/Environment.cs",
             options: undefined,
         },
     };
@@ -204,6 +218,25 @@ async function genEnvVars() {
         }),
     });
     fs.writeFileSync(`${sdkPath}/lib/environment.rb`, rendered, "utf-8");
+
+    // C#.
+    sdkPath = "./sdk/csharp";
+    template = fs.readFileSync(`${sdkPath}/env.mustache`, "utf-8").toString();
+    rendered = mustache.render(template, {
+        variables: variables.map((v) => {
+            return {
+                ...v,
+                comment: [
+                    ...v.desc.split("\n").map((line) => `        /// ${line}`),
+                ].join("\n"),
+            };
+        }),
+    });
+    fs.writeFileSync(
+        `${sdkPath}/src/Buildkite.Sdk/Environment.cs`,
+        rendered,
+        "utf-8"
+    );
 }
 
 (async () => {

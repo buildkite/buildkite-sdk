@@ -21,6 +21,7 @@ RUN curl https://mise.run | sh
 RUN mise install node@latest && mise use --global node@latest
 RUN mise install python@latest && mise use --global python@latest
 RUN mise install go@latest && mise use --global go@latest
+RUN mise install dotnet@latest && mise use --global dotnet@latest
 
 # Install Python tools.
 RUN pip install --no-cache-dir uv black
