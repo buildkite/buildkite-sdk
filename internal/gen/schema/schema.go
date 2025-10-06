@@ -3,7 +3,9 @@ package schema
 import (
 	"encoding/json"
 	"fmt"
-	"os"
+	"io"
+	"log"
+	"net/http"
 )
 
 type PipelineSchema struct {
@@ -21,13 +23,18 @@ type SchemaProperty struct {
 }
 
 func ReadSchema() (PipelineSchema, error) {
-	file, err := os.ReadFile("internal/gen/schema.json")
+	resp, err := http.Get("https://raw.githubusercontent.com/buildkite/pipeline-schema/refs/heads/main/schema.json")
 	if err != nil {
-		return PipelineSchema{}, fmt.Errorf("reading schema file: %v", err)
+		log.Fatalln(err)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
 	}
 
 	var schema PipelineSchema
-	err = json.Unmarshal(file, &schema)
+	err = json.Unmarshal(body, &schema)
 	if err != nil {
 		return PipelineSchema{}, fmt.Errorf("parsing schema: %v", err)
 	}
