@@ -475,6 +475,8 @@ InputStepDict = TypedDict('InputStepDict',{
     'allow_dependency_failure': NotRequired['AllowDependencyFailure'],
     # A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
     'allowed_teams': NotRequired['AllowedTeams'],
+    # The state that the build is set to when the build is blocked by this input step
+    'blocked_state': NotRequired[Literal['passed','failed','running']],
     # Which branches will include this step in their builds
     'branches': NotRequired['Branches'],
     # The step keys for a step to depend on
@@ -506,6 +508,8 @@ class InputStep(BaseModel):
     allow_dependency_failure: Optional[AllowDependencyFailure] = None
     # A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
     allowed_teams: Optional[AllowedTeams] = None
+    # The state that the build is set to when the build is blocked by this input step
+    blocked_state: Optional[Literal['passed','failed','running']] = None
     # Which branches will include this step in their builds
     branches: Optional[Branches] = None
     # The step keys for a step to depend on

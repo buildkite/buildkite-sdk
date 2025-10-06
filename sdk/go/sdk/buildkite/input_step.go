@@ -3,6 +3,15 @@
 
 package buildkite
 
+type InputStepBlockedState string
+
+// The state that the build is set to when the build is blocked by this input step
+var InputStepBlockedStateValues = map[string]InputStepBlockedState{
+	"passed":  "passed",
+	"failed":  "failed",
+	"running": "running",
+}
+
 type InputStepType string
 
 var InputStepTypeValues = map[string]InputStepType{
@@ -14,6 +23,8 @@ type InputStep struct {
 	AllowDependencyFailure *AllowDependencyFailure `json:"allow_dependency_failure,omitempty"`
 	// A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
 	AllowedTeams *AllowedTeams `json:"allowed_teams,omitempty"`
+	// The state that the build is set to when the build is blocked by this input step
+	BlockedState *InputStepBlockedState `json:"blocked_state,omitempty"`
 	// Which branches will include this step in their builds
 	Branches *Branches `json:"branches,omitempty"`
 	// The step keys for a step to depend on

@@ -291,6 +291,8 @@ export interface InputStep {
   allow_dependency_failure?: AllowDependencyFailure
   // A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
   allowed_teams?: AllowedTeams
+  // The state that the build is set to when the build is blocked by this input step
+  blocked_state?: 'passed' | 'failed' | 'running'
   // Which branches will include this step in their builds
   branches?: Branches
   // The step keys for a step to depend on
