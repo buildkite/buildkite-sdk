@@ -6,10 +6,12 @@
                 "app-python:install",
                 "app-go:install",
                 "app-ruby:install",
+                "app-csharp:install",
                 "sdk-typescript:install",
                 "sdk-python:install",
                 "sdk-go:install",
                 "sdk-ruby:install",
+                "sdk-csharp:install",
                 "infra:install"
             ]
         },
@@ -29,10 +31,12 @@
                 "app-python:clean",
                 "app-go:clean",
                 "app-ruby:clean",
+                "app-csharp:clean",
                 "sdk-typescript:clean",
                 "sdk-python:clean",
                 "sdk-go:clean",
-                "sdk-ruby:clean"
+                "sdk-ruby:clean",
+                "sdk-csharp:clean"
             ]
         },
         "format:all": {
@@ -45,6 +49,7 @@
                 "sdk-python:format",
                 "sdk-go:format",
                 "sdk-ruby:format",
+                "sdk-csharp:format",
                 "infra:format"
             ]
         },
@@ -78,7 +83,8 @@
                 "sdk-typescript:build",
                 "sdk-python:build",
                 "sdk-go:build",
-                "sdk-ruby:build"
+                "sdk-ruby:build",
+                "sdk-csharp:build"
             ]
         },
         "test:all": {
@@ -87,16 +93,20 @@
                 "sdk-python:test",
                 "sdk-go:test",
                 "sdk-ruby:test",
+                "sdk-csharp:test",
                 "app-typescript:test",
                 "app-python:test",
-                "app-go:test"
+                "app-go:test",
+                "app-ruby:test",
+                "app-csharp:test"
             ]
         },
         "docs:all": {
             "dependsOn": [
                 "sdk-typescript:docs:build",
                 "sdk-python:docs:build",
-                "sdk-ruby:docs:build"
+                "sdk-ruby:docs:build",
+                "sdk-csharp:docs:build"
             ]
         },
         "docs:publish:preview": {
@@ -118,7 +128,8 @@
                 "app-typescript:run",
                 "app-python:run",
                 "app-go:run",
-                "app-ruby:run"
+                "app-ruby:run",
+                "app-csharp:run"
             ]
         },
         "publish:all": {
@@ -126,7 +137,8 @@
                 "sdk-typescript:publish",
                 "sdk-python:publish",
                 "sdk-go:publish",
-                "sdk-ruby:publish"
+                "sdk-ruby:publish",
+                "sdk-csharp:publish"
             ]
         },
         "rebuild:all": {

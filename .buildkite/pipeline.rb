@@ -59,6 +59,13 @@ language_targets = [
     key: "ruby",
     sdk_label: "sdk-ruby",
     app_label: "app-ruby"
+  },
+  {
+    icon: ":csharp:",
+    label: "C#",
+    key: "csharp",
+    sdk_label: "sdk-csharp",
+    app_label: "app-csharp"
   }
 ]
 
