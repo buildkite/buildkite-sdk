@@ -14,12 +14,10 @@ func value[T any](val T) *T {
 func main() {
 	pipeline := buildkite.NewPipeline()
 
-	pipeline.AddStep(buildkite.PipelineStepsUnion{
-		CommandStep: &buildkite.CommandStep{
-			Label: value("some-label"),
-			Commands: &buildkite.CommandStepCommand{
-				String: value("echo 'Hello, world!"),
-			},
+	pipeline.AddStep(buildkite.CommandStep{
+		Label: value("some-label"),
+		Commands: &buildkite.CommandStepCommand{
+			String: value("echo 'Hello, world!"),
 		},
 	})
 

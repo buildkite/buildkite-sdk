@@ -22,13 +22,13 @@ var pipelineFunctions = `func (p Pipeline) ToJSON() (string, error) {
 	return string(rawJSON), nil
 }
 
-func (p *Pipeline) AddStep(step PipelineStepsUnion) {
+func (p *Pipeline) AddStep(step pipelineStep) {
 	steps := p.Steps
 	if steps == nil {
 		steps = &[]PipelineStepsUnion{}
 	}
 
-	newSteps := append(*steps, step)
+	newSteps := append(*steps, step.toStepUnion())
 	p.Steps = &newSteps
 }
 
@@ -76,7 +76,83 @@ func (p *Pipeline) ToYAML() (string, error) {
 
 func NewPipeline() *Pipeline {
 	return &Pipeline{}
-}`
+}
+
+type pipelineStep interface {
+	toStepUnion() PipelineStepsUnion
+}
+
+func (s BlockStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		BlockStep: &s,
+	}
+}
+func (s CommandStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		CommandStep: &s,
+	}
+}
+func (s GroupStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		GroupStep: &s,
+	}
+}
+func (s InputStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		InputStep: &s,
+	}
+}
+func (s NestedBlockStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		NestedBlockStep: &s,
+	}
+}
+func (s NestedCommandStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		NestedCommandStep: &s,
+	}
+}
+func (s NestedInputStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		NestedInputStep: &s,
+	}
+}
+func (s NestedTriggerStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		NestedTriggerStep: &s,
+	}
+}
+func (s NestedWaitStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		NestedWaitStep: &s,
+	}
+}
+func (s StringBlockStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		StringBlockStep: &s,
+	}
+}
+func (s StringInputStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		StringInputStep: &s,
+	}
+}
+func (s StringWaitStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		StringWaitStep: &s,
+	}
+}
+func (s TriggerStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		TriggerStep: &s,
+	}
+}
+func (s WaitStep) toStepUnion() PipelineStepsUnion {
+	return PipelineStepsUnion{
+		WaitStep: &s,
+	}
+}
+`
 
 func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 	goStruct := utils.NewGoStruct("Pipeline", "", nil)
