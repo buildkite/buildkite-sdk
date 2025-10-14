@@ -29,7 +29,7 @@ class Pipeline:
         self.steps = []
         self.agents = None
         self.env = None
-        self.notify = None
+        self.notify = []
         """I guess this is where we define the steps?"""
 
     def add_agent(self, key: str, value: any):
@@ -43,7 +43,7 @@ class Pipeline:
         self.env[key] = value
 
     def add_notify(self, notify: PipelineNotify):
-        self.notify = notify
+        self.notify.append(notify)
 
     def add_step(
         self,
@@ -89,8 +89,8 @@ class Pipeline:
             pipeline["agents"] = self.agents
         if self.env != None:
             pipeline["env"] = self.env
-        if self.notify != None:
-            pipeline["notify"] = self.notify
+        if self.notify:
+            pipeline["notify"] = [n.to_dict() for n in self.notify]
 
         return pipeline
 
