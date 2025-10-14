@@ -404,7 +404,7 @@ class TestCommandStepClass(TestRunner):
     def test_if(self):
         pipeline = Pipeline(
             steps=[
-                CommandStep(command='test', pipeline_if='build.message !~ /skip tests/')
+                CommandStep(command='test', step_if='build.message !~ /skip tests/')
             ]
         )
         self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'if': 'build.message !~ /skip tests/'}]})
@@ -944,4 +944,3 @@ class TestCommandStepDict(TestRunner):
             ]
         )
         self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'if_changed': '*.txt'}]})
-

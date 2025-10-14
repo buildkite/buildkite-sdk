@@ -65,7 +65,7 @@ class TestTriggerStepClass(TestRunner):
         }
         pipeline = Pipeline(
             steps=[
-                TriggerStep(trigger='a-slug', pipeline_async=True)
+                TriggerStep(trigger='a-slug', step_async=True)
             ]
         )
         self.validator.check_result(pipeline, {'steps': [expected]})
@@ -210,7 +210,7 @@ class TestTriggerStepClass(TestRunner):
         }
         pipeline = Pipeline(
             steps=[
-                TriggerStep(trigger='a-slug', pipeline_if="build.message !~ /skip tests/")
+                TriggerStep(trigger='a-slug', step_if="build.message !~ /skip tests/")
             ]
         )
         self.validator.check_result(pipeline, {'steps': [expected]})

@@ -314,13 +314,13 @@ func (o Object) Python() (string, error) {
 		// Reserved words
 		if name == "async" {
 			pyTypedDict.AddItem("async", "Literal[True, False, 'true', 'false']", "", "async", val.GetDescription(), false, false)
-			pyClass.AddItem("pipeline_async", "Literal[True, False, 'true', 'false']", "", "async", val.GetDescription(), false, false)
+			pyClass.AddItem("step_async", "Literal[True, False, 'true', 'false']", "", "async", val.GetDescription(), false, false)
 			continue
 		}
 
 		if name == "if" {
 			pyTypedDict.AddItem("if", "If", "", "if", val.GetDescription(), false, false)
-			pyClass.AddItem("pipeline_if", "If", "", "if", val.GetDescription(), false, false)
+			pyClass.AddItem("step_if", "If", "", "if", val.GetDescription(), false, false)
 			continue
 		}
 

@@ -156,7 +156,7 @@ class TestGroupStepClass(TestRunner):
             steps=[
                 GroupStep(
                     group='Tests',
-                    pipeline_if='build.message !~ /skip tests/',
+                    step_if='build.message !~ /skip tests/',
                     steps=[CommandStep(command='test')]
                 )
             ]

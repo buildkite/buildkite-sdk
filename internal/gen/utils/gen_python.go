@@ -58,10 +58,10 @@ var pythonClassTemplate = `{{if ne "" .Description}}{{printf "# %s\n" .Descripti
 
     @classmethod
     def from_dict(cls, data: {{.Name}}Dict) -> {{.Name}}:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})`
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})`
 
 var pythonTypedDictTemplate = `{{if ne "" .Description}}{{printf "# %s\n" .Description}}{{end}}{{.Name}} = TypedDict('{{.Name}}',{
     {{ range .Items}}{{if ne "" .Description}}{{printf "# %s\n    " .Description}}{{end}}'{{.Name}}': {{if eq false .Required }}NotRequired[{{.Value}}]{{else}}{{.Value}}{{end}},

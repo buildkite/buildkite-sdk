@@ -168,7 +168,7 @@ class TestInputStepClass(TestRunner):
     def test_if(self):
         pipeline = Pipeline(
             steps=[
-                InputStep(input='a label', pipeline_if='build.message !~ /skip tests/')
+                InputStep(input='a label', step_if='build.message !~ /skip tests/')
             ]
         )
         self.validator.check_result(pipeline, {'steps': [{'input': 'a label', 'if': 'build.message !~ /skip tests/'}]})

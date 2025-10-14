@@ -141,7 +141,7 @@ class TestWaitStepClass(TestRunner):
         }
         pipeline = Pipeline(
             steps=[
-                WaitStep(type='waiter', pipeline_if='build.message !~ /skip tests/')
+                WaitStep(type='waiter', step_if='build.message !~ /skip tests/')
             ]
         )
         self.validator.check_result(pipeline, {'steps': [expected]})

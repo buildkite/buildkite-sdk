@@ -13,7 +13,7 @@ class TestPipelineNotifyClass(TestRunner):
     def test_email_if(self):
         pipeline = Pipeline(
             notify=[
-                NotifyEmail(email='dev@acmeinc.com', pipeline_if="build.state == 'failed")
+                NotifyEmail(email='dev@acmeinc.com', step_if="build.state == 'failed")
             ]
         )
         self.validator.check_result(pipeline, {'notify': [{'email': 'dev@acmeinc.com', 'if': "build.state == 'failed"}]})
@@ -29,7 +29,7 @@ class TestPipelineNotifyClass(TestRunner):
     def test_basecamp_campfire_if(self):
         pipeline = Pipeline(
             notify=[
-                NotifyBasecamp(basecamp_campfire='https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', pipeline_if="build.state == 'failed")
+                NotifyBasecamp(basecamp_campfire='https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', step_if="build.state == 'failed")
             ]
         )
         self.validator.check_result(pipeline, {'notify': [{'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', 'if': "build.state == 'failed"}]})
@@ -45,7 +45,7 @@ class TestPipelineNotifyClass(TestRunner):
     def test_slack_if(self):
         pipeline = Pipeline(
             notify=[
-                NotifySlack(slack='#channel', pipeline_if="build.state == 'failed")
+                NotifySlack(slack='#channel', step_if="build.state == 'failed")
             ]
         )
         self.validator.check_result(pipeline, {'notify': [{'slack': '#channel', 'if': "build.state == 'failed"}]})
@@ -77,7 +77,7 @@ class TestPipelineNotifyClass(TestRunner):
     def test_webhook_if(self):
         pipeline = Pipeline(
             notify=[
-                NotifyWebhook(webhook='https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', pipeline_if="build.state == 'failed")
+                NotifyWebhook(webhook='https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', step_if="build.state == 'failed")
             ]
         )
         self.validator.check_result(pipeline, {'notify': [{'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', 'if': "build.state == 'failed"}]})
@@ -93,7 +93,7 @@ class TestPipelineNotifyClass(TestRunner):
     def test_pagerduty_if(self):
         pipeline = Pipeline(
             notify=[
-                NotifyPagerduty(pagerduty_change_event='636d22Yourc0418Key3b49eee3e8', pipeline_if="build.state == 'failed")
+                NotifyPagerduty(pagerduty_change_event='636d22Yourc0418Key3b49eee3e8', step_if="build.state == 'failed")
             ]
         )
         self.validator.check_result(pipeline, {'notify': [{'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8', 'if': "build.state == 'failed"}]})
@@ -130,7 +130,7 @@ class TestPipelineNotifyClass(TestRunner):
         pipeline = Pipeline(
             notify=[
                 NotifyGithubCommitStatus(
-                    pipeline_if="build.state == 'failed",
+                    step_if="build.state == 'failed",
                     github_commit_status=NotifyGithubCommitStatusGithubCommitStatus(
                         context='my-custom-status'
                     )
@@ -287,7 +287,7 @@ class TestCommandNotifyClass(TestRunner):
                 CommandStep(
                     command='bash.sh',
                     notify=[
-                        NotifyBasecamp(basecamp_campfire='https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', pipeline_if="build.state == 'failed")
+                        NotifyBasecamp(basecamp_campfire='https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', step_if="build.state == 'failed")
                     ]
                 )
             ]
@@ -325,7 +325,7 @@ class TestCommandNotifyClass(TestRunner):
                 CommandStep(
                     command='bash.sh',
                     notify=[
-                        NotifySlack(slack='#channel', pipeline_if="build.state == 'failed'")
+                        NotifySlack(slack='#channel', step_if="build.state == 'failed'")
                     ]
                 )
             ]
@@ -436,7 +436,7 @@ class TestCommandNotifyClass(TestRunner):
                     command='bash.sh',
                     notify=[
                         NotifyGithubCommitStatus(
-                            pipeline_if="build.state == 'failed'",
+                            step_if="build.state == 'failed'",
                             github_commit_status=NotifyGithubCommitStatusGithubCommitStatus(
                                 context='my-context'
                             )

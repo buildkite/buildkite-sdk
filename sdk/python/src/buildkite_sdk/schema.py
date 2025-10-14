@@ -42,10 +42,10 @@ class AutomaticRetry(BaseModel):
 
     @classmethod
     def from_dict(cls, data: AutomaticRetryDict) -> AutomaticRetry:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 type AutomaticRetryList = List[Union[AutomaticRetry,AutomaticRetryDict]]
 
@@ -102,7 +102,7 @@ class BlockStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
     # A unique identifier for a step, must not resemble a UUID
     key: Optional[str] = None
     # The label of the block step
@@ -115,10 +115,10 @@ class BlockStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: BlockStepDict) -> BlockStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # Which branches will include this step in their builds
 type Branches = Union[str,List[str]]
@@ -140,10 +140,10 @@ class CacheObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: CacheObjectDict) -> CacheObject:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 # The paths for the caches to be used in the step
 type Cache = Union[str,List[str],CacheObject]
 
@@ -159,10 +159,10 @@ class CommandStepRetry(BaseModel):
 
     @classmethod
     def from_dict(cls, data: CommandStepRetryDict) -> CommandStepRetry:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 # The conditions for retrying this step.
 CommandStepRetryDict = TypedDict('CommandStepRetryDict',{
     # Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
@@ -182,10 +182,10 @@ class CommandStepSignature(BaseModel):
 
     @classmethod
     def from_dict(cls, data: CommandStepSignatureDict) -> CommandStepSignature:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 # The signature of the command step, generally injected by agents at pipeline upload
 CommandStepSignatureDict = TypedDict('CommandStepSignatureDict',{
     # The algorithm used to generate the signature
@@ -291,7 +291,7 @@ class CommandStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
     # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
     if_changed: Optional[str] = None
     # (Kubernetes stack only) The container image to use for this pipeline or step
@@ -324,10 +324,10 @@ class CommandStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: CommandStepDict) -> CommandStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
 type CommandStepAutomaticRetry = Union[Literal[True,False,'true','false'],AutomaticRetryDict,AutomaticRetry,AutomaticRetryList]
@@ -358,10 +358,10 @@ class CommandStepManualRetryObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: CommandStepManualRetryObjectDict) -> CommandStepManualRetryObject:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # Array of notification options for this step
 type CommandStepNotify = List[Union[NotifySimple,NotifyBasecampDict,NotifyBasecamp,NotifySlackDict,NotifySlack,NotifyGithubCommitStatusDict,NotifyGithubCommitStatus,NotifyGithubCheckDict,NotifyGithubCheck]]
@@ -381,10 +381,10 @@ class DependsOnListObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: DependsOnListObjectDict) -> DependsOnListObject:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 type DependsOnList = List[Union[str,DependsOnListObject,DependsOnListObjectDict]]
 
 # Environment variables for this step
@@ -435,7 +435,7 @@ class GroupStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
     # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
     if_changed: Optional[str] = None
     # A unique identifier for a step, must not resemble a UUID
@@ -453,10 +453,10 @@ class GroupStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: GroupStepDict) -> GroupStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # A list of steps
 type GroupSteps = List[Union[BlockStepDict,BlockStep,NestedBlockStepDict,NestedBlockStep,StringBlockStep,InputStepDict,InputStep,NestedInputStepDict,NestedInputStep,StringInputStep,CommandStepDict,CommandStep,NestedCommandStepDict,NestedCommandStep,WaitStepDict,WaitStep,NestedWaitStepDict,NestedWaitStep,StringWaitStep,TriggerStepDict,TriggerStep,NestedTriggerStepDict,NestedTriggerStep]]
@@ -521,7 +521,7 @@ class InputStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
     # The label of the input step
     input: Optional[str] = None
     # A unique identifier for a step, must not resemble a UUID
@@ -536,10 +536,10 @@ class InputStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: InputStepDict) -> InputStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # A unique identifier for a step, must not resemble a UUID
 type Key = str
@@ -569,10 +569,10 @@ class MatrixAdjustments(BaseModel):
 
     @classmethod
     def from_dict(cls, data: MatrixAdjustmentsDict) -> MatrixAdjustments:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # Build Matrix dimension element
 type MatrixAdjustmentsWithObject = Dict[str, str]
@@ -597,10 +597,10 @@ class MatrixObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: MatrixObjectDict) -> MatrixObject:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 type MatrixSetupObject = Dict[str, List[Union[str,int,bool]]]
 type MatrixSetup = Union[MatrixElementList,Dict[str, List[Union[str,int,bool]]]]
@@ -615,10 +615,10 @@ class NestedBlockStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedBlockStepDict) -> NestedBlockStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NestedCommandStepDict = TypedDict('NestedCommandStepDict',{
     'command': NotRequired['CommandStepDict'],
@@ -634,10 +634,10 @@ class NestedCommandStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedCommandStepDict) -> NestedCommandStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NestedInputStepDict = TypedDict('NestedInputStepDict',{
     'input': NotRequired['InputStepDict'],
@@ -649,10 +649,10 @@ class NestedInputStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedInputStepDict) -> NestedInputStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NestedTriggerStepDict = TypedDict('NestedTriggerStepDict',{
     'trigger': NotRequired['TriggerStepDict'],
@@ -664,10 +664,10 @@ class NestedTriggerStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedTriggerStepDict) -> NestedTriggerStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NestedWaitStepDict = TypedDict('NestedWaitStepDict',{
     'wait': NotRequired['WaitStepDict'],
@@ -681,10 +681,10 @@ class NestedWaitStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedWaitStepDict) -> NestedWaitStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NotifyBasecampDict = TypedDict('NotifyBasecampDict',{
     'basecamp_campfire': NotRequired['str'],
@@ -696,14 +696,14 @@ NotifyBasecampDict = TypedDict('NotifyBasecampDict',{
 class NotifyBasecamp(BaseModel):
     basecamp_campfire: Optional[str] = None
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
 
     @classmethod
     def from_dict(cls, data: NotifyBasecampDict) -> NotifyBasecamp:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NotifyEmailDict = TypedDict('NotifyEmailDict',{
     'email': NotRequired['str'],
@@ -715,14 +715,14 @@ NotifyEmailDict = TypedDict('NotifyEmailDict',{
 class NotifyEmail(BaseModel):
     email: Optional[str] = None
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
 
     @classmethod
     def from_dict(cls, data: NotifyEmailDict) -> NotifyEmail:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NotifyGithubCheckDict = TypedDict('NotifyGithubCheckDict',{
     'github_check': NotRequired['Dict[str, Any]'],
@@ -734,10 +734,10 @@ class NotifyGithubCheck(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NotifyGithubCheckDict) -> NotifyGithubCheck:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 class NotifyGithubCommitStatusGithubCommitStatus(BaseModel):
     # GitHub commit status name
@@ -745,10 +745,10 @@ class NotifyGithubCommitStatusGithubCommitStatus(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NotifyGithubCommitStatusGithubCommitStatusDict) -> NotifyGithubCommitStatusGithubCommitStatus:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 NotifyGithubCommitStatusGithubCommitStatusDict = TypedDict('NotifyGithubCommitStatusGithubCommitStatusDict',{
     # GitHub commit status name
     'context': NotRequired['str'],
@@ -764,14 +764,14 @@ NotifyGithubCommitStatusDict = TypedDict('NotifyGithubCommitStatusDict',{
 class NotifyGithubCommitStatus(BaseModel):
     github_commit_status: Optional[NotifyGithubCommitStatusGithubCommitStatus] = None
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
 
     @classmethod
     def from_dict(cls, data: NotifyGithubCommitStatusDict) -> NotifyGithubCommitStatus:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NotifyPagerdutyDict = TypedDict('NotifyPagerdutyDict',{
     # A boolean expression that omits the step when false
@@ -782,15 +782,15 @@ NotifyPagerdutyDict = TypedDict('NotifyPagerdutyDict',{
 
 class NotifyPagerduty(BaseModel):
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
     pagerduty_change_event: Optional[str] = None
 
     @classmethod
     def from_dict(cls, data: NotifyPagerdutyDict) -> NotifyPagerduty:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 type NotifySimple = Literal['github_check','github_commit_status']
 
@@ -803,15 +803,15 @@ NotifySlackDict = TypedDict('NotifySlackDict',{
 
 class NotifySlack(BaseModel):
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
     slack: Optional[Union[str,NotifySlackObject]] = None
 
     @classmethod
     def from_dict(cls, data: NotifySlackDict) -> NotifySlack:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NotifySlackObjectDict = TypedDict('NotifySlackObjectDict',{
     'channels': NotRequired['List[str]'],
@@ -825,10 +825,10 @@ class NotifySlackObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NotifySlackObjectDict) -> NotifySlackObject:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 NotifyWebhookDict = TypedDict('NotifyWebhookDict',{
     # A boolean expression that omits the step when false
@@ -839,15 +839,15 @@ NotifyWebhookDict = TypedDict('NotifyWebhookDict',{
 
 class NotifyWebhook(BaseModel):
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
     webhook: Optional[str] = None
 
     @classmethod
     def from_dict(cls, data: NotifyWebhookDict) -> NotifyWebhook:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # A list of steps
 type PipelineSteps = List[Union[BlockStepDict,BlockStep,NestedBlockStepDict,NestedBlockStep,StringBlockStep,InputStepDict,InputStep,NestedInputStepDict,NestedInputStep,StringInputStep,CommandStepDict,CommandStep,NestedCommandStepDict,NestedCommandStep,WaitStepDict,WaitStep,NestedWaitStepDict,NestedWaitStep,StringWaitStep,TriggerStepDict,TriggerStep,NestedTriggerStepDict,NestedTriggerStep,GroupStepDict,GroupStep]]
@@ -898,10 +898,10 @@ class SelectField(BaseModel):
 
     @classmethod
     def from_dict(cls, data: SelectFieldDict) -> SelectField:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 SelectFieldOptionDict = TypedDict('SelectFieldOptionDict',{
     # The text displayed directly under the select field’s label
@@ -927,10 +927,10 @@ class SelectFieldOption(BaseModel):
 
     @classmethod
     def from_dict(cls, data: SelectFieldOptionDict) -> SelectFieldOption:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # Whether this step should be skipped. Passing a string provides a reason for skipping this command
 type Skip = Union[bool,str]
@@ -952,10 +952,10 @@ class SoftFailObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: SoftFailObjectDict) -> SoftFailObject:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # Pauses the execution of a build and waits on a user to unblock it
 type StringBlockStep = Literal['block']
@@ -998,10 +998,10 @@ class TextField(BaseModel):
 
     @classmethod
     def from_dict(cls, data: TextFieldDict) -> TextField:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 # Properties of the build that will be created when the step is triggered
 class TriggerStepBuild(BaseModel):
@@ -1018,10 +1018,10 @@ class TriggerStepBuild(BaseModel):
 
     @classmethod
     def from_dict(cls, data: TriggerStepBuildDict) -> TriggerStepBuild:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 # Properties of the build that will be created when the step is triggered
 TriggerStepBuildDict = TypedDict('TriggerStepBuildDict',{
     # The branch for the build
@@ -1075,7 +1075,7 @@ class TriggerStep(BaseModel):
     # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
     allow_dependency_failure: Optional[AllowDependencyFailure] = None
     # Whether to continue the build without waiting for the triggered step to complete
-    pipeline_async: Optional[Literal[True, False, 'true', 'false']] = Field(serialization_alias='async', default=None)
+    step_async: Optional[Literal[True, False, 'true', 'false']] = Field(serialization_alias='async', default=None)
     # Which branches will include this step in their builds
     branches: Optional[Branches] = None
     # Properties of the build that will be created when the step is triggered
@@ -1087,7 +1087,7 @@ class TriggerStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
     # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
     if_changed: Optional[str] = None
     # A unique identifier for a step, must not resemble a UUID
@@ -1106,10 +1106,10 @@ class TriggerStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: TriggerStepDict) -> TriggerStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 WaitStepDict = TypedDict('WaitStepDict',{
     # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
@@ -1152,7 +1152,7 @@ class WaitStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    pipeline_if: Optional[If] = Field(serialization_alias='if', default=None)
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
     # A unique identifier for a step, must not resemble a UUID
     key: Optional[str] = None
     # Waits for previous steps to pass before continuing
@@ -1165,8 +1165,8 @@ class WaitStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: WaitStepDict) -> WaitStep:
-        pipeline_if = {'pipeline_if': data['if']} if 'if' in data else {}
-        pipeline_async = {'pipeline_async': data['async']} if 'async' in data else {}
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **pipeline_if, **pipeline_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
