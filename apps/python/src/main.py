@@ -7,7 +7,7 @@ def generate_json():
         label="some-label",
         commands="echo 'Hello, world!'",
     ))
-    return pipeline.to_json_string()
+    return pipeline.to_json()
 
 def generate_yaml():
     pipeline = Pipeline()

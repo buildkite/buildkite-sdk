@@ -44,15 +44,17 @@ class Pipeline(BaseModel):
     def add_step(self, step: Step):
         self.steps.append(step)
 
-    def to_json(self):
+    def to_dict(self):
+        """Serialize the pipeline as a JSON string."""
         return self.model_dump(
             by_alias=True,
             exclude_none=True,
         )
 
-    def to_json_string(self):
-        pipeline_json = self.to_json()
+    def to_json(self):
+        pipeline_json = self.to_dict()
         return json.dumps(pipeline_json)
 
     def to_yaml_string(self):
+        """Serialize the pipeline as a YAML string."""
         return yaml.dump(self)

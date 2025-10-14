@@ -22,10 +22,10 @@ class PipelineValidator:
             return False
 
     def check_result(self, pipeline: Pipeline, expected: Dict[str, Any]):
-        actual = pipeline.to_json()
+        actual = pipeline.to_dict()
 
         is_valid = self.validate_pipeline_against_schema(actual)
-        pipeline_string = pipeline.to_json_string()
+        pipeline_string = pipeline.to_json()
         assert is_valid == True, f"Pipeline is not valid: {pipeline_string}"
 
         comparison_result = Compare().check(expected, actual)
