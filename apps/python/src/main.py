@@ -15,7 +15,7 @@ def generate_yaml():
         label="some-label",
         commands="echo 'Hello, world!'",
     ))
-    return pipeline.to_yaml_string()
+    return pipeline.to_yaml()
 
 makedirs("../../out/apps/python", exist_ok=True)
 

@@ -152,6 +152,10 @@ func (s WaitStep) toStepUnion() PipelineStepsUnion {
 		WaitStep: &s,
 	}
 }
+
+func Value[T any](val T) *T {
+	return &val
+}
 `
 
 func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
