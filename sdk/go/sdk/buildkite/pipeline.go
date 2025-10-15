@@ -157,3 +157,7 @@ func (s WaitStep) toStepUnion() PipelineStepsUnion {
 		WaitStep: &s,
 	}
 }
+
+func Value[T any](val T) *T {
+	return &val
+}
