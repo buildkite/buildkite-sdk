@@ -163,7 +163,7 @@ class PipelineNotify(_purple_build_notify):
             email=email,
             build_notify_if=build_notify_if,
             basecamp_campfire=basecamp_campfire,
-            slack=slack._to_pipeline_notify(),
+            slack=slack._to_pipeline_notify() if slack else None,
             webhook=webhook,
             pagerduty_change_event=pagerduty_change_event,
             github_commit_status=github_commit_status,
