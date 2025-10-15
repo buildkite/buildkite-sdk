@@ -1,35 +1,35 @@
 import * as yaml from "yaml";
-import { PipelineNotify, NotifyEnum } from './types'
-import { BlockStep } from './blockStep'
-import { CommandStep } from './commandStep'
-import { GroupStep } from './groupStep'
-import { InputStep } from './inputStep'
-import { TriggerStep } from './triggerStep'
-import { WaitStep } from './waitStep'
+import * as schema from './types/schema'
 export { EnvironmentVariable } from "./environment";
 
-export type { BlockStep, CommandStep, GroupStep, InputStep, TriggerStep, WaitStep };
-
-export type PipelineStep =
-    | CommandStep
-    | WaitStep
-    | InputStep
-    | TriggerStep
-    | BlockStep
-    | GroupStep;
-
-interface PipelineSchema {
-    agents?: Record<string, any>;
-    env?: Record<string, any>;
-    notify?: (PipelineNotify | NotifyEnum)[];
-    steps?: PipelineStep[];
-}
-
 export class Pipeline {
-    public agents: Record<string, any> = {};
-    public env: Record<string, any> = {};
-    public notify: (PipelineNotify | NotifyEnum)[] = [];
-    public steps: PipelineStep[] = [];
+    public agents: schema.AgentsObject = {};
+    public env: schema.Env = {};
+    public notify: schema.BuildNotify = [];
+    public steps: schema.PipelineSteps = [];
+
+    /**
+     * Set the pipeline
+     * @param pipeline
+     * @returns
+     */
+    setPipeline(pipeline: schema.BuildkitePipeline) {
+        if (pipeline.agents) {
+            this.agents = pipeline.agents
+        }
+
+        if (pipeline.env) {
+            this.env = pipeline.env
+        }
+
+        if (pipeline.notify) {
+            this.notify = pipeline.notify
+        }
+
+        if (pipeline.steps) {
+            this.steps = pipeline.steps
+        }
+    }
 
     /**
      * Add an agent to target by tag
@@ -54,7 +54,7 @@ export class Pipeline {
      * Add an notification
      * @param notify
      */
-    addNotify(notify: PipelineNotify | NotifyEnum) {
+    addNotify(notify: schema.BuildNotify[0]) {
         this.notify.push(notify);
     }
 
@@ -63,13 +63,13 @@ export class Pipeline {
      * @param step
      * @returns
      */
-    addStep(step: PipelineStep) {
+    addStep(step: schema.PipelineSteps[0]) {
         this.steps.push(step);
         return this;
     }
 
-    private build(): PipelineSchema {
-        const pipeline: PipelineSchema = {};
+    private build(): schema.BuildkitePipeline {
+        const pipeline: schema.BuildkitePipeline = {};
 
         if (Object.keys(this.agents).length > 0) {
             pipeline.agents = this.agents;
