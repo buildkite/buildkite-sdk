@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class Environment(Enum):
     # Always `true`
     BUILDKITE = "BUILDKITE"
