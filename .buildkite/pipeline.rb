@@ -64,22 +64,10 @@ language_targets = [
 
 language_targets.each do |target|
   pipeline.add_step(
-    depends_on: ["install"],
+    depends_on: "install",
     key: "#{target[:key]}",
     group: "#{target[:icon]} #{target[:label]}",
     steps: [
-      {
-        key: "#{target[:key]}-diff",
-        label: ":git: Diff",
-        plugins: language_plugins,
-        commands: [
-          "mise trust",
-          "nx install #{target[:sdk_label]}",
-          "nx gen:build",
-          "nx gen:types-#{target[:key]}",
-          "exit $(git diff --exit-code)",
-        ],
-      },
       {
         key: "#{target[:key]}-test",
         label: ":test_tube: Test",

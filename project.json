@@ -48,61 +48,10 @@
                 "infra:format"
             ]
         },
-        "gen:build": {
+        "gen:types": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": [
-                    "cd internal/gen && go build -o type-gen",
-                    "chmod +x internal/gen/type-gen"
-                ],
-                "parallel": false
-            }
-        },
-        "gen:types-ruby": {
-            "executor": "nx:run-commands",
-            "options": {
-                "commands": [
-                    "echo 'Ruby type generation not implemented'",
-                    "exit 0"
-                ],
-                "parallel": false
-            }
-        },
-        "gen:types-go": {
-            "executor": "nx:run-commands",
-            "options": {
-                "commands": [
-                    "rm -rf sdk/go/sdk/buildkite",
-                    "mkdir sdk/go/sdk/buildkite",
-                    "go install golang.org/x/tools/cmd/goimports@latest",
-                    "export PATH=\"$HOME/go/bin:$PATH\"",
-                    "./internal/gen/type-gen go sdk/go/sdk/buildkite",
-                    "goimports -w ./sdk/go/sdk/buildkite",
-                    "gofmt ./sdk/go/sdk/buildkite"
-                ],
-                "parallel": false
-            }
-        },
-        "gen:types-python": {
-            "executor": "nx:run-commands",
-            "options": {
-                "commands": [
-                    "rm -rf sdk/python/src/buildkite_sdk/schema.py",
-                    "touch sdk/python/src/buildkite_sdk/schema.py",
-                    "./internal/gen/type-gen py sdk/python/src/buildkite_sdk"
-                ],
-                "parallel": false
-            }
-        },
-        "gen:types-typescript": {
-            "executor": "nx:run-commands",
-            "options": {
-                "commands": [
-                    "rm -rf sdk/typescript/src/types",
-                    "mkdir sdk/typescript/src/types",
-                    "./internal/gen/type-gen ts sdk/typescript/src/types",
-                    "npx prettier --write ./sdk/typescript/src/types/schema.ts"
-                ],
+                "commands": ["node ./sdk/gen-types.js", "npm run format"],
                 "parallel": false
             }
         },

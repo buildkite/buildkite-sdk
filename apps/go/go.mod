@@ -1,6 +1,6 @@
 module myapp
 
-go 1.24.5
+go 1.23.2
 
 require github.com/buildkite/buildkite-sdk/sdk/go v0.0.1
 

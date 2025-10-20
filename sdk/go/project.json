@@ -65,7 +65,7 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": ["go test"],
-                "cwd": "sdk/go/sdk_test",
+                "cwd": "sdk/go/sdk/buildkite",
                 "parallel": false
             }
         }
