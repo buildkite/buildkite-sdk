@@ -1,4 +1,4 @@
-from buildkite_sdk import Pipeline, PipelineDict
+from buildkite_sdk import Pipeline, PipelineArgs
 from .utils import TestRunner
 
 class TestEnv(TestRunner):
@@ -10,7 +10,7 @@ class TestEnv(TestRunner):
         self.validator.check_result(pipeline, {'steps': [], 'env': {'FOO': 'bar'}})
 
     def test_dict(self):
-        expected: PipelineDict = {
+        expected: PipelineArgs = {
             'env': {'FOO': 'bar'},
             'steps': []
         }
