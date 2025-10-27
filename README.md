@@ -10,6 +10,10 @@ Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-s
 
 Learn more about how to set up the Buildkite SDK for each langauge, and use it to work with your Buildkite pipelines, from the [Buildkite SDK](http://buildkite.com/docs/pipelines/configure/dynamic-pipelines/sdk) page of the Buildkite Docs.
 
+## Upgrading to v0.4.0
+
+In v0.4.0 we introduced type generation from Buildkite's [Pipeline Schema](https://github.com/buildkite/pipeline-schema). You can find a list of breaking changes [here](./docs/v0.0.4-breaking-changes.md).
+
 ## Development
 
 ### Prerequisites
