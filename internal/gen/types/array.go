@@ -40,7 +40,7 @@ func (a Array) GoStructType() string {
 	case Number:
 		return "[]int"
 	case Union:
-		return fmt.Sprintf("[]%sUnion", a.Name.ToTitleCase())
+		return fmt.Sprintf("[]%sItem", a.Name.ToTitleCase())
 	default:
 		return fmt.Sprintf("[]%s", a.Name.ToTitleCase())
 	}
@@ -56,7 +56,7 @@ func (a Array) GoStructKey(isUnion bool) string {
 		case Number:
 			return "IntArray"
 		case Union:
-			return fmt.Sprintf("%sUnion", a.Name.ToTitleCase())
+			return fmt.Sprintf("%sItem", a.Name.ToTitleCase())
 		default:
 			return a.Name.ToTitleCase()
 		}
@@ -72,7 +72,7 @@ func (a Array) Go() (string, error) {
 	union, ok := a.Type.(Union)
 	if !a.IsReference() && ok {
 		item := Union{
-			Name:            NewPropertyName(fmt.Sprintf("%sUnion", a.Name.Value)),
+			Name:            NewPropertyName(fmt.Sprintf("%sItem", a.Name.Value)),
 			Description:     union.Description,
 			TypeIdentifiers: union.TypeIdentifiers,
 		}
@@ -88,7 +88,7 @@ func (a Array) Go() (string, error) {
 			lines.AddLines(description)
 		}
 
-		lines.AddLines(fmt.Sprintf("type %s = []%sUnion", a.Name.ToTitleCase(), a.Type.GoStructType()))
+		lines.AddLines(fmt.Sprintf("type %s = []%sItem", a.Name.ToTitleCase(), a.Type.GoStructType()))
 		return lines.String(), nil
 	}
 

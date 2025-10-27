@@ -99,7 +99,7 @@ func (e Enum) Go() (string, error) {
 
 			lines.AddLines(
 				fmt.Sprintf("type %s %s", enumDefinitionName, typ),
-				fmt.Sprintf(fmt.Sprintf("// %s", e.Description)),
+				fmt.Sprintf("// %s", e.Description),
 				fmt.Sprintf("var %sValues = map[string]%s{", enumDefinitionName, enumDefinitionName),
 			)
 
