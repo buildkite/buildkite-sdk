@@ -1,4 +1,4 @@
-from buildkite_sdk import Pipeline, NotifyEmail, NotifyBasecamp, NotifySlack, NotifySlackObject, NotifyWebhook, NotifyPagerduty, NotifyGithubCommitStatus, NotifyGithubCommitStatusGithubCommitStatus, CommandStep, CommandStepDict
+from buildkite_sdk import Pipeline, NotifyEmail, NotifyBasecamp, NotifySlack, NotifySlackObject, NotifyWebhook, NotifyPagerduty, NotifyGithubCommitStatus, NotifyGithubCommitStatusGithubCommitStatus, CommandStep, CommandStepArgs
 from .utils import TestRunner
 
 class TestPipelineNotifyClass(TestRunner):
@@ -254,7 +254,7 @@ class TestPipelineNotifyDict(TestRunner):
 
 class TestCommandNotifyClass(TestRunner):
     def test_basecamp_campfire(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines'}
@@ -273,7 +273,7 @@ class TestCommandNotifyClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_basecamp_campfire_if(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {
@@ -295,7 +295,7 @@ class TestCommandNotifyClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_slack(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'slack': '#channel'}
@@ -314,7 +314,7 @@ class TestCommandNotifyClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_slack_if(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'slack': '#channel', 'if': "build.state == 'failed'"}
@@ -333,7 +333,7 @@ class TestCommandNotifyClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_slack_channels(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'slack': {'channels': ['#one', '#two']}}
@@ -352,7 +352,7 @@ class TestCommandNotifyClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_slack_message(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'slack': {'channels': ['#one', '#two'], 'message': 'a message'}}
@@ -371,7 +371,7 @@ class TestCommandNotifyClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_github_check(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': ['github_check']
         }
@@ -386,7 +386,7 @@ class TestCommandNotifyClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_github_commit_status_string(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': ['github_commit_status']
         }
@@ -401,7 +401,7 @@ class TestCommandNotifyClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_github_commit_status_object(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'github_commit_status': {'context': 'my-context'}}
@@ -424,7 +424,7 @@ class TestCommandNotifyClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_github_commit_status_if(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'github_commit_status': {'context': 'my-context'}, 'if': "build.state == 'failed'"}
@@ -449,7 +449,7 @@ class TestCommandNotifyClass(TestRunner):
 
 class TestCommandNotifyDict(TestRunner):
     def test_basecamp_campfire(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines'}
@@ -463,7 +463,7 @@ class TestCommandNotifyDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_basecamp_campfire_if(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {
@@ -480,7 +480,7 @@ class TestCommandNotifyDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_slack(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'slack': '#channel'}
@@ -494,7 +494,7 @@ class TestCommandNotifyDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_slack_if(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'slack': '#channel', 'if': "build.state == 'failed'"}
@@ -508,7 +508,7 @@ class TestCommandNotifyDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_slack_channels(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'slack': {'channels': ['#one', '#two']}}
@@ -522,7 +522,7 @@ class TestCommandNotifyDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_slack_message(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'slack': {'channels': ['#one', '#two'], 'message': 'a message'}}
@@ -536,7 +536,7 @@ class TestCommandNotifyDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_github_check(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': ['github_check']
         }
@@ -548,7 +548,7 @@ class TestCommandNotifyDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_github_commit_status_string(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': ['github_commit_status']
         }
@@ -560,7 +560,7 @@ class TestCommandNotifyDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_github_commit_status_object(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'github_commit_status': {'context': 'my-context'}}
@@ -574,7 +574,7 @@ class TestCommandNotifyDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_github_commit_status_if(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'bash.sh',
             'notify': [
                 {'github_commit_status': {'context': 'my-context'}, 'if': "build.state == 'failed'"}

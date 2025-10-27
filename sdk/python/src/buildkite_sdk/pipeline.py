@@ -1,12 +1,68 @@
-from .schema import Env, Agents, BlockStepDict, BuildNotify, Image, BlockStep, NestedBlockStep,StringBlockStep,InputStep,NestedInputStep,StringInputStep,CommandStep,NestedCommandStep,WaitStep,NestedWaitStep,StringWaitStep,TriggerStep,NestedTriggerStep,GroupStep
-from typing import Optional, List, Any, TypedDict, NotRequired
+from .schema import (
+    Env,
+    Agents,
+    BuildNotify,
+    Image,
+    BlockStepArgs,
+    BlockStep,
+    NestedBlockStepArgs,
+    NestedBlockStep,
+    StringBlockStep,
+    InputStepArgs,
+    InputStep,
+    NestedInputStepArgs,
+    NestedInputStep,
+    StringInputStep,
+    CommandStepArgs,
+    CommandStep,
+    NestedCommandStepArgs,
+    NestedCommandStep,
+    WaitStepArgs,
+    WaitStep,
+    NestedWaitStepArgs,
+    NestedWaitStep,
+    StringWaitStep,
+    TriggerStepArgs,
+    TriggerStep,
+    NestedTriggerStepArgs,
+    NestedTriggerStep,
+    GroupStepArgs,
+    GroupStep
+)
+from typing import Optional, List, Any, TypedDict, NotRequired, Union
 from pydantic import BaseModel
 import json
 import yaml
 
-type Step = BlockStepDict | StringBlockStep | BlockStep | NestedBlockStep | InputStep | NestedInputStep | StringInputStep | CommandStep | NestedCommandStep | WaitStep | NestedWaitStep | StringWaitStep | TriggerStep | NestedTriggerStep | GroupStep
+type Step = Union[
+    BlockStepArgs,
+    BlockStep,
+    NestedBlockStepArgs,
+    NestedBlockStep,
+    StringBlockStep,
+    InputStepArgs,
+    InputStep,
+    NestedInputStepArgs,
+    NestedInputStep,
+    StringInputStep,
+    CommandStepArgs,
+    CommandStep,
+    NestedCommandStepArgs,
+    NestedCommandStep,
+    WaitStepArgs,
+    WaitStep,
+    NestedWaitStepArgs,
+    NestedWaitStep,
+    StringWaitStep,
+    TriggerStepArgs,
+    TriggerStep,
+    NestedTriggerStepArgs,
+    NestedTriggerStep,
+    GroupStepArgs,
+    GroupStep
+]
 
-class PipelineDict(TypedDict):
+class PipelineArgs(TypedDict):
     env: NotRequired[Env]
     agents: NotRequired[Agents]
     notify: NotRequired[BuildNotify]
@@ -21,7 +77,7 @@ class Pipeline(BaseModel):
     steps: List[Step] = []
 
     @classmethod
-    def from_dict(cls, data: PipelineDict):
+    def from_dict(cls, data: PipelineArgs):
         return cls(**data)
 
     def add_agent(self, key: str, value: Any):

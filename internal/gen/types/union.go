@@ -135,6 +135,17 @@ func (u Union) TypeScriptInterfaceType() string {
 	parts := make([]string, len(u.TypeIdentifiers))
 	for i, typ := range u.TypeIdentifiers {
 		if obj, ok := typ.(Object); ok {
+			if obj.AdditionalProperties != nil {
+				prop := *obj.AdditionalProperties
+				parts[i] = fmt.Sprintf("Record<string, %s>", prop.TypeScriptInterfaceType())
+				continue
+			}
+
+			if obj.Properties == nil {
+				parts[i] = "Record<string, any>"
+				continue
+			}
+
 			block := utils.NewTypeScriptInterface("", obj.Description)
 			for _, name := range obj.Properties.Keys() {
 				prop, _ := obj.Properties.Get(name)
@@ -157,7 +168,7 @@ func (u Union) TypeScriptInterfaceType() string {
 func (u Union) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 	if u.Description != "" {
-		block.AddLines(fmt.Sprintf("// %s", u.Description))
+		block.AddLines(utils.NewTypeDocComment(u.Description))
 	}
 
 	block.AddLines(
@@ -207,7 +218,7 @@ func (u Union) Python() (string, error) {
 		if ref, ok := typ.(PropertyReference); ok {
 			if obj, ok := ref.Type.(Object); ok {
 				if len(obj.Properties.Keys()) > 0 {
-					parts = append(parts, fmt.Sprintf("%sDict", typ.PythonClassType()))
+					parts = append(parts, fmt.Sprintf("%sArgs", typ.PythonClassType()))
 				}
 			}
 		}

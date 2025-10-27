@@ -99,7 +99,7 @@ func (e Enum) Go() (string, error) {
 
 			lines.AddLines(
 				fmt.Sprintf("type %s %s", enumDefinitionName, typ),
-				fmt.Sprintf(fmt.Sprintf("// %s", e.Description)),
+				fmt.Sprintf("// %s", e.Description),
 				fmt.Sprintf("var %sValues = map[string]%s{", enumDefinitionName, enumDefinitionName),
 			)
 
@@ -161,7 +161,7 @@ func (e Enum) TypeScript() (string, error) {
 
 	block := utils.NewCodeBlock()
 	if e.Description != "" {
-		block.AddLines(fmt.Sprintf("// %s", e.Description))
+		block.AddLines(utils.NewTypeDocComment(e.Description))
 	}
 
 	block.AddLines(fmt.Sprintf("export type %s = %s", e.Name.ToTitleCase(), values))

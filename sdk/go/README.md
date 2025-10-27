@@ -24,15 +24,25 @@ import (
 
 func main() {
 	pipeline := buildkite.Pipeline{}
-	command := "echo 'Hello, world!"
 
-	pipeline.AddCommandStep(buildkite.CommandStep{
-		Command: &buildkite.CommandUnion{
-			String: &command,
+	pipeline.AddStep(buildkite.CommandStep{
+		Command: &buildkite.CommandStepCommand{
+			String: buildkite.Value("echo 'Hello, world!"),
 		},
 	})
 
-	fmt.Println(pipeline.ToJSON())
-	fmt.Println(pipeline.ToYAML())
+	json, err := pipeline.ToJSON()
+	if err != nil {
+		log.Fatalf("Failed to serialize JSON: %v", err)
+	}
+
+	fmt.Println(json)
+
+	yaml, err := pipeline.YAML()
+	if err != nil {
+		log.Fatalf("Failed to serialize JSON: %v", err)
+	}
+
+	fmt.Println(yaml)
 }
 ```

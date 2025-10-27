@@ -40,7 +40,7 @@ func (a Array) GoStructType() string {
 	case Number:
 		return "[]int"
 	case Union:
-		return fmt.Sprintf("[]%sUnion", a.Name.ToTitleCase())
+		return fmt.Sprintf("[]%sItem", a.Name.ToTitleCase())
 	default:
 		return fmt.Sprintf("[]%s", a.Name.ToTitleCase())
 	}
@@ -56,7 +56,7 @@ func (a Array) GoStructKey(isUnion bool) string {
 		case Number:
 			return "IntArray"
 		case Union:
-			return fmt.Sprintf("%sUnion", a.Name.ToTitleCase())
+			return fmt.Sprintf("%sItem", a.Name.ToTitleCase())
 		default:
 			return a.Name.ToTitleCase()
 		}
@@ -72,7 +72,7 @@ func (a Array) Go() (string, error) {
 	union, ok := a.Type.(Union)
 	if !a.IsReference() && ok {
 		item := Union{
-			Name:            NewPropertyName(fmt.Sprintf("%sUnion", a.Name.Value)),
+			Name:            NewPropertyName(fmt.Sprintf("%sItem", a.Name.Value)),
 			Description:     union.Description,
 			TypeIdentifiers: union.TypeIdentifiers,
 		}
@@ -88,7 +88,7 @@ func (a Array) Go() (string, error) {
 			lines.AddLines(description)
 		}
 
-		lines.AddLines(fmt.Sprintf("type %s = []%sUnion", a.Name.ToTitleCase(), a.Type.GoStructType()))
+		lines.AddLines(fmt.Sprintf("type %s = []%sItem", a.Name.ToTitleCase(), a.Type.GoStructType()))
 		return lines.String(), nil
 	}
 
@@ -105,7 +105,7 @@ func (a Array) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 
 	if a.Description != "" {
-		block.AddLines(fmt.Sprintf("// %s", a.Description))
+		block.AddLines(utils.NewTypeDocComment(a.Description))
 	}
 
 	if union, ok := a.Type.(Union); ok {
@@ -166,7 +166,7 @@ func (a Array) Python() (string, error) {
 				unionType := nestedObj.PythonClassType()
 				unionTypeParts = append(unionTypeParts, unionType)
 				if len(obj.Properties.Keys()) > 0 {
-					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sDict", unionType))
+					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sArgs", unionType))
 				}
 
 				continue
@@ -174,7 +174,7 @@ func (a Array) Python() (string, error) {
 
 			if ref, ok := typ.(PropertyReference); ok {
 				if _, ok := ref.Type.(Object); ok {
-					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sDict", typ.PythonClassType()))
+					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sArgs", typ.PythonClassType()))
 				}
 			}
 
@@ -186,7 +186,7 @@ func (a Array) Python() (string, error) {
 
 	if _, ok := a.Type.(Object); ok {
 		listLength = 2
-		listType = fmt.Sprintf("%s,%sDict", listType, listType)
+		listType = fmt.Sprintf("%s,%sArgs", listType, listType)
 	}
 
 	pyType := fmt.Sprintf("type %s = List[Union[%s]]", a.Name.ToTitleCase(), listType)

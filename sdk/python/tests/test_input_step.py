@@ -1,4 +1,4 @@
-from buildkite_sdk import Pipeline, InputStep, NestedInputStep, InputStepDict, TextField, SelectField, SelectFieldOption, DependsOnListObject
+from buildkite_sdk import Pipeline, InputStep, NestedInputStep, InputStepArgs, TextField, SelectField, SelectFieldOption, DependsOnListObject
 from .utils import TestRunner
 
 class TestInputStepNestingTypesClass(TestRunner):
@@ -91,7 +91,7 @@ class TestInputStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'input': 'a label', 'prompt': 'prompt'}]})
 
     def test_fields(self):
-        expected: InputStepDict = {
+        expected: InputStepArgs = {
             'input': 'A label',
             'prompt': 'A prompt',
             'fields': [
@@ -198,7 +198,7 @@ class TestInputStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'input': 'a label', 'depends_on': ['one','two']}]})
 
     def test_depends_on_object_list(self):
-        expected: InputStepDict = {
+        expected: InputStepArgs = {
             'input': 'a label',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -219,7 +219,7 @@ class TestInputStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_mixed_list(self):
-        expected: InputStepDict = {
+        expected: InputStepArgs = {
             'input': 'a label',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -264,7 +264,7 @@ class TestInputStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'input': 'a label', 'allowed_teams': ['one','two']}]})
 
     def test_multiple_fields(self):
-        expected: InputStepDict = {
+        expected: InputStepArgs = {
             'input': 'A label',
             'fields': [
                 {
@@ -304,7 +304,7 @@ class TestInputStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {'steps': [expected]})
 
-class TestInputStepDict(TestRunner):
+class TestInputStepArgs(TestRunner):
     def test_branches(self):
         pipeline = Pipeline(
             steps=[
@@ -338,7 +338,7 @@ class TestInputStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'input': 'a label', 'prompt': 'prompt'}]})
 
     def test_fields(self):
-        expected: InputStepDict = {
+        expected: InputStepArgs = {
             'input': 'A label',
             'prompt': 'A prompt',
             'fields': [
@@ -422,7 +422,7 @@ class TestInputStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'input': 'a label', 'depends_on': ['one','two']}]})
 
     def test_depends_on_object_list(self):
-        expected: InputStepDict = {
+        expected: InputStepArgs = {
             'input': 'a label',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -437,7 +437,7 @@ class TestInputStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_mixed_list(self):
-        expected: InputStepDict = {
+        expected: InputStepArgs = {
             'input': 'a label',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -476,7 +476,7 @@ class TestInputStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'input': 'a label', 'allowed_teams': ['one','two']}]})
 
     def test_multiple_fields(self):
-        expected: InputStepDict = {
+        expected: InputStepArgs = {
             'input': 'A label',
             'fields': [
                 {

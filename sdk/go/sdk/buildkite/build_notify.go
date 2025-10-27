@@ -6,12 +6,12 @@ package buildkite
 import "encoding/json"
 
 // Array of notification options for this step
-type BuildNotifyUnionValues interface {
+type BuildNotifyItemValues interface {
 	NotifySimple | NotifyEmail | NotifyBasecamp | NotifySlack | NotifyWebhook | NotifyPagerduty | NotifyGithubCommitStatus | NotifyGithubCheck
 }
 
 // Array of notification options for this step
-type BuildNotifyUnion struct {
+type BuildNotifyItem struct {
 	NotifyBasecamp           *NotifyBasecamp
 	NotifyEmail              *NotifyEmail
 	NotifyGithubCheck        *NotifyGithubCheck
@@ -22,7 +22,7 @@ type BuildNotifyUnion struct {
 	NotifyWebhook            *NotifyWebhook
 }
 
-func (e BuildNotifyUnion) MarshalJSON() ([]byte, error) {
+func (e BuildNotifyItem) MarshalJSON() ([]byte, error) {
 	if e.NotifySimple != nil {
 		return json.Marshal(e.NotifySimple)
 	}
@@ -51,4 +51,4 @@ func (e BuildNotifyUnion) MarshalJSON() ([]byte, error) {
 }
 
 // Array of notification options for this step
-type BuildNotify = []BuildNotifyUnion
+type BuildNotify = []BuildNotifyItem

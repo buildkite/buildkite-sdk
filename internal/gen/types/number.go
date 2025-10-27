@@ -50,7 +50,7 @@ func (n Number) GoStructKey(isUnion bool) string {
 func (n Number) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 	if n.Description != "" {
-		block.AddLines(fmt.Sprintf("// %s", n.Description))
+		block.AddLines(utils.NewTypeDocComment(n.Description))
 	}
 
 	block.AddLines(fmt.Sprintf("type %s = number", n.Name.ToTitleCase()))

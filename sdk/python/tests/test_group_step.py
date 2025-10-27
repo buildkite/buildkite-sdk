@@ -1,4 +1,4 @@
-from buildkite_sdk import Pipeline, GroupStep, GroupStepDict, CommandStep, WaitStep, NestedWaitStep, InputStep, NestedInputStep, NotifyEmail
+from buildkite_sdk import Pipeline, GroupStep, GroupStepArgs, CommandStep, WaitStep, NestedWaitStep, InputStep, NestedInputStep, NotifyEmail
 from .utils import TestRunner
 
 class TestGroupStepNestingTypesClass(TestRunner):
@@ -11,7 +11,7 @@ class TestGroupStepNestingTypesClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'group': 'Tests', 'steps': [{'command': 'test'}]}]})
 
     def test_label(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': '~',
             'label': 'Tests',
             'steps': [{'command': 'test'}]
@@ -33,7 +33,7 @@ class TestGroupStepNestingTypesDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'group': 'Tests', 'steps': [{'command': 'test'}]}]})
 
     def test_label(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': '~',
             'label': 'Tests',
             'steps': [{'command': 'test'}]
@@ -47,7 +47,7 @@ class TestGroupStepNestingTypesDict(TestRunner):
 
 class TestGroupStepClass(TestRunner):
     def test_id(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'id': 'id',
             'steps': [{'command': 'test'}]
@@ -60,7 +60,7 @@ class TestGroupStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_identifier(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'identifier': 'identifier',
             'steps': [{'command': 'test'}]
@@ -73,7 +73,7 @@ class TestGroupStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'depends_on': 'step',
             'steps': [{'command': 'test'}]
@@ -86,7 +86,7 @@ class TestGroupStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_key(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'key': 'key',
             'steps': [{'command': 'test'}]
@@ -99,7 +99,7 @@ class TestGroupStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_wait(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'steps': [
                 'wait',
@@ -122,7 +122,7 @@ class TestGroupStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_input(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'steps': [
                 'input',
@@ -164,7 +164,7 @@ class TestGroupStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_allow_dependency_failure(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'allow_dependency_failure': True,
             'steps': [{'command': 'test'}]
@@ -181,7 +181,7 @@ class TestGroupStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_notify(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'steps': [{'command': 'test'}],
             'notify': [{'email': 'dev@acmeinc.com'}]
@@ -198,7 +198,7 @@ class TestGroupStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_if_changed(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'steps': [{'command': 'test'}],
             'if_changed': '*.txt'
@@ -214,9 +214,9 @@ class TestGroupStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {'steps': [expected]})
 
-class TestGroupStepDict(TestRunner):
+class TestGroupStepArgs(TestRunner):
     def test_id(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'id': 'id',
             'steps': [{'command': 'test'}]
@@ -229,7 +229,7 @@ class TestGroupStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_identifier(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'identifier': 'identifier',
             'steps': [{'command': 'test'}]
@@ -242,7 +242,7 @@ class TestGroupStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'depends_on': 'step',
             'steps': [{'command': 'test'}]
@@ -255,7 +255,7 @@ class TestGroupStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_key(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'key': 'key',
             'steps': [{'command': 'test'}]
@@ -268,7 +268,7 @@ class TestGroupStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_wait(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'steps': [
                 'wait',
@@ -284,7 +284,7 @@ class TestGroupStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_input(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'steps': [
                 'input',
@@ -301,7 +301,7 @@ class TestGroupStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_if(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'if': 'build.message !~ /skip tests/',
             'steps': [{'command': 'test'}]
@@ -318,7 +318,7 @@ class TestGroupStepDict(TestRunner):
         }]})
 
     def test_allow_dependency_failure(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'allow_dependency_failure': True,
             'steps': [{'command': 'test'}]
@@ -331,7 +331,7 @@ class TestGroupStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_notify(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'steps': [{'command': 'test'}],
             'notify': [{'email': 'dev@acmeinc.com'}]
@@ -344,7 +344,7 @@ class TestGroupStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_if_changed(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'Tests',
             'steps': [{'command': 'test'}],
             'if_changed': '*.txt'

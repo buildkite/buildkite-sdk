@@ -56,11 +56,11 @@ func NewTypeScriptFile(
 }
 
 // Interface
-var tsInterfaceTemplate = `{{if ne "" .Description}}{{printf "// %s\n" .Description}}{{end}}export interface {{.Name}} { {{ range .Items}}
-	{{if ne "" .Description}}{{printf "// %s\n    " .Description}}{{end}}{{.Name}}{{if eq false .Required }}?{{end}}: {{.Value}}{{end}}}`
+var tsInterfaceTemplate = `{{if ne "" .Description}}{{printf "/**\n     * %s\n    */\n" .Description}}{{end}}export interface {{.Name}} { {{ range .Items}}
+	{{if ne "" .Description}}{{printf "/**\n     * %s\n    */\n    " .Description}}{{end}}{{.Name}}{{if eq false .Required }}?{{end}}: {{.Value}}{{end}}}`
 
 var tsUnionObjectTemplate = `{ {{ range .Items}}
-	{{if ne "" .Description}}{{printf "// %s\n    " .Description}}{{end}}{{.Name}}{{if eq false .Required }}?{{end}}: {{.Value}}
+	{{if ne "" .Description}}{{printf "/**\n     * %s\n    */\n    " .Description}}{{end}}{{.Name}}{{if eq false .Required }}?{{end}}: {{.Value}}
 {{end}}}`
 
 type TypeScriptInterfaceItem struct {
@@ -114,4 +114,8 @@ func NewTypeScriptInterface(name, description string) *TypeScriptInterface {
 		Name:        name,
 		Description: description,
 	}
+}
+
+func NewTypeDocComment(comment string) string {
+	return fmt.Sprintf("/**\n * %s\n */", comment)
 }

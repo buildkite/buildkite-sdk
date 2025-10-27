@@ -15,7 +15,7 @@ func TestFields(t *testing.T) {
 		textOne := "textFieldOne"
 		textTwo := "textFieldTwo"
 		val := testFields{
-			Fields: []buildkite.FieldsUnion{
+			Fields: []buildkite.FieldsItem{
 				{
 					TextField: &buildkite.TextField{
 						Text: &textOne,
@@ -35,7 +35,7 @@ func TestFields(t *testing.T) {
 		selectOne := "selectFieldOne"
 		selectTwo := "selectFieldTwo"
 		val := testFields{
-			Fields: []buildkite.FieldsUnion{
+			Fields: []buildkite.FieldsItem{
 				{
 					SelectField: &buildkite.SelectField{
 						Select: &selectOne,
