@@ -6,12 +6,12 @@ package buildkite
 import "encoding/json"
 
 // Array of notification options for this step
-type CommandStepNotifyUnionValues interface {
+type CommandStepNotifyItemValues interface {
 	NotifySimple | NotifyBasecamp | NotifySlack | NotifyGithubCommitStatus | NotifyGithubCheck
 }
 
 // Array of notification options for this step
-type CommandStepNotifyUnion struct {
+type CommandStepNotifyItem struct {
 	NotifyBasecamp           *NotifyBasecamp
 	NotifyGithubCheck        *NotifyGithubCheck
 	NotifyGithubCommitStatus *NotifyGithubCommitStatus
@@ -19,7 +19,7 @@ type CommandStepNotifyUnion struct {
 	NotifySlack              *NotifySlack
 }
 
-func (e CommandStepNotifyUnion) MarshalJSON() ([]byte, error) {
+func (e CommandStepNotifyItem) MarshalJSON() ([]byte, error) {
 	if e.NotifySimple != nil {
 		return json.Marshal(e.NotifySimple)
 	}
@@ -39,4 +39,4 @@ func (e CommandStepNotifyUnion) MarshalJSON() ([]byte, error) {
 }
 
 // Array of notification options for this step
-type CommandStepNotify = []CommandStepNotifyUnion
+type CommandStepNotify = []CommandStepNotifyItem

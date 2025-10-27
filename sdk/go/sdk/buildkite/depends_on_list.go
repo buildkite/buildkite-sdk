@@ -27,15 +27,15 @@ type DependsOnListObject struct {
 	AllowFailure *DependsOnListObjectAllowFailure `json:"allow_failure,omitempty"`
 	Step         *string                          `json:"step,omitempty"`
 }
-type DependsOnListUnionValues interface {
+type DependsOnListItemValues interface {
 	string | DependsOnListObject
 }
-type DependsOnListUnion struct {
+type DependsOnListItem struct {
 	DependsOnList *DependsOnListObject
 	String        *string
 }
 
-func (e DependsOnListUnion) MarshalJSON() ([]byte, error) {
+func (e DependsOnListItem) MarshalJSON() ([]byte, error) {
 	if e.String != nil {
 		return json.Marshal(e.String)
 	}
@@ -45,4 +45,4 @@ func (e DependsOnListUnion) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
-type DependsOnList = []DependsOnListUnion
+type DependsOnList = []DependsOnListItem

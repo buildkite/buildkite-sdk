@@ -14,7 +14,7 @@ func TestBuildNotify(t *testing.T) {
 	t.Run("NotifySimple", func(t *testing.T) {
 		value := buildkite.NotifySimpleValues["github_check"]
 		val := testBuildNotify{
-			Notify: []buildkite.BuildNotifyUnion{
+			Notify: []buildkite.BuildNotifyItem{
 				{
 					NotifySimple: &value,
 				},
@@ -26,7 +26,7 @@ func TestBuildNotify(t *testing.T) {
 	t.Run("NotifyEmail", func(t *testing.T) {
 		email := "email"
 		val := testBuildNotify{
-			Notify: []buildkite.BuildNotifyUnion{
+			Notify: []buildkite.BuildNotifyItem{
 				{
 					NotifyEmail: &buildkite.NotifyEmail{
 						Email: &email,
@@ -40,7 +40,7 @@ func TestBuildNotify(t *testing.T) {
 	t.Run("NotifyBasecamp", func(t *testing.T) {
 		value := "string"
 		val := testBuildNotify{
-			Notify: []buildkite.BuildNotifyUnion{
+			Notify: []buildkite.BuildNotifyItem{
 				{
 					NotifyBasecamp: &buildkite.NotifyBasecamp{
 						BasecampCampfire: &value,
@@ -54,7 +54,7 @@ func TestBuildNotify(t *testing.T) {
 	t.Run("NotifySlack", func(t *testing.T) {
 		channel := "#general"
 		val := testBuildNotify{
-			Notify: []buildkite.BuildNotifyUnion{
+			Notify: []buildkite.BuildNotifyItem{
 				{
 					NotifySlack: &buildkite.NotifySlack{
 						Slack: &buildkite.NotifySlackSlack{
@@ -70,7 +70,7 @@ func TestBuildNotify(t *testing.T) {
 	t.Run("NotifyWebhook", func(t *testing.T) {
 		webhook := "url"
 		val := testBuildNotify{
-			Notify: []buildkite.BuildNotifyUnion{
+			Notify: []buildkite.BuildNotifyItem{
 				{
 					NotifyWebhook: &buildkite.NotifyWebhook{
 						Webhook: &webhook,
@@ -84,7 +84,7 @@ func TestBuildNotify(t *testing.T) {
 	t.Run("NotifyPagerduty", func(t *testing.T) {
 		changeEvent := "event"
 		val := testBuildNotify{
-			Notify: []buildkite.BuildNotifyUnion{
+			Notify: []buildkite.BuildNotifyItem{
 				{
 					NotifyPagerduty: &buildkite.NotifyPagerduty{
 						PagerdutyChangeEvent: &changeEvent,
@@ -98,7 +98,7 @@ func TestBuildNotify(t *testing.T) {
 	t.Run("NotifyGithubCommitStatus", func(t *testing.T) {
 		context := "ctx"
 		val := testBuildNotify{
-			Notify: []buildkite.BuildNotifyUnion{
+			Notify: []buildkite.BuildNotifyItem{
 				{
 					NotifyGithubCommitStatus: &buildkite.NotifyGithubCommitStatus{
 						GithubCommitStatus: &buildkite.NotifyGithubCommitStatusGithubCommitStatus{
@@ -114,7 +114,7 @@ func TestBuildNotify(t *testing.T) {
 	t.Run("NotifyGithubCheck", func(t *testing.T) {
 		value := map[string]interface{}{"foo": "bar"}
 		val := testBuildNotify{
-			Notify: []buildkite.BuildNotifyUnion{
+			Notify: []buildkite.BuildNotifyItem{
 				{
 					NotifyGithubCheck: &buildkite.NotifyGithubCheck{
 						GithubCheck: &value,

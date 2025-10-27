@@ -8,17 +8,17 @@ import "encoding/json"
 type PluginsListObject = map[string]interface{}
 
 // Array of plugins for this step
-type PluginsListUnionValues interface {
+type PluginsListItemValues interface {
 	string | PluginsListObject
 }
 
 // Array of plugins for this step
-type PluginsListUnion struct {
+type PluginsListItem struct {
 	PluginsList *PluginsListObject
 	String      *string
 }
 
-func (e PluginsListUnion) MarshalJSON() ([]byte, error) {
+func (e PluginsListItem) MarshalJSON() ([]byte, error) {
 	if e.String != nil {
 		return json.Marshal(e.String)
 	}
@@ -29,4 +29,4 @@ func (e PluginsListUnion) MarshalJSON() ([]byte, error) {
 }
 
 // Array of plugins for this step
-type PluginsList = []PluginsListUnion
+type PluginsList = []PluginsListItem

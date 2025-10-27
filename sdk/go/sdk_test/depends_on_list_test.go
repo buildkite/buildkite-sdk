@@ -74,7 +74,7 @@ func TestDependsOnList(t *testing.T) {
 			one := "one"
 			two := "two"
 			testVal := testDependsOnList{
-				DependsOn: []buildkite.DependsOnListUnion{
+				DependsOn: []buildkite.DependsOnListItem{
 					{String: &one},
 					{String: &two},
 				},
@@ -86,7 +86,7 @@ func TestDependsOnList(t *testing.T) {
 			one := "step1"
 			two := "step2"
 			testVal := testDependsOnList{
-				DependsOn: []buildkite.DependsOnListUnion{
+				DependsOn: []buildkite.DependsOnListItem{
 					{
 						DependsOnList: &buildkite.DependsOnListObject{
 							Step: &one,
@@ -106,7 +106,7 @@ func TestDependsOnList(t *testing.T) {
 			one := "one"
 			two := "step2"
 			testVal := testDependsOnList{
-				DependsOn: []buildkite.DependsOnListUnion{
+				DependsOn: []buildkite.DependsOnListItem{
 					{String: &one},
 					{
 						DependsOnList: &buildkite.DependsOnListObject{

@@ -57,7 +57,7 @@ func TestInputStep(t *testing.T) {
 
 	t.Run("Fields", func(t *testing.T) {
 		text := "textField"
-		fields := []buildkite.FieldsUnion{
+		fields := []buildkite.FieldsItem{
 			{
 				TextField: &buildkite.TextField{
 					Text: &text,
@@ -141,7 +141,7 @@ func TestInputStep(t *testing.T) {
 		branches := "branch"
 		dependsOn := "step"
 		text := "textField"
-		fields := []buildkite.FieldsUnion{
+		fields := []buildkite.FieldsItem{
 			{
 				TextField: &buildkite.TextField{
 					Text: &text,
@@ -192,7 +192,7 @@ func TestNestedInputStep(t *testing.T) {
 	branches := "branch"
 	dependsOn := "step"
 	text := "textField"
-	fields := []buildkite.FieldsUnion{
+	fields := []buildkite.FieldsItem{
 		{
 			TextField: &buildkite.TextField{
 				Text: &text,

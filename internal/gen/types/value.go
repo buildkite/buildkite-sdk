@@ -25,7 +25,7 @@ var pipelineFunctions = `func (p Pipeline) ToJSON() (string, error) {
 func (p *Pipeline) AddStep(step pipelineStep) {
 	steps := p.Steps
 	if steps == nil {
-		steps = &[]PipelineStepsUnion{}
+		steps = &[]PipelineStepsItem{}
 	}
 
 	newSteps := append(*steps, step.toStepUnion())
@@ -54,8 +54,8 @@ func (p *Pipeline) AddEnvironmentVariable(key string, value any) {
 	p.Env = &env
 }
 
-func (p *Pipeline) AddNotify(notify BuildNotifyUnion) {
-	foo := []BuildNotifyUnion{notify}
+func (p *Pipeline) AddNotify(notify BuildNotifyItem) {
+	foo := []BuildNotifyItem{notify}
 	p.Notify = &foo
 }
 
@@ -79,76 +79,76 @@ func NewPipeline() *Pipeline {
 }
 
 type pipelineStep interface {
-	toStepUnion() PipelineStepsUnion
+	toStepUnion() PipelineStepsItem
 }
 
-func (s BlockStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s BlockStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		BlockStep: &s,
 	}
 }
-func (s CommandStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s CommandStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		CommandStep: &s,
 	}
 }
-func (s GroupStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s GroupStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		GroupStep: &s,
 	}
 }
-func (s InputStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s InputStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		InputStep: &s,
 	}
 }
-func (s NestedBlockStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s NestedBlockStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		NestedBlockStep: &s,
 	}
 }
-func (s NestedCommandStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s NestedCommandStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		NestedCommandStep: &s,
 	}
 }
-func (s NestedInputStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s NestedInputStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		NestedInputStep: &s,
 	}
 }
-func (s NestedTriggerStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s NestedTriggerStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		NestedTriggerStep: &s,
 	}
 }
-func (s NestedWaitStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s NestedWaitStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		NestedWaitStep: &s,
 	}
 }
-func (s StringBlockStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s StringBlockStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		StringBlockStep: &s,
 	}
 }
-func (s StringInputStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s StringInputStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		StringInputStep: &s,
 	}
 }
-func (s StringWaitStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s StringWaitStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		StringWaitStep: &s,
 	}
 }
-func (s TriggerStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s TriggerStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		TriggerStep: &s,
 	}
 }
-func (s WaitStep) toStepUnion() PipelineStepsUnion {
-	return PipelineStepsUnion{
+func (s WaitStep) toStepUnion() PipelineStepsItem {
+	return PipelineStepsItem{
 		WaitStep: &s,
 	}
 }
