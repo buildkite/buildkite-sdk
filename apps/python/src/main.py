@@ -4,10 +4,6 @@ from os import makedirs
 def generate_json():
     pipeline = Pipeline()
     pipeline.add_step({"label": "some-label", "commands": "echo 'Hello, world!'"})
-    # pipeline.add_step(CommandStep(
-    #     label="some-label",
-    #     commands="echo 'Hello, world!'",
-    # ))
     return pipeline.to_json()
 
 def generate_yaml():
