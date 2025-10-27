@@ -1,4 +1,4 @@
-from buildkite_sdk import Pipeline, WaitStep, WaitStepDict, NestedWaitStep, NestedWaitStepDict, DependsOnListObject
+from buildkite_sdk import Pipeline, WaitStep, WaitStepArgs, NestedWaitStep, NestedWaitStepArgs, DependsOnListObject
 from .utils import TestRunner
 
 class TestWaitStepNestingTypesClass(TestRunner):
@@ -11,7 +11,7 @@ class TestWaitStepNestingTypesClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': ['waiter']})
 
     def test_type_wait(self):
-        expected: WaitStepDict = {'type': 'wait'}
+        expected: WaitStepArgs = {'type': 'wait'}
         pipeline = Pipeline(
             steps=[
                 WaitStep(type='wait')
@@ -20,7 +20,7 @@ class TestWaitStepNestingTypesClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_type_waiter(self):
-        expected: WaitStepDict = {'type': 'waiter'}
+        expected: WaitStepArgs = {'type': 'waiter'}
         pipeline = Pipeline(
             steps=[
                 WaitStep(type='waiter')
@@ -29,7 +29,7 @@ class TestWaitStepNestingTypesClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_wait_field(self):
-        expected: WaitStepDict = {'wait': '~', 'continue_on_failure': True}
+        expected: WaitStepArgs = {'wait': '~', 'continue_on_failure': True}
         pipeline = Pipeline(
             steps=[
                 WaitStep(wait='~', continue_on_failure=True)
@@ -38,7 +38,7 @@ class TestWaitStepNestingTypesClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_nested_wait(self):
-        expected: NestedWaitStepDict = {
+        expected: NestedWaitStepArgs = {
             'wait': {'continue_on_failure': True}
         }
         pipeline = Pipeline(
@@ -49,7 +49,7 @@ class TestWaitStepNestingTypesClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_nested_waiter(self):
-        expected: NestedWaitStepDict = {
+        expected: NestedWaitStepArgs = {
             'waiter': {'continue_on_failure': True}
         }
         pipeline = Pipeline(
@@ -61,7 +61,7 @@ class TestWaitStepNestingTypesClass(TestRunner):
 
 class TestWaitStepNestingTypesDict(TestRunner):
     def test_type_wait(self):
-        expected: WaitStepDict = {'type': 'wait'}
+        expected: WaitStepArgs = {'type': 'wait'}
         pipeline = Pipeline(
             steps=[
                 WaitStep.from_dict(expected)
@@ -70,7 +70,7 @@ class TestWaitStepNestingTypesDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_type_waiter(self):
-        expected: WaitStepDict = {'type': 'waiter'}
+        expected: WaitStepArgs = {'type': 'waiter'}
         pipeline = Pipeline(
             steps=[
                 WaitStep.from_dict(expected)
@@ -79,7 +79,7 @@ class TestWaitStepNestingTypesDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_wait_field(self):
-        expected: WaitStepDict = {'wait': '~', 'continue_on_failure': True}
+        expected: WaitStepArgs = {'wait': '~', 'continue_on_failure': True}
         pipeline = Pipeline(
             steps=[
                 WaitStep.from_dict(expected)
@@ -88,7 +88,7 @@ class TestWaitStepNestingTypesDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_nested_wait(self):
-        expected: NestedWaitStepDict = {
+        expected: NestedWaitStepArgs = {
             'wait': {'continue_on_failure': True}
         }
         pipeline = Pipeline(
@@ -99,7 +99,7 @@ class TestWaitStepNestingTypesDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_nested_waiter(self):
-        expected: NestedWaitStepDict = {
+        expected: NestedWaitStepArgs = {
             'waiter': {'continue_on_failure': True}
         }
         pipeline = Pipeline(
@@ -111,7 +111,7 @@ class TestWaitStepNestingTypesDict(TestRunner):
 
 class TestWaitStepClass(TestRunner):
     def test_id(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'id': 'id'
         }
@@ -123,7 +123,7 @@ class TestWaitStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_identifier(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'identifier': 'identifier'
         }
@@ -135,7 +135,7 @@ class TestWaitStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_if(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'if': 'build.message !~ /skip tests/'
         }
@@ -147,7 +147,7 @@ class TestWaitStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_key(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'key': 'key'
         }
@@ -159,7 +159,7 @@ class TestWaitStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_string(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'depends_on': 'step'
         }
@@ -171,7 +171,7 @@ class TestWaitStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_string_list(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'depends_on': ['one', 'two']
         }
@@ -183,7 +183,7 @@ class TestWaitStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_object_list(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -204,7 +204,7 @@ class TestWaitStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_mixed_list(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -225,7 +225,7 @@ class TestWaitStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_allow_dependency_failure(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'allow_dependency_failure': True
         }
@@ -236,9 +236,9 @@ class TestWaitStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {'steps': [expected]})
 
-class TestWaitStepDict(TestRunner):
+class TestWaitStepArgs(TestRunner):
     def test_id(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'id': 'id'
         }
@@ -250,7 +250,7 @@ class TestWaitStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_identifier(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'identifier': 'identifier'
         }
@@ -262,7 +262,7 @@ class TestWaitStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_if(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'if': 'build.message !~ /skip tests/'
         }
@@ -274,7 +274,7 @@ class TestWaitStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_key(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'key': 'key'
         }
@@ -286,7 +286,7 @@ class TestWaitStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_string(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'depends_on': 'step'
         }
@@ -298,7 +298,7 @@ class TestWaitStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_string_list(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'depends_on': ['one', 'two']
         }
@@ -310,7 +310,7 @@ class TestWaitStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_object_list(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -325,7 +325,7 @@ class TestWaitStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_mixed_list(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -340,7 +340,7 @@ class TestWaitStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_allow_dependency_failure(self):
-        expected: WaitStepDict = {
+        expected: WaitStepArgs = {
             'type': 'waiter',
             'allow_dependency_failure': True
         }

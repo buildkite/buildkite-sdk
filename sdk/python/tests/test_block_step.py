@@ -1,4 +1,4 @@
-from buildkite_sdk import Pipeline, BlockStep, BlockStepDict, NestedBlockStep, TextField, SelectField, SelectFieldOption, DependsOnListObject, GroupStep
+from buildkite_sdk import Pipeline, BlockStep, BlockStepArgs, NestedBlockStep, TextField, SelectField, SelectFieldOption, DependsOnListObject, GroupStep
 from .utils import TestRunner
 
 class TestBlockStepNestingTypesClass(TestRunner):
@@ -347,7 +347,7 @@ class TestBlockStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {'steps': [{'group': 'Tests', 'steps': [{'block': 'a label'}]}]})
 
-class TestBlockStepDict(TestRunner):
+class TestBlockStepArgs(TestRunner):
     def test_branches(self):
         pipeline = Pipeline(
             steps=[
@@ -381,7 +381,7 @@ class TestBlockStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'block': 'label', 'prompt': 'prompt'}]})
 
     def test_fields(self):
-        expected: BlockStepDict = {
+        expected: BlockStepArgs = {
             'block': 'A label',
             'prompt': 'A prompt',
             'fields': [
@@ -501,7 +501,7 @@ class TestBlockStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'block': 'a label', 'allow_dependency_failure': True}]})
 
     def test_multiple_fields(self):
-        expected: BlockStepDict = {
+        expected: BlockStepArgs = {
             'block': 'a label',
             'fields': [
                 {
@@ -523,7 +523,7 @@ class TestBlockStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_multiple_fields_with_default(self):
-        expected: BlockStepDict = {
+        expected: BlockStepArgs = {
             'block': 'a label',
             'fields': [
                 {

@@ -1,4 +1,4 @@
-from buildkite_sdk import Pipeline, CommandStep, CommandStepDict, MatrixObject, MatrixAdjustments, GroupStep, GroupStepDict
+from buildkite_sdk import Pipeline, CommandStep, CommandStepArgs, MatrixObject, MatrixAdjustments, GroupStep, GroupStepArgs
 from .utils import TestRunner
 
 class TestMatrixClass(TestRunner):
@@ -111,7 +111,7 @@ class TestMatrixClass(TestRunner):
         }]})
 
     def test_group(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'matrices',
             'steps': [
                 {
@@ -167,7 +167,7 @@ class TestMatrixDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'command': 'echo {{matrix}}', 'label': '{{matrix}}', 'matrix': ['one','two']}]})
 
     def test_single_adjustements(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'echo {{matrix}}',
             'label': '{{matrix}}',
             'matrix': {
@@ -186,7 +186,7 @@ class TestMatrixDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_multiple_adjustments(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'echo {{matrix.color}} {{matrix.shape}}',
             'label': '{{matrix.color}} {{matrix.shape}}',
             'matrix': {
@@ -226,7 +226,7 @@ class TestMatrixDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_group(self):
-        expected: GroupStepDict = {
+        expected: GroupStepArgs = {
             'group': 'matrices',
             'steps': [
                 {

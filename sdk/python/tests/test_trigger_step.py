@@ -1,9 +1,9 @@
-from buildkite_sdk import Pipeline, TriggerStep, TriggerStepDict, TriggerStepBuild, NestedTriggerStep, NestedTriggerStepDict, DependsOnListObject, SoftFailObject
+from buildkite_sdk import Pipeline, TriggerStep, TriggerStepArgs, TriggerStepBuild, NestedTriggerStep, NestedTriggerStepArgs, DependsOnListObject, SoftFailObject
 from .utils import TestRunner
 
 class TestTriggerStepNestingTypesClass(TestRunner):
     def test_field(self):
-        expected: TriggerStepDict = {'trigger': 'a-slug'}
+        expected: TriggerStepArgs = {'trigger': 'a-slug'}
         pipeline = Pipeline(
             steps=[
                 TriggerStep(trigger='a-slug')
@@ -12,7 +12,7 @@ class TestTriggerStepNestingTypesClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_type(self):
-        expected: TriggerStepDict = {'trigger': 'a-slug', 'type': 'trigger'}
+        expected: TriggerStepArgs = {'trigger': 'a-slug', 'type': 'trigger'}
         pipeline = Pipeline(
             steps=[
                 TriggerStep(trigger='a-slug', type='trigger')
@@ -21,7 +21,7 @@ class TestTriggerStepNestingTypesClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_nested(self):
-        expected: NestedTriggerStepDict = {'trigger': {'trigger': 'a-slug'}}
+        expected: NestedTriggerStepArgs = {'trigger': {'trigger': 'a-slug'}}
         pipeline = Pipeline(
             steps=[
                 NestedTriggerStep(trigger=TriggerStep(trigger='a-slug'))
@@ -31,7 +31,7 @@ class TestTriggerStepNestingTypesClass(TestRunner):
 
 class TestTriggerStepNestingTypesDict(TestRunner):
     def test_field(self):
-        expected: TriggerStepDict = {'trigger': 'a-slug'}
+        expected: TriggerStepArgs = {'trigger': 'a-slug'}
         pipeline = Pipeline(
             steps=[
                 TriggerStep.from_dict(expected)
@@ -40,7 +40,7 @@ class TestTriggerStepNestingTypesDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_type(self):
-        expected: TriggerStepDict = {'trigger': 'a-slug', 'type': 'trigger'}
+        expected: TriggerStepArgs = {'trigger': 'a-slug', 'type': 'trigger'}
         pipeline = Pipeline(
             steps=[
                 TriggerStep.from_dict(expected)
@@ -49,7 +49,7 @@ class TestTriggerStepNestingTypesDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_nested(self):
-        expected: NestedTriggerStepDict = {'trigger': {'trigger': 'a-slug'}}
+        expected: NestedTriggerStepArgs = {'trigger': {'trigger': 'a-slug'}}
         pipeline = Pipeline(
             steps=[
                 NestedTriggerStep.from_dict(expected)
@@ -59,7 +59,7 @@ class TestTriggerStepNestingTypesDict(TestRunner):
 
 class TestTriggerStepClass(TestRunner):
     def test_async(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'async': True,
         }
@@ -71,7 +71,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_branches(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'branches': ['one','two']
         }
@@ -83,7 +83,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_message(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'message': 'a message',
@@ -100,7 +100,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_commit(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'commit': 'a commit',
@@ -117,7 +117,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_branch(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'branch': 'a branch',
@@ -134,7 +134,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_meta_data(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'meta_data': {'a-key': 'a-val'}
@@ -151,7 +151,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_env(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'env': {'SOME_ENV': 'some-val'}
@@ -168,7 +168,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_id(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'id': 'id'
         }
@@ -180,7 +180,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_identifier(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'identifier': 'identifier'
         }
@@ -192,7 +192,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_label(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'label': 'a label',
         }
@@ -204,7 +204,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_if(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'if': "build.message !~ /skip tests/"
         }
@@ -216,7 +216,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_key(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'key': 'key'
         }
@@ -228,7 +228,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_string(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'depends_on': 'step'
         }
@@ -240,7 +240,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_string_list(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'depends_on': ['one','two']
         }
@@ -252,7 +252,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_object_list(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -273,7 +273,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_mixed_list(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -294,7 +294,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_allow_dependency_failure(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'allow_dependency_failure': True
         }
@@ -306,7 +306,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_skip_bool(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'skip': True
         }
@@ -318,7 +318,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_skip_string(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'skip': 'a reason'
         }
@@ -330,7 +330,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_soft_fail_bool(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'soft_fail': True,
         }
@@ -342,7 +342,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_soft_fail_exit_status_int(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'soft_fail': [{'exit_status': -1}]
         }
@@ -354,7 +354,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_soft_fail_exit_status_string(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'soft_fail': [{'exit_status': '*'}]
         }
@@ -366,7 +366,7 @@ class TestTriggerStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_if_changed(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'if_changed': '*.txt'
         }
@@ -377,9 +377,9 @@ class TestTriggerStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {'steps': [expected]})
 
-class TestTriggerStepDict(TestRunner):
+class TestTriggerStepArgs(TestRunner):
     def test_async(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'async': True,
         }
@@ -391,7 +391,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_branches(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'branches': ['one','two']
         }
@@ -403,7 +403,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_message(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'message': 'a message',
@@ -417,7 +417,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_commit(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'commit': 'a commit',
@@ -431,7 +431,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_branch(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'branch': 'a branch',
@@ -445,7 +445,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_meta_data(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'meta_data': {'a-key': 'a-val'}
@@ -459,7 +459,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_build_env(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'build': {
                 'env': {'SOME_ENV': 'some-val'}
@@ -473,7 +473,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_id(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'id': 'id'
         }
@@ -485,7 +485,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_identifier(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'identifier': 'identifier'
         }
@@ -497,7 +497,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_label(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'label': 'a label',
         }
@@ -509,7 +509,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_if(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'if': "build.message !~ /skip tests/"
         }
@@ -521,7 +521,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_key(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'key': 'key'
         }
@@ -533,7 +533,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_string(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'depends_on': 'step'
         }
@@ -545,7 +545,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_string_list(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'depends_on': ['one','two']
         }
@@ -557,7 +557,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_object_list(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -572,7 +572,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_mixed_list(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'depends_on': [
                 {'step': 'one', 'allow_failure': True},
@@ -587,7 +587,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_allow_dependency_failure(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'allow_dependency_failure': True
         }
@@ -599,7 +599,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_skip_bool(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'skip': True
         }
@@ -611,7 +611,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_skip_string(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'skip': 'a reason'
         }
@@ -623,7 +623,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_soft_fail_bool(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'soft_fail': True,
         }
@@ -635,7 +635,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_soft_fail_exit_status_int(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'soft_fail': [{'exit_status': -1}]
         }
@@ -647,7 +647,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_soft_fail_exit_status_string(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'soft_fail': [{'exit_status': '*'}]
         }
@@ -659,7 +659,7 @@ class TestTriggerStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_if_changed(self):
-        expected: TriggerStepDict = {
+        expected: TriggerStepArgs = {
             'trigger': 'a-slug',
             'if_changed': '*.txt'
         }

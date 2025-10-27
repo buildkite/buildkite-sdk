@@ -1,4 +1,4 @@
-from buildkite_sdk import Pipeline, CommandStep, CommandStepDict, NestedCommandStep, AutomaticRetry, CommandStepRetry, SoftFailObject, DependsOnListObject, CommandStepSignature
+from buildkite_sdk import Pipeline, CommandStep, CommandStepArgs, NestedCommandStep, AutomaticRetry, CommandStepRetry, SoftFailObject, DependsOnListObject, CommandStepSignature
 from .utils import TestRunner
 
 class TestCommandStepNestingTypesClass(TestRunner):
@@ -324,7 +324,7 @@ class TestCommandStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_automatic_retry_bool(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'test',
             'retry': {
                 'automatic': True
@@ -434,7 +434,7 @@ class TestCommandStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'depends_on': ['one','two']}]})
 
     def test_depends_on_object_list(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'test',
             'depends_on': [
                 { 'step': 'one', 'allow_failure': True },
@@ -455,7 +455,7 @@ class TestCommandStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_mixed_list(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'test',
             'depends_on': [
                 { 'step': 'one', 'allow_failure': True },
@@ -500,7 +500,7 @@ class TestCommandStepClass(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'cancel_on_build_failing': True}]})
 
     def test_signature(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'echo {{matrix}}',
             'env': {
                 'FOO': 'bar'
@@ -566,7 +566,7 @@ class TestCommandStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'if_changed': '*.txt'}]})
 
-class TestCommandStepDict(TestRunner):
+class TestCommandStepArgs(TestRunner):
     def test_agents_dict(self):
         pipeline = Pipeline(
             steps=[
@@ -685,7 +685,7 @@ class TestCommandStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'plugins': ['a-plugin#v1.0.0']}]})
 
     def test_retry_automatic_list(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'test',
             'retry': {
                 'automatic': [
@@ -714,7 +714,7 @@ class TestCommandStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_automatic_retry_exit_status(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'test',
             'retry': {
                 'automatic': {
@@ -730,7 +730,7 @@ class TestCommandStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_automatic_retry_bool(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'test',
             'retry': {
                 'automatic': True
@@ -744,7 +744,7 @@ class TestCommandStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_automatic_retry_exit_status_list(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'test',
             'retry': {
                 'automatic': {
@@ -840,7 +840,7 @@ class TestCommandStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'depends_on': ['one','two']}]})
 
     def test_depends_on_object_list(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'test',
             'depends_on': [
                 { 'step': 'one', 'allow_failure': True },
@@ -855,7 +855,7 @@ class TestCommandStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_depends_on_mixed_list(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'test',
             'depends_on': [
                 { 'step': 'one', 'allow_failure': True },
@@ -894,7 +894,7 @@ class TestCommandStepDict(TestRunner):
         self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'cancel_on_build_failing': True}]})
 
     def test_signature(self):
-        expected: CommandStepDict = {
+        expected: CommandStepArgs = {
             'command': 'echo {{matrix}}',
             'env': {
                 'FOO': 'bar'
