@@ -349,7 +349,7 @@ export interface MatrixObject {
     setup: MatrixSetup;
 }
 
-export type MatrixSetup = MatrixElementList | {};
+export type MatrixSetup = MatrixElementList | Record<string, MatrixElement[]>;
 
 export interface NestedBlockStep {
     block?: BlockStep;

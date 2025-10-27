@@ -1,10 +1,66 @@
-from .schema import Env, Agents, BlockStepDict, BuildNotify, Image, BlockStep, NestedBlockStep,StringBlockStep,InputStep,NestedInputStep,StringInputStep,CommandStep,NestedCommandStep,WaitStep,NestedWaitStep,StringWaitStep,TriggerStep,NestedTriggerStep,GroupStep
-from typing import Optional, List, Any, TypedDict, NotRequired
+from .schema import (
+    Env,
+    Agents,
+    BuildNotify,
+    Image,
+    BlockStepDict,
+    BlockStep,
+    NestedBlockStepDict,
+    NestedBlockStep,
+    StringBlockStep,
+    InputStepDict,
+    InputStep,
+    NestedInputStepDict,
+    NestedInputStep,
+    StringInputStep,
+    CommandStepDict,
+    CommandStep,
+    NestedCommandStepDict,
+    NestedCommandStep,
+    WaitStepDict,
+    WaitStep,
+    NestedWaitStepDict,
+    NestedWaitStep,
+    StringWaitStep,
+    TriggerStepDict,
+    TriggerStep,
+    NestedTriggerStepDict,
+    NestedTriggerStep,
+    GroupStepDict,
+    GroupStep
+)
+from typing import Optional, List, Any, TypedDict, NotRequired, Union
 from pydantic import BaseModel
 import json
 import yaml
 
-type Step = BlockStepDict | StringBlockStep | BlockStep | NestedBlockStep | InputStep | NestedInputStep | StringInputStep | CommandStep | NestedCommandStep | WaitStep | NestedWaitStep | StringWaitStep | TriggerStep | NestedTriggerStep | GroupStep
+type Step = Union[
+    BlockStepDict,
+    BlockStep,
+    NestedBlockStepDict,
+    NestedBlockStep,
+    StringBlockStep,
+    InputStepDict,
+    InputStep,
+    NestedInputStepDict,
+    NestedInputStep,
+    StringInputStep,
+    CommandStepDict,
+    CommandStep,
+    NestedCommandStepDict,
+    NestedCommandStep,
+    WaitStepDict,
+    WaitStep,
+    NestedWaitStepDict,
+    NestedWaitStep,
+    StringWaitStep,
+    TriggerStepDict,
+    TriggerStep,
+    NestedTriggerStepDict,
+    NestedTriggerStep,
+    GroupStepDict,
+    GroupStep
+]
 
 class PipelineDict(TypedDict):
     env: NotRequired[Env]

@@ -135,6 +135,17 @@ func (u Union) TypeScriptInterfaceType() string {
 	parts := make([]string, len(u.TypeIdentifiers))
 	for i, typ := range u.TypeIdentifiers {
 		if obj, ok := typ.(Object); ok {
+			if obj.AdditionalProperties != nil {
+				prop := *obj.AdditionalProperties
+				parts[i] = fmt.Sprintf("Record<string, %s>", prop.TypeScriptInterfaceType())
+				continue
+			}
+
+			if obj.Properties == nil {
+				parts[i] = "Record<string, any>"
+				continue
+			}
+
 			block := utils.NewTypeScriptInterface("", obj.Description)
 			for _, name := range obj.Properties.Keys() {
 				prop, _ := obj.Properties.Get(name)
