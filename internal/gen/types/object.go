@@ -305,7 +305,7 @@ func (o Object) Python() (string, error) {
 
 	codeBlock := utils.NewCodeBlock()
 	pyClass := utils.NewPythonClass(o.Name.ToTitleCase(), o.Description)
-	pyTypedDict := utils.NewPythonClass(fmt.Sprintf("%sDict", o.Name.ToTitleCase()), o.Description)
+	pyTypedDict := utils.NewPythonClass(fmt.Sprintf("%sArgs", o.Name.ToTitleCase()), o.Description)
 
 	for _, name := range keys {
 		prop, _ := o.Properties.Get(name)
@@ -346,10 +346,10 @@ func (o Object) Python() (string, error) {
 				continue
 			}
 
-			dictStructType = fmt.Sprintf("%sDict", dictStructType)
+			dictStructType = fmt.Sprintf("%sArgs", dictStructType)
 			constructorName = structType
 			nestedPyClass := utils.NewPythonClass(structType, description)
-			nestedPyTypeDict := utils.NewPythonClass(fmt.Sprintf("%sDict", structType), description)
+			nestedPyTypeDict := utils.NewPythonClass(fmt.Sprintf("%sArgs", structType), description)
 			for _, propName := range keys {
 				nestedProp, _ := obj.Properties.Get(propName)
 				nestedVal := nestedProp.(Value)
@@ -359,7 +359,7 @@ func (o Object) Python() (string, error) {
 				nestedDictType := nestedType
 				if obj, ok := nestedVal.(Object); ok {
 					if len(obj.Properties.Keys()) > 0 {
-						nestedDictType = fmt.Sprintf("%sDict", nestedType)
+						nestedDictType = fmt.Sprintf("%sArgs", nestedType)
 					}
 				}
 
@@ -384,7 +384,7 @@ func (o Object) Python() (string, error) {
 		if ref, ok := val.(PropertyReference); ok {
 			if obj, ok := ref.Type.(Object); ok {
 				if len(obj.Properties.Keys()) > 0 {
-					dictStructType = fmt.Sprintf("%sDict", structType)
+					dictStructType = fmt.Sprintf("%sArgs", structType)
 					constructorName = structType
 				}
 			}
@@ -394,7 +394,7 @@ func (o Object) Python() (string, error) {
 		if array, ok := val.(Array); ok {
 			if obj, ok := array.Type.(Object); ok {
 				if len(obj.Properties.Keys()) > 0 {
-					dictStructType = fmt.Sprintf("List[%sDict]", obj.PythonClassType())
+					dictStructType = fmt.Sprintf("List[%sArgs]", obj.PythonClassType())
 					constructorName = obj.PythonClassType()
 					isObjectArray = true
 				}
@@ -407,7 +407,7 @@ func (o Object) Python() (string, error) {
 			for i, typ := range union.TypeIdentifiers {
 				if obj, ok := typ.(Object); ok {
 					typeIdentifiers[i] = Object{
-						Name:                 NewPropertyName(fmt.Sprintf("%sDict", obj.Name.Value)),
+						Name:                 NewPropertyName(fmt.Sprintf("%sArgs", obj.Name.Value)),
 						Properties:           obj.Properties,
 						AdditionalProperties: obj.AdditionalProperties,
 						Required:             obj.Required,
@@ -418,8 +418,8 @@ func (o Object) Python() (string, error) {
 				if ref, ok := typ.(PropertyReference); ok {
 					fmt.Println(ref.Name)
 					typeIdentifiers[i] = PropertyReference{
-						Name: fmt.Sprintf("%sDict", ref.Name),
-						Ref:  schema.PropertyReferenceString(fmt.Sprintf("%sDict", ref.Name)),
+						Name: fmt.Sprintf("%sArgs", ref.Name),
+						Ref:  schema.PropertyReferenceString(fmt.Sprintf("%sArgs", ref.Name)),
 						Type: ref.Type,
 					}
 					continue

@@ -218,7 +218,7 @@ func (u Union) Python() (string, error) {
 		if ref, ok := typ.(PropertyReference); ok {
 			if obj, ok := ref.Type.(Object); ok {
 				if len(obj.Properties.Keys()) > 0 {
-					parts = append(parts, fmt.Sprintf("%sDict", typ.PythonClassType()))
+					parts = append(parts, fmt.Sprintf("%sArgs", typ.PythonClassType()))
 				}
 			}
 		}

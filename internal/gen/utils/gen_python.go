@@ -57,7 +57,7 @@ var pythonClassTemplate = `{{if ne "" .Description}}{{printf "# %s\n" .Descripti
     {{if ne "" .Description}}{{printf "# %s\n    " .Description}}{{end}}{{.Name}}: {{if eq false .Required }}Optional[{{.Value}}]{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{else}} = None{{end}}{{else}}{{.Value}}{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{end}}{{end}}{{end}}
 
     @classmethod
-    def from_dict(cls, data: {{.Name}}Dict) -> {{.Name}}:
+    def from_dict(cls, data: {{.Name}}Args) -> {{.Name}}:
         step_if = {'step_if': data['if']} if 'if' in data else {}
         step_async = {'step_async': data['async']} if 'async' in data else {}
         matrix_with = {'matrix_with': data['with']} if 'with' in data else {}

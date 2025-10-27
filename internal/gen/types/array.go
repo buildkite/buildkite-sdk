@@ -166,7 +166,7 @@ func (a Array) Python() (string, error) {
 				unionType := nestedObj.PythonClassType()
 				unionTypeParts = append(unionTypeParts, unionType)
 				if len(obj.Properties.Keys()) > 0 {
-					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sDict", unionType))
+					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sArgs", unionType))
 				}
 
 				continue
@@ -174,7 +174,7 @@ func (a Array) Python() (string, error) {
 
 			if ref, ok := typ.(PropertyReference); ok {
 				if _, ok := ref.Type.(Object); ok {
-					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sDict", typ.PythonClassType()))
+					unionTypeParts = append(unionTypeParts, fmt.Sprintf("%sArgs", typ.PythonClassType()))
 				}
 			}
 
@@ -186,7 +186,7 @@ func (a Array) Python() (string, error) {
 
 	if _, ok := a.Type.(Object); ok {
 		listLength = 2
-		listType = fmt.Sprintf("%s,%sDict", listType, listType)
+		listType = fmt.Sprintf("%s,%sArgs", listType, listType)
 	}
 
 	pyType := fmt.Sprintf("type %s = List[Union[%s]]", a.Name.ToTitleCase(), listType)
