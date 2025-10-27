@@ -50,7 +50,7 @@ func (s String) GoStructKey(isUnion bool) string {
 func (s String) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 	if s.Description != "" {
-		block.AddLines(fmt.Sprintf("// %s", s.Description))
+		block.AddLines(utils.NewTypeDocComment(s.Description))
 	}
 
 	block.AddLines(fmt.Sprintf("export type %s = string", s.Name.ToTitleCase()))

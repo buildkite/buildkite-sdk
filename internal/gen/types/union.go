@@ -168,7 +168,7 @@ func (u Union) TypeScriptInterfaceType() string {
 func (u Union) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 	if u.Description != "" {
-		block.AddLines(fmt.Sprintf("// %s", u.Description))
+		block.AddLines(utils.NewTypeDocComment(u.Description))
 	}
 
 	block.AddLines(

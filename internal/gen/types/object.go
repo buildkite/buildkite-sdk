@@ -155,7 +155,7 @@ func (o Object) TypeScript() (string, error) {
 		block := utils.NewCodeBlock()
 
 		if o.Description != "" {
-			block.AddLines(fmt.Sprintf("// %s", o.Description))
+			block.AddLines(utils.NewTypeDocComment(o.Description))
 		}
 
 		if o.AdditionalProperties != nil {

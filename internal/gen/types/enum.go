@@ -161,7 +161,7 @@ func (e Enum) TypeScript() (string, error) {
 
 	block := utils.NewCodeBlock()
 	if e.Description != "" {
-		block.AddLines(fmt.Sprintf("// %s", e.Description))
+		block.AddLines(utils.NewTypeDocComment(e.Description))
 	}
 
 	block.AddLines(fmt.Sprintf("export type %s = %s", e.Name.ToTitleCase(), values))

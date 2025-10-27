@@ -52,7 +52,7 @@ func (b Boolean) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 
 	if b.Description != "" {
-		block.AddLines(fmt.Sprintf("// %s", b.Description))
+		block.AddLines(utils.NewTypeDocComment(b.Description))
 	}
 
 	block.AddLines(fmt.Sprintf("type %s = boolean", b.Name.ToTitleCase()))
