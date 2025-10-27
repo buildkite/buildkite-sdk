@@ -3,30 +3,30 @@ from .schema import (
     Agents,
     BuildNotify,
     Image,
-    BlockStepDict,
+    BlockStepArgs,
     BlockStep,
-    NestedBlockStepDict,
+    NestedBlockStepArgs,
     NestedBlockStep,
     StringBlockStep,
-    InputStepDict,
+    InputStepArgs,
     InputStep,
-    NestedInputStepDict,
+    NestedInputStepArgs,
     NestedInputStep,
     StringInputStep,
-    CommandStepDict,
+    CommandStepArgs,
     CommandStep,
-    NestedCommandStepDict,
+    NestedCommandStepArgs,
     NestedCommandStep,
-    WaitStepDict,
+    WaitStepArgs,
     WaitStep,
-    NestedWaitStepDict,
+    NestedWaitStepArgs,
     NestedWaitStep,
     StringWaitStep,
-    TriggerStepDict,
+    TriggerStepArgs,
     TriggerStep,
-    NestedTriggerStepDict,
+    NestedTriggerStepArgs,
     NestedTriggerStep,
-    GroupStepDict,
+    GroupStepArgs,
     GroupStep
 )
 from typing import Optional, List, Any, TypedDict, NotRequired, Union
@@ -35,34 +35,34 @@ import json
 import yaml
 
 type Step = Union[
-    BlockStepDict,
+    BlockStepArgs,
     BlockStep,
-    NestedBlockStepDict,
+    NestedBlockStepArgs,
     NestedBlockStep,
     StringBlockStep,
-    InputStepDict,
+    InputStepArgs,
     InputStep,
-    NestedInputStepDict,
+    NestedInputStepArgs,
     NestedInputStep,
     StringInputStep,
-    CommandStepDict,
+    CommandStepArgs,
     CommandStep,
-    NestedCommandStepDict,
+    NestedCommandStepArgs,
     NestedCommandStep,
-    WaitStepDict,
+    WaitStepArgs,
     WaitStep,
-    NestedWaitStepDict,
+    NestedWaitStepArgs,
     NestedWaitStep,
     StringWaitStep,
-    TriggerStepDict,
+    TriggerStepArgs,
     TriggerStep,
-    NestedTriggerStepDict,
+    NestedTriggerStepArgs,
     NestedTriggerStep,
-    GroupStepDict,
+    GroupStepArgs,
     GroupStep
 ]
 
-class PipelineDict(TypedDict):
+class PipelineArgs(TypedDict):
     env: NotRequired[Env]
     agents: NotRequired[Agents]
     notify: NotRequired[BuildNotify]
@@ -77,7 +77,7 @@ class Pipeline(BaseModel):
     steps: List[Step] = []
 
     @classmethod
-    def from_dict(cls, data: PipelineDict):
+    def from_dict(cls, data: PipelineArgs):
         return cls(**data)
 
     def add_agent(self, key: str, value: Any):
