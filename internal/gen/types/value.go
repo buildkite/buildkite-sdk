@@ -45,9 +45,9 @@ func (p *Pipeline) AddAgent(key string, value any) {
 }
 
 func (p *Pipeline) AddEnvironmentVariable(key string, value any) {
-	env := *p.Env
-	if p.Env == nil {
-		env = map[string]interface{}{}
+	env := map[string]interface{}{}
+	if p.Env != nil {
+		env = *p.Env
 	}
 
 	env[key] = value
