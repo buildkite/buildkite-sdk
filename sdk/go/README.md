@@ -38,9 +38,9 @@ func main() {
 
 	fmt.Println(json)
 
-	yaml, err := pipeline.YAML()
+	yaml, err := pipeline.ToYAML()
 	if err != nil {
-		log.Fatalf("Failed to serialize JSON: %v", err)
+		log.Fatalf("Failed to serialize YAML: %v", err)
 	}
 
 	fmt.Println(yaml)
