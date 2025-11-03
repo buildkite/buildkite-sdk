@@ -8,7 +8,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifyEmail(email='dev@acmeinc.com')
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'email': 'dev@acmeinc.com'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'email': 'dev@acmeinc.com'}]})
 
     def test_email_if(self):
         pipeline = Pipeline(
@@ -16,7 +16,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifyEmail(email='dev@acmeinc.com', step_if="build.state == 'failed")
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'email': 'dev@acmeinc.com', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'email': 'dev@acmeinc.com', 'if': "build.state == 'failed"}]})
 
     def test_basecamp_campfire(self):
         pipeline = Pipeline(
@@ -24,7 +24,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifyBasecamp(basecamp_campfire='https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines')
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines'}]})
 
     def test_basecamp_campfire_if(self):
         pipeline = Pipeline(
@@ -32,7 +32,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifyBasecamp(basecamp_campfire='https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', step_if="build.state == 'failed")
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', 'if': "build.state == 'failed"}]})
 
     def test_slack(self):
         pipeline = Pipeline(
@@ -40,7 +40,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifySlack(slack='#channel')
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'slack': '#channel'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'slack': '#channel'}]})
 
     def test_slack_if(self):
         pipeline = Pipeline(
@@ -48,7 +48,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifySlack(slack='#channel', step_if="build.state == 'failed")
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'slack': '#channel', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'slack': '#channel', 'if': "build.state == 'failed"}]})
 
     def test_slack_channels_list(self):
         pipeline = Pipeline(
@@ -56,7 +56,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifySlack(slack=NotifySlackObject(channels=['#one','#two']))
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'slack': {'channels': ['#one','#two']}}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'slack': {'channels': ['#one','#two']}}]})
 
     def test_slack_message(self):
         pipeline = Pipeline(
@@ -64,7 +64,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifySlack(slack=NotifySlackObject(channels=['#one','#two'], message='a message'))
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'slack': {'channels': ['#one','#two'], 'message': 'a message'}}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'slack': {'channels': ['#one','#two'], 'message': 'a message'}}]})
 
     def test_webhook(self):
         pipeline = Pipeline(
@@ -72,7 +72,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifyWebhook(webhook='https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a')
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a'}]})
 
     def test_webhook_if(self):
         pipeline = Pipeline(
@@ -80,7 +80,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifyWebhook(webhook='https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', step_if="build.state == 'failed")
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', 'if': "build.state == 'failed"}]})
 
     def test_pagerduty(self):
         pipeline = Pipeline(
@@ -88,7 +88,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifyPagerduty(pagerduty_change_event='636d22Yourc0418Key3b49eee3e8')
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8'}]})
 
     def test_pagerduty_if(self):
         pipeline = Pipeline(
@@ -96,7 +96,7 @@ class TestPipelineNotifyClass(TestRunner):
                 NotifyPagerduty(pagerduty_change_event='636d22Yourc0418Key3b49eee3e8', step_if="build.state == 'failed")
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8', 'if': "build.state == 'failed"}]})
 
     def test_github_check_string(self):
         pipeline = Pipeline(
@@ -104,7 +104,7 @@ class TestPipelineNotifyClass(TestRunner):
                 'github_check'
             ]
         )
-        self.validator.check_result(pipeline, {'notify': ['github_check']})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': ['github_check']})
 
     def test_github_commit_status_string(self):
         pipeline = Pipeline(
@@ -112,7 +112,7 @@ class TestPipelineNotifyClass(TestRunner):
                 'github_commit_status'
             ]
         )
-        self.validator.check_result(pipeline, {'notify': ['github_commit_status']})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': ['github_commit_status']})
 
     def test_github_commit_status(self):
         pipeline = Pipeline(
@@ -124,7 +124,7 @@ class TestPipelineNotifyClass(TestRunner):
                 )
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'github_commit_status': {'context': 'my-custom-status'}}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'github_commit_status': {'context': 'my-custom-status'}}]})
 
     def test_github_commit_status_if(self):
         pipeline = Pipeline(
@@ -137,7 +137,7 @@ class TestPipelineNotifyClass(TestRunner):
                 )
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'if': "build.state == 'failed", 'github_commit_status': {'context': 'my-custom-status'}}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'if': "build.state == 'failed", 'github_commit_status': {'context': 'my-custom-status'}}]})
 
 class TestPipelineNotifyDict(TestRunner):
     def test_email(self):
@@ -146,7 +146,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyEmail.from_dict({'email': 'dev@acmeinc.com'})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'email': 'dev@acmeinc.com'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'email': 'dev@acmeinc.com'}]})
 
     def test_email_if(self):
         pipeline = Pipeline(
@@ -154,7 +154,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyEmail.from_dict({'email': 'dev@acmeinc.com', 'if': "build.state == 'failed"})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'email': 'dev@acmeinc.com', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'email': 'dev@acmeinc.com', 'if': "build.state == 'failed"}]})
 
     def test_basecamp_campfire(self):
         pipeline = Pipeline(
@@ -162,7 +162,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyBasecamp.from_dict({'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines'})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines'}]})
 
     def test_basecamp_campfire_if(self):
         pipeline = Pipeline(
@@ -170,7 +170,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyBasecamp.from_dict({'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', 'if': "build.state == 'failed"})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'basecamp_campfire': 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', 'if': "build.state == 'failed"}]})
 
     def test_slack(self):
         pipeline = Pipeline(
@@ -178,7 +178,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifySlack.from_dict({'slack': '#channel'})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'slack': '#channel'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'slack': '#channel'}]})
 
     def test_slack_if(self):
         pipeline = Pipeline(
@@ -186,7 +186,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifySlack.from_dict({'slack': '#channel', 'if': "build.state == 'failed"})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'slack': '#channel', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'slack': '#channel', 'if': "build.state == 'failed"}]})
 
     def test_slack_channels_list(self):
         pipeline = Pipeline(
@@ -194,7 +194,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifySlack.from_dict({'slack': {'channels': ['#one','#two']}})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'slack': {'channels': ['#one','#two']}}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'slack': {'channels': ['#one','#two']}}]})
 
     def test_slack_message(self):
         pipeline = Pipeline(
@@ -202,7 +202,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifySlack.from_dict({'slack': {'channels': ['#one','#two'], 'message': 'a message'}})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'slack': {'channels': ['#one','#two'], 'message': 'a message'}}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'slack': {'channels': ['#one','#two'], 'message': 'a message'}}]})
 
     def test_webhook(self):
         pipeline = Pipeline(
@@ -210,7 +210,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyWebhook.from_dict({'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a'})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a'}]})
 
     def test_webhook_if(self):
         pipeline = Pipeline(
@@ -218,7 +218,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyWebhook.from_dict({'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', 'if': "build.state == 'failed"})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'webhook': 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', 'if': "build.state == 'failed"}]})
 
     def test_pagerduty(self):
         pipeline = Pipeline(
@@ -226,7 +226,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyPagerduty.from_dict({'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8'})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8'}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8'}]})
 
     def test_pagerduty_if(self):
         pipeline = Pipeline(
@@ -234,7 +234,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyPagerduty.from_dict({'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8', 'if': "build.state == 'failed"})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8', 'if': "build.state == 'failed"}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'pagerduty_change_event': '636d22Yourc0418Key3b49eee3e8', 'if': "build.state == 'failed"}]})
 
     def test_github_commit_status(self):
         pipeline = Pipeline(
@@ -242,7 +242,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyGithubCommitStatus.from_dict({'github_commit_status': {'context': 'my-custom-status'}})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'github_commit_status': {'context': 'my-custom-status'}}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'github_commit_status': {'context': 'my-custom-status'}}]})
 
     def test_github_commit_status_if(self):
         pipeline = Pipeline(
@@ -250,7 +250,7 @@ class TestPipelineNotifyDict(TestRunner):
                 NotifyGithubCommitStatus.from_dict({'if': "build.state == 'failed", 'github_commit_status': {'context': 'my-custom-status'}})
             ]
         )
-        self.validator.check_result(pipeline, {'notify': [{'if': "build.state == 'failed", 'github_commit_status': {'context': 'my-custom-status'}}]})
+        self.validator.check_result(pipeline, {'steps': [], 'notify': [{'if': "build.state == 'failed", 'github_commit_status': {'context': 'my-custom-status'}}]})
 
 class TestCommandNotifyClass(TestRunner):
     def test_basecamp_campfire(self):
