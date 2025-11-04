@@ -5,6 +5,7 @@ import unittest
 import requests
 import jsonschema
 import json
+import yaml
 
 class PipelineValidator:
     schema: Any
@@ -30,6 +31,10 @@ class PipelineValidator:
 
         comparison_result = Compare().check(expected, actual)
         assert comparison_result == NO_DIFF, f"Differences found: {json.dumps(comparison_result, indent=4)}"
+
+        expectedYaml = yaml.dump(expected)
+        actualYaml = pipeline.to_yaml()
+        assert expectedYaml == actualYaml, f"YAML results do not match:\n{expectedYaml}\n{actualYaml}"
 
 class TestRunner(unittest.TestCase):
     validator = PipelineValidator()

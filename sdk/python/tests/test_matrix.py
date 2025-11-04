@@ -182,7 +182,6 @@ class TestMatrixDict(TestRunner):
                 CommandStep.from_dict(expected)
             ]
         )
-        print(pipeline)
         self.validator.check_result(pipeline, {'steps': [expected]})
 
     def test_multiple_adjustments(self):
