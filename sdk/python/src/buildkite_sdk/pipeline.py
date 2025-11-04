@@ -113,5 +113,4 @@ class Pipeline(BaseModel):
 
     def to_yaml(self):
         """Serialize the pipeline as a YAML string."""
-        print(self.to_dict())
         return yaml.dump(self.to_dict())

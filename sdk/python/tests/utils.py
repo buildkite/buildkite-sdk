@@ -29,9 +29,6 @@ class PipelineValidator:
         pipeline_string = pipeline.to_json()
         assert is_valid == True, f"Pipeline is not valid: {pipeline_string}"
 
-        print(expected)
-        print(actual)
-
         comparison_result = Compare().check(expected, actual)
         assert comparison_result == NO_DIFF, f"Differences found: {json.dumps(comparison_result, indent=4)}"
 
