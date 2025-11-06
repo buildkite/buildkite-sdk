@@ -109,20 +109,20 @@
         "gen:pipeline": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": [
-                    "ruby ./.buildkite/pipeline.rb > ./.buildkite/pipeline.json"
-                ],
-                "parallel": false
-            }
+                "commands": []
+            },
+            "dependsOn": [
+                "ci:run:pipeline"
+            ]
         },
         "gen:pipeline-release": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": [
-                    "ruby ./.buildkite/release.rb > ./.buildkite/pipeline.json"
-                ],
-                "parallel": false
-            }
+                "commands": []
+            },
+            "dependsOn": [
+                "ci:run:release-pipeline"
+            ]
         },
         "build:all": {
             "dependsOn": [
