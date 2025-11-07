@@ -55,6 +55,7 @@ interface Target {
     sdkLabel: string;
     appLabel: string;
     versions: string[];
+    language?: string;
 }
 
 const languageTargets: Target[] = [
@@ -64,7 +65,8 @@ const languageTargets: Target[] = [
         key: "typescript",
         sdkLabel: "sdk-typescript",
         appLabel: "app-typescript",
-        versions: ["v24"],
+        versions: ["20", "21", "22", "23", "24", "25"],
+        language: "node",
     },
     {
         icon: ":python:",
@@ -72,7 +74,7 @@ const languageTargets: Target[] = [
         key: "python",
         sdkLabel: "sdk-python",
         appLabel: "app-python",
-        versions: ["3.14"],
+        versions: ["3.10", "3.11", "3.12", "3.13", "3.14"],
     },
     {
         icon: ":go:",
@@ -80,7 +82,7 @@ const languageTargets: Target[] = [
         key: "go",
         sdkLabel: "sdk-go",
         appLabel: "app-go",
-        versions: ["1.25"],
+        versions: ["1.24", "1.25"],
     },
     {
         icon: ":ruby:",
@@ -88,7 +90,7 @@ const languageTargets: Target[] = [
         key: "ruby",
         sdkLabel: "sdk-ruby",
         appLabel: "app-ruby",
-        versions: ["3.4"],
+        versions: ["3.2", "3.3", "3.4"],
     },
 ];
 
@@ -116,7 +118,7 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: [
                     "mise trust",
-                    `mise use ${target.key}@{{matrix}}`,
+                    `mise use ${target.language ?? target.key}@{{matrix}}`,
                     `nx install ${target.sdkLabel}`,
                     `nx test ${target.sdkLabel}`,
                 ],
