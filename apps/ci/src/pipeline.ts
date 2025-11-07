@@ -119,7 +119,11 @@ languageTargets.forEach((target) => {
                     `mise use ${
                         target.key === "typescript" ? "node" : target.key
                     }@{{matrix}}`,
-                    `nx install ${target.sdkLabel}`,
+                    `${
+                        target.key === "python"
+                            ? "pip install --no-cache-dir uv black && "
+                            : ""
+                    }nx install ${target.sdkLabel}`,
                     `nx test ${target.sdkLabel}`,
                 ],
                 matrix: target.versions,
