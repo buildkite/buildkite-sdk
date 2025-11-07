@@ -55,7 +55,6 @@ interface Target {
     sdkLabel: string;
     appLabel: string;
     versions: string[];
-    language?: string;
 }
 
 const languageTargets: Target[] = [
@@ -66,7 +65,6 @@ const languageTargets: Target[] = [
         sdkLabel: "sdk-typescript",
         appLabel: "app-typescript",
         versions: ["20", "21", "22", "23", "24", "25"],
-        language: "node",
     },
     {
         icon: ":python:",
@@ -118,7 +116,9 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: [
                     "mise trust",
-                    `mise use ${target.language ?? target.key}@{{matrix}}`,
+                    `mise use ${
+                        target.key === "typescript" ? "node" : target.key
+                    }@{{matrix}}`,
                     `nx install ${target.sdkLabel}`,
                     `nx test ${target.sdkLabel}`,
                 ],
