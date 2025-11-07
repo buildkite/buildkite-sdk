@@ -4,6 +4,7 @@ import * as fs from "fs";
 const pipeline = new Pipeline();
 const plugins = [{ "docker#v5.11.0": { image: "buildkite-sdk-tools:latest" } }];
 
+// Install
 pipeline.addStep({
     key: "install",
     label: ":test_tube: Install",
@@ -17,6 +18,24 @@ pipeline.addStep({
         },
     ],
     commands: ["mise trust", "npm install --ignore-scripts"],
+});
+
+// Check for version updates
+const misePackages = ["node", "python", "go", "ruby"];
+pipeline.addStep({
+    key: "version-check",
+    group: ":heavy_check_mark: Version Check",
+    steps: misePackages.map((pkg) => ({
+        plugins,
+        key: `${pkg}-version-check`,
+        label: `:${pkg}: ${pkg}`,
+        soft_fail: true,
+        command: [
+            "mise trust",
+            `mise upgrade ${pkg} --bump`,
+            "exit $(git diff --exit-code)",
+        ],
+    })),
 });
 
 const languagePlugins = [
@@ -53,7 +72,7 @@ const languageTargets: Target[] = [
         key: "python",
         sdkLabel: "sdk-python",
         appLabel: "app-python",
-        versions: ["3.15"],
+        versions: ["3.14"],
     },
     {
         icon: ":go:",
