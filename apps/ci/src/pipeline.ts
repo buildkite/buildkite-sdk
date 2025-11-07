@@ -1,8 +1,26 @@
 import { Pipeline } from "@buildkite/buildkite-sdk";
 import * as fs from "fs";
+import toml from "toml";
 
 const pipeline = new Pipeline();
 const plugins = [{ "docker#v5.11.0": { image: "buildkite-sdk-tools:latest" } }];
+
+function getMiseConfig(): {
+    node: string[];
+    go: string[];
+    python: string[];
+    ruby: string[];
+} {
+    try {
+        const data = fs.readFileSync("./mise.toml");
+        const config = toml.parse(data.toString());
+        return config.tools;
+    } catch (parseErr) {
+        console.log("Error parsing TOML:", parseErr);
+    }
+}
+
+const languageVersions = getMiseConfig();
 
 // Install
 pipeline.addStep({
@@ -64,7 +82,7 @@ const languageTargets: Target[] = [
         key: "typescript",
         sdkLabel: "sdk-typescript",
         appLabel: "app-typescript",
-        versions: ["20", "21", "22", "23", "24", "25"],
+        versions: languageVersions["node"],
     },
     {
         icon: ":python:",
@@ -72,7 +90,7 @@ const languageTargets: Target[] = [
         key: "python",
         sdkLabel: "sdk-python",
         appLabel: "app-python",
-        versions: ["3.10", "3.11", "3.12", "3.13", "3.14"],
+        versions: languageVersions["python"],
     },
     {
         icon: ":go:",
@@ -80,7 +98,7 @@ const languageTargets: Target[] = [
         key: "go",
         sdkLabel: "sdk-go",
         appLabel: "app-go",
-        versions: ["1.24", "1.25"],
+        versions: languageVersions["go"],
     },
     {
         icon: ":ruby:",
@@ -88,7 +106,7 @@ const languageTargets: Target[] = [
         key: "ruby",
         sdkLabel: "sdk-ruby",
         appLabel: "app-ruby",
-        versions: ["3.2", "3.3", "3.4"],
+        versions: languageVersions["ruby"],
     },
 ];
 
@@ -104,7 +122,6 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: [
                     "mise trust",
-                    `nx install ${target.sdkLabel}`,
                     "nx gen:build",
                     `nx gen:types-${target.key}`,
                     "exit $(git diff --exit-code)",
@@ -116,17 +133,9 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: [
                     "mise trust",
-                    `mise use ${
-                        target.key === "typescript" ? "node" : target.key
-                    }@{{matrix}}`,
-                    `${
-                        target.key === "python"
-                            ? "pip install --no-cache-dir uv black && "
-                            : ""
-                    }nx install ${target.sdkLabel}`,
+                    `nx install ${target.sdkLabel}`,
                     `nx test ${target.sdkLabel}`,
                 ],
-                matrix: target.versions,
             },
             {
                 key: `${target.key}-build`,
@@ -134,11 +143,9 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: [
                     "mise trust",
-                    `mise use ${target.key}@{{matrix}}`,
                     `nx install ${target.sdkLabel}`,
                     `nx build ${target.sdkLabel}`,
                 ],
-                matrix: target.versions,
             },
             {
                 key: `${target.key}-docs`,
@@ -158,9 +165,20 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: [
                     "mise trust",
-                    `nx install ${target.appLabel}`,
+                    `mise install ${
+                        target.key === "typescript" ? "node" : target.key
+                    }@{{matrix}}`,
+                    `mise use --global ${
+                        target.key === "typescript" ? "node" : target.key
+                    }@{{matrix}}`,
+                    `${
+                        target.key === "python"
+                            ? "pip install --no-cache-dir uv black && "
+                            : ""
+                    }nx install ${target.appLabel}`,
                     `nx run ${target.appLabel}:run`,
                 ],
+                matrix: target.versions,
             },
         ],
     });
