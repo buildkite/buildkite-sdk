@@ -31,7 +31,7 @@
         "run": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": ["go version", "go run main.go"],
+                "commands": ["go run main.go"],
                 "cwd": "apps/go",
                 "parallel": false
             }

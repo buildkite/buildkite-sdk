@@ -20,20 +20,20 @@ RUN curl https://mise.run | sh
 # Install Node.js, Python, and Go.
 
 # Node.js version support: https://nodejs.org/en/about/previous-releases
-RUN mise install node@latest && \
-    mise use --global node@latest
+RUN mise install node@25 && \
+    mise use --global node@25
 
 # Python version support: https://devguide.python.org/versions/
-RUN mise install python@latest && \
-    mise use --global python@latest
+RUN mise install python@3.14 && \
+    mise use --global python@3.14
 
 # Go version support: https://endoflife.date/go
-RUN mise install go@latest && \
-    mise use --global go@latest
+RUN mise install go@1.25 && \
+    mise use --global go@1.25
 
 # Ruby version support: https://www.ruby-lang.org/en/downloads/branches/
-RUN mise install ruby@latest && \
-    mise use --global ruby@latest
+RUN mise install ruby@3.4 && \
+    mise use --global ruby@3.4
 
 # Install Python tools.
 RUN pip install --no-cache-dir uv black
