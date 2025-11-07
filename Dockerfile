@@ -26,8 +26,9 @@ RUN mise install node@20 && \
     mise install node@23 && \
     # Current LTS Version
     mise install node@24 && \
+    # Latest version
     mise install node@25 && \
-    mise use --global node@24
+    mise use --global node@25
 
 # Python version support: https://devguide.python.org/versions/
 RUN mise install python@3.10 && \
