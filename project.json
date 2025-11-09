@@ -106,6 +106,14 @@
                 "parallel": false
             }
         },
+        "gen:types": {
+            "dependsOn": [
+                "gen:build",
+                "gen:types-typescript",
+                "gen:types-python",
+                "gen:types-go"
+            ]
+        },
         "gen:pipeline": {
             "executor": "nx:run-commands",
             "options": {
