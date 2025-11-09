@@ -1,0 +1,497 @@
+{
+    "steps": [
+        {
+            "key": "install",
+            "label": ":test_tube: Install",
+            "plugins": [
+                {
+                    "docker#v5.11.0": {
+                        "image": "buildkite-sdk-tools:latest",
+                        "propagate-environment": true,
+                        "environment": [
+                            "GITHUB_TOKEN",
+                            "NPM_TOKEN",
+                            "PYPI_TOKEN",
+                            "GEM_HOST_API_KEY"
+                        ]
+                    }
+                },
+                {
+                    "rubygems-oidc#v0.2.0": {
+                        "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                    }
+                },
+                {
+                    "aws-assume-role-with-web-identity#v1.0.0": {
+                        "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                    }
+                },
+                {
+                    "aws-ssm#v1.0.0": {
+                        "parameters": {
+                            "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                            "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                            "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                        }
+                    }
+                },
+                {
+                    "artifacts#v1.9.2": {
+                        "upload": [
+                            "node_modules"
+                        ],
+                        "compressed": "node_modules.tgz"
+                    }
+                }
+            ],
+            "commands": [
+                "mise trust",
+                "npm install --ignore-scripts"
+            ]
+        },
+        {
+            "depends_on": "install",
+            "key": "typescript",
+            "group": ":typescript: Typescript",
+            "steps": [
+                {
+                    "key": "typescript-test",
+                    "label": ":test_tube: Test",
+                    "plugins": [
+                        {
+                            "docker#v5.11.0": {
+                                "image": "buildkite-sdk-tools:latest",
+                                "propagate-environment": true,
+                                "environment": [
+                                    "GITHUB_TOKEN",
+                                    "NPM_TOKEN",
+                                    "PYPI_TOKEN",
+                                    "GEM_HOST_API_KEY"
+                                ]
+                            }
+                        },
+                        {
+                            "rubygems-oidc#v0.2.0": {
+                                "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                            }
+                        },
+                        {
+                            "aws-assume-role-with-web-identity#v1.0.0": {
+                                "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                            }
+                        },
+                        {
+                            "aws-ssm#v1.0.0": {
+                                "parameters": {
+                                    "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                                    "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                                    "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                                }
+                            }
+                        },
+                        {
+                            "artifacts#v1.9.2": {
+                                "download": [
+                                    "node_modules"
+                                ],
+                                "compressed": "node_modules.tgz"
+                            }
+                        }
+                    ],
+                    "commands": [
+                        "mise trust",
+                        "nx install sdk-typescript",
+                        "nx test sdk-typescript"
+                    ]
+                },
+                {
+                    "key": "typescript-publish",
+                    "label": ":rocket: Publish",
+                    "depends_on": [
+                        "typescript-test"
+                    ],
+                    "plugins": [
+                        {
+                            "docker#v5.11.0": {
+                                "image": "buildkite-sdk-tools:latest",
+                                "propagate-environment": true,
+                                "environment": [
+                                    "GITHUB_TOKEN",
+                                    "NPM_TOKEN",
+                                    "PYPI_TOKEN",
+                                    "GEM_HOST_API_KEY"
+                                ]
+                            }
+                        },
+                        {
+                            "rubygems-oidc#v0.2.0": {
+                                "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                            }
+                        },
+                        {
+                            "aws-assume-role-with-web-identity#v1.0.0": {
+                                "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                            }
+                        },
+                        {
+                            "aws-ssm#v1.0.0": {
+                                "parameters": {
+                                    "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                                    "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                                    "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                                }
+                            }
+                        },
+                        {
+                            "artifacts#v1.9.2": {
+                                "download": [
+                                    "node_modules"
+                                ],
+                                "compressed": "node_modules.tgz"
+                            }
+                        }
+                    ],
+                    "commands": [
+                        "mise trust",
+                        "nx install sdk-typescript",
+                        "nx build sdk-typescript",
+                        "nx run sdk-typescript:publish"
+                    ]
+                }
+            ]
+        },
+        {
+            "depends_on": "install",
+            "key": "python",
+            "group": ":python: Python",
+            "steps": [
+                {
+                    "key": "python-test",
+                    "label": ":test_tube: Test",
+                    "plugins": [
+                        {
+                            "docker#v5.11.0": {
+                                "image": "buildkite-sdk-tools:latest",
+                                "propagate-environment": true,
+                                "environment": [
+                                    "GITHUB_TOKEN",
+                                    "NPM_TOKEN",
+                                    "PYPI_TOKEN",
+                                    "GEM_HOST_API_KEY"
+                                ]
+                            }
+                        },
+                        {
+                            "rubygems-oidc#v0.2.0": {
+                                "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                            }
+                        },
+                        {
+                            "aws-assume-role-with-web-identity#v1.0.0": {
+                                "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                            }
+                        },
+                        {
+                            "aws-ssm#v1.0.0": {
+                                "parameters": {
+                                    "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                                    "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                                    "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                                }
+                            }
+                        },
+                        {
+                            "artifacts#v1.9.2": {
+                                "download": [
+                                    "node_modules"
+                                ],
+                                "compressed": "node_modules.tgz"
+                            }
+                        }
+                    ],
+                    "commands": [
+                        "mise trust",
+                        "nx install sdk-python",
+                        "nx test sdk-python"
+                    ]
+                },
+                {
+                    "key": "python-publish",
+                    "label": ":rocket: Publish",
+                    "depends_on": [
+                        "python-test"
+                    ],
+                    "plugins": [
+                        {
+                            "docker#v5.11.0": {
+                                "image": "buildkite-sdk-tools:latest",
+                                "propagate-environment": true,
+                                "environment": [
+                                    "GITHUB_TOKEN",
+                                    "NPM_TOKEN",
+                                    "PYPI_TOKEN",
+                                    "GEM_HOST_API_KEY"
+                                ]
+                            }
+                        },
+                        {
+                            "rubygems-oidc#v0.2.0": {
+                                "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                            }
+                        },
+                        {
+                            "aws-assume-role-with-web-identity#v1.0.0": {
+                                "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                            }
+                        },
+                        {
+                            "aws-ssm#v1.0.0": {
+                                "parameters": {
+                                    "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                                    "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                                    "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                                }
+                            }
+                        },
+                        {
+                            "artifacts#v1.9.2": {
+                                "download": [
+                                    "node_modules"
+                                ],
+                                "compressed": "node_modules.tgz"
+                            }
+                        }
+                    ],
+                    "commands": [
+                        "mise trust",
+                        "nx install sdk-python",
+                        "nx build sdk-python",
+                        "nx run sdk-python:publish"
+                    ]
+                }
+            ]
+        },
+        {
+            "depends_on": "install",
+            "key": "go",
+            "group": ":go: Go",
+            "steps": [
+                {
+                    "key": "go-test",
+                    "label": ":test_tube: Test",
+                    "plugins": [
+                        {
+                            "docker#v5.11.0": {
+                                "image": "buildkite-sdk-tools:latest",
+                                "propagate-environment": true,
+                                "environment": [
+                                    "GITHUB_TOKEN",
+                                    "NPM_TOKEN",
+                                    "PYPI_TOKEN",
+                                    "GEM_HOST_API_KEY"
+                                ]
+                            }
+                        },
+                        {
+                            "rubygems-oidc#v0.2.0": {
+                                "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                            }
+                        },
+                        {
+                            "aws-assume-role-with-web-identity#v1.0.0": {
+                                "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                            }
+                        },
+                        {
+                            "aws-ssm#v1.0.0": {
+                                "parameters": {
+                                    "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                                    "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                                    "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                                }
+                            }
+                        },
+                        {
+                            "artifacts#v1.9.2": {
+                                "download": [
+                                    "node_modules"
+                                ],
+                                "compressed": "node_modules.tgz"
+                            }
+                        }
+                    ],
+                    "commands": [
+                        "mise trust",
+                        "nx install sdk-go",
+                        "nx test sdk-go"
+                    ]
+                },
+                {
+                    "key": "go-publish",
+                    "label": ":rocket: Publish",
+                    "depends_on": [
+                        "go-test"
+                    ],
+                    "plugins": [
+                        {
+                            "docker#v5.11.0": {
+                                "image": "buildkite-sdk-tools:latest",
+                                "propagate-environment": true,
+                                "environment": [
+                                    "GITHUB_TOKEN",
+                                    "NPM_TOKEN",
+                                    "PYPI_TOKEN",
+                                    "GEM_HOST_API_KEY"
+                                ]
+                            }
+                        },
+                        {
+                            "rubygems-oidc#v0.2.0": {
+                                "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                            }
+                        },
+                        {
+                            "aws-assume-role-with-web-identity#v1.0.0": {
+                                "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                            }
+                        },
+                        {
+                            "aws-ssm#v1.0.0": {
+                                "parameters": {
+                                    "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                                    "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                                    "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                                }
+                            }
+                        },
+                        {
+                            "artifacts#v1.9.2": {
+                                "download": [
+                                    "node_modules"
+                                ],
+                                "compressed": "node_modules.tgz"
+                            }
+                        }
+                    ],
+                    "commands": [
+                        "mise trust",
+                        "nx install sdk-go",
+                        "nx build sdk-go",
+                        "nx run sdk-go:publish"
+                    ]
+                }
+            ]
+        },
+        {
+            "depends_on": "install",
+            "key": "ruby",
+            "group": ":ruby: Ruby",
+            "steps": [
+                {
+                    "key": "ruby-test",
+                    "label": ":test_tube: Test",
+                    "plugins": [
+                        {
+                            "docker#v5.11.0": {
+                                "image": "buildkite-sdk-tools:latest",
+                                "propagate-environment": true,
+                                "environment": [
+                                    "GITHUB_TOKEN",
+                                    "NPM_TOKEN",
+                                    "PYPI_TOKEN",
+                                    "GEM_HOST_API_KEY"
+                                ]
+                            }
+                        },
+                        {
+                            "rubygems-oidc#v0.2.0": {
+                                "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                            }
+                        },
+                        {
+                            "aws-assume-role-with-web-identity#v1.0.0": {
+                                "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                            }
+                        },
+                        {
+                            "aws-ssm#v1.0.0": {
+                                "parameters": {
+                                    "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                                    "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                                    "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                                }
+                            }
+                        },
+                        {
+                            "artifacts#v1.9.2": {
+                                "download": [
+                                    "node_modules"
+                                ],
+                                "compressed": "node_modules.tgz"
+                            }
+                        }
+                    ],
+                    "commands": [
+                        "mise trust",
+                        "nx install sdk-ruby",
+                        "nx test sdk-ruby"
+                    ]
+                },
+                {
+                    "key": "ruby-publish",
+                    "label": ":rocket: Publish",
+                    "depends_on": [
+                        "ruby-test"
+                    ],
+                    "plugins": [
+                        {
+                            "docker#v5.11.0": {
+                                "image": "buildkite-sdk-tools:latest",
+                                "propagate-environment": true,
+                                "environment": [
+                                    "GITHUB_TOKEN",
+                                    "NPM_TOKEN",
+                                    "PYPI_TOKEN",
+                                    "GEM_HOST_API_KEY"
+                                ]
+                            }
+                        },
+                        {
+                            "rubygems-oidc#v0.2.0": {
+                                "role": "rg_oidc_akr_emf87k6zphtb7x7adyrk"
+                            }
+                        },
+                        {
+                            "aws-assume-role-with-web-identity#v1.0.0": {
+                                "role-arn": "arn:aws:iam::597088016345:role/marketing-website-production-pipeline-role"
+                            }
+                        },
+                        {
+                            "aws-ssm#v1.0.0": {
+                                "parameters": {
+                                    "NPM_TOKEN": "/prod/buildkite-sdk/npm-token",
+                                    "PYPI_TOKEN": "/prod/buildkite-sdk/pypi-token",
+                                    "GITHUB_TOKEN": "/prod/buildkite-sdk/github-token"
+                                }
+                            }
+                        },
+                        {
+                            "artifacts#v1.9.2": {
+                                "download": [
+                                    "node_modules"
+                                ],
+                                "compressed": "node_modules.tgz"
+                            }
+                        }
+                    ],
+                    "commands": [
+                        "mise trust",
+                        "nx install sdk-ruby",
+                        "nx build sdk-ruby",
+                        "nx run sdk-ruby:publish"
+                    ]
+                }
+            ]
+        }
+    ]
+}
