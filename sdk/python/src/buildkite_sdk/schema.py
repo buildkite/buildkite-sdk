@@ -248,6 +248,8 @@ CommandStepArgs = TypedDict('CommandStepArgs',{
     'priority': NotRequired['int'],
     # The conditions for retrying this step.
     'retry': NotRequired['CommandStepRetryArgs'],
+    # A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
+    'secrets': NotRequired['Secrets'],
     # The signature of the command step, generally injected by agents at pipeline upload
     'signature': NotRequired['CommandStepSignatureArgs'],
     # Whether this step should be skipped. Passing a string provides a reason for skipping this command
@@ -312,6 +314,8 @@ class CommandStep(BaseModel):
     priority: Optional[int] = None
     # The conditions for retrying this step.
     retry: Optional[CommandStepRetry] = None
+    # A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
+    secrets: Optional[Secrets] = None
     # The signature of the command step, generally injected by agents at pipeline upload
     signature: Optional[CommandStepSignature] = None
     # Whether this step should be skipped. Passing a string provides a reason for skipping this command
@@ -863,6 +867,10 @@ type PluginsObject = Dict[str, Any]
 
 # The instructional message displayed in the dialog box when the unblock step is activated
 type Prompt = str
+
+type SecretsObject = Dict[str, str]
+# A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
+type Secrets = Union[List[str],Dict[str, str]]
 
 SelectFieldArgs = TypedDict('SelectFieldArgs',{
     # The value of the option(s) that will be pre-selected in the dropdown

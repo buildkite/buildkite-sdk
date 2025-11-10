@@ -20,9 +20,9 @@ In v0.4.0 we introduced type generation from Buildkite's [Pipeline Schema](https
 
 To work on the SDK, you'll need current versions of the following tools:
 
-- [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
-- For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
-- For Ruby: [Bundler](https://bundler.io/)
+-   [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+-   For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
+-   For Ruby: [Bundler](https://bundler.io/)
 
 See `mise.toml` for details. (We also recommend [Mise](https://mise.jdx.dev/) for tool-version management.) If you're on a Mac, and you use [Homebrew](https://brew.sh/), you can run `brew bundle` and `mise install` to get all you need:
 
@@ -72,6 +72,28 @@ npm run docs:publish
 # Clear away build and test artifacts.
 npm run clean
 ```
+
+### Regenerating types after a schema change
+
+This SDK generates types from the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-schema). When changes are made to the pipeline-schema repository, you can regenerate the types by running:
+
+```bash
+# Regenerate the types for all languages.
+npm run types
+
+# Regenerate the types for a specific language.
+npm run types-ts
+npm run types-py
+npm run types-go
+```
+
+The type generator automatically fetches the latest schema from the `main` branch of the pipeline-schema repository. Generated types are then written to:
+
+-   `sdk/typescript/src/types/`
+-   `sdk/python/src/buildkite_sdk/schema.py`
+-   `sdk/go/sdk/buildkite/`
+
+Note that the type-generator binary (a Go program at `internal/gen/type-gen`) is automatically built when you run `npm run types`. If you need to rebuild that binary manually, run `npx nx gen:build`.
 
 ### Upgrading nx
 
