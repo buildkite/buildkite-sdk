@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Union, Literal, List, Dict, Any, Optional, TypedDict, NotRequired
 from pydantic import BaseModel, Field
 
-type Agents = Union[AgentsObject, AgentsList]
+type Agents = AgentsObject | AgentsList
 
 # Query rules to target specific agents in k=v format
 type AgentsList = List[str]
@@ -16,36 +16,23 @@ type AgentsObject = Dict[str, Any]
 type AllowDependencyFailure = Literal[True, False, "true", "false"]
 
 # A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
-type AllowedTeams = Union[str, List[str]]
+type AllowedTeams = str | List[str]
 
-AutomaticRetryArgs = TypedDict(
-    "AutomaticRetryArgs",
-    {
-        # The exit status number that will cause this job to retry
-        "exit_status": NotRequired[Union[Literal["*"], int, List[int]]],
-        # The number of times this job can be retried
-        "limit": NotRequired["int"],
-        # The exit signal, if any, that may be retried
-        "signal": NotRequired["str"],
-        # The exit signal reason, if any, that may be retried
-        "signal_reason": NotRequired[
-            Literal[
-                "*",
-                "none",
-                "agent_refused",
-                "agent_stop",
-                "cancel",
-                "process_run_error",
-                "signature_rejected",
-            ]
-        ],
-    },
-)
+AutomaticRetryArgs = TypedDict('AutomaticRetryArgs',{
+    # The exit status number that will cause this job to retry
+    'exit_status': NotRequired[Literal['*'] | int | List[int]],
+    # The number of times this job can be retried
+    'limit': NotRequired['int'],
+    # The exit signal, if any, that may be retried
+    'signal': NotRequired['str'],
+    # The exit signal reason, if any, that may be retried
+    'signal_reason': NotRequired[Literal['*','none','agent_refused','agent_stop','cancel','process_run_error','signature_rejected']],
 
+})
 
 class AutomaticRetry(BaseModel):
     # The exit status number that will cause this job to retry
-    exit_status: Optional[Union[Literal["*"], int, List[int]]] = None
+    exit_status: Optional[Literal['*'] | int | List[int]] = None
     # The number of times this job can be retried
     limit: Optional[int] = None
     # The exit signal, if any, that may be retried
@@ -149,7 +136,11 @@ class BlockStep(BaseModel):
 
 
 # Which branches will include this step in their builds
+<<<<<<< HEAD
 type Branches = Union[str, List[str]]
+=======
+type Branches = str | List[str]
+>>>>>>> 50e8283 (Regen python types)
 
 # Array of notification options for this step
 type BuildNotify = List[
@@ -196,7 +187,11 @@ class CacheObject(BaseModel):
 
 
 # The paths for the caches to be used in the step
+<<<<<<< HEAD
 type Cache = Union[str, List[str], CacheObject]
+=======
+type Cache = str | List[str] | CacheObject
+>>>>>>> 50e8283 (Regen python types)
 
 # Whether to cancel the job as soon as the build is marked as failing
 type CancelOnBuildFailing = Literal[True, False, "true", "false"]
@@ -247,92 +242,87 @@ class CommandStepSignature(BaseModel):
 
 
 # The signature of the command step, generally injected by agents at pipeline upload
-CommandStepSignatureArgs = TypedDict(
-    "CommandStepSignatureArgs",
-    {
-        # The algorithm used to generate the signature
-        "algorithm": NotRequired["str"],
-        # The fields that were signed to form the signature value
-        "signed_fields": NotRequired["List[str]"],
-        # The signature value, a JWS compact signature with a detached body
-        "value": NotRequired["str"],
-    },
-)
-CommandStepArgs = TypedDict(
-    "CommandStepArgs",
-    {
-        "agents": NotRequired["Agents"],
-        # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
-        "allow_dependency_failure": NotRequired["AllowDependencyFailure"],
-        # The glob path/s of artifacts to upload once this step has finished running
-        "artifact_paths": NotRequired["Union[str,List[str]]"],
-        # Which branches will include this step in their builds
-        "branches": NotRequired["Branches"],
-        # The paths for the caches to be used in the step
-        "cache": NotRequired["Cache"],
-        # Whether to cancel the job as soon as the build is marked as failing
-        "cancel_on_build_failing": NotRequired["CancelOnBuildFailing"],
-        # The commands to run on the agent
-        "command": NotRequired["CommandStepCommand"],
-        # The commands to run on the agent
-        "commands": NotRequired["CommandStepCommand"],
-        # The maximum number of jobs created from this step that are allowed to run at the same time. If you use this attribute, you must also define concurrency_group.
-        "concurrency": NotRequired["int"],
-        # A unique name for the concurrency group that you are creating with the concurrency attribute
-        "concurrency_group": NotRequired["str"],
-        # Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
-        "concurrency_method": NotRequired[Literal["ordered", "eager"]],
-        # The step keys for a step to depend on
-        "depends_on": NotRequired["DependsOn"],
-        # Environment variables for this step
-        "env": NotRequired["Env"],
-        # A unique identifier for a step, must not resemble a UUID
-        "id": NotRequired["str"],
-        # A unique identifier for a step, must not resemble a UUID
-        "identifier": NotRequired["str"],
-        # A boolean expression that omits the step when false
-        "if": NotRequired["If"],
-        # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-        "if_changed": NotRequired["str"],
-        # (Kubernetes stack only) The container image to use for this pipeline or step
-        "image": NotRequired["str"],
-        # A unique identifier for a step, must not resemble a UUID
-        "key": NotRequired["str"],
-        # The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
-        "label": NotRequired["str"],
-        "matrix": NotRequired["Matrix"],
-        # The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
-        "name": NotRequired["str"],
-        # Array of notification options for this step
-        "notify": NotRequired["CommandStepNotify"],
-        # The number of parallel jobs that will be created based on this step
-        "parallelism": NotRequired["int"],
-        "plugins": NotRequired["Plugins"],
-        # Priority of the job, higher priorities are assigned to agents
-        "priority": NotRequired["int"],
-        # The conditions for retrying this step.
-        "retry": NotRequired["CommandStepRetryArgs"],
-        # A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
-        "secrets": NotRequired["Secrets"],
-        # The signature of the command step, generally injected by agents at pipeline upload
-        "signature": NotRequired["CommandStepSignatureArgs"],
-        # Whether this step should be skipped. Passing a string provides a reason for skipping this command
-        "skip": NotRequired["Skip"],
-        # The conditions for marking the step as a soft-fail.
-        "soft_fail": NotRequired["SoftFail"],
-        # The number of minutes to time out a job
-        "timeout_in_minutes": NotRequired["int"],
-        "type": NotRequired[Literal["script", "command", "commands"]],
-    },
-)
+CommandStepSignatureArgs = TypedDict('CommandStepSignatureArgs',{
+    # The algorithm used to generate the signature
+    'algorithm': NotRequired['str'],
+    # The fields that were signed to form the signature value
+    'signed_fields': NotRequired['List[str]'],
+    # The signature value, a JWS compact signature with a detached body
+    'value': NotRequired['str'],
 
+})
+CommandStepArgs = TypedDict('CommandStepArgs',{
+    'agents': NotRequired['Agents'],
+    # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+    'allow_dependency_failure': NotRequired['AllowDependencyFailure'],
+    # The glob path/s of artifacts to upload once this step has finished running
+    'artifact_paths': NotRequired['str | List[str]'],
+    # Which branches will include this step in their builds
+    'branches': NotRequired['Branches'],
+    # The paths for the caches to be used in the step
+    'cache': NotRequired['Cache'],
+    # Whether to cancel the job as soon as the build is marked as failing
+    'cancel_on_build_failing': NotRequired['CancelOnBuildFailing'],
+    # The commands to run on the agent
+    'command': NotRequired['CommandStepCommand'],
+    # The commands to run on the agent
+    'commands': NotRequired['CommandStepCommand'],
+    # The maximum number of jobs created from this step that are allowed to run at the same time. If you use this attribute, you must also define concurrency_group.
+    'concurrency': NotRequired['int'],
+    # A unique name for the concurrency group that you are creating with the concurrency attribute
+    'concurrency_group': NotRequired['str'],
+    # Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
+    'concurrency_method': NotRequired[Literal['ordered','eager']],
+    # The step keys for a step to depend on
+    'depends_on': NotRequired['DependsOn'],
+    # Environment variables for this step
+    'env': NotRequired['Env'],
+    # A unique identifier for a step, must not resemble a UUID
+    'id': NotRequired['str'],
+    # A unique identifier for a step, must not resemble a UUID
+    'identifier': NotRequired['str'],
+    # A boolean expression that omits the step when false
+    'if': NotRequired['If'],
+    # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+    'if_changed': NotRequired['str'],
+    # (Kubernetes stack only) The container image to use for this pipeline or step
+    'image': NotRequired['str'],
+    # A unique identifier for a step, must not resemble a UUID
+    'key': NotRequired['str'],
+    # The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+    'label': NotRequired['str'],
+    'matrix': NotRequired['Matrix'],
+    # The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
+    'name': NotRequired['str'],
+    # Array of notification options for this step
+    'notify': NotRequired['CommandStepNotify'],
+    # The number of parallel jobs that will be created based on this step
+    'parallelism': NotRequired['int'],
+    'plugins': NotRequired['Plugins'],
+    # Priority of the job, higher priorities are assigned to agents
+    'priority': NotRequired['int'],
+    # The conditions for retrying this step.
+    'retry': NotRequired['CommandStepRetryArgs'],
+    # A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
+    'secrets': NotRequired['Secrets'],
+    # The signature of the command step, generally injected by agents at pipeline upload
+    'signature': NotRequired['CommandStepSignatureArgs'],
+    # Whether this step should be skipped. Passing a string provides a reason for skipping this command
+    'skip': NotRequired['Skip'],
+    # The conditions for marking the step as a soft-fail.
+    'soft_fail': NotRequired['SoftFail'],
+    # The number of minutes to time out a job
+    'timeout_in_minutes': NotRequired['int'],
+    'type': NotRequired[Literal['script','command','commands']],
+
+})
 
 class CommandStep(BaseModel):
     agents: Optional[Agents] = None
     # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
     allow_dependency_failure: Optional[AllowDependencyFailure] = None
     # The glob path/s of artifacts to upload once this step has finished running
-    artifact_paths: Optional[Union[str, List[str]]] = None
+    artifact_paths: Optional[str | List[str]] = None
     # Which branches will include this step in their builds
     branches: Optional[Branches] = None
     # The paths for the caches to be used in the step
@@ -400,34 +390,13 @@ class CommandStep(BaseModel):
 
 
 # Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
-type CommandStepAutomaticRetry = Union[
-    Literal[True, False, "true", "false"],
-    AutomaticRetryArgs,
-    AutomaticRetry,
-    AutomaticRetryList,
-]
+type CommandStepAutomaticRetry = Literal[True,False,'true','false'] | AutomaticRetryArgs | AutomaticRetry | AutomaticRetryList
 
 # The commands to run on the agent
-type CommandStepCommand = Union[List[str], str]
+type CommandStepCommand = List[str] | str
 
 # Whether to allow a job to be retried manually
-type CommandStepManualRetry = Union[
-    Literal[True, False, "true", "false"],
-    CommandStepManualRetryObjectArgs,
-    CommandStepManualRetryObject,
-]
-
-CommandStepManualRetryObjectArgs = TypedDict(
-    "CommandStepManualRetryObjectArgs",
-    {
-        # Whether or not this job can be retried manually
-        "allowed": NotRequired[Literal[True, False, "true", "false"]],
-        # Whether or not this job can be retried after it has passed
-        "permit_on_passed": NotRequired[Literal[True, False, "true", "false"]],
-        # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
-        "reason": NotRequired["str"],
-    },
-)
+type CommandStepManualRetry = Literal[True,False,'true','false'] | CommandStepManualRetryObjectArgs | CommandStepManualRetryObject
 
 
 class CommandStepManualRetryObject(BaseModel):
@@ -464,15 +433,7 @@ type CommandStepNotify = List[
 ]
 
 # The step keys for a step to depend on
-type DependsOn = Union[str, DependsOnList]
-
-DependsOnListObjectArgs = TypedDict(
-    "DependsOnListObjectArgs",
-    {
-        "allow_failure": NotRequired[Literal[True, False, "true", "false"]],
-        "step": NotRequired["str"],
-    },
-)
+type DependsOn = str | DependsOnList
 
 
 class DependsOnListObject(BaseModel):
@@ -683,7 +644,7 @@ type Key = str
 # The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
 type Label = str
 
-type Matrix = Union[MatrixElementList, MatrixObjectArgs, MatrixObject]
+type Matrix = MatrixElementList | MatrixObjectArgs | MatrixObject
 
 # An adjustment to a Build Matrix
 MatrixAdjustmentsArgs = TypedDict(
@@ -719,7 +680,7 @@ class MatrixAdjustments(BaseModel):
 # Build Matrix dimension element
 type MatrixAdjustmentsWithObject = Dict[str, str]
 
-type MatrixElement = Union[str, int, bool]
+type MatrixElement = str | int | bool
 
 type MatrixElementList = List[Union[str, int, bool]]
 
@@ -747,6 +708,8 @@ class MatrixObject(BaseModel):
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
         return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
+type MatrixSetupObject = Dict[str, List[str | int | bool]]
+type MatrixSetup = MatrixElementList | Dict[str, List[str | int | bool]]
 
 type MatrixSetupObject = Dict[str, List[Union[str, int, bool]]]
 type MatrixSetup = Union[MatrixElementList, Dict[str, List[Union[str, int, bool]]]]
@@ -986,22 +949,17 @@ class NotifyPagerduty(BaseModel):
         return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 
-type NotifySimple = Literal["github_check", "github_commit_status"]
+NotifySlackArgs = TypedDict('NotifySlackArgs',{
+    # A boolean expression that omits the step when false
+    'if': NotRequired['If'],
+    'slack': NotRequired['str | NotifySlackObjectArgs'],
 
-NotifySlackArgs = TypedDict(
-    "NotifySlackArgs",
-    {
-        # A boolean expression that omits the step when false
-        "if": NotRequired["If"],
-        "slack": NotRequired["Union[str,NotifySlackObjectArgs]"],
-    },
-)
-
+})
 
 class NotifySlack(BaseModel):
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
-    slack: Optional[Union[str, NotifySlackObject]] = None
+    step_if: Optional[If] = Field(serialization_alias='if', default=None)
+    slack: Optional[str | NotifySlackObject] = None
 
     @classmethod
     def from_dict(cls, data: NotifySlackArgs) -> NotifySlack:
@@ -1055,38 +1013,7 @@ class NotifyWebhook(BaseModel):
         return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 
-# A list of steps
-type PipelineSteps = List[
-    Union[
-        BlockStepArgs,
-        BlockStep,
-        NestedBlockStepArgs,
-        NestedBlockStep,
-        StringBlockStep,
-        InputStepArgs,
-        InputStep,
-        NestedInputStepArgs,
-        NestedInputStep,
-        StringInputStep,
-        CommandStepArgs,
-        CommandStep,
-        NestedCommandStepArgs,
-        NestedCommandStep,
-        WaitStepArgs,
-        WaitStep,
-        NestedWaitStepArgs,
-        NestedWaitStep,
-        StringWaitStep,
-        TriggerStepArgs,
-        TriggerStep,
-        NestedTriggerStepArgs,
-        NestedTriggerStep,
-        GroupStepArgs,
-        GroupStep,
-    ]
-]
-
-type Plugins = Union[PluginsList, PluginsObject]
+type Plugins = PluginsList | PluginsObject
 
 type PluginsListObject = Dict[str, Any]
 # Array of plugins for this step
@@ -1100,31 +1027,28 @@ type Prompt = str
 
 type SecretsObject = Dict[str, str]
 # A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
-type Secrets = Union[List[str], Dict[str, str]]
+type Secrets = List[str] | Dict[str, str]
 
-SelectFieldArgs = TypedDict(
-    "SelectFieldArgs",
-    {
-        # The value of the option(s) that will be pre-selected in the dropdown
-        "default": NotRequired["Union[str,List[str]]"],
-        # The explanatory text that is shown after the label
-        "hint": NotRequired["str"],
-        # The meta-data key that stores the field's input
-        "key": "str",
-        # Whether more than one option may be selected
-        "multiple": NotRequired[Literal[True, False, "true", "false"]],
-        "options": "List[SelectFieldOptionArgs]",
-        # Whether the field is required for form submission
-        "required": NotRequired[Literal[True, False, "true", "false"]],
-        # The text input name
-        "select": NotRequired["str"],
-    },
-)
+SelectFieldArgs = TypedDict('SelectFieldArgs',{
+    # The value of the option(s) that will be pre-selected in the dropdown
+    'default': NotRequired['str | List[str]'],
+    # The explanatory text that is shown after the label
+    'hint': NotRequired['str'],
+    # The meta-data key that stores the field's input
+    'key': 'str',
+    # Whether more than one option may be selected
+    'multiple': NotRequired[Literal[True,False,'true','false']],
+    'options': 'List[SelectFieldOptionArgs]',
+    # Whether the field is required for form submission
+    'required': NotRequired[Literal[True,False,'true','false']],
+    # The text input name
+    'select': NotRequired['str'],
 
+})
 
 class SelectField(BaseModel):
     # The value of the option(s) that will be pre-selected in the dropdown
-    default: Optional[Union[str, List[str]]] = None
+    default: Optional[str | List[str]] = None
     # The explanatory text that is shown after the label
     hint: Optional[str] = None
     # The meta-data key that stores the field's input
@@ -1179,10 +1103,10 @@ class SelectFieldOption(BaseModel):
 
 
 # Whether this step should be skipped. Passing a string provides a reason for skipping this command
-type Skip = Union[bool, str]
+type Skip = bool | str
 
 # The conditions for marking the step as a soft-fail.
-type SoftFail = Union[Literal[True, False, "true", "false"], SoftFailList]
+type SoftFail = Literal[True,False,'true','false'] | SoftFailList
 
 type SoftFailList = List[Union[SoftFailObject, SoftFailObjectArgs]]
 
@@ -1194,10 +1118,15 @@ SoftFailObjectArgs = TypedDict(
     },
 )
 
+SoftFailObjectArgs = TypedDict('SoftFailObjectArgs',{
+    # The exit status number that will cause this job to soft-fail
+    'exit_status': NotRequired[Literal['*'] | int],
+
+})
 
 class SoftFailObject(BaseModel):
     # The exit status number that will cause this job to soft-fail
-    exit_status: Optional[Union[Literal["*"], int]] = None
+    exit_status: Optional[Literal['*'] | int] = None
 
     @classmethod
     def from_dict(cls, data: SoftFailObjectArgs) -> SoftFailObject:

@@ -124,7 +124,10 @@ languageTargets.forEach((target) => {
                     "mise trust",
                     "nx gen:build",
                     `nx gen:types-${target.key}`,
-                    "exit $(git diff --exit-code)",
+                    "export DIFF=$(git diff --exit-code)",
+                    "echo 'Debug'",
+                    "echo $DIFF",
+                    "exit $($DIFF)",
                 ],
             },
             {
