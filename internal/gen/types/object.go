@@ -325,8 +325,8 @@ func (o Object) Python() (string, error) {
 		}
 
 		if name == "with" {
-			pyTypedDict.AddItem("with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", val.GetDescription(), true, false)
-			pyClass.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", val.GetDescription(), true, false)
+			pyTypedDict.AddItem("with", "MatrixElementList | MatrixAdjustmentsWithObject", "", "with", val.GetDescription(), true, false)
+			pyClass.AddItem("matrix_with", "MatrixElementList | MatrixAdjustmentsWithObject", "", "with", val.GetDescription(), true, false)
 			continue
 		}
 

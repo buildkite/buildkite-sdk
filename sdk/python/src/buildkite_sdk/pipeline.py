@@ -1,67 +1,71 @@
-from .schema import (
-    Env,
-    Agents,
-    BuildNotify,
-    Image,
-    BlockStepArgs,
-    BlockStep,
-    NestedBlockStepArgs,
-    NestedBlockStep,
-    StringBlockStep,
-    InputStepArgs,
-    InputStep,
-    NestedInputStepArgs,
-    NestedInputStep,
-    StringInputStep,
-    CommandStepArgs,
-    CommandStep,
-    NestedCommandStepArgs,
-    NestedCommandStep,
-    WaitStepArgs,
-    WaitStep,
-    NestedWaitStepArgs,
-    NestedWaitStep,
-    StringWaitStep,
-    TriggerStepArgs,
-    TriggerStep,
-    NestedTriggerStepArgs,
-    NestedTriggerStep,
-    GroupStepArgs,
-    GroupStep,
-    Secrets,
-)
-from typing import Optional, List, Any, TypedDict, NotRequired, Union
-from pydantic import BaseModel
-import json
-import yaml
+from __future__ import annotations
 
-type Step = Union[
-    BlockStepArgs,
+import json
+from typing import Any, List, NotRequired, Optional, TypedDict, Union
+
+import yaml
+from pydantic import BaseModel
+
+from .schema import (
+    Agents,
     BlockStep,
-    NestedBlockStepArgs,
-    NestedBlockStep,
-    StringBlockStep,
-    InputStepArgs,
-    InputStep,
-    NestedInputStepArgs,
-    NestedInputStep,
-    StringInputStep,
-    CommandStepArgs,
+    BlockStepArgs,
+    BuildNotify,
     CommandStep,
-    NestedCommandStepArgs,
-    NestedCommandStep,
-    WaitStepArgs,
-    WaitStep,
-    NestedWaitStepArgs,
-    NestedWaitStep,
-    StringWaitStep,
-    TriggerStepArgs,
-    TriggerStep,
-    NestedTriggerStepArgs,
-    NestedTriggerStep,
-    GroupStepArgs,
+    CommandStepArgs,
+    Env,
     GroupStep,
-]
+    GroupStepArgs,
+    Image,
+    InputStep,
+    InputStepArgs,
+    NestedBlockStep,
+    NestedBlockStepArgs,
+    NestedCommandStep,
+    NestedCommandStepArgs,
+    NestedInputStep,
+    NestedInputStepArgs,
+    NestedTriggerStep,
+    NestedTriggerStepArgs,
+    NestedWaitStep,
+    NestedWaitStepArgs,
+    Secrets,
+    StringBlockStep,
+    StringInputStep,
+    StringWaitStep,
+    TriggerStep,
+    TriggerStepArgs,
+    WaitStep,
+    WaitStepArgs,
+)
+
+type Step = (
+    BlockStepArgs
+    | BlockStep
+    | NestedBlockStepArgs
+    | NestedBlockStep
+    | StringBlockStep
+    | InputStepArgs
+    | InputStep
+    | NestedInputStepArgs
+    | NestedInputStep
+    | StringInputStep
+    | CommandStepArgs
+    | CommandStep
+    | NestedCommandStepArgs
+    | NestedCommandStep
+    | WaitStepArgs
+    | WaitStep
+    | NestedWaitStepArgs
+    | NestedWaitStep
+    | StringWaitStep
+    | TriggerStepArgs
+    | TriggerStep
+    | NestedTriggerStepArgs
+    | NestedTriggerStep
+    | GroupStepArgs
+    | GroupStep
+)
 
 
 class PipelineArgs(TypedDict):
