@@ -230,7 +230,7 @@ func (u Union) Python() (string, error) {
 		codeBlock.AddLines(fmt.Sprintf("# %s", u.Description))
 	}
 
-	codeBlock.AddLines(fmt.Sprintf("type %s = Union[%s]", u.Name.ToTitleCase(), strings.Join(parts, ",")))
+	codeBlock.AddLines(fmt.Sprintf("type %s = %s", u.Name.ToTitleCase(), strings.Join(parts, " | ")))
 	return codeBlock.String(), nil
 }
 
@@ -244,6 +244,6 @@ func (u Union) PythonClassType() string {
 	for i, typ := range u.TypeIdentifiers {
 		parts[i] = typ.PythonClassType()
 	}
-	codeBlock.AddLines(fmt.Sprintf("Union[%s]", strings.Join(parts, ",")))
+	codeBlock.AddLines(strings.Join(parts, " | "))
 	return codeBlock.String()
 }
