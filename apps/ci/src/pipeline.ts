@@ -167,7 +167,7 @@ languageTargets.forEach((target) => {
                 depends_on: [`${target.key}-test`, `${target.key}-build`],
                 plugins: languagePlugins,
                 commands: [
-                    "mise trust",
+                    "mise trust mise.apps.toml",
                     `mise install ${
                         target.key === "typescript" ? "node" : target.key
                     }@{{matrix}}`,
