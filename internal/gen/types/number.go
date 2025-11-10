@@ -72,7 +72,7 @@ func (n Number) Python() (string, error) {
 		block.AddLines(fmt.Sprintf("# %s", n.Description))
 	}
 
-	block.AddLines(fmt.Sprintf("type %s = int", n.Name.ToTitleCase()))
+	block.AddLines(fmt.Sprintf("%s = int", n.Name.ToTitleCase()))
 	return block.String(), nil
 }
 

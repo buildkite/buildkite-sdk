@@ -193,7 +193,7 @@ func (e Enum) Python() (string, error) {
 		block.AddLines(fmt.Sprintf("# %s", e.Description))
 	}
 
-	block.AddLines(fmt.Sprintf("type %s = %s", e.Name.ToTitleCase(), e.PythonClassType()))
+	block.AddLines(fmt.Sprintf("%s = %s", e.Name.ToTitleCase(), e.PythonClassType()))
 	return block.String(), nil
 }
 

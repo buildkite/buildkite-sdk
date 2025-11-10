@@ -230,7 +230,7 @@ func (u Union) Python() (string, error) {
 		codeBlock.AddLines(fmt.Sprintf("# %s", u.Description))
 	}
 
-	codeBlock.AddLines(fmt.Sprintf("type %s = %s", u.Name.ToTitleCase(), strings.Join(parts, " | ")))
+	codeBlock.AddLines(fmt.Sprintf("%s = %s", u.Name.ToTitleCase(), strings.Join(parts, " | ")))
 	return codeBlock.String(), nil
 }
 

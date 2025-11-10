@@ -211,8 +211,9 @@ func (p PipelineSchemaGenerator) ResolveReference(ref schema.PropertyReferenceSt
 	return currentDef
 }
 
-func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property schema.PropertyDefinition) (Value, error) {
+func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property schema.PropertyDefinition) (Value, []string, error) {
 	propertyName := NewPropertyName(name)
+	dependencies := []string{}
 
 	// Union
 	if property.OneOf != nil {
@@ -229,54 +230,57 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 			Description: property.Description,
 			Values:      property.Enum,
 			Default:     property.Default,
-		}, nil
+		}, dependencies, nil
 	}
 
 	// Array
 	if property.Type == "array" {
 		if property.Items.AnyOf != nil {
-			union, err := p.UnionDefinitionToUnionValue(propertyName, property.Description, property.Items.AnyOf)
+			union, unionDependencies, err := p.UnionDefinitionToUnionValue(propertyName, property.Description, property.Items.AnyOf)
 			if err != nil {
-				return Union{}, fmt.Errorf("converting array union defintion for union [%s]: %v", propertyName.Value, err)
+				return Union{}, dependencies, fmt.Errorf("converting array union defintion for union [%s]: %v", propertyName.Value, err)
 			}
 
+			dependencies = append(dependencies, unionDependencies...)
 			return Array{
 				Name:        propertyName,
 				Description: property.Description,
 				Type:        union,
-			}, nil
+			}, unionDependencies, nil
 		}
 		if property.Items.OneOf != nil {
-			union, err := p.UnionDefinitionToUnionValue(propertyName, property.Description, property.Items.OneOf)
+			union, unionDependencies, err := p.UnionDefinitionToUnionValue(propertyName, property.Description, property.Items.OneOf)
 			if err != nil {
-				return Union{}, fmt.Errorf("converting array union defintion for union [%s]: %v", propertyName.Value, err)
+				return Union{}, dependencies, fmt.Errorf("converting array union defintion for union [%s]: %v", propertyName.Value, err)
 			}
 
+			dependencies = append(dependencies, unionDependencies...)
 			return Array{
 				Name:        propertyName,
 				Description: property.Description,
 				Type:        union,
-			}, nil
+			}, dependencies, nil
 		}
 
 		if property.Items.Ref != "" {
 			if property.Items.Ref.IsNested() {
-				return nil, fmt.Errorf("nested refs are not supported")
+				return nil, dependencies, fmt.Errorf("nested refs are not supported")
 			}
 
 			refName := property.Items.Ref.Name()
 			property := p.ResolveReference(property.Items.Ref)
-			arrayType, err := p.PropertyDefinitionToValue(refName, property)
+			arrayType, _, err := p.PropertyDefinitionToValue(refName, property)
 			if err != nil {
-				return nil, fmt.Errorf("finding ref def: %v", err)
+				return nil, dependencies, fmt.Errorf("finding ref def: %v", err)
 			}
 
+			dependencies = append(dependencies, refName)
 			return Array{
 				Name:        propertyName,
 				Description: property.Description,
 				Type:        arrayType,
 				Reference:   true,
-			}, nil
+			}, dependencies, nil
 		}
 
 		switch property.Items.Type {
@@ -285,13 +289,13 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 				Name:        propertyName,
 				Description: property.Description,
 				Type:        String{},
-			}, nil
+			}, dependencies, nil
 		case "integer":
 			return Array{
 				Name:        propertyName,
 				Description: property.Description,
 				Type:        Number{},
-			}, nil
+			}, dependencies, nil
 		default:
 			panic(fmt.Sprintf("unsupported array type [%s]", propertyName.Value))
 		}
@@ -303,11 +307,12 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 		for name, prop := range property.Properties {
 			if prop.Ref != "" {
 				refProp := p.ResolveReference(prop.Ref)
-				refVal, err := p.PropertyDefinitionToValue(name, refProp)
+				refVal, objDependencies, err := p.PropertyDefinitionToValue(name, refProp)
 				if err != nil {
-					return nil, fmt.Errorf("converting reference for [%s]: %v", propertyName.Value, err)
+					return nil, dependencies, fmt.Errorf("converting reference for [%s]: %v", propertyName.Value, err)
 				}
 
+				dependencies = append(dependencies, objDependencies...)
 				properties.Set(name, PropertyReference{
 					Name: name,
 					Ref:  prop.Ref,
@@ -328,13 +333,15 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 				propName = fmt.Sprintf("%s%s", propertyName.Value, utils.DashCaseToTitleCase(name))
 			}
 
-			objProp, err := p.PropertyDefinitionToValue(
+			objProp, objDependencies, err := p.PropertyDefinitionToValue(
 				propName,
 				prop,
 			)
 			if err != nil {
-				return nil, fmt.Errorf("converting object property to value [%s]: %v", propertyName.Value, err)
+				return nil, dependencies, fmt.Errorf("converting object property to value [%s]: %v", propertyName.Value, err)
 			}
+
+			dependencies = append(dependencies, objDependencies...)
 			properties.Set(name, objProp)
 		}
 		properties.SortKeys(sort.Strings)
@@ -346,9 +353,9 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 				Items:       property.AdditionalProperties.Items,
 			}
 
-			additionalProperties, err := p.PropertyDefinitionToValue("", propDef)
+			additionalProperties, _, err := p.PropertyDefinitionToValue("", propDef)
 			if err != nil {
-				return nil, fmt.Errorf("determing type of additional properties: %v", err)
+				return nil, dependencies, fmt.Errorf("determing type of additional properties: %v", err)
 			}
 
 			return Object{
@@ -357,7 +364,7 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 				Properties:           properties,
 				AdditionalProperties: &additionalProperties,
 				Required:             property.Required,
-			}, nil
+			}, dependencies, nil
 		}
 
 		return Object{
@@ -365,7 +372,7 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 			Description: property.Description,
 			Properties:  properties,
 			Required:    property.Required,
-		}, nil
+		}, dependencies, nil
 	}
 
 	// String
@@ -373,7 +380,7 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 		return String{
 			Name:        propertyName,
 			Description: property.Description,
-		}, nil
+		}, dependencies, nil
 	}
 
 	// Number
@@ -381,7 +388,7 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 		return Number{
 			Name:        propertyName,
 			Description: property.Description,
-		}, nil
+		}, dependencies, nil
 	}
 
 	// Boolean
@@ -389,14 +396,15 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 		return Boolean{
 			Name:        propertyName,
 			Description: property.Description,
-		}, nil
+		}, dependencies, nil
 	}
 
-	return nil, fmt.Errorf("type for [%s] has not been implemented", name)
+	return nil, dependencies, fmt.Errorf("type for [%s] has not been implemented", name)
 }
 
-func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName PropertyName, description string, items []schema.PropertyDefinition) (Union, error) {
+func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName PropertyName, description string, items []schema.PropertyDefinition) (Union, []string, error) {
 	var typeIdentifiers []Value
+	dependencies := []string{}
 	for _, item := range items {
 		// Skip Null
 		if item.Type == "null" {
@@ -407,11 +415,12 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 		if item.Ref != "" {
 			refName := item.Ref.Name()
 			refDef := p.ResolveReference(item.Ref)
-			refTyp, err := p.PropertyDefinitionToValue(refName, refDef)
+			refTyp, _, err := p.PropertyDefinitionToValue(refName, refDef)
 			if err != nil {
-				return Union{}, fmt.Errorf("looking up reference type: %v", err)
+				return Union{}, dependencies, fmt.Errorf("looking up reference type: %v", err)
 			}
 
+			dependencies = append(dependencies, string(item.Ref.Name()))
 			typeIdentifiers = append(typeIdentifiers, PropertyReference{
 				Name: refName,
 				Ref:  item.Ref,
@@ -435,12 +444,12 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 		if item.Type == "object" {
 			properties := orderedmap.New()
 			for name, prop := range item.Properties {
-				objProp, err := p.PropertyDefinitionToValue(
+				objProp, _, err := p.PropertyDefinitionToValue(
 					name,
 					prop,
 				)
 				if err != nil {
-					return Union{}, fmt.Errorf("converting object property to value [%s]: %v", propertyName.Value, err)
+					return Union{}, dependencies, fmt.Errorf("converting object property to value [%s]: %v", propertyName.Value, err)
 				}
 				properties.Set(name, objProp)
 			}
@@ -453,9 +462,9 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 					Items:       item.AdditionalProperties.Items,
 				}
 
-				additionalProperties, err := p.PropertyDefinitionToValue("", propDef)
+				additionalProperties, _, err := p.PropertyDefinitionToValue("", propDef)
 				if err != nil {
-					return Union{}, fmt.Errorf("determing type of additional properties: %v", err)
+					return Union{}, dependencies, fmt.Errorf("determing type of additional properties: %v", err)
 				}
 
 				typeIdentifiers = append(typeIdentifiers, Object{
@@ -478,11 +487,12 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 		// Array
 		if item.Type == "array" {
 			if item.Items.AnyOf != nil {
-				union, err := p.UnionDefinitionToUnionValue(propertyName, item.Description, item.Items.AnyOf)
+				union, unionDependencies, err := p.UnionDefinitionToUnionValue(propertyName, item.Description, item.Items.AnyOf)
 				if err != nil {
-					return Union{}, fmt.Errorf("converting array union defintion for union [%s]: %v", propertyName.Value, err)
+					return Union{}, dependencies, fmt.Errorf("converting array union defintion for union [%s]: %v", propertyName.Value, err)
 				}
 
+				dependencies = append(dependencies, unionDependencies...)
 				typeIdentifiers = append(typeIdentifiers, Array{
 					Name: propertyName,
 					Type: union,
@@ -490,11 +500,12 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 				continue
 			}
 			if item.Items.OneOf != nil {
-				union, err := p.UnionDefinitionToUnionValue(propertyName, item.Description, item.Items.OneOf)
+				union, unionDependencies, err := p.UnionDefinitionToUnionValue(propertyName, item.Description, item.Items.OneOf)
 				if err != nil {
-					return Union{}, fmt.Errorf("converting array union defintion for union [%s]: %v", propertyName.Value, err)
+					return Union{}, dependencies, fmt.Errorf("converting array union defintion for union [%s]: %v", propertyName.Value, err)
 				}
 
+				dependencies = append(dependencies, unionDependencies...)
 				typeIdentifiers = append(typeIdentifiers, Array{
 					Name: propertyName,
 					Type: union,
@@ -504,18 +515,19 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 
 			if item.Items.Ref != "" {
 				if item.Items.Ref.IsNested() {
-					return Union{}, fmt.Errorf("nested refs are not supported")
+					return Union{}, dependencies, fmt.Errorf("nested refs are not supported")
 				}
 
 				refName := item.Items.Ref.Name()
 				val, _ := p.Definitions.Get(refName)
 				property := val.(schema.PropertyDefinition)
 
-				arrayType, err := p.PropertyDefinitionToValue(refName, property)
+				arrayType, _, err := p.PropertyDefinitionToValue(refName, property)
 				if err != nil {
-					return Union{}, fmt.Errorf("finding ref def: %v", err)
+					return Union{}, dependencies, fmt.Errorf("finding ref def: %v", err)
 				}
 
+				dependencies = append(dependencies, string(item.Items.Ref.Name()))
 				typeIdentifiers = append(typeIdentifiers, Array{
 					Name: NewPropertyName(refName),
 					Type: arrayType,
@@ -565,14 +577,14 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 			continue
 		}
 
-		return Union{}, fmt.Errorf("union type not implemented")
+		return Union{}, dependencies, fmt.Errorf("union type not implemented")
 	}
 
 	return Union{
 		Name:            propertyName,
 		Description:     description,
 		TypeIdentifiers: typeIdentifiers,
-	}, nil
+	}, dependencies, nil
 }
 
 type Value interface {

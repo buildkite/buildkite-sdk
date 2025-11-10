@@ -39,7 +39,7 @@ from .schema import (
     WaitStepArgs,
 )
 
-type Step = (
+Step = (
     BlockStepArgs
     | BlockStep
     | NestedBlockStepArgs
@@ -93,16 +93,17 @@ class Pipeline(BaseModel):
         self.secrets = secrets
 
     def add_agent(self, key: str, value: Any):
-        if self.agents == None:
+        if self.agents is None:
             self.agents = {}
 
         if isinstance(self.agents, List):
             self.agents.append(f"{key}={value}")
-        else:
-            self.agents[key] = value
+            return
+
+        self.agents[key] = value
 
     def add_environment_variable(self, key: str, value: Any):
-        if self.env == None:
+        if self.env is None:
             self.env = {}
         self.env[key] = value
 

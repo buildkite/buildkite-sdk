@@ -16,7 +16,7 @@ func generateGoTypes(
 		val, _ := generator.Definitions.Get(name)
 		prop := val.(schema.PropertyDefinition)
 
-		property, err := generator.PropertyDefinitionToValue(name, prop)
+		property, _, err := generator.PropertyDefinitionToValue(name, prop)
 		if err != nil {
 			return fmt.Errorf("converting property definition to a value: %v", err)
 		}
