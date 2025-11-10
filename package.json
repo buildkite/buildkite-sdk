@@ -64,7 +64,8 @@
     "workspaces": [
         "apps/**",
         "sdk/**",
-        "infra"
+        "infra",
+        "ci"
     ],
     "dependencies": {
         "@octokit/rest": "^21.0.2",
