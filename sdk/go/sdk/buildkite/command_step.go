@@ -111,6 +111,8 @@ type CommandStep struct {
 	Priority *int `json:"priority,omitempty"`
 	// The conditions for retrying this step.
 	Retry *CommandStepRetry `json:"retry,omitempty"`
+	// A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
+	Secrets *Secrets `json:"secrets,omitempty"`
 	// The signature of the command step, generally injected by agents at pipeline upload
 	Signature *CommandStepSignature `json:"signature,omitempty"`
 	// Whether this step should be skipped. Passing a string provides a reason for skipping this command

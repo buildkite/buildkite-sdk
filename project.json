@@ -111,18 +111,14 @@
             "options": {
                 "commands": []
             },
-            "dependsOn": [
-                "ci:run:pipeline"
-            ]
+            "dependsOn": ["ci:run:pipeline"]
         },
         "gen:pipeline-release": {
             "executor": "nx:run-commands",
             "options": {
                 "commands": []
             },
-            "dependsOn": [
-                "ci:run:release-pipeline"
-            ]
+            "dependsOn": ["ci:run:release-pipeline"]
         },
         "build:all": {
             "dependsOn": [

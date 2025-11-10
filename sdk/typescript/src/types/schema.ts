@@ -260,6 +260,10 @@ export interface CommandStep {
         manual?: CommandStepManualRetry;
     };
     /**
+     * A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
+     */
+    secrets?: Secrets;
+    /**
      * The signature of the command step, generally injected by agents at pipeline upload
      */
     signature?: {
@@ -691,6 +695,11 @@ export type PluginsObject = Record<string, any>;
  */
 export type Prompt = string;
 
+/**
+ * A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
+ */
+export type Secrets = string[] | Record<string, string>;
+
 export interface SelectField {
     /**
      * The value of the option(s) that will be pre-selected in the dropdown
@@ -941,5 +950,6 @@ export interface BuildkitePipeline {
     env?: Env;
     image?: Image;
     notify?: BuildNotify;
+    secrets?: Secrets;
     steps?: PipelineSteps;
 }

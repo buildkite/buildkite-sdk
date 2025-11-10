@@ -58,9 +58,17 @@ func (p *PropertyAdditionalProperties) UnmarshalJSON(data []byte) error {
 			return fmt.Errorf("unmarhsaling additional properties: %v", err)
 		}
 
+		var typeStr, descStr string
+		if t, ok := obj["type"].(string); ok {
+			typeStr = t
+		}
+		if d, ok := obj["description"].(string); ok {
+			descStr = d
+		}
+
 		*p = PropertyAdditionalProperties{
-			Type:        obj["type"].(string),
-			Description: obj["description"].(string),
+			Type:        typeStr,
+			Description: descStr,
 			Items:       items,
 		}
 		return nil
