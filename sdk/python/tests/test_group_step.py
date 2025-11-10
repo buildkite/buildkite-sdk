@@ -1,44 +1,357 @@
-from buildkite_sdk import Pipeline, GroupStep, CommandStep, WaitStep
-import json
+from buildkite_sdk import Pipeline, GroupStep, GroupStepArgs, CommandStep, WaitStep, NestedWaitStep, InputStep, NestedInputStep, NotifyEmail
+from .utils import TestRunner
 
-def test_simple_group_step():
-    pipeline = Pipeline()
-    pipeline.add_step(GroupStep(
-        group="my-group",
-        steps=[
-            CommandStep(commands="command1"),
-            WaitStep(),
-            CommandStep(commands="command2")
-        ]
-    ))
+class TestGroupStepNestingTypesClass(TestRunner):
+    def test_field(self):
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(group='Tests', steps=[CommandStep(command='test')])
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [{'group': 'Tests', 'steps': [{'command': 'test'}]}]})
 
-    expected = {"steps": [{
-        "group": "my-group",
-        "steps": [
-            {"commands": "command1"},
-            {"wait": "~"},
-            {"commands": "command2"},
-        ],
-    }]}
-    assert pipeline.to_json() == json.dumps(expected, indent="    ")
+    def test_label(self):
+        expected: GroupStepArgs = {
+            'group': '~',
+            'label': 'Tests',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(group='~', label='Tests', steps=[CommandStep(command='test')])
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
 
-def test_group_step_typed_dict():
-    pipeline = Pipeline()
-    pipeline.add_step({
-        "group":"my-group",
-        "steps": [
-            { "commands": "command1" },
-            { "wait": "~" },
-            { "commands": "command2" },
-        ],
-    })
+class TestGroupStepNestingTypesDict(TestRunner):
+    def test_field(self):
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict({'group': 'Tests', 'steps': [{'command': 'test'}]})
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [{'group': 'Tests', 'steps': [{'command': 'test'}]}]})
 
-    expected = {"steps": [{
-        "group": "my-group",
-        "steps": [
-            {"commands": "command1"},
-            {"wait": "~"},
-            {"commands": "command2"},
-        ],
-    }]}
-    assert pipeline.to_json() == json.dumps(expected, indent="    ")
+    def test_label(self):
+        expected: GroupStepArgs = {
+            'group': '~',
+            'label': 'Tests',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+class TestGroupStepClass(TestRunner):
+    def test_id(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'id': 'id',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(group='Tests', id='id', steps=[CommandStep(command='test')])
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_identifier(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'identifier': 'identifier',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(group='Tests', identifier='identifier', steps=[CommandStep(command='test')])
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_depends_on(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'depends_on': 'step',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(group='Tests', depends_on='step', steps=[CommandStep(command='test')])
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_key(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'key': 'key',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(group='Tests', key='key', steps=[CommandStep(command='test')])
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_wait(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'steps': [
+                'wait',
+                {'key': 'waiter', 'type': 'wait'},
+                {'wait': { 'key': 'waiter2', 'type': 'wait' }}
+            ],
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(
+                    group='Tests',
+                    steps=[
+                        'wait',
+                        WaitStep(key='waiter', type='wait'),
+                        NestedWaitStep(wait=WaitStep(key='waiter2', type='wait'))
+                    ]
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_input(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'steps': [
+                'input',
+                {'input': 'a label'},
+                {'key': 'input', 'type': 'input'},
+                {'input': {'key': 'input2', 'type': 'input'}}
+            ],
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(
+                    group='Tests',
+                    steps=[
+                        'input',
+                        InputStep(input='a label'),
+                        InputStep(key='input', type='input'),
+                        NestedInputStep(input=InputStep(key='input2', type='input'))
+                    ]
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_if(self):
+        expected = {
+            'group': 'Tests',
+            'if': 'build.message !~ /skip tests/',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(
+                    group='Tests',
+                    step_if='build.message !~ /skip tests/',
+                    steps=[CommandStep(command='test')]
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_allow_dependency_failure(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'allow_dependency_failure': True,
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(
+                    group='Tests',
+                    allow_dependency_failure=True,
+                    steps=[CommandStep(command='test')]
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_notify(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'steps': [{'command': 'test'}],
+            'notify': [{'email': 'dev@acmeinc.com'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(
+                    group='Tests',
+                    steps=[CommandStep(command='test')],
+                    notify=[NotifyEmail(email='dev@acmeinc.com')]
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_if_changed(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'steps': [{'command': 'test'}],
+            'if_changed': '*.txt'
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(
+                    group='Tests',
+                    steps=[CommandStep(command='test')],
+                    if_changed='*.txt'
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+class TestGroupStepArgs(TestRunner):
+    def test_id(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'id': 'id',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_identifier(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'identifier': 'identifier',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_depends_on(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'depends_on': 'step',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_key(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'key': 'key',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_wait(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'steps': [
+                'wait',
+                {'key': 'waiter', 'type': 'wait'},
+                {'wait': { 'key': 'waiter2', 'type': 'wait' }}
+            ],
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_input(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'steps': [
+                'input',
+                {'input': 'a label'},
+                {'key': 'input', 'type': 'input'},
+                {'input': {'key': 'input2', 'type': 'input'}}
+            ],
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_if(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'if': 'build.message !~ /skip tests/',
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [{
+            'group': 'Tests',
+            'if': 'build.message !~ /skip tests/',
+            'steps': [{'command': 'test'}]
+        }]})
+
+    def test_allow_dependency_failure(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'allow_dependency_failure': True,
+            'steps': [{'command': 'test'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_notify(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'steps': [{'command': 'test'}],
+            'notify': [{'email': 'dev@acmeinc.com'}]
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})
+
+    def test_if_changed(self):
+        expected: GroupStepArgs = {
+            'group': 'Tests',
+            'steps': [{'command': 'test'}],
+            'if_changed': '*.txt'
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep.from_dict(expected)
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [expected]})

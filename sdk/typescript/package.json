@@ -1,11 +1,14 @@
 {
     "name": "@buildkite/buildkite-sdk",
-    "version": "0.3.0",
+    "version": "0.4.1",
     "dependencies": {
         "tslib": "^2.3.0",
         "yaml": "^2.6.1"
     },
     "type": "commonjs",
     "main": "./src/index.js",
-    "typings": "./src/index.d.ts"
+    "typings": "./src/index.d.ts",
+    "devDependencies": {
+        "ajv": "^8.17.1"
+    }
 }

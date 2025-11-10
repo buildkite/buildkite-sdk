@@ -1,0 +1,112 @@
+{
+    "name": "ci",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/ci/src",
+    "projectType": "application",
+    "tags": [],
+    "targets": {
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [],
+                "cwd": "apps/ci"
+            }
+        },
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": []
+            },
+            "cache": false
+        },
+        "build:pipeline": {
+            "executor": "@nx/esbuild:esbuild",
+            "outputs": ["{options.outputPath}"],
+            "defaultConfiguration": "production",
+            "options": {
+                "platform": "node",
+                "outputPath": "dist/apps/ci",
+                "format": ["cjs"],
+                "bundle": false,
+                "main": "apps/ci/src/pipeline.ts",
+                "tsConfig": "apps/ci/tsconfig.app.json",
+                "assets": ["apps/ci/src/assets"],
+                "generatePackageJson": true,
+                "esbuildOptions": {
+                    "sourcemap": true,
+                    "outExtension": {
+                        ".js": ".js"
+                    }
+                }
+            },
+            "configurations": {
+                "development": {},
+                "production": {
+                    "esbuildOptions": {
+                        "sourcemap": false,
+                        "outExtension": {
+                            ".js": ".js"
+                        }
+                    }
+                }
+            }
+        },
+        "build:release-pipeline": {
+            "executor": "@nx/esbuild:esbuild",
+            "outputs": ["{options.outputPath}"],
+            "defaultConfiguration": "production",
+            "options": {
+                "platform": "node",
+                "outputPath": "dist/apps/ci",
+                "format": ["cjs"],
+                "bundle": false,
+                "main": "apps/ci/src/release.ts",
+                "tsConfig": "apps/ci/tsconfig.app.json",
+                "assets": ["apps/ci/src/assets"],
+                "generatePackageJson": true,
+                "esbuildOptions": {
+                    "sourcemap": true,
+                    "outExtension": {
+                        ".js": ".js"
+                    }
+                }
+            },
+            "configurations": {
+                "development": {},
+                "production": {
+                    "esbuildOptions": {
+                        "sourcemap": false,
+                        "outExtension": {
+                            ".js": ".js"
+                        }
+                    }
+                }
+            }
+        },
+        "run:pipeline": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "dependsOn": ["build"],
+            "options": {
+                "buildTarget": "ci:build:pipeline",
+                "runBuildTargetDependencies": false,
+                "watch": false
+            }
+        },
+        "run:release-pipeline": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "dependsOn": ["build"],
+            "options": {
+                "buildTarget": "ci:build:release-pipeline",
+                "runBuildTargetDependencies": false,
+                "watch": false
+            }
+        },
+        "test": {
+            "options": {
+                "passWithNoTests": true
+            }
+        }
+    }
+}

@@ -56,7 +56,7 @@
                 ],
                 "env": {
                     "GOPROXY": "proxy.golang.org",
-                    "VERSION": "0.3.0"
+                    "VERSION": "0.4.1"
                 }
             },
             "cache": false
@@ -65,7 +65,7 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": ["go test"],
-                "cwd": "sdk/go/sdk/buildkite",
+                "cwd": "sdk/go/sdk_test",
                 "parallel": false
             }
         }

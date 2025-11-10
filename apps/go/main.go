@@ -12,8 +12,8 @@ func main() {
 
 	pipeline.AddStep(buildkite.CommandStep{
 		Label: buildkite.Value("some-label"),
-		Commands: []string{
-			"echo 'Hello, world!'",
+		Commands: &buildkite.CommandStepCommand{
+			String: buildkite.Value("echo 'Hello, world!"),
 		},
 	})
 

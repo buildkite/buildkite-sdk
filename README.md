@@ -1,6 +1,6 @@
 # buildkite-sdk
 
-[![Build status](https://badge.buildkite.com/a95a3beece2339d1783a0a819f4ceb323c1eb12fb9662be274.svg?branch=main)](https://buildkite.com/buildkite/pipeline-sdk)
+[![Build status](https://badge.buildkite.com/a95a3beece2339d1783a0a819f4ceb323c1eb12fb9662be274.svg?branch=main)](https://buildkite.com/buildkite/buildkite-sdk)
 
 A multi-language SDK for [Buildkite](https://buildkite.com)! 🪁
 
@@ -9,6 +9,10 @@ Consumes the [Buildkite pipeline schema](https://github.com/buildkite/pipeline-s
 ## Installing and using the SDKs
 
 Learn more about how to set up the Buildkite SDK for each langauge, and use it to work with your Buildkite pipelines, from the [Buildkite SDK](http://buildkite.com/docs/pipelines/configure/dynamic-pipelines/sdk) page of the Buildkite Docs.
+
+## Upgrading to v0.4.0
+
+In v0.4.0 we introduced type generation from Buildkite's [Pipeline Schema](https://github.com/buildkite/pipeline-schema). You can find a list of breaking changes [here](./docs/v0.0.4-breaking-changes.md).
 
 ## Development
 
