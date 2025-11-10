@@ -1,7 +1,14 @@
 from __future__ import annotations
 
 import json
-from typing import Any, List, NotRequired, Optional, TypedDict, Union
+import sys
+
+if sys.version_info >= (3, 12):
+    from typing import Any, List, NotRequired, Optional, TypedDict
+else:
+    from typing import Any, List, NotRequired, Optional
+
+    from typing_extensions import TypedDict
 
 import yaml
 from pydantic import BaseModel
