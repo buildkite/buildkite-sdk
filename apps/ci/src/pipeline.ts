@@ -12,7 +12,7 @@ function getMiseConfig(): {
     ruby: string[];
 } {
     try {
-        const data = fs.readFileSync("./mise.toml");
+        const data = fs.readFileSync("./mise.apps.toml");
         const config = toml.parse(data.toString());
         return config.tools;
     } catch (parseErr) {
