@@ -1,6 +1,6 @@
 module github.com/buildkite/buildkite-sdk/sdk/go
 
-go 1.24.5
+go 1.25.4
 
 require (
 	github.com/itchyny/json2yaml v0.1.4
