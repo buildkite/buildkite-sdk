@@ -5,9 +5,9 @@ from __future__ import annotations
 import sys
 
 if sys.version_info >= (3, 12):
-    from typing import Any, List, NotRequired, Optional, TypedDict
+	from typing import Literal, List, Dict, Any, Optional, TypedDict, NotRequired
 else:
-    from typing import Any, List, NotRequired, Optional
+	from typing import Literal, List, Dict, Any, Optional, NotRequired
 
     from typing_extensions import TypedDict
 
@@ -82,24 +82,39 @@ class AutomaticRetry(BaseModel):
 
 AutomaticRetryList = List[AutomaticRetry | AutomaticRetryArgs]
 
-TextFieldArgs = TypedDict(
-    "TextFieldArgs",
-    {
-        # The value that is pre-filled in the text field
-        "default": NotRequired["str"],
-        # The format must be a regular expression implicitly anchored to the beginning and end of the input and is functionally equivalent to the HTML5 pattern attribute.
-        "format": NotRequired["str"],
-        # The explanatory text that is shown after the label
-        "hint": NotRequired["str"],
-        # The meta-data key that stores the field's input
-        "key": "str",
-        # Whether the field is required for form submission
-        "required": NotRequired[Literal[True, False, "true", "false"]],
-        # The text input name
-        "text": NotRequired["str"],
-    },
-)
+DependsOnListObjectArgs = TypedDict('DependsOnListObjectArgs',{
+    'allow_failure': NotRequired[Literal[True,False,'true','false']],
+    'step': NotRequired['str'],
 
+})
+
+class DependsOnListObject(BaseModel):
+    allow_failure: Optional[Literal[True,False,'true','false']] = None
+    step: Optional[str] = None
+
+    @classmethod
+    def from_dict(cls, data: DependsOnListObjectArgs) -> DependsOnListObject:
+        step_if = {'step_if': data['if']} if 'if' in data else {}
+        step_async = {'step_async': data['async']} if 'async' in data else {}
+        matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+DependsOnList = List[str | DependsOnListObject | DependsOnListObjectArgs]
+
+TextFieldArgs = TypedDict('TextFieldArgs',{
+    # The value that is pre-filled in the text field
+    'default': NotRequired['str'],
+    # The format must be a regular expression implicitly anchored to the beginning and end of the input and is functionally equivalent to the HTML5 pattern attribute.
+    'format': NotRequired['str'],
+    # The explanatory text that is shown after the label
+    'hint': NotRequired['str'],
+    # The meta-data key that stores the field's input
+    'key': 'str',
+    # Whether the field is required for form submission
+    'required': NotRequired[Literal[True,False,'true','false']],
+    # The text input name
+    'text': NotRequired['str'],
+
+})
 
 class TextField(BaseModel):
     # The value that is pre-filled in the text field
@@ -198,65 +213,38 @@ class SelectField(BaseModel):
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
         return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
+BlockStepArgs = TypedDict('BlockStepArgs',{
+    # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
+    'allow_dependency_failure': NotRequired['AllowDependencyFailure'],
+    # A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
+    'allowed_teams': NotRequired['AllowedTeams'],
+    # The label of the block step
+    'block': NotRequired['str'],
+    # The state that the build is set to when the build is blocked by this block step
+    'blocked_state': NotRequired[Literal['passed','failed','running']],
+    # Which branches will include this step in their builds
+    'branches': NotRequired['Branches'],
+    # The step keys for a step to depend on
+    'depends_on': NotRequired['DependsOn'],
+    # A list of input fields required to be filled out before unblocking the step
+    'fields': NotRequired['Fields'],
+    # A unique identifier for a step, must not resemble a UUID
+    'id': NotRequired['str'],
+    # A unique identifier for a step, must not resemble a UUID
+    'identifier': NotRequired['str'],
+    # A boolean expression that omits the step when false
+    'if': NotRequired['If'],
+    # A unique identifier for a step, must not resemble a UUID
+    'key': NotRequired['str'],
+    # The label of the block step
+    'label': NotRequired['str'],
+    # The label of the block step
+    'name': NotRequired['str'],
+    # The instructional message displayed in the dialog box when the unblock step is activated
+    'prompt': NotRequired['str'],
+    'type': NotRequired[Literal['block']],
 
-DependsOnListObjectArgs = TypedDict(
-    "DependsOnListObjectArgs",
-    {
-        "allow_failure": NotRequired[Literal[True, False, "true", "false"]],
-        "step": NotRequired["str"],
-    },
-)
-
-
-class DependsOnListObject(BaseModel):
-    allow_failure: Optional[Literal[True, False, "true", "false"]] = None
-    step: Optional[str] = None
-
-    @classmethod
-    def from_dict(cls, data: DependsOnListObjectArgs) -> DependsOnListObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
-
-
-DependsOnList = List[str | DependsOnListObject | DependsOnListObjectArgs]
-
-BlockStepArgs = TypedDict(
-    "BlockStepArgs",
-    {
-        # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
-        "allow_dependency_failure": NotRequired["AllowDependencyFailure"],
-        # A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
-        "allowed_teams": NotRequired["AllowedTeams"],
-        # The label of the block step
-        "block": NotRequired["str"],
-        # The state that the build is set to when the build is blocked by this block step
-        "blocked_state": NotRequired[Literal["passed", "failed", "running"]],
-        # Which branches will include this step in their builds
-        "branches": NotRequired["Branches"],
-        # The step keys for a step to depend on
-        "depends_on": NotRequired["DependsOn"],
-        # A list of input fields required to be filled out before unblocking the step
-        "fields": NotRequired["Fields"],
-        # A unique identifier for a step, must not resemble a UUID
-        "id": NotRequired["str"],
-        # A unique identifier for a step, must not resemble a UUID
-        "identifier": NotRequired["str"],
-        # A boolean expression that omits the step when false
-        "if": NotRequired["If"],
-        # A unique identifier for a step, must not resemble a UUID
-        "key": NotRequired["str"],
-        # The label of the block step
-        "label": NotRequired["str"],
-        # The label of the block step
-        "name": NotRequired["str"],
-        # The instructional message displayed in the dialog box when the unblock step is activated
-        "prompt": NotRequired["str"],
-        "type": NotRequired[Literal["block"]],
-    },
-)
-
+})
 
 class BlockStep(BaseModel):
     # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
@@ -572,15 +560,25 @@ class CommandStepManualRetryObject(BaseModel):
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
         return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
+PluginsListObject = Dict[str, Any]
+# Array of plugins for this step
+PluginsList = List[str | Dict[str, Any]]
 
-SoftFailObjectArgs = TypedDict(
-    "SoftFailObjectArgs",
-    {
-        # The exit status number that will cause this job to soft-fail
-        "exit_status": NotRequired[Literal["*"] | int],
-    },
-)
+# A map of plugins for this step. Deprecated: please use the array syntax.
+PluginsObject = Dict[str, Any]
 
+MatrixElement = str | int | bool
+
+MatrixElementList = List[str | int | bool]
+
+# Build Matrix dimension element
+MatrixAdjustmentsWithObject = Dict[str, str]
+
+SoftFailObjectArgs = TypedDict('SoftFailObjectArgs',{
+    # The exit status number that will cause this job to soft-fail
+    'exit_status': NotRequired[Literal['*'] | int],
+
+})
 
 class SoftFailObject(BaseModel):
     # The exit status number that will cause this job to soft-fail
@@ -595,13 +593,6 @@ class SoftFailObject(BaseModel):
 
 
 SoftFailList = List[SoftFailObject | SoftFailObjectArgs]
-
-MatrixElement = str | int | bool
-
-MatrixElementList = List[str | int | bool]
-
-# Build Matrix dimension element
-MatrixAdjustmentsWithObject = Dict[str, str]
 
 # An adjustment to a Build Matrix
 MatrixAdjustmentsArgs = TypedDict(
@@ -657,15 +648,6 @@ class MatrixObject(BaseModel):
         step_async = {"step_async": data["async"]} if "async" in data else {}
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
         return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
-
-
-PluginsListObject = Dict[str, Any]
-# Array of plugins for this step
-PluginsList = List[str | Dict[str, Any]]
-
-# A map of plugins for this step. Deprecated: please use the array syntax.
-PluginsObject = Dict[str, Any]
-
 
 # The conditions for retrying this step.
 class CommandStepRetry(BaseModel):

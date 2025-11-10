@@ -18,9 +18,9 @@ from __future__ import annotations
 import sys
 
 if sys.version_info >= (3, 12):
-    from typing import Any, List, NotRequired, Optional, TypedDict
+	from typing import Literal, List, Dict, Any, Optional, TypedDict, NotRequired
 else:
-    from typing import Any, List, NotRequired, Optional
+	from typing import Literal, List, Dict, Any, Optional, NotRequired
 
     from typing_extensions import TypedDict
 
