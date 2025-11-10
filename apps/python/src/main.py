@@ -3,7 +3,7 @@ from os import makedirs
 
 def generate_json():
     pipeline = Pipeline()
-    pipeline.add_step({"label": "some-label", "commands": "echo 'Hello, world!'"})
+    pipeline.add_step({"commands": "echo 'Hello, world!'", "label": "some-label"})
     return pipeline.to_json()
 
 def generate_yaml():
