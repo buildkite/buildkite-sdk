@@ -22,7 +22,7 @@ if sys.version_info >= (3, 12):
 else:
 	from typing import Literal, List, Dict, Any, Optional, NotRequired
 
-    from typing_extensions import TypedDict
+	from typing_extensions import TypedDict
 
 from pydantic import BaseModel, Field
 
