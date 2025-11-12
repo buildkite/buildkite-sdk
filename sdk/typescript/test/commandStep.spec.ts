@@ -205,6 +205,20 @@ describe('CommandStep', () => {
         })
     })
 
+    describe('Secrets', () => {
+        it('StringArray', () => validatePipeline({
+            command: 'test',
+            secrets: ['MY_SECRET'],
+        }))
+
+        it('Object', () => validatePipeline({
+            command: 'test',
+            secrets: {
+                'MY_SECRET': 'API_TOKEN',
+            },
+        }))
+    })
+
     describe('Skip', () => {
         it('Boolean', () => {
             validatePipeline({

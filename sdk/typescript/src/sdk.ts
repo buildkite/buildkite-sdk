@@ -7,6 +7,7 @@ export class Pipeline {
     public env: schema.Env = {};
     public notify: schema.BuildNotify = [];
     public steps: schema.PipelineSteps = [];
+    public secrets: schema.Secrets = [];
 
     /**
      * Set the pipeline
@@ -29,6 +30,15 @@ export class Pipeline {
         if (pipeline.steps) {
             this.steps = pipeline.steps
         }
+    }
+
+    /**
+     * Set the secrets for the pipeline
+     * @param secrets
+     * @returns
+     */
+    setSecrets(secrets: schema.Secrets) {
+        this.secrets = secrets
     }
 
     /**
@@ -70,6 +80,10 @@ export class Pipeline {
 
     private build(): schema.BuildkitePipeline {
         const pipeline: schema.BuildkitePipeline = {};
+
+        if (Object.keys(this.secrets).length > 0) {
+            pipeline.secrets = this.secrets;
+        }
 
         if (Object.keys(this.agents).length > 0) {
             pipeline.agents = this.agents;
