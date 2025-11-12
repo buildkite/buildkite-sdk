@@ -13,6 +13,11 @@ module Buildkite
       @agents = nil
       @env = nil
       @notify = nil
+      @secrets = nil
+    end
+
+    def set_secrets(secrets)
+      @secrets = secrets
     end
 
     def add_agent(key, value)
@@ -55,6 +60,7 @@ module Buildkite
       pipeline["agents"] = @agents unless @agents.nil?
       pipeline["env"] = @env unless @env.nil?
       pipeline["notify"] = @notify unless @notify.nil?
+      pipeline["secrets"] = @secrets unless @secrets.nil?
       pipeline
     end
 
