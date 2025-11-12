@@ -1,101 +1,97 @@
-import { createValidator, PipelineStepValidator } from './utils'
+import { createValidator, PipelineStepValidator } from "./utils";
 
-describe('GroupStep', () => {
-    let validatePipeline: PipelineStepValidator
+describe("GroupStep", () => {
+    let validatePipeline: PipelineStepValidator;
     beforeAll(async () => {
-        const { step } = await createValidator()
-        validatePipeline = step
-    })
+        const { step } = await createValidator();
+        validatePipeline = step;
+    });
 
     const simpleGroupPipeline = {
-        group: 'group',
-        steps: [
-            { command: 'command' },
-        ],
-    }
+        group: "group",
+        steps: [{ command: "command" }],
+    };
 
-    it('Simple', () => {
-        validatePipeline(simpleGroupPipeline)
-    })
+    it("Simple", () => {
+        validatePipeline(simpleGroupPipeline);
+    });
 
-    it('Id', () => {
+    it("Id", () => {
         validatePipeline({
             ...simpleGroupPipeline,
-            id: 'id',
-        })
-    })
+            id: "id",
+        });
+    });
 
-    it('Identifier', () => {
+    it("Identifier", () => {
         validatePipeline({
             ...simpleGroupPipeline,
-            identifier: 'identifier',
-        })
-    })
+            identifier: "identifier",
+        });
+    });
 
-    it('DependsOn', () => {
+    it("DependsOn", () => {
         validatePipeline({
             ...simpleGroupPipeline,
-            depends_on: 'step',
-        })
-    })
+            depends_on: "step",
+        });
+    });
 
-    it('Key', () => {
+    it("Key", () => {
         validatePipeline({
             ...simpleGroupPipeline,
-            key: 'key',
-        })
-    })
+            key: "key",
+        });
+    });
 
-    it('Wait', () => {
+    it("Wait", () => {
         validatePipeline({
-            group: 'group',
+            group: "group",
             steps: [
-                'wait',
-                { key: 'waiter', type: 'wait' },
-                { wait: { key: 'waiter2', type: 'wait' } },
+                "wait",
+                { key: "waiter", type: "wait" },
+                { wait: { key: "waiter2", type: "wait" } },
             ],
-        })
-    })
+        });
+    });
 
-    it('Input', () => {
+    it("Input", () => {
         validatePipeline({
-            group: 'group',
+            group: "group",
             steps: [
-                'input',
-                { input: 'a label' },
-                { key: 'input', type: 'input' },
-                { input: { key: 'input2', type: 'input' } },
+                "input",
+                { input: "a label" },
+                { key: "input", type: "input" },
+                { input: { key: "input2", type: "input" } },
             ],
-        })
-    })
+        });
+    });
 
-    it('If', () => {
+    it("If", () => {
         validatePipeline({
             ...simpleGroupPipeline,
-            if: 'build.message !~ /skip tests/'
-        })
-    })
+            if: "build.message !~ /skip tests/",
+        });
+    });
 
-    it('AllowDependencyFailure', () => {
+    it("AllowDependencyFailure", () => {
         validatePipeline({
             ...simpleGroupPipeline,
             allow_dependency_failure: true,
-        })
-    })
+        });
+    });
 
-    it('Notify', () => {
+    it("Notify", () => {
         validatePipeline({
             ...simpleGroupPipeline,
-            notify: [
-                { email: 'dev@acmeinc.com' },
-            ],
-        })
-    })
+            notify: [{ email: "dev@acmeinc.com" }],
+        });
+    });
 
-    it('IfChanged', () => {
+    it("IfChanged", () => {
         validatePipeline({
             ...simpleGroupPipeline,
-            if_changed: '*.txt'
-        })
-    })
-})
+            if_changed: "*.txt",
+        });
+    });
+});

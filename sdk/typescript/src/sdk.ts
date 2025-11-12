@@ -1,5 +1,5 @@
 import * as yaml from "yaml";
-import * as schema from './types/schema'
+import * as schema from "./types/schema";
 export { EnvironmentVariable } from "./environment";
 
 export class Pipeline {
@@ -7,6 +7,7 @@ export class Pipeline {
     public env: schema.Env = {};
     public notify: schema.BuildNotify = [];
     public steps: schema.PipelineSteps = [];
+    public secrets: schema.Secrets = [];
 
     /**
      * Set the pipeline
@@ -15,20 +16,29 @@ export class Pipeline {
      */
     setPipeline(pipeline: schema.BuildkitePipeline) {
         if (pipeline.agents) {
-            this.agents = pipeline.agents
+            this.agents = pipeline.agents;
         }
 
         if (pipeline.env) {
-            this.env = pipeline.env
+            this.env = pipeline.env;
         }
 
         if (pipeline.notify) {
-            this.notify = pipeline.notify
+            this.notify = pipeline.notify;
         }
 
         if (pipeline.steps) {
-            this.steps = pipeline.steps
+            this.steps = pipeline.steps;
         }
+    }
+
+    /**
+     * Set the secrets for the pipeline
+     * @param secrets
+     * @returns
+     */
+    setSecrets(secrets: schema.Secrets) {
+        this.secrets = secrets;
     }
 
     /**
@@ -70,6 +80,10 @@ export class Pipeline {
 
     private build(): schema.BuildkitePipeline {
         const pipeline: schema.BuildkitePipeline = {};
+
+        if (Object.keys(this.secrets).length > 0) {
+            pipeline.secrets = this.secrets;
+        }
 
         if (Object.keys(this.agents).length > 0) {
             pipeline.agents = this.agents;

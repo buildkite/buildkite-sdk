@@ -1,385 +1,378 @@
-import { createValidator, PipelineStepValidator } from './utils'
+import { createValidator, PipelineStepValidator } from "./utils";
 
-describe('CommandStep', () => {
-    let validatePipeline: PipelineStepValidator
+describe("CommandStep", () => {
+    let validatePipeline: PipelineStepValidator;
     beforeAll(async () => {
-        const { step } = await createValidator()
-        validatePipeline = step
-    })
+        const { step } = await createValidator();
+        validatePipeline = step;
+    });
 
-    describe('Nesting', () => {
-        it('ScriptType', () => {
-            validatePipeline({ type: 'script' })
-        })
+    describe("Nesting", () => {
+        it("ScriptType", () => {
+            validatePipeline({ type: "script" });
+        });
 
-        it('Command', () => {
-            validatePipeline({ command: 'bash.sh' })
-        })
+        it("Command", () => {
+            validatePipeline({ command: "bash.sh" });
+        });
 
-        it('CommandType', () => {
-            validatePipeline({ type: 'command', command: 'bash.sh' })
-        })
+        it("CommandType", () => {
+            validatePipeline({ type: "command", command: "bash.sh" });
+        });
 
-        it('CommandsType', () => {
-            validatePipeline({ type: 'commands', command: 'bash.sh' })
-        })
+        it("CommandsType", () => {
+            validatePipeline({ type: "commands", command: "bash.sh" });
+        });
 
-        it('NestedCommand', () => {
-            validatePipeline({ command: { command: 'bash.sh' }})
-        })
+        it("NestedCommand", () => {
+            validatePipeline({ command: { command: "bash.sh" } });
+        });
 
-        it('NestedCommands', () => {
-            validatePipeline({ commands: { command: 'bash.sh' }})
-        })
+        it("NestedCommands", () => {
+            validatePipeline({ commands: { command: "bash.sh" } });
+        });
 
-        it('NestedScript', () => {
-            validatePipeline({ script: { command: 'bash.sh' }})
-        })
-    })
+        it("NestedScript", () => {
+            validatePipeline({ script: { command: "bash.sh" } });
+        });
+    });
 
-    it('MultipleCommands', () => {
+    it("MultipleCommands", () => {
         validatePipeline({
-            command: ["one", "two"]
-        })
-    })
+            command: ["one", "two"],
+        });
+    });
 
-    it('PluginOnly', () => {
-        validatePipeline({ plugins: [{'a-plugin#v1.0.0': {run: 'app'}}] })
-    })
+    it("PluginOnly", () => {
+        validatePipeline({ plugins: [{ "a-plugin#v1.0.0": { run: "app" } }] });
+    });
 
-    describe('Agents', () => {
-        it('Object', () => {
-             validatePipeline({
-                command: 'test',
+    describe("Agents", () => {
+        it("Object", () => {
+            validatePipeline({
+                command: "test",
                 agents: {
-                    os: 'macOS'
+                    os: "macOS",
                 },
-            })
-        })
+            });
+        });
 
-        it('List', () => {
+        it("List", () => {
             validatePipeline({
-                command: 'test',
-                agents: [ 'os=macOS' ],
-            })
-        })
-    })
+                command: "test",
+                agents: ["os=macOS"],
+            });
+        });
+    });
 
-    describe('ArtifactPath', () => {
-        it('Array', () => {
+    describe("ArtifactPath", () => {
+        it("Array", () => {
             validatePipeline({
-                command: 'test',
-                artifact_paths: [
-                    'one',
-                    'two',
-                ],
-            })
-        })
+                command: "test",
+                artifact_paths: ["one", "two"],
+            });
+        });
 
-        it('String', () => {
+        it("String", () => {
             validatePipeline({
-                command: 'test',
-                artifact_paths: 'one',
-            })
-        })
-    })
+                command: "test",
+                artifact_paths: "one",
+            });
+        });
+    });
 
-    it('Branches', () => {
+    it("Branches", () => {
         validatePipeline({
-            command: 'test',
-            branches: 'branch',
-        })
-    })
+            command: "test",
+            branches: "branch",
+        });
+    });
 
-    it('Concurrency', () => {
+    it("Concurrency", () => {
         validatePipeline({
-            command: 'test',
+            command: "test",
             concurrency: 1,
-            concurrency_group: 'my-group',
-            concurrency_method: 'eager',
-        })
-    })
+            concurrency_group: "my-group",
+            concurrency_method: "eager",
+        });
+    });
 
-    it('Env', () => {
+    it("Env", () => {
         validatePipeline({
-            command: 'test',
-            env: { AN_ENV: 'value' },
-        })
-    })
+            command: "test",
+            env: { AN_ENV: "value" },
+        });
+    });
 
-    it('Id', () => {
+    it("Id", () => {
         validatePipeline({
-            command: 'test',
-            id: 'id',
-        })
-    })
+            command: "test",
+            id: "id",
+        });
+    });
 
-    it('Identifier', () => {
+    it("Identifier", () => {
         validatePipeline({
-            command: 'test',
-            identifier: 'id',
-        })
-    })
+            command: "test",
+            identifier: "id",
+        });
+    });
 
-    it('Label', () => {
+    it("Label", () => {
         validatePipeline({
-            command: 'test',
-            label: 'a label',
-        })
-    })
+            command: "test",
+            label: "a label",
+        });
+    });
 
-    it('Parallelism', () => {
+    it("Parallelism", () => {
         validatePipeline({
-            command: 'test',
+            command: "test",
             parallelism: 42,
-        })
-    })
+        });
+    });
 
-    describe('Plugins', () => {
-        it('Object', () => {
+    describe("Plugins", () => {
+        it("Object", () => {
             validatePipeline({
-                command: 'test',
-                plugins: {'a-plugin#v1.0.0': {run: 'app'}},
-            })
-        })
+                command: "test",
+                plugins: { "a-plugin#v1.0.0": { run: "app" } },
+            });
+        });
 
-        it('StringArray', () => {
+        it("StringArray", () => {
             validatePipeline({
-                command: 'test',
-                plugins: ['a-plugin#v1.0.0']
-            })
-        })
+                command: "test",
+                plugins: ["a-plugin#v1.0.0"],
+            });
+        });
 
-        it('ObjectArray', () => {
+        it("ObjectArray", () => {
             validatePipeline({
-                command: 'test',
-                plugins: [{'a-plugin#v1.0.0': {run: 'app'}}],
-            })
-        })
-    })
+                command: "test",
+                plugins: [{ "a-plugin#v1.0.0": { run: "app" } }],
+            });
+        });
+    });
 
-    describe('Retry', () => {
-        it('ObjectArray', () => {
+    describe("Retry", () => {
+        it("ObjectArray", () => {
             validatePipeline({
-                command: 'test',
+                command: "test",
                 retry: {
                     automatic: [
-                        { exit_status: -1, signal_reason: 'none' },
-                        { signal: 'kill' },
+                        { exit_status: -1, signal_reason: "none" },
+                        { signal: "kill" },
                         { exit_status: 255 },
                         { exit_status: 3, limit: 3 },
                     ],
                 },
-            })
-        })
+            });
+        });
 
-        it('ExitStatus', () => {
+        it("ExitStatus", () => {
             validatePipeline({
-                command: 'test',
+                command: "test",
                 retry: {
                     automatic: {
                         exit_status: -1,
-                    }
-                }
-            })
-        })
+                    },
+                },
+            });
+        });
 
-        it('ExitStatusArray', () => {
+        it("ExitStatusArray", () => {
             validatePipeline({
-                command: 'test',
+                command: "test",
                 retry: {
                     automatic: {
                         exit_status: [1, 2, 3],
                     },
                 },
-            })
-        })
+            });
+        });
 
-        it('Boolean', () => {
+        it("Boolean", () => {
             validatePipeline({
-                command: 'test',
+                command: "test",
                 retry: {
                     automatic: true,
                 },
-            })
-        })
-    })
+            });
+        });
+    });
 
-    describe('Skip', () => {
-        it('Boolean', () => {
+    describe("Secrets", () => {
+        it("StringArray", () =>
             validatePipeline({
-                command: 'test',
+                command: "test",
+                secrets: ["MY_SECRET"],
+            }));
+
+        it("Object", () =>
+            validatePipeline({
+                command: "test",
+                secrets: {
+                    MY_SECRET: "API_TOKEN",
+                },
+            }));
+    });
+
+    describe("Skip", () => {
+        it("Boolean", () => {
+            validatePipeline({
+                command: "test",
                 skip: true,
-            })
-        })
+            });
+        });
 
-        it('String', () => {
+        it("String", () => {
             validatePipeline({
-                command: 'test',
-                skip: 'reason',
-            })
-        })
-    })
+                command: "test",
+                skip: "reason",
+            });
+        });
+    });
 
-    it('TimeoutInMinutes', () => {
+    it("TimeoutInMinutes", () => {
         validatePipeline({
-            command: 'test',
+            command: "test",
             timeout_in_minutes: 1,
-        })
-    })
+        });
+    });
 
-    describe('SoftFail', () => {
-        it('Boolean', () => {
+    describe("SoftFail", () => {
+        it("Boolean", () => {
             validatePipeline({
-                command: 'test',
+                command: "test",
                 soft_fail: true,
-            })
-        })
+            });
+        });
 
-        it('ObjectNumber', () => {
+        it("ObjectNumber", () => {
             validatePipeline({
-                command: 'test',
-                soft_fail: [
-                    { exit_status: -1 },
-                ],
-            })
-        })
+                command: "test",
+                soft_fail: [{ exit_status: -1 }],
+            });
+        });
 
-        it('ObjectString', () => {
+        it("ObjectString", () => {
             validatePipeline({
-                command: 'test',
-                soft_fail: [
-                    { exit_status: '*' },
-                ],
-            })
-        })
-    })
+                command: "test",
+                soft_fail: [{ exit_status: "*" }],
+            });
+        });
+    });
 
-    it('If', () => {
+    it("If", () => {
         validatePipeline({
-            command: 'test',
-            if: 'build.message !~ /skip tests/',
-        })
-    })
+            command: "test",
+            if: "build.message !~ /skip tests/",
+        });
+    });
 
-    it('Key', () => {
+    it("Key", () => {
         validatePipeline({
-            command: 'test',
-            key: 'key',
-        })
-    })
+            command: "test",
+            key: "key",
+        });
+    });
 
-    describe('DependsOn', () => {
-        it('String', () => {
+    describe("DependsOn", () => {
+        it("String", () => {
             validatePipeline({
-                command: 'test',
-                depends_on: 'depend-on-me',
-            })
-        })
+                command: "test",
+                depends_on: "depend-on-me",
+            });
+        });
 
-        it('StringArray', () => {
+        it("StringArray", () => {
             validatePipeline({
-                command: 'test',
+                command: "test",
+                depends_on: ["depend-on-me-1", "depend-on-me-2"],
+            });
+        });
+
+        it("Object", () => {
+            validatePipeline({
+                command: "test",
+                depends_on: [{ step: "depend-on-me", allow_failure: true }],
+            });
+        });
+
+        it("ObjectArray", () => {
+            validatePipeline({
+                command: "test",
                 depends_on: [
-                    'depend-on-me-1',
-                    'depend-on-me-2',
+                    { step: "depend-on-me-1" },
+                    { step: "depend-on-me-2" },
                 ],
-            })
-        })
+            });
+        });
 
-        it('Object', () => {
+        it("Mixed", () => {
             validatePipeline({
-                command: 'test',
-                depends_on: [
-                    { step: 'depend-on-me', allow_failure: true },
-                ],
-            })
-        })
+                command: "test",
+                depends_on: ["depend-on-me-1", { step: "depend-on-me-2" }],
+            });
+        });
+    });
 
-        it('ObjectArray', () => {
-            validatePipeline({
-                command: 'test',
-                depends_on: [
-                    { step: 'depend-on-me-1' },
-                    { step: 'depend-on-me-2' },
-                ],
-            })
-        })
-
-        it('Mixed', () => {
-            validatePipeline({
-                command: 'test',
-                depends_on: [
-                    'depend-on-me-1',
-                    { step: 'depend-on-me-2' },
-                ],
-            })
-        })
-    })
-
-    it('AllowDependencyFailure', () => {
+    it("AllowDependencyFailure", () => {
         validatePipeline({
-            command: 'test',
+            command: "test",
             allow_dependency_failure: true,
-        })
-    })
+        });
+    });
 
-    it('Priority', () => {
+    it("Priority", () => {
         validatePipeline({
-            command: 'test',
+            command: "test",
             priority: 100,
-        })
-    })
+        });
+    });
 
-    it('CancelOnBuildFailing', () => {
+    it("CancelOnBuildFailing", () => {
         validatePipeline({
-            command: 'test',
+            command: "test",
             cancel_on_build_failing: false,
-        })
-    })
+        });
+    });
 
-    it('Matrix', () => {
+    it("Matrix", () => {
         validatePipeline({
-            command: 'echo {{matrix}}',
-            env: { FOO: 'bar' },
+            command: "echo {{matrix}}",
+            env: { FOO: "bar" },
             plugins: [
-                { 'docker#v3.0.0': { image: 'alpine', 'always-pull': true }},
+                { "docker#v3.0.0": { image: "alpine", "always-pull": true } },
             ],
-            matrix: ['one','two','three'],
+            matrix: ["one", "two", "three"],
             signature: {
-                value: 'not a real signature value',
-                algorithm: 'HS256',
-                signed_fields: [
-                    'command',
-                    'env::FOO',
-                    'plugins',
-                    'matrix',
-                ],
+                value: "not a real signature value",
+                algorithm: "HS256",
+                signed_fields: ["command", "env::FOO", "plugins", "matrix"],
             },
-        })
-    })
+        });
+    });
 
-    describe('Cache', () => {
-        it('Array', () => {
+    describe("Cache", () => {
+        it("Array", () => {
             validatePipeline({
-                command: 'test',
-                cache: [
-                    'dist/',
-                    './src/target/',
-                ],
-            })
+                command: "test",
+                cache: ["dist/", "./src/target/"],
+            });
 
             validatePipeline({
-                command: 'test',
-                cache: 'dist/',
-            })
-        })
-    })
+                command: "test",
+                cache: "dist/",
+            });
+        });
+    });
 
-    it('IfChanged', () => {
+    it("IfChanged", () => {
         validatePipeline({
-            command: 'test',
-            if_changed: '*.txt',
-        })
-    })
-})
+            command: "test",
+            if_changed: "*.txt",
+        });
+    });
+});

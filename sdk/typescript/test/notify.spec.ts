@@ -1,182 +1,203 @@
-import { createValidator, PipelineSchemaValidator, PipelineStepValidator } from './utils'
+import {
+    createValidator,
+    PipelineSchemaValidator,
+    PipelineStepValidator,
+} from "./utils";
 
-describe('Notify', () => {
-    describe('PipelineNotify', () => {
-        let validatePipeline: PipelineSchemaValidator
+describe("Notify", () => {
+    describe("PipelineNotify", () => {
+        let validatePipeline: PipelineSchemaValidator;
         beforeAll(async () => {
-            const { pipeline } = await createValidator()
-            validatePipeline = pipeline
-        })
+            const { pipeline } = await createValidator();
+            validatePipeline = pipeline;
+        });
 
-        it('Email', () => {
+        it("Email", () => {
             validatePipeline({
                 notify: [
-                    { email: 'dev@acmeinc.com', if: `build.state == 'failed'` },
+                    { email: "dev@acmeinc.com", if: `build.state == 'failed'` },
                 ],
-            })
-        })
+            });
+        });
 
-        it('BasecampCampfire', () => {
+        it("BasecampCampfire", () => {
             validatePipeline({
                 notify: [
-                    { basecamp_campfire: 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', if: `build.state == 'failed'` },
+                    {
+                        basecamp_campfire:
+                            "https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines",
+                        if: `build.state == 'failed'`,
+                    },
                 ],
-            })
-        })
+            });
+        });
 
-        describe('Slack', () => {
-            it('Simple', () => {
+        describe("Slack", () => {
+            it("Simple", () => {
                 validatePipeline({
                     notify: [
-                        { slack: '#channel', if: `build.state == 'failed'` },
+                        { slack: "#channel", if: `build.state == 'failed'` },
                     ],
-                })
-            })
+                });
+            });
 
-            it('Detailed', () => {
+            it("Detailed", () => {
                 validatePipeline({
                     notify: [
                         {
                             slack: {
-                                channels: ['important-business#announcements'],
-                                message: 'CI announcement'
+                                channels: ["important-business#announcements"],
+                                message: "CI announcement",
                             },
                             if: `build.state == 'failed'`,
                         },
                     ],
-                })
-            })
-        })
+                });
+            });
+        });
 
-        it('Webhook', () => {
+        it("Webhook", () => {
             validatePipeline({
                 notify: [
-                    { webhook: 'https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a', if: `build.state == 'failed'` },
+                    {
+                        webhook:
+                            "https://webhook.site/32raf257-168b-5aca-9067-3b410g78c23a",
+                        if: `build.state == 'failed'`,
+                    },
                 ],
-            })
-        })
+            });
+        });
 
-        it('PagerDuty', () => {
+        it("PagerDuty", () => {
             validatePipeline({
                 notify: [
-                    { pagerduty_change_event: '636d22Yourc0418Key3b49eee3e8', if: `build.state == 'failed'` },
+                    {
+                        pagerduty_change_event: "636d22Yourc0418Key3b49eee3e8",
+                        if: `build.state == 'failed'`,
+                    },
                 ],
-            })
-        })
+            });
+        });
 
-        describe('GithubCheck', () => {
-            it('String', () => {
+        describe("GithubCheck", () => {
+            it("String", () => {
+                validatePipeline({
+                    notify: ["github_check"],
+                });
+            });
+
+            it("Object", () => {
+                validatePipeline({
+                    notify: [{ github_check: { foo: "bar" } }],
+                });
+            });
+        });
+
+        describe("GithubCommitStatus", () => {
+            it("String", () => {
+                validatePipeline({
+                    notify: ["github_commit_status"],
+                });
+            });
+
+            it("Object", () => {
                 validatePipeline({
                     notify: [
-                        'github_check',
+                        {
+                            github_commit_status: {
+                                context: "my-custom-status",
+                            },
+                            if: `build.state == 'failed'`,
+                        },
                     ],
-                })
-            })
+                });
+            });
+        });
+    });
 
-            it('Object', () => {
-                validatePipeline({
-                    notify: [
-                        { github_check: { foo: 'bar' } },
-                    ],
-                })
-            })
-        })
-
-        describe('GithubCommitStatus', () => {
-            it('String', () => {
-                validatePipeline({
-                    notify: [ 'github_commit_status' ],
-                })
-            })
-
-            it('Object', () => {
-                validatePipeline({
-                    notify: [
-                        { github_commit_status: { context: 'my-custom-status' }, if: `build.state == 'failed'` },
-                    ],
-                })
-            })
-        })
-    })
-
-    describe('CommandNotify', () => {
-        let validatePipeline: PipelineStepValidator
+    describe("CommandNotify", () => {
+        let validatePipeline: PipelineStepValidator;
         beforeAll(async () => {
-            const { step } = await createValidator()
-            validatePipeline = step
-        })
+            const { step } = await createValidator();
+            validatePipeline = step;
+        });
 
-        it('BasecampCampfire', () => {
+        it("BasecampCampfire", () => {
             validatePipeline({
                 command: "blah.sh",
                 notify: [
-                    { basecamp_campfire: 'https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines', if: `build.state == 'failed'` },
+                    {
+                        basecamp_campfire:
+                            "https://3.basecamp.com/1234567/integrations/qwertyuiop/buckets/1234567/chats/1234567/lines",
+                        if: `build.state == 'failed'`,
+                    },
                 ],
-            })
-        })
+            });
+        });
 
-        describe('Slack', () => {
-            it('Simple', () => {
+        describe("Slack", () => {
+            it("Simple", () => {
                 validatePipeline({
                     command: "blah.sh",
                     notify: [
-                        { slack: '#channel', if: `build.state == 'failed'` },
+                        { slack: "#channel", if: `build.state == 'failed'` },
                     ],
-                })
-            })
+                });
+            });
 
-            it('Detailed', () => {
+            it("Detailed", () => {
                 validatePipeline({
                     command: "blah.sh",
                     notify: [
                         {
                             slack: {
-                                channels: ['important-business#announcements'],
-                                message: 'CI announcement'
+                                channels: ["important-business#announcements"],
+                                message: "CI announcement",
                             },
                             if: `build.state == 'failed'`,
                         },
                     ],
-                })
-            })
-        })
+                });
+            });
+        });
 
-        describe('GithubCheck', () => {
-            it('String', () => {
+        describe("GithubCheck", () => {
+            it("String", () => {
+                validatePipeline({
+                    command: "blah.sh",
+                    notify: ["github_check"],
+                });
+            });
+
+            it("Object", () => {
+                validatePipeline({
+                    command: "blah.sh",
+                    notify: [{ github_check: { foo: "bar" } }],
+                });
+            });
+        });
+
+        describe("GithubCommitStatus", () => {
+            it("String", () => {
+                validatePipeline({
+                    command: "blah.sh",
+                    notify: ["github_commit_status"],
+                });
+            });
+
+            it("Object", () => {
                 validatePipeline({
                     command: "blah.sh",
                     notify: [
-                        'github_check',
+                        {
+                            github_commit_status: {
+                                context: "my-custom-status",
+                            },
+                            if: `build.state == 'failed'`,
+                        },
                     ],
-                })
-            })
-
-            it('Object', () => {
-                validatePipeline({
-                    command: "blah.sh",
-                    notify: [
-                        { github_check: { foo: 'bar' } },
-                    ],
-                })
-            })
-        })
-
-        describe('GithubCommitStatus', () => {
-            it('String', () => {
-                validatePipeline({
-                    command: "blah.sh",
-                    notify: [ 'github_commit_status' ],
-                })
-            })
-
-            it('Object', () => {
-                validatePipeline({
-                    command: "blah.sh",
-                    notify: [
-                        { github_commit_status: { context: 'my-custom-status' }, if: `build.state == 'failed'` },
-                    ],
-                })
-            })
-        })
-    })
-})
+                });
+            });
+        });
+    });
+});

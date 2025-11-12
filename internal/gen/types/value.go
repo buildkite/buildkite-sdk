@@ -32,6 +32,10 @@ func (p *Pipeline) AddStep(step pipelineStep) {
 	p.Steps = &newSteps
 }
 
+func (p *Pipeline) SetSecrets(secrets *Secrets) {
+	p.Secrets = secrets
+}
+
 func (p *Pipeline) AddAgent(key string, value any) {
 	agents := map[string]interface{}{}
 	if p.Agents != nil {

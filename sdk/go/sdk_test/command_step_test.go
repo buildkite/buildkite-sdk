@@ -307,6 +307,26 @@ func TestCommandStep(t *testing.T) {
 		CheckResult(t, val, `{"plugins":[{"docker":{"foo":"bar"}}]}`)
 	})
 
+	t.Run("Secrets", func(t *testing.T) {
+		t.Run("StringArray", func(t *testing.T) {
+			val := buildkite.CommandStep{
+				Secrets: &buildkite.Secrets{
+					StringArray: []string{"MY_SECRET"},
+				},
+			}
+			CheckResult(t, val, `{"secrets":["MY_SECRET"]}`)
+		})
+
+		t.Run("StringArray", func(t *testing.T) {
+			val := buildkite.CommandStep{
+				Secrets: &buildkite.Secrets{
+					Secrets: &buildkite.SecretsObject{"MY_SECRET": "API_TOKEN"},
+				},
+			}
+			CheckResult(t, val, `{"secrets":{"MY_SECRET":"API_TOKEN"}}`)
+		})
+	})
+
 	t.Run("Softfail", func(t *testing.T) {
 		softFail := true
 		val := buildkite.CommandStep{

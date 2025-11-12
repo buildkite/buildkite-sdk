@@ -8,6 +8,30 @@ import (
 )
 
 func TestPipeline(t *testing.T) {
+	t.Run("Secrets", func(t *testing.T) {
+		t.Run("StringArray", func(t *testing.T) {
+			pipeline := buildkite.NewPipeline()
+			pipeline.SetSecrets(&buildkite.Secrets{
+				StringArray: []string{"MY_SECRET"},
+			})
+
+			result, err := pipeline.ToJSON()
+			assert.NoError(t, err)
+			assert.Equal(t, `{"secrets":["MY_SECRET"]}`, result)
+		})
+
+		t.Run("StringArray", func(t *testing.T) {
+			pipeline := buildkite.NewPipeline()
+			pipeline.SetSecrets(&buildkite.Secrets{
+				Secrets: &buildkite.SecretsObject{"MY_SECRET": "API_TOKEN"},
+			})
+
+			result, err := pipeline.ToJSON()
+			assert.NoError(t, err)
+			assert.Equal(t, `{"secrets":{"MY_SECRET":"API_TOKEN"}}`, result)
+		})
+	})
+
 	t.Run("AddAgent", func(t *testing.T) {
 		pipeline := buildkite.NewPipeline()
 		pipeline.AddAgent("foo", "bar")
