@@ -1,181 +1,178 @@
-import { createValidator, PipelineStepValidator } from './utils'
+import { createValidator, PipelineStepValidator } from "./utils";
 
-describe('InputStep', () => {
-    let validatePipeline: PipelineStepValidator
+describe("InputStep", () => {
+    let validatePipeline: PipelineStepValidator;
     beforeAll(async () => {
-        const { step } = await createValidator()
-        validatePipeline = step
-    })
+        const { step } = await createValidator();
+        validatePipeline = step;
+    });
 
-    describe('NestingTypes', () => {
-        it('String', () => {
-            validatePipeline('input')
-        })
+    describe("NestingTypes", () => {
+        it("String", () => {
+            validatePipeline("input");
+        });
 
-        it('Simple', () => {
-            validatePipeline({ input: 'a label' })
-        })
+        it("Simple", () => {
+            validatePipeline({ input: "a label" });
+        });
 
-        it('Nested', () => {
+        it("Nested", () => {
             validatePipeline({
                 input: {
-                    fields: [
-                        { text: 'Field 1', key: 'field-1' },
-                    ],
+                    fields: [{ text: "Field 1", key: "field-1" }],
                 },
-            })
-        })
+            });
+        });
 
-        it('Type', () => {
+        it("Type", () => {
             validatePipeline({
-                type: 'input',
-                label: 'a label',
-                fields: [
-                    { text: 'Field 1', key: 'field-1' },
-                ],
-            })
-        })
-    })
+                type: "input",
+                label: "a label",
+                fields: [{ text: "Field 1", key: "field-1" }],
+            });
+        });
+    });
 
-    it('AllowedTeams', () => {
+    it("AllowedTeams", () => {
         validatePipeline({
-            input: 'a label',
-            allowed_teams: 'team',
-        })
-    })
+            input: "a label",
+            allowed_teams: "team",
+        });
+    });
 
-    it('Branches', () => {
+    it("Branches", () => {
         validatePipeline({
-            input: 'a label',
-            branches: 'main',
-        })
-    })
+            input: "a label",
+            branches: "main",
+        });
+    });
 
-    it('Id', () => {
+    it("Id", () => {
         validatePipeline({
-            input: 'a label',
-            id: 'id',
-        })
-    })
+            input: "a label",
+            id: "id",
+        });
+    });
 
-    it('Identifier', () => {
+    it("Identifier", () => {
         validatePipeline({
-            input: 'a label',
-            identifier: 'identifier',
-        })
-    })
+            input: "a label",
+            identifier: "identifier",
+        });
+    });
 
-    it('Prompt', () => {
+    it("Prompt", () => {
         validatePipeline({
-            input: 'a label',
-            prompt: 'prompt',
-        })
-    })
+            input: "a label",
+            prompt: "prompt",
+        });
+    });
 
-    it('Fields', () => {
+    it("Fields", () => {
         validatePipeline({
-            input: 'a label',
+            input: "a label",
             fields: [
                 {
-                    text: 'Field 1',
-                    key: 'field-1',
+                    text: "Field 1",
+                    key: "field-1",
                 },
                 {
-                    text: 'Field 2',
-                    key: 'field-2',
+                    text: "Field 2",
+                    key: "field-2",
                     required: false,
-                    default: 'Field 2 Default',
-                    hint: 'Field 2 Hint',
+                    default: "Field 2 Default",
+                    hint: "Field 2 Hint",
                 },
                 {
-                    select: 'Select 1',
-                    key: 'select-1',
+                    select: "Select 1",
+                    key: "select-1",
                     multiple: true,
                     options: [
-                        { label: 'Select 1 Option 1', value: 'select-1-option-1' },
-                        { label: 'Select 1 Option 2', value: 'select-1-option-2' },
+                        {
+                            label: "Select 1 Option 1",
+                            value: "select-1-option-1",
+                        },
+                        {
+                            label: "Select 1 Option 2",
+                            value: "select-1-option-2",
+                        },
                     ],
                 },
                 {
-                    select: 'Select 2',
-                    key: 'select-2',
-                    hint: 'Select 2 Hint',
+                    select: "Select 2",
+                    key: "select-2",
+                    hint: "Select 2 Hint",
                     required: false,
-                    default: 'select-2-option-1',
+                    default: "select-2-option-1",
                     options: [
-                        { label: 'Select 2 Option 1', value: 'select-2-option-1' },
+                        {
+                            label: "Select 2 Option 1",
+                            value: "select-2-option-1",
+                        },
                     ],
                 },
             ],
-        })
-    })
+        });
+    });
 
-    it('If', () => {
+    it("If", () => {
         validatePipeline({
-            input: 'a label',
-            if: 'build.message !~ /skip tests/',
-        })
-    })
+            input: "a label",
+            if: "build.message !~ /skip tests/",
+        });
+    });
 
-    it('Key', () => {
+    it("Key", () => {
         validatePipeline({
-            input: 'a label',
-            key: 'key',
-        })
-    })
+            input: "a label",
+            key: "key",
+        });
+    });
 
-    describe('DependsOn', () => {
-        it('String', () => {
+    describe("DependsOn", () => {
+        it("String", () => {
             validatePipeline({
-                input: 'a label',
-                depends_on: 'depend-on-me',
-            })
-        })
+                input: "a label",
+                depends_on: "depend-on-me",
+            });
+        });
 
-        it('StringArray', () => {
+        it("StringArray", () => {
             validatePipeline({
-                input: 'a label',
+                input: "a label",
+                depends_on: ["depend-on-me-1", "depend-on-me-2"],
+            });
+        });
+
+        it("Object", () => {
+            validatePipeline({
+                input: "a label",
+                depends_on: [{ step: "depend-on-me", allow_failure: true }],
+            });
+        });
+
+        it("ObjectArray", () => {
+            validatePipeline({
+                input: "a label",
                 depends_on: [
-                    'depend-on-me-1',
-                    'depend-on-me-2',
+                    { step: "depend-on-me-1" },
+                    { step: "depend-on-me-2" },
                 ],
-            })
-        })
+            });
+        });
 
-        it('Object', () => {
+        it("Mixed", () => {
             validatePipeline({
-                input: 'a label',
-                depends_on: [
-                    { step: 'depend-on-me', allow_failure: true },
-                ],
-            })
-        })
+                input: "a label",
+                depends_on: ["depend-on-me-1", { step: "depend-on-me-2" }],
+            });
+        });
+    });
 
-        it('ObjectArray', () => {
-            validatePipeline({
-                input: 'a label',
-                depends_on: [
-                    { step: 'depend-on-me-1' },
-                    { step: 'depend-on-me-2' },
-                ],
-            })
-        })
-
-        it('Mixed', () => {
-            validatePipeline({
-                input: 'a label',
-                depends_on: [
-                    'depend-on-me-1',
-                    { step: 'depend-on-me-2' },
-                ],
-            })
-        })
-    })
-
-    it('AllowDependencyFailure', () => {
+    it("AllowDependencyFailure", () => {
         validatePipeline({
-            input: 'a label',
+            input: "a label",
             allow_dependency_failure: true,
-        })
-    })
-})
+        });
+    });
+});

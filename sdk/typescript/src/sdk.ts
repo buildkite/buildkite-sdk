@@ -1,5 +1,5 @@
 import * as yaml from "yaml";
-import * as schema from './types/schema'
+import * as schema from "./types/schema";
 export { EnvironmentVariable } from "./environment";
 
 export class Pipeline {
@@ -16,19 +16,19 @@ export class Pipeline {
      */
     setPipeline(pipeline: schema.BuildkitePipeline) {
         if (pipeline.agents) {
-            this.agents = pipeline.agents
+            this.agents = pipeline.agents;
         }
 
         if (pipeline.env) {
-            this.env = pipeline.env
+            this.env = pipeline.env;
         }
 
         if (pipeline.notify) {
-            this.notify = pipeline.notify
+            this.notify = pipeline.notify;
         }
 
         if (pipeline.steps) {
-            this.steps = pipeline.steps
+            this.steps = pipeline.steps;
         }
     }
 
@@ -38,7 +38,7 @@ export class Pipeline {
      * @returns
      */
     setSecrets(secrets: schema.Secrets) {
-        this.secrets = secrets
+        this.secrets = secrets;
     }
 
     /**

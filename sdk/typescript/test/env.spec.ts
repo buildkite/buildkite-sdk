@@ -1,18 +1,18 @@
-import { createValidator, PipelineStepValidator } from './utils'
+import { createValidator, PipelineStepValidator } from "./utils";
 
-describe('PipelineEnv', () => {
-    let validatePipeline: PipelineStepValidator
+describe("PipelineEnv", () => {
+    let validatePipeline: PipelineStepValidator;
     beforeAll(async () => {
-        const { step } = await createValidator()
-        validatePipeline = step
-    })
+        const { step } = await createValidator();
+        validatePipeline = step;
+    });
 
-    it('Env', () => {
+    it("Env", () => {
         validatePipeline({
             env: {
-                AN_ENV: 'a value',
+                AN_ENV: "a value",
             },
             steps: [],
-        })
-    })
-})
+        });
+    });
+});
