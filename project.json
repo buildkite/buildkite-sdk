@@ -89,7 +89,8 @@
                 "commands": [
                     "rm -rf sdk/python/src/buildkite_sdk/schema.py",
                     "touch sdk/python/src/buildkite_sdk/schema.py",
-                    "./internal/gen/type-gen py sdk/python/src/buildkite_sdk"
+                    "./internal/gen/type-gen py sdk/python/src/buildkite_sdk",
+                    "npx nx run sdk-python:format"
                 ],
                 "parallel": false
             }
