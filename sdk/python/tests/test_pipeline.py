@@ -15,6 +15,16 @@ class TestPipelineClass(TestRunner):
         pipeline = Pipeline.from_dict({"steps": [{"command": "run.sh"}]})
         self.validator.check_result(pipeline, {"steps": [{"command": "run.sh"}]})
 
+    def test_set_secrets_list(self):
+        pipeline = Pipeline()
+        pipeline.set_secrets(["MY_SECRET"])
+        self.validator.check_result(pipeline, {"steps": [], "secrets": ["MY_SECRET"]})
+
+    def test_set_secrets_object(self):
+        pipeline = Pipeline()
+        pipeline.set_secrets({"MY_SECRET": "API_TOKEN"})
+        self.validator.check_result(pipeline, {"steps": [], "secrets": {"MY_SECRET": "API_TOKEN"}})
+
     def test_add_agent_list(self):
         pipeline = Pipeline(agents=[])
         pipeline.add_agent("foo", "bar")

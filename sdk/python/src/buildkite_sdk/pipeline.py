@@ -27,7 +27,8 @@ from .schema import (
     NestedTriggerStepArgs,
     NestedTriggerStep,
     GroupStepArgs,
-    GroupStep
+    GroupStep,
+    Secrets
 )
 from typing import Optional, List, Any, TypedDict, NotRequired, Union
 from pydantic import BaseModel
@@ -67,6 +68,7 @@ class PipelineArgs(TypedDict):
     agents: NotRequired[Agents]
     notify: NotRequired[BuildNotify]
     image: NotRequired[Image]
+    secrets: NotRequired[Secrets]
     steps: List[Step]
 
 class Pipeline(BaseModel):
@@ -74,11 +76,15 @@ class Pipeline(BaseModel):
     agents: Optional[Agents] = None
     notify: Optional[BuildNotify] = None
     image: Optional[Image] = None
+    secrets: Optional[Secrets] = None
     steps: List[Step] = []
 
     @classmethod
     def from_dict(cls, data: PipelineArgs):
         return cls(**data)
+
+    def set_secrets(self, secrets: Secrets):
+        self.secrets = secrets
 
     def add_agent(self, key: str, value: Any):
         if self.agents == None:

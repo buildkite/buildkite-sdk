@@ -353,6 +353,22 @@ class TestCommandStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {'steps': [expected]})
 
+    def test_secrets_list(self):
+        pipeline = Pipeline(
+            steps=[
+                CommandStep(command='test', secrets=['MY_SECRET'])
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'secrets': ['MY_SECRET']}]})
+
+    def test_secrets_object(self):
+        pipeline = Pipeline(
+            steps=[
+                CommandStep(command='test', secrets={"MY_SECRET": "API_TOKEN"})
+            ]
+        )
+        self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'secrets': {"MY_SECRET": "API_TOKEN"}}]})
+
     def test_skip_bool(self):
         pipeline = Pipeline(
             steps=[
