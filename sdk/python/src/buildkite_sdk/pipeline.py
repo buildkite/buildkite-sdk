@@ -28,7 +28,7 @@ from .schema import (
     NestedTriggerStep,
     GroupStepArgs,
     GroupStep,
-    Secrets
+    Secrets,
 )
 from typing import Optional, List, Any, TypedDict, NotRequired, Union
 from pydantic import BaseModel
@@ -60,8 +60,9 @@ type Step = Union[
     NestedTriggerStepArgs,
     NestedTriggerStep,
     GroupStepArgs,
-    GroupStep
+    GroupStep,
 ]
+
 
 class PipelineArgs(TypedDict):
     env: NotRequired[Env]
@@ -70,6 +71,7 @@ class PipelineArgs(TypedDict):
     image: NotRequired[Image]
     secrets: NotRequired[Secrets]
     steps: List[Step]
+
 
 class Pipeline(BaseModel):
     env: Optional[Env] = None
