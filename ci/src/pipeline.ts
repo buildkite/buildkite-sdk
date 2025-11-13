@@ -3,7 +3,14 @@ import * as fs from "fs";
 import toml from "toml";
 
 const pipeline = new Pipeline();
-const plugins = [{ "docker#v5.11.0": { image: "buildkite-sdk-tools:latest" } }];
+const plugins = [
+    {
+        "docker#v5.11.0": {
+            image: "buildkite-sdk-tools:latest",
+            "propagate-environment": true,
+        },
+    },
+];
 
 function getMiseConfig(): {
     node: string[];
