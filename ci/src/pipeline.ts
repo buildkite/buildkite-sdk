@@ -24,6 +24,7 @@ function getMiseConfig(): {
         return config.tools;
     } catch (parseErr) {
         console.log("Error parsing TOML:", parseErr);
+        throw parseErr;
     }
 }
 
@@ -77,8 +78,8 @@ interface Target {
     icon: string;
     label: string;
     key: string;
-    sdkLabel: string;
-    appLabel: string;
+    sdkTarget: string;
+    appTarget: string;
     versions: string[];
 }
 
@@ -87,55 +88,55 @@ const languageTargets: Target[] = [
         icon: ":typescript:",
         label: "Typescript",
         key: "typescript",
-        sdkLabel: "sdk-typescript",
-        appLabel: "app-typescript",
+        sdkTarget: "sdk-typescript",
+        appTarget: "app-typescript",
         versions: languageVersions["node"],
     },
     {
         icon: ":python:",
         label: "Python",
         key: "python",
-        sdkLabel: "sdk-python",
-        appLabel: "app-python",
+        sdkTarget: "sdk-python",
+        appTarget: "app-python",
         versions: languageVersions["python"],
     },
     {
         icon: ":go:",
         label: "Go",
         key: "go",
-        sdkLabel: "sdk-go",
-        appLabel: "app-go",
+        sdkTarget: "sdk-go",
+        appTarget: "app-go",
         versions: languageVersions["go"],
     },
     {
         icon: ":ruby:",
         label: "Ruby",
         key: "ruby",
-        sdkLabel: "sdk-ruby",
-        appLabel: "app-ruby",
+        sdkTarget: "sdk-ruby",
+        appTarget: "app-ruby",
         versions: languageVersions["ruby"],
     },
 ];
 
-function generateAppCommands(key: string, appLabel: string) {
+function generateAppCommands(key: string, appTarget: string) {
     let language = key;
     if (key === "typescript") {
         language = "node";
     }
 
-    let appInstallCommand = `mise exec ${language}@{{matrix}} -- nx install ${appLabel}`;
+    let appInstallCommand = `mise exec ${language}@{{matrix}} -- nx install ${appTarget}`;
     if (language === "python") {
-        appInstallCommand = `mise exec ${language}@{{matrix}} -- pip install --no-cache-dir uv black && nx install ${appLabel}`;
+        appInstallCommand = `mise exec ${language}@{{matrix}} -- pip install --no-cache-dir uv black && nx install ${appTarget}`;
     }
     if (language === "node") {
-        appInstallCommand = `mise exec ${language}@{{matrix}} -- npm install -g nx && npm install && nx install ${appLabel}`;
+        appInstallCommand = `mise exec ${language}@{{matrix}} -- npm install -g nx && npm install && nx install ${appTarget}`;
     }
 
     return [
         "mise trust mise.apps.toml",
         `mise install ${language}@{{matrix}}`,
         appInstallCommand,
-        `mise exec ${language}@{{matrix}} -- nx run ${appLabel}:run`,
+        `mise exec ${language}@{{matrix}} -- nx run ${appTarget}:run`,
     ];
 }
 
@@ -168,8 +169,8 @@ languageTargets.forEach((target) => {
                 },
                 commands: [
                     "mise trust",
-                    `nx install ${target.sdkLabel}`,
-                    `nx test ${target.sdkLabel}`,
+                    `nx install ${target.sdkTarget}`,
+                    `nx test ${target.sdkTarget}`,
                 ],
             },
             {
@@ -178,8 +179,8 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: [
                     "mise trust",
-                    `nx install ${target.sdkLabel}`,
-                    `nx build ${target.sdkLabel}`,
+                    `nx install ${target.sdkTarget}`,
+                    `nx build ${target.sdkTarget}`,
                 ],
             },
             {
@@ -189,8 +190,8 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: [
                     "mise trust",
-                    `nx install ${target.sdkLabel}`,
-                    `nx run ${target.sdkLabel}:docs:build`,
+                    `nx install ${target.sdkTarget}`,
+                    `nx run ${target.sdkTarget}:docs:build`,
                 ],
             },
             {
@@ -198,7 +199,7 @@ languageTargets.forEach((target) => {
                 key: `${target.key}-apps`,
                 depends_on: [`${target.key}-test`, `${target.key}-build`],
                 plugins: languagePlugins,
-                commands: generateAppCommands(target.key, target.appLabel),
+                commands: generateAppCommands(target.key, target.appTarget),
                 matrix: target.versions,
             },
         ],
