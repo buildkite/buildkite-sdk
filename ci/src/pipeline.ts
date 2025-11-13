@@ -154,6 +154,11 @@ languageTargets.forEach((target) => {
                 key: `${target.key}-test`,
                 label: ":test_tube: Test",
                 plugins: languagePlugins,
+                env: {
+                    // Jest Issue: https://github.com/jestjs/jest/issues/15888
+                    // Node Issue: https://github.com/nodejs/node/issues/60704
+                    NODE_OPTIONS: "--localstorage-file=./jest-storage",
+                },
                 commands: [
                     "mise trust",
                     `nx install ${target.sdkLabel}`,
