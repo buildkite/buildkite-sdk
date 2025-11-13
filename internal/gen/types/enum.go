@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 	"github.com/iancoleman/orderedmap"
 )
@@ -161,7 +162,7 @@ func (e Enum) TypeScript() (string, error) {
 
 	block := utils.NewCodeBlock()
 	if e.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(e.Description))
+		block.AddLines(typescript.NewTypeDocComment(e.Description))
 	}
 
 	block.AddLines(fmt.Sprintf("export type %s = %s", e.Name.ToTitleCase(), values))

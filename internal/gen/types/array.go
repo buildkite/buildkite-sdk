@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
@@ -105,7 +106,7 @@ func (a Array) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 
 	if a.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(a.Description))
+		block.AddLines(typescript.NewTypeDocComment(a.Description))
 	}
 
 	if union, ok := a.Type.(Union); ok {

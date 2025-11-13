@@ -138,9 +138,7 @@ export type Cache =
     | string[]
     | {
           name?: string;
-
           paths: string[];
-
           size?: string;
       };
 
@@ -253,7 +251,6 @@ export interface CommandStep {
          * Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
          */
         automatic?: CommandStepAutomaticRetry;
-
         /**
          * Whether to allow a job to be retried manually
          */
@@ -271,12 +268,10 @@ export interface CommandStep {
          * The algorithm used to generate the signature
          */
         algorithm?: string;
-
         /**
          * The fields that were signed to form the signature value
          */
         signed_fields?: string[];
-
         /**
          * The signature value, a JWS compact signature with a detached body
          */
@@ -358,7 +353,6 @@ export type DependsOnList = (
     | string
     | {
           allow_failure?: true | false | "true" | "false";
-
           step?: string;
       }
 )[];
@@ -829,22 +823,18 @@ export interface TriggerStep {
          * The branch for the build
          */
         branch?: string;
-
         /**
          * The commit hash for the build
          */
         commit?: string;
-
         /**
          * Environment variables for this step
          */
         env?: Env;
-
         /**
          * The message for the build (supports emoji)
          */
         message?: string;
-
         /**
          * Meta-data for the build
          */

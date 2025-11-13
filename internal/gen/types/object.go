@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 	"github.com/iancoleman/orderedmap"
 )
@@ -155,7 +156,7 @@ func (o Object) TypeScript() (string, error) {
 		block := utils.NewCodeBlock()
 
 		if o.Description != "" {
-			block.AddLines(utils.NewTypeDocComment(o.Description))
+			block.AddLines(typescript.NewTypeDocComment(o.Description))
 		}
 
 		if o.AdditionalProperties != nil {
@@ -168,7 +169,7 @@ func (o Object) TypeScript() (string, error) {
 		return block.String(), nil
 	}
 
-	tsInterface := utils.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description)
+	tsInterface := typescript.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description, false)
 	for _, name := range keys {
 		prop, _ := o.Properties.Get(name)
 		val := prop.(Value)
@@ -202,7 +203,7 @@ func (o Object) TypeScript() (string, error) {
 				continue
 			}
 
-			tsObject := utils.NewTypeScriptInterface("", obj.Description)
+			tsObject := typescript.NewTypeScriptInterface("", obj.Description, true)
 			for _, propName := range keys {
 				nestedProp, _ := obj.Properties.Get(propName)
 				nestedVal := nestedProp.(Value)
@@ -228,11 +229,7 @@ func (o Object) TypeScript() (string, error) {
 				tsObject.AddItem(propName, nestedVal.TypeScriptInterfaceType(), nestedDescription, nestedRequired)
 			}
 
-			objString, err := tsObject.WriteUnionObject()
-			if err != nil {
-				return "", fmt.Errorf("generating nested object: %v", err)
-			}
-
+			objString := tsObject.Write()
 			tsInterface.AddItem(name, objString, obj.Description, required)
 			continue
 		}
@@ -240,13 +237,8 @@ func (o Object) TypeScript() (string, error) {
 		tsInterface.AddItem(name, structType, val.GetDescription(), required)
 	}
 
-	tsInterfaceString, err := tsInterface.Write()
-	if err != nil {
-		return "", fmt.Errorf("writing ts interface: %v", err)
-	}
-
 	block := utils.NewCodeBlock(
-		tsInterfaceString,
+		tsInterface.Write(),
 	)
 	return block.String(), nil
 }

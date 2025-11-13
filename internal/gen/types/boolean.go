@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
@@ -52,7 +53,7 @@ func (b Boolean) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 
 	if b.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(b.Description))
+		block.AddLines(typescript.NewTypeDocComment(b.Description))
 	}
 
 	block.AddLines(fmt.Sprintf("type %s = boolean", b.Name.ToTitleCase()))

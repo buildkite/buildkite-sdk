@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
@@ -146,7 +147,7 @@ func (u Union) TypeScriptInterfaceType() string {
 				continue
 			}
 
-			block := utils.NewTypeScriptInterface("", obj.Description)
+			block := typescript.NewTypeScriptInterface("", obj.Description, true)
 			for _, name := range obj.Properties.Keys() {
 				prop, _ := obj.Properties.Get(name)
 				val := prop.(Value)
@@ -155,8 +156,7 @@ func (u Union) TypeScriptInterfaceType() string {
 				block.AddItem(name, val.TypeScriptInterfaceType(), val.GetDescription(), required)
 			}
 
-			res, _ := block.WriteUnionObject()
-			parts[i] = res
+			parts[i] = block.Write()
 			continue
 		}
 
@@ -168,7 +168,7 @@ func (u Union) TypeScriptInterfaceType() string {
 func (u Union) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 	if u.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(u.Description))
+		block.AddLines(typescript.NewTypeDocComment(u.Description))
 	}
 
 	block.AddLines(

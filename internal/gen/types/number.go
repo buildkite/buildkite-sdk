@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
@@ -50,7 +51,7 @@ func (n Number) GoStructKey(isUnion bool) string {
 func (n Number) TypeScript() (string, error) {
 	block := utils.NewCodeBlock()
 	if n.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(n.Description))
+		block.AddLines(typescript.NewTypeDocComment(n.Description))
 	}
 
 	block.AddLines(fmt.Sprintf("type %s = number", n.Name.ToTitleCase()))
