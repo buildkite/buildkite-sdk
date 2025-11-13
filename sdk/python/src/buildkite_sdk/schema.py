@@ -6,9 +6,9 @@ import sys
 if sys.version_info >= (3, 12):
     from typing import Literal, List, Dict, Any, Optional, TypedDict, NotRequired
 else:
-    from typing import Literal, List, Dict, Any, Optional, NotRequired
+    from typing import Literal, List, Dict, Any, Optional
 
-    from typing_extensions import TypedDict
+    from typing_extensions import TypedDict, NotRequired
 
 from pydantic import BaseModel, Field
 
@@ -550,43 +550,12 @@ Cache = str | List[str] | CacheObject
 # Whether to cancel the job as soon as the build is marked as failing
 CancelOnBuildFailing = Literal[True, False, "true", "false"]
 
-CommandStepManualRetryObjectArgs = TypedDict(
-    "CommandStepManualRetryObjectArgs",
-    {
-        # Whether or not this job can be retried manually
-        "allowed": NotRequired[Literal[True, False, "true", "false"]],
-        # Whether or not this job can be retried after it has passed
-        "permit_on_passed": NotRequired[Literal[True, False, "true", "false"]],
-        # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
-        "reason": NotRequired["str"],
-    },
-)
+MatrixElement = str | int | bool
 
+MatrixElementList = List[str | int | bool]
 
-class CommandStepManualRetryObject(BaseModel):
-    # Whether or not this job can be retried manually
-    allowed: Optional[Literal[True, False, "true", "false"]] = None
-    # Whether or not this job can be retried after it has passed
-    permit_on_passed: Optional[Literal[True, False, "true", "false"]] = None
-    # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
-    reason: Optional[str] = None
-
-    @classmethod
-    def from_dict(
-        cls, data: CommandStepManualRetryObjectArgs
-    ) -> CommandStepManualRetryObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
-
-
-PluginsListObject = Dict[str, Any]
-# Array of plugins for this step
-PluginsList = List[str | Dict[str, Any]]
-
-# A map of plugins for this step. Deprecated: please use the array syntax.
-PluginsObject = Dict[str, Any]
+# Build Matrix dimension element
+MatrixAdjustmentsWithObject = Dict[str, str]
 
 SoftFailObjectArgs = TypedDict(
     "SoftFailObjectArgs",
@@ -610,13 +579,6 @@ class SoftFailObject(BaseModel):
 
 
 SoftFailList = List[SoftFailObject | SoftFailObjectArgs]
-
-MatrixElement = str | int | bool
-
-MatrixElementList = List[str | int | bool]
-
-# Build Matrix dimension element
-MatrixAdjustmentsWithObject = Dict[str, str]
 
 # An adjustment to a Build Matrix
 MatrixAdjustmentsArgs = TypedDict(
@@ -668,6 +630,44 @@ class MatrixObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: MatrixObjectArgs) -> MatrixObject:
+        step_if = {"step_if": data["if"]} if "if" in data else {}
+        step_async = {"step_async": data["async"]} if "async" in data else {}
+        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+
+
+PluginsListObject = Dict[str, Any]
+# Array of plugins for this step
+PluginsList = List[str | Dict[str, Any]]
+
+# A map of plugins for this step. Deprecated: please use the array syntax.
+PluginsObject = Dict[str, Any]
+
+CommandStepManualRetryObjectArgs = TypedDict(
+    "CommandStepManualRetryObjectArgs",
+    {
+        # Whether or not this job can be retried manually
+        "allowed": NotRequired[Literal[True, False, "true", "false"]],
+        # Whether or not this job can be retried after it has passed
+        "permit_on_passed": NotRequired[Literal[True, False, "true", "false"]],
+        # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
+        "reason": NotRequired["str"],
+    },
+)
+
+
+class CommandStepManualRetryObject(BaseModel):
+    # Whether or not this job can be retried manually
+    allowed: Optional[Literal[True, False, "true", "false"]] = None
+    # Whether or not this job can be retried after it has passed
+    permit_on_passed: Optional[Literal[True, False, "true", "false"]] = None
+    # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
+    reason: Optional[str] = None
+
+    @classmethod
+    def from_dict(
+        cls, data: CommandStepManualRetryObjectArgs
+    ) -> CommandStepManualRetryObject:
         step_if = {"step_if": data["if"]} if "if" in data else {}
         step_async = {"step_async": data["async"]} if "async" in data else {}
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}

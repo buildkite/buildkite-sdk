@@ -20,9 +20,9 @@ import sys
 if sys.version_info >= (3, 12):
 	from typing import Literal, List, Dict, Any, Optional, TypedDict, NotRequired
 else:
-	from typing import Literal, List, Dict, Any, Optional, NotRequired
+	from typing import Literal, List, Dict, Any, Optional
 
-	from typing_extensions import TypedDict
+	from typing_extensions import TypedDict, NotRequired
 
 from pydantic import BaseModel, Field
 
