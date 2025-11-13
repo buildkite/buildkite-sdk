@@ -7,6 +7,7 @@
     "ensure_final_newline_on_save": true,
     "languages": {
         "TypeScript": {
+            "tab_size": 4,
             "formatter": "prettier",
             "prettier": {
                 "singleQuote": false,

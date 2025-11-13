@@ -110,6 +110,28 @@ const languageTargets: Target[] = [
     },
 ];
 
+function generateAppCommands(key: string, appLabel: string) {
+    let language = key;
+    if (key === "typescript") {
+        language = "node";
+    }
+
+    let appInstallCommand = `mise exec ${language}@{{matrix}} -- nx install ${appLabel}`;
+    if (language === "python") {
+        appInstallCommand = `mise exec ${language}@{{matrix}} -- pip install --no-cache-dir uv black && nx install ${appLabel}`;
+    }
+    if (language === "node") {
+        appInstallCommand = `mise exec ${language}@{{matrix}} -- npm install -g nx && npm install && nx install ${appLabel}`;
+    }
+
+    return [
+        "mise trust mise.apps.toml",
+        `mise install ${language}@{{matrix}}`,
+        appInstallCommand,
+        `mise exec ${language}@{{matrix}} -- nx run ${appLabel}:run`,
+    ];
+}
+
 languageTargets.forEach((target) => {
     pipeline.addStep({
         depends_on: ["install"],
@@ -124,7 +146,8 @@ languageTargets.forEach((target) => {
                     "mise trust",
                     "nx gen:build",
                     `nx gen:types-${target.key}`,
-                    "exit $(git diff --exit-code)",
+                    "export DIFF=$(git diff --exit-code)",
+                    "exit $DIFF",
                 ],
             },
             {
@@ -163,22 +186,7 @@ languageTargets.forEach((target) => {
                 key: `${target.key}-apps`,
                 depends_on: [`${target.key}-test`, `${target.key}-build`],
                 plugins: languagePlugins,
-                commands: [
-                    "mise trust mise.apps.toml",
-                    `mise install ${
-                        target.key === "typescript" ? "node" : target.key
-                    }@{{matrix}}`,
-                    `mise exec ${
-                        target.key === "typescript" ? "node" : target.key
-                    }@{{matrix}} -- ${
-                        target.key === "python"
-                            ? "pip install --no-cache-dir uv black && "
-                            : ""
-                    }nx install ${target.appLabel}`,
-                    `mise exec ${
-                        target.key === "typescript" ? "node" : target.key
-                    }@{{matrix}} -- nx run ${target.appLabel}:run`,
-                ],
+                commands: generateAppCommands(target.key, target.appLabel),
                 matrix: target.versions,
             },
         ],
