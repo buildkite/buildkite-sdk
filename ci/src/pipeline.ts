@@ -170,7 +170,7 @@ languageTargets.forEach((target) => {
                 commands: [
                     "mise trust",
                     `nx install ${target.sdkTarget}`,
-                    `nx test ${target.sdkTarget}`,
+                    `nx test ${target.sdkTarget}${target.key === "typescript" ? " --runInBand" : ""}`,
                 ],
             },
             {
