@@ -124,10 +124,7 @@ languageTargets.forEach((target) => {
                     "mise trust",
                     "nx gen:build",
                     `nx gen:types-${target.key}`,
-                    "export DIFF=$(git diff --exit-code)",
-                    "echo 'Debug'",
-                    "echo $DIFF",
-                    "exit $($DIFF)",
+                    "exit $(git diff --exit-code)",
                 ],
             },
             {
@@ -171,15 +168,16 @@ languageTargets.forEach((target) => {
                     `mise install ${
                         target.key === "typescript" ? "node" : target.key
                     }@{{matrix}}`,
-                    `mise use --global ${
+                    `mise exec ${
                         target.key === "typescript" ? "node" : target.key
-                    }@{{matrix}}`,
-                    `${
+                    }@{{matrix}} -- ${
                         target.key === "python"
                             ? "pip install --no-cache-dir uv black && "
                             : ""
                     }nx install ${target.appLabel}`,
-                    `nx run ${target.appLabel}:run`,
+                    `mise exec ${
+                        target.key === "typescript" ? "node" : target.key
+                    }@{{matrix}} -- nx run ${target.appLabel}:run`,
                 ],
                 matrix: target.versions,
             },
