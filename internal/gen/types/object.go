@@ -3,7 +3,6 @@ package types
 import (
 	"fmt"
 	"slices"
-	"strings"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
@@ -17,6 +16,9 @@ type Object struct {
 	Properties           *orderedmap.OrderedMap
 	AdditionalProperties *Value
 	Required             []string
+
+	// Is the object nested in another definition
+	IsNested bool
 }
 
 func (o Object) GetDescription() string {
@@ -155,21 +157,26 @@ func (o Object) TypeScript() (string, error) {
 	if len(keys) == 0 {
 		block := utils.NewCodeBlock()
 
+		identifier := fmt.Sprintf("export type %s = ", o.Name.ToTitleCase())
+		if o.IsNested {
+			identifier = ""
+		}
+
 		if o.Description != "" {
 			block.AddLines(typescript.NewTypeDocComment(o.Description))
 		}
 
 		if o.AdditionalProperties != nil {
 			prop := *o.AdditionalProperties
-			block.AddLines(fmt.Sprintf("export type %s = Record<string, %s>", o.Name.ToTitleCase(), prop.TypeScriptInterfaceType()))
+			block.AddLines(fmt.Sprintf("%sRecord<string, %s>", identifier, prop.TypeScriptInterfaceType()))
 			return block.String(), nil
 		}
 
-		block.AddLines(fmt.Sprintf("export type %s = Record<string, any>", o.Name.ToTitleCase()))
+		block.AddLines(fmt.Sprintf("%sRecord<string, any>", identifier))
 		return block.String(), nil
 	}
 
-	tsInterface := typescript.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description, false)
+	tsInterface := typescript.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description, o.IsNested)
 	for _, name := range keys {
 		prop, _ := o.Properties.Get(name)
 		val := prop.(Value)
@@ -254,25 +261,6 @@ func (o Object) TypeScriptInterfaceType() string {
 	}
 
 	return o.Name.ToTitleCase()
-}
-
-func (o Object) TypeScriptImports() string {
-	var imports []string
-	for _, key := range o.Properties.Keys() {
-		prop, _ := o.Properties.Get(key)
-		val := prop.(Value)
-
-		if union, ok := val.(Union); ok {
-			imports = append(imports, union.TypeScriptImports())
-		}
-
-		if ref, ok := val.(PropertyReference); ok {
-			imports = append(imports,
-				fmt.Sprintf("import {%s} from \"./%s.ts\"", ref.TypeScriptInterfaceType(), ref.Name),
-			)
-		}
-	}
-	return strings.Join(imports, "\n")
 }
 
 // Python

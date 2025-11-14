@@ -677,7 +677,7 @@ export type Plugins = PluginsList | PluginsObject;
 /**
  * Array of plugins for this step
  */
-export type PluginsList = (string | {})[];
+export type PluginsList = (string | Record<string, any>)[];
 
 /**
  * A map of plugins for this step. Deprecated: please use the array syntax.

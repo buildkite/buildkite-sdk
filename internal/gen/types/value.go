@@ -451,6 +451,18 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 				if err != nil {
 					return Union{}, dependencies, fmt.Errorf("converting object property to value [%s]: %v", propertyName.Value, err)
 				}
+
+				// Nested object
+				if nestedObject, ok := objProp.(Object); ok {
+					objProp = Object{
+						Name:                 nestedObject.Name,
+						Properties:           nestedObject.Properties,
+						AdditionalProperties: nestedObject.AdditionalProperties,
+						Required:             nestedObject.Required,
+						IsNested:             true,
+					}
+				}
+
 				properties.Set(name, objProp)
 			}
 			properties.SortKeys(sort.Strings)
@@ -472,6 +484,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 					Properties:           properties,
 					AdditionalProperties: &additionalProperties,
 					Required:             item.Required,
+					IsNested:             true,
 				})
 				continue
 			}
@@ -480,6 +493,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 				Name:       propertyName,
 				Properties: properties,
 				Required:   item.Required,
+				IsNested:   true,
 			})
 			continue
 		}

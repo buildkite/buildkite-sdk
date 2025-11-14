@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
@@ -129,34 +128,15 @@ func (u Union) Go() (string, error) {
 
 // TypeScript
 func (u Union) TypeScriptInterfaceKey() string {
-	return u.Name.Value
+	return u.Name.ToCamelCase()
 }
 
 func (u Union) TypeScriptInterfaceType() string {
 	parts := make([]string, len(u.TypeIdentifiers))
 	for i, typ := range u.TypeIdentifiers {
+		// Object
 		if obj, ok := typ.(Object); ok {
-			if obj.AdditionalProperties != nil {
-				prop := *obj.AdditionalProperties
-				parts[i] = fmt.Sprintf("Record<string, %s>", prop.TypeScriptInterfaceType())
-				continue
-			}
-
-			if obj.Properties == nil {
-				parts[i] = "Record<string, any>"
-				continue
-			}
-
-			block := typescript.NewTypeScriptInterface("", obj.Description, true)
-			for _, name := range obj.Properties.Keys() {
-				prop, _ := obj.Properties.Get(name)
-				val := prop.(Value)
-				required := slices.Contains(obj.Required, name)
-
-				block.AddItem(name, val.TypeScriptInterfaceType(), val.GetDescription(), required)
-			}
-
-			parts[i] = block.Write()
+			parts[i], _ = obj.TypeScript()
 			continue
 		}
 
@@ -166,28 +146,12 @@ func (u Union) TypeScriptInterfaceType() string {
 }
 
 func (u Union) TypeScript() (string, error) {
-	block := utils.NewCodeBlock()
-	if u.Description != "" {
-		block.AddLines(typescript.NewTypeDocComment(u.Description))
-	}
-
-	block.AddLines(
-		fmt.Sprintf("export type %s = %s", u.Name.ToTitleCase(), u.TypeScriptInterfaceType()),
+	typ := typescript.NewType(
+		u.Name.ToTitleCase(),
+		u.Description,
+		u.TypeScriptInterfaceType(),
 	)
-
-	return block.String(), nil
-}
-
-func (u Union) TypeScriptImports() string {
-	var imports []string
-	for _, typ := range u.TypeIdentifiers {
-		if ref, ok := typ.(PropertyReference); ok {
-			imports = append(imports,
-				fmt.Sprintf("import {%s} from \"./%s.ts\"", ref.TypeScriptInterfaceType(), ref.Name),
-			)
-		}
-	}
-	return strings.Join(imports, "\n")
+	return typ.String(), nil
 }
 
 // Python
