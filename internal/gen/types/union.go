@@ -22,7 +22,7 @@ func (u Union) IsReference() bool {
 	return false
 }
 
-func (u Union) IsPrimative() bool {
+func (u Union) IsPrimitive() bool {
 	return false
 }
 

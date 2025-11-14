@@ -28,7 +28,7 @@ func (o Object) IsReference() bool {
 	return false
 }
 
-func (Object) IsPrimative() bool {
+func (Object) IsPrimitive() bool {
 	return false
 }
 
