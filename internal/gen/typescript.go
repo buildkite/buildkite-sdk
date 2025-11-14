@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
 	"github.com/buildkite/buildkite-sdk/internal/gen/types"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
@@ -19,27 +18,26 @@ func generateTypeScriptTypes(
 
 	// Generate the type for each definition in the schema.
 	for _, name := range generator.Definitions.Keys() {
-		val, _ := generator.Definitions.Get(name)
-		prop := val.(schema.PropertyDefinition)
+		prop, err := generator.GetDefinition(name)
+		if err != nil {
+			return fmt.Errorf("getting definition: %v", err)
+		}
 
 		property, _, err := generator.PropertyDefinitionToValue(name, prop)
 		if err != nil {
 			return fmt.Errorf("converting property definition to a value: %v", err)
 		}
 
-		contents, err := property.TypeScript()
-		if err != nil {
-			return fmt.Errorf("generating files contents for [%s]", name)
-		}
-
-		codeBlock.AddLines(contents, "")
+		codeBlock.AddLines(property.TypeScript(), "")
 	}
 
 	// Create an interface for the properties
 	pipelineInterface := typescript.NewTypeScriptInterface("BuildkitePipeline", "", false)
 	for _, name := range generator.Properties.Keys() {
-		val, _ := generator.Properties.Get(name)
-		prop := val.(schema.SchemaProperty)
+		prop, err := generator.GetProperty(name)
+		if err != nil {
+			return fmt.Errorf("getting property: %v", err)
+		}
 
 		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
 		pipelineInterface.AddItem(name, structType, "", false)

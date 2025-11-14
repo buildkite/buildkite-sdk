@@ -14,6 +14,34 @@ type PipelineSchemaGenerator struct {
 	Properties  *orderedmap.OrderedMap
 }
 
+func (p PipelineSchemaGenerator) GetDefinition(name string) (schema.PropertyDefinition, error) {
+	val, ok := p.Definitions.Get(name)
+	if !ok {
+		return schema.PropertyDefinition{}, fmt.Errorf(`no definition found for "%s"`, name)
+	}
+
+	def, ok := val.(schema.PropertyDefinition)
+	if !ok {
+		return schema.PropertyDefinition{}, fmt.Errorf(`the item for "%s" is not a PropertyDefinition`, name)
+	}
+
+	return def, nil
+}
+
+func (p PipelineSchemaGenerator) GetProperty(name string) (schema.SchemaProperty, error) {
+	val, ok := p.Properties.Get(name)
+	if !ok {
+		return schema.SchemaProperty{}, fmt.Errorf(`no property found for "%s"`, name)
+	}
+
+	def, ok := val.(schema.SchemaProperty)
+	if !ok {
+		return schema.SchemaProperty{}, fmt.Errorf(`the item for "%s" is not a SchemaProperty`, name)
+	}
+
+	return def, nil
+}
+
 var pipelineFunctions = `func (p Pipeline) ToJSON() (string, error) {
     rawJSON, err := json.Marshal(p)
 	if err != nil {
@@ -623,7 +651,7 @@ type Value interface {
 	GoStructKey(isUnion bool) string
 
 	// TypeScript
-	TypeScript() (string, error)
+	TypeScript() string
 	TypeScriptInterfaceKey() string
 	TypeScriptInterfaceType() string
 

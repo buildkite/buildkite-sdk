@@ -148,14 +148,14 @@ func (e Enum) Go() (string, error) {
 }
 
 // TypeScript
-func (e Enum) TypeScript() (string, error) {
+func (e Enum) TypeScript() string {
 	typ := typescript.NewType(
 		e.Name.ToTitleCase(),
 		e.Description,
 		e.TypeScriptInterfaceType(),
 	)
 
-	return typ.String(), nil
+	return typ.String()
 }
 
 func (e Enum) TypeScriptInterfaceKey() string {

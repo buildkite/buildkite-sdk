@@ -102,7 +102,7 @@ func (a Array) Go() (string, error) {
 }
 
 // TypeScript
-func (a Array) TypeScript() (string, error) {
+func (a Array) TypeScript() string {
 	arrayType := a.Type.TypeScriptInterfaceType()
 	if _, ok := a.Type.(Union); ok {
 		arrayType = fmt.Sprintf("(%s)", arrayType)
@@ -113,7 +113,7 @@ func (a Array) TypeScript() (string, error) {
 		a.Description,
 		fmt.Sprintf("%s[]", arrayType),
 	)
-	return typ.String(), nil
+	return typ.String()
 }
 
 func (a Array) TypeScriptInterfaceType() string {

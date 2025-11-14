@@ -48,13 +48,13 @@ func (s String) GoStructKey(isUnion bool) string {
 }
 
 // TypeScript
-func (s String) TypeScript() (string, error) {
+func (s String) TypeScript() string {
 	typ := typescript.NewType(
 		s.Name.ToTitleCase(),
 		s.Description,
 		"string",
 	)
-	return typ.String(), nil
+	return typ.String()
 }
 
 func (s String) TypeScriptInterfaceKey() string {

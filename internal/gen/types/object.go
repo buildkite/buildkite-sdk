@@ -152,7 +152,7 @@ func (o Object) Go() (string, error) {
 }
 
 // TypeScript
-func (o Object) TypeScript() (string, error) {
+func (o Object) TypeScript() string {
 	keys := o.Properties.Keys()
 	if len(keys) == 0 {
 		recordValue := "any"
@@ -163,7 +163,7 @@ func (o Object) TypeScript() (string, error) {
 
 		typeValue := fmt.Sprintf("Record<string, %s>", recordValue)
 		if o.IsNested {
-			return typeValue, nil
+			return typeValue
 		}
 
 		typ := typescript.NewType(
@@ -171,7 +171,7 @@ func (o Object) TypeScript() (string, error) {
 			o.Description,
 			typeValue,
 		)
-		return typ.String(), nil
+		return typ.String()
 	}
 
 	tsInterface := typescript.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description, o.IsNested)
@@ -183,7 +183,7 @@ func (o Object) TypeScript() (string, error) {
 		tsInterface.AddItem(name, structType, val.GetDescription(), required)
 	}
 
-	return tsInterface.Write(), nil
+	return tsInterface.Write()
 }
 
 func (o Object) TypeScriptInterfaceKey() string {
@@ -192,8 +192,7 @@ func (o Object) TypeScriptInterfaceKey() string {
 
 func (o Object) TypeScriptInterfaceType() string {
 	if o.IsNested {
-		result, _ := o.TypeScript()
-		return result
+		return o.TypeScript()
 	}
 
 	return o.Name.ToTitleCase()

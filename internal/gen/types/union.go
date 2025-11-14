@@ -136,7 +136,7 @@ func (u Union) TypeScriptInterfaceType() string {
 	for i, typ := range u.TypeIdentifiers {
 		// Object
 		if obj, ok := typ.(Object); ok {
-			parts[i], _ = obj.TypeScript()
+			parts[i] = obj.TypeScript()
 			continue
 		}
 
@@ -145,13 +145,13 @@ func (u Union) TypeScriptInterfaceType() string {
 	return strings.Join(parts, " | ")
 }
 
-func (u Union) TypeScript() (string, error) {
+func (u Union) TypeScript() string {
 	typ := typescript.NewType(
 		u.Name.ToTitleCase(),
 		u.Description,
 		u.TypeScriptInterfaceType(),
 	)
-	return typ.String(), nil
+	return typ.String()
 }
 
 // Python

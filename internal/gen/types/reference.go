@@ -61,8 +61,8 @@ func (p PropertyReference) GoStructKey(isUnion bool) string {
 }
 
 // TypeScript
-func (p PropertyReference) TypeScript() (string, error) {
-	return p.Name, nil
+func (p PropertyReference) TypeScript() string {
+	return p.Name
 }
 
 func (p PropertyReference) TypeScriptInterfaceKey() string {

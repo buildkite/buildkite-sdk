@@ -48,13 +48,13 @@ func (b Boolean) Go() (string, error) {
 }
 
 // TypeScript
-func (b Boolean) TypeScript() (string, error) {
+func (b Boolean) TypeScript() string {
 	typ := typescript.NewType(
 		b.Name.ToTitleCase(),
 		b.Description,
 		"boolean",
 	)
-	return typ.String(), nil
+	return typ.String()
 }
 
 func (b Boolean) TypeScriptInterfaceKey() string {
