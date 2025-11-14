@@ -1,7 +1,7 @@
 {
     "name": "ci",
-    "$schema": "../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "apps/ci/src",
+    "$schema": "../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "ci/src",
     "projectType": "application",
     "tags": [],
     "targets": {
@@ -9,7 +9,7 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": [],
-                "cwd": "apps/ci"
+                "cwd": "ci"
             }
         },
         "clean": {
@@ -25,12 +25,12 @@
             "defaultConfiguration": "production",
             "options": {
                 "platform": "node",
-                "outputPath": "dist/apps/ci",
+                "outputPath": "dist/ci",
                 "format": ["cjs"],
                 "bundle": false,
-                "main": "apps/ci/src/pipeline.ts",
-                "tsConfig": "apps/ci/tsconfig.app.json",
-                "assets": ["apps/ci/src/assets"],
+                "main": "ci/src/pipeline.ts",
+                "tsConfig": "ci/tsconfig.app.json",
+                "assets": ["ci/src/assets"],
                 "generatePackageJson": true,
                 "esbuildOptions": {
                     "sourcemap": true,
@@ -57,12 +57,12 @@
             "defaultConfiguration": "production",
             "options": {
                 "platform": "node",
-                "outputPath": "dist/apps/ci",
+                "outputPath": "dist/ci",
                 "format": ["cjs"],
                 "bundle": false,
-                "main": "apps/ci/src/release.ts",
-                "tsConfig": "apps/ci/tsconfig.app.json",
-                "assets": ["apps/ci/src/assets"],
+                "main": "ci/src/release.ts",
+                "tsConfig": "ci/tsconfig.app.json",
+                "assets": ["ci/src/assets"],
                 "generatePackageJson": true,
                 "esbuildOptions": {
                     "sourcemap": true,

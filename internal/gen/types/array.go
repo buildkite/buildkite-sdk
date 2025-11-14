@@ -145,7 +145,6 @@ func (a Array) TypeScriptInterfaceKey() string {
 func (a Array) Python() (string, error) {
 	codeBlock := utils.NewCodeBlock()
 	listType := a.Type.PythonClassType()
-	listLength := 1
 
 	if union, ok := a.Type.(Union); ok {
 		var unionTypeParts []string
@@ -180,19 +179,14 @@ func (a Array) Python() (string, error) {
 
 			unionTypeParts = append(unionTypeParts, typ.PythonClassType())
 		}
-		listLength = len(unionTypeParts)
-		listType = strings.Join(unionTypeParts, ",")
+		listType = strings.Join(unionTypeParts, " | ")
 	}
 
 	if _, ok := a.Type.(Object); ok {
-		listLength = 2
-		listType = fmt.Sprintf("%s,%sArgs", listType, listType)
+		listType = fmt.Sprintf("%s | %sArgs", listType, listType)
 	}
 
-	pyType := fmt.Sprintf("type %s = List[Union[%s]]", a.Name.ToTitleCase(), listType)
-	if listLength == 1 {
-		pyType = fmt.Sprintf("type %s = List[%s]", a.Name.ToTitleCase(), listType)
-	}
+	pyType := fmt.Sprintf("%s = List[%s]", a.Name.ToTitleCase(), listType)
 
 	if a.Description != "" {
 		codeBlock.AddLines(fmt.Sprintf("# %s", a.Description))

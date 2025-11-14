@@ -74,7 +74,7 @@ func (b Boolean) Python() (string, error) {
 		block.AddLines(fmt.Sprintf("# %s", b.Description))
 	}
 
-	block.AddLines(fmt.Sprintf("type %s = bool", b.Name.ToTitleCase()))
+	block.AddLines(fmt.Sprintf("%s = bool", b.Name.ToTitleCase()))
 	return block.String(), nil
 }
 

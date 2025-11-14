@@ -6,9 +6,10 @@ from buildkite_sdk import (
     GroupStepArgs,
     InputStepArgs,
     TriggerStepArgs,
-    WaitStepArgs
+    WaitStepArgs,
 )
 from .utils import TestRunner
+
 
 class TestPipelineClass(TestRunner):
     def test_from_dict(self):
@@ -43,7 +44,9 @@ class TestPipelineClass(TestRunner):
     def test_add_notify(self):
         pipeline = Pipeline()
         pipeline.add_notify([NotifyEmail(email="person@example.com")])
-        self.validator.check_result(pipeline, {"steps": [], "notify": [{"email": "person@example.com"}]})
+        self.validator.check_result(
+            pipeline, {"steps": [], "notify": [{"email": "person@example.com"}]}
+        )
 
     def test_add_step(self):
         pipeline = Pipeline()
@@ -53,7 +56,10 @@ class TestPipelineClass(TestRunner):
     def test_add_multiple_steps(self):
         block_step: BlockStepArgs = {"block": "block label"}
         command_step: CommandStepArgs = {"command": "run.sh"}
-        group_step: GroupStepArgs = {"group": "group label", "steps": [{"command": "group.sh"}]}
+        group_step: GroupStepArgs = {
+            "group": "group label",
+            "steps": [{"command": "group.sh"}],
+        }
         input_step: InputStepArgs = {"input": "input label"}
         trigger_step: TriggerStepArgs = {"trigger": "trigger label"}
         wait_step: WaitStepArgs = {"wait": "wait label"}
@@ -66,4 +72,16 @@ class TestPipelineClass(TestRunner):
         pipeline.add_step(trigger_step)
         pipeline.add_step(wait_step)
 
-        self.validator.check_result(pipeline, {"steps": [block_step, command_step, group_step, input_step, trigger_step, wait_step]})
+        self.validator.check_result(
+            pipeline,
+            {
+                "steps": [
+                    block_step,
+                    command_step,
+                    group_step,
+                    input_step,
+                    trigger_step,
+                    wait_step,
+                ]
+            },
+        )

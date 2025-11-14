@@ -7,11 +7,14 @@ import jsonschema
 import json
 import yaml
 
+
 class PipelineValidator:
     schema: Any
 
     def __init__(self) -> None:
-        response = requests.get('https://raw.githubusercontent.com/buildkite/pipeline-schema/refs/heads/main/schema.json')
+        response = requests.get(
+            "https://raw.githubusercontent.com/buildkite/pipeline-schema/refs/heads/main/schema.json"
+        )
         response.raise_for_status()
         self.schema = response.json()
 
@@ -30,11 +33,16 @@ class PipelineValidator:
         assert is_valid == True, f"Pipeline is not valid: {pipeline_string}"
 
         comparison_result = Compare().check(expected, actual)
-        assert comparison_result == NO_DIFF, f"Differences found: {json.dumps(comparison_result, indent=4)}"
+        assert comparison_result == NO_DIFF, (
+            f"Differences found: {json.dumps(comparison_result, indent=4)}"
+        )
 
         expectedYaml = yaml.dump(expected)
         actualYaml = pipeline.to_yaml()
-        assert expectedYaml == actualYaml, f"YAML results do not match:\n{expectedYaml}\n{actualYaml}"
+        assert expectedYaml == actualYaml, (
+            f"YAML results do not match:\n{expectedYaml}\n{actualYaml}"
+        )
+
 
 class TestRunner(unittest.TestCase):
     validator = PipelineValidator()

@@ -295,11 +295,11 @@ func (o Object) Python() (string, error) {
 
 		if o.AdditionalProperties != nil {
 			prop := *o.AdditionalProperties
-			block.AddLines(fmt.Sprintf("type %s = Dict[str, %s]", o.Name.ToTitleCase(), prop.PythonClassType()))
+			block.AddLines(fmt.Sprintf("%s = Dict[str, %s]", o.Name.ToTitleCase(), prop.PythonClassType()))
 			return block.String(), nil
 		}
 
-		block.AddLines(fmt.Sprintf("type %s = Dict[str, Any]", o.Name.ToTitleCase()))
+		block.AddLines(fmt.Sprintf("%s = Dict[str, Any]", o.Name.ToTitleCase()))
 		return block.String(), nil
 	}
 
@@ -325,8 +325,8 @@ func (o Object) Python() (string, error) {
 		}
 
 		if name == "with" {
-			pyTypedDict.AddItem("with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", val.GetDescription(), true, false)
-			pyClass.AddItem("matrix_with", "Union[MatrixElementList,MatrixAdjustmentsWithObject]", "", "with", val.GetDescription(), true, false)
+			pyTypedDict.AddItem("with", "MatrixElementList | MatrixAdjustmentsWithObject", "", "with", val.GetDescription(), true, false)
+			pyClass.AddItem("matrix_with", "MatrixElementList | MatrixAdjustmentsWithObject", "", "with", val.GetDescription(), true, false)
 			continue
 		}
 
@@ -416,7 +416,6 @@ func (o Object) Python() (string, error) {
 				}
 
 				if ref, ok := typ.(PropertyReference); ok {
-					fmt.Println(ref.Name)
 					typeIdentifiers[i] = PropertyReference{
 						Name: fmt.Sprintf("%sArgs", ref.Name),
 						Ref:  schema.PropertyReferenceString(fmt.Sprintf("%sArgs", ref.Name)),

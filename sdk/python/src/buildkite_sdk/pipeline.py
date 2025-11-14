@@ -1,67 +1,78 @@
-from .schema import (
-    Env,
-    Agents,
-    BuildNotify,
-    Image,
-    BlockStepArgs,
-    BlockStep,
-    NestedBlockStepArgs,
-    NestedBlockStep,
-    StringBlockStep,
-    InputStepArgs,
-    InputStep,
-    NestedInputStepArgs,
-    NestedInputStep,
-    StringInputStep,
-    CommandStepArgs,
-    CommandStep,
-    NestedCommandStepArgs,
-    NestedCommandStep,
-    WaitStepArgs,
-    WaitStep,
-    NestedWaitStepArgs,
-    NestedWaitStep,
-    StringWaitStep,
-    TriggerStepArgs,
-    TriggerStep,
-    NestedTriggerStepArgs,
-    NestedTriggerStep,
-    GroupStepArgs,
-    GroupStep,
-    Secrets,
-)
-from typing import Optional, List, Any, TypedDict, NotRequired, Union
-from pydantic import BaseModel
-import json
-import yaml
+from __future__ import annotations
 
-type Step = Union[
-    BlockStepArgs,
+import json
+import sys
+
+if sys.version_info >= (3, 12):
+    from typing import Any, List, NotRequired, Optional, TypedDict
+else:
+    from typing import Any, List, Optional
+
+    from typing_extensions import NotRequired, TypedDict
+
+import yaml
+from pydantic import BaseModel
+
+from .schema import (
+    Agents,
     BlockStep,
-    NestedBlockStepArgs,
-    NestedBlockStep,
-    StringBlockStep,
-    InputStepArgs,
-    InputStep,
-    NestedInputStepArgs,
-    NestedInputStep,
-    StringInputStep,
-    CommandStepArgs,
+    BlockStepArgs,
+    BuildNotify,
     CommandStep,
-    NestedCommandStepArgs,
-    NestedCommandStep,
-    WaitStepArgs,
-    WaitStep,
-    NestedWaitStepArgs,
-    NestedWaitStep,
-    StringWaitStep,
-    TriggerStepArgs,
-    TriggerStep,
-    NestedTriggerStepArgs,
-    NestedTriggerStep,
-    GroupStepArgs,
+    CommandStepArgs,
+    Env,
     GroupStep,
-]
+    GroupStepArgs,
+    Image,
+    InputStep,
+    InputStepArgs,
+    NestedBlockStep,
+    NestedBlockStepArgs,
+    NestedCommandStep,
+    NestedCommandStepArgs,
+    NestedInputStep,
+    NestedInputStepArgs,
+    NestedTriggerStep,
+    NestedTriggerStepArgs,
+    NestedWaitStep,
+    NestedWaitStepArgs,
+    Secrets,
+    StringBlockStep,
+    StringInputStep,
+    StringWaitStep,
+    TriggerStep,
+    TriggerStepArgs,
+    WaitStep,
+    WaitStepArgs,
+)
+
+Step = (
+    BlockStepArgs
+    | BlockStep
+    | NestedBlockStepArgs
+    | NestedBlockStep
+    | StringBlockStep
+    | InputStepArgs
+    | InputStep
+    | NestedInputStepArgs
+    | NestedInputStep
+    | StringInputStep
+    | CommandStepArgs
+    | CommandStep
+    | NestedCommandStepArgs
+    | NestedCommandStep
+    | WaitStepArgs
+    | WaitStep
+    | NestedWaitStepArgs
+    | NestedWaitStep
+    | StringWaitStep
+    | TriggerStepArgs
+    | TriggerStep
+    | NestedTriggerStepArgs
+    | NestedTriggerStep
+    | GroupStepArgs
+    | GroupStep
+)
 
 
 class PipelineArgs(TypedDict):
@@ -89,16 +100,17 @@ class Pipeline(BaseModel):
         self.secrets = secrets
 
     def add_agent(self, key: str, value: Any):
-        if self.agents == None:
+        if self.agents is None:
             self.agents = {}
 
         if isinstance(self.agents, List):
             self.agents.append(f"{key}={value}")
-        else:
-            self.agents[key] = value
+            return
+
+        self.agents[key] = value
 
     def add_environment_variable(self, key: str, value: Any):
-        if self.env == None:
+        if self.env is None:
             self.env = {}
         self.env[key] = value
 
