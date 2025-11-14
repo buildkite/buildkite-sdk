@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	gogen "github.com/buildkite/buildkite-sdk/internal/gen/go"
 	"github.com/buildkite/buildkite-sdk/internal/gen/types"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
@@ -28,15 +29,7 @@ func generateGoTypes(
 			return fmt.Errorf("generating files contents for [%s]: %v", fileName, err)
 		}
 
-		file := utils.NewGoFile(
-			"buildkite",
-			fileName,
-			[]string{},
-			utils.NewCodeBlock(
-				contents,
-			),
-		)
-
+		file := gogen.NewGoFile("buildkite", fileName, contents)
 		err = file.Write()
 		if err != nil {
 			return fmt.Errorf("writing file [%s]: %v", fileName, err)
@@ -49,15 +42,7 @@ func generateGoTypes(
 	}
 
 	pipelineFileName := fmt.Sprintf("%s/pipeline.go", outDir)
-	file := utils.NewGoFile(
-		"buildkite",
-		pipelineFileName,
-		[]string{},
-		utils.NewCodeBlock(
-			pipelineSchemaString,
-		),
-	)
-
+	file := gogen.NewGoFile("buildkite", pipelineFileName, pipelineSchemaString)
 	err = file.Write()
 	if err != nil {
 		return fmt.Errorf("writing file [%s]: %v", pipelineFileName, err)
