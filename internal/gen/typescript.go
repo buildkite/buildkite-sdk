@@ -18,7 +18,7 @@ func generateTypeScriptTypes(
 
 	// Generate the type for each definition in the schema.
 	for _, name := range generator.Definitions.Keys() {
-		prop, err := generator.GetDefinition(name)
+		prop, err := generator.Definitions.Get(name)
 		if err != nil {
 			return fmt.Errorf("getting definition: %v", err)
 		}
@@ -34,7 +34,7 @@ func generateTypeScriptTypes(
 	// Create an interface for the properties
 	pipelineInterface := typescript.NewTypeScriptInterface("BuildkitePipeline", "", false)
 	for _, name := range generator.Properties.Keys() {
-		prop, err := generator.GetProperty(name)
+		prop, err := generator.Properties.Get(name)
 		if err != nil {
 			return fmt.Errorf("getting property: %v", err)
 		}

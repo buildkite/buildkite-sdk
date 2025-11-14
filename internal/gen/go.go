@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
 	"github.com/buildkite/buildkite-sdk/internal/gen/types"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
@@ -13,8 +12,10 @@ func generateGoTypes(
 	outDir string,
 ) error {
 	for _, name := range generator.Definitions.Keys() {
-		val, _ := generator.Definitions.Get(name)
-		prop := val.(schema.PropertyDefinition)
+		prop, err := generator.Definitions.Get(name)
+		if err != nil {
+			return err
+		}
 
 		property, _, err := generator.PropertyDefinitionToValue(name, prop)
 		if err != nil {

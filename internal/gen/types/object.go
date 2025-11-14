@@ -7,13 +7,12 @@ import (
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
-	"github.com/iancoleman/orderedmap"
 )
 
 type Object struct {
 	Name                 PropertyName
 	Description          string
-	Properties           *orderedmap.OrderedMap
+	Properties           *utils.OrderedMap[Value]
 	AdditionalProperties *Value
 	Required             []string
 
@@ -65,8 +64,10 @@ func (o Object) Go() (string, error) {
 
 	objectStruct := utils.NewGoStruct(o.Name.ToTitleCase(), o.Description, nil)
 	for _, name := range keys {
-		prop, _ := o.Properties.Get(name)
-		val := prop.(Value)
+		val, err := o.Properties.Get(name)
+		if err != nil {
+			return "", err
+		}
 
 		structKey := val.GoStructKey(false)
 		structType := val.GoStructType()

@@ -38,8 +38,15 @@ func (o *OrderedMap[T]) SortKeys() {
 	o.data.SortKeys(sort.Strings)
 }
 
-func NewOrderedMap[T any]() *OrderedMap[T] {
-	return &OrderedMap[T]{
+func NewOrderedMap[T any](data map[string]T) *OrderedMap[T] {
+	newMap := &OrderedMap[T]{
 		data: orderedmap.New(),
 	}
+
+	for key, item := range data {
+		newMap.Set(key, item)
+	}
+	newMap.SortKeys()
+
+	return newMap
 }
