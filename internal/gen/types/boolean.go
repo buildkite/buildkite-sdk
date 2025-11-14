@@ -48,16 +48,13 @@ func (b Boolean) Go() (string, error) {
 }
 
 // TypeScript
-
 func (b Boolean) TypeScript() (string, error) {
-	block := utils.NewCodeBlock()
-
-	if b.Description != "" {
-		block.AddLines(typescript.NewTypeDocComment(b.Description))
-	}
-
-	block.AddLines(fmt.Sprintf("type %s = boolean", b.Name.ToTitleCase()))
-	return block.String(), nil
+	typ := typescript.NewType(
+		b.Name.ToTitleCase(),
+		b.Description,
+		"boolean",
+	)
+	return typ.String(), nil
 }
 
 func (b Boolean) TypeScriptInterfaceKey() string {
