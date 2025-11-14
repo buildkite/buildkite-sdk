@@ -99,7 +99,7 @@ func generatePythonTypes(
 	for _, key := range types.Properties.Keys() {
 		lines, err := types.Generate(key)
 		if err != nil {
-			return fmt.Errorf("genereating types: %v", err)
+			return fmt.Errorf("generating types: %v", err)
 		}
 
 		if lines != "" {
