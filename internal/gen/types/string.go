@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
@@ -47,14 +48,13 @@ func (s String) GoStructKey(isUnion bool) string {
 }
 
 // TypeScript
-func (s String) TypeScript() (string, error) {
-	block := utils.NewCodeBlock()
-	if s.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(s.Description))
-	}
-
-	block.AddLines(fmt.Sprintf("export type %s = string", s.Name.ToTitleCase()))
-	return block.String(), nil
+func (s String) TypeScript() string {
+	typ := typescript.NewType(
+		s.Name.ToTitleCase(),
+		s.Description,
+		"string",
+	)
+	return typ.String()
 }
 
 func (s String) TypeScriptInterfaceKey() string {

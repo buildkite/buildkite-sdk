@@ -59,3 +59,25 @@ func DashCaseToTitleCase(str string) string {
 
 	return strings.Join(titleCaseWords, "")
 }
+
+func SnakeCaseToCamelCase(str string) string {
+	words := strings.Split(str, "_")
+	var titleCaseWords []string
+
+	for i, word := range words {
+		if i == 0 {
+			titleCaseWords = append(titleCaseWords, word)
+			continue
+		}
+
+		if word == "" {
+			continue
+		}
+
+		firstChar := string(unicode.ToUpper(rune(word[0])))
+		restOfWord := strings.ToLower(word[1:])
+		titleCaseWords = append(titleCaseWords, firstChar+restOfWord)
+	}
+
+	return strings.Join(titleCaseWords, "")
+}
