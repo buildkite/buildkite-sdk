@@ -49,17 +49,16 @@ func (n Number) GoStructKey(isUnion bool) string {
 
 // TypeScript
 func (n Number) TypeScript() (string, error) {
-	block := utils.NewCodeBlock()
-	if n.Description != "" {
-		block.AddLines(typescript.NewTypeDocComment(n.Description))
-	}
-
-	block.AddLines(fmt.Sprintf("type %s = number", n.Name.ToTitleCase()))
-	return block.String(), nil
+	typ := typescript.NewType(
+		n.Name.ToTitleCase(),
+		n.Description,
+		"number",
+	)
+	return typ.String(), nil
 }
 
 func (n Number) TypeScriptInterfaceKey() string {
-	return n.Name.Value
+	return n.Name.ToCamelCase()
 }
 
 func (n Number) TypeScriptInterfaceType() string {
