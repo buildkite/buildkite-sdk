@@ -23,7 +23,7 @@ func (a Array) IsReference() bool {
 	return a.Reference
 }
 
-func (Array) IsPrimative() bool {
+func (Array) IsPrimitive() bool {
 	return false
 }
 

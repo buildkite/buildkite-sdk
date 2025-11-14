@@ -20,7 +20,7 @@ func (s String) IsReference() bool {
 	return false
 }
 
-func (String) IsPrimative() bool {
+func (String) IsPrimitive() bool {
 	return true
 }
 

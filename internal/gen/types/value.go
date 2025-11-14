@@ -644,5 +644,5 @@ type Value interface {
 	PythonClassType() string
 
 	IsReference() bool
-	IsPrimative() bool
+	IsPrimitive() bool
 }
