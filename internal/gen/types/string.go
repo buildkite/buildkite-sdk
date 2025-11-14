@@ -49,17 +49,16 @@ func (s String) GoStructKey(isUnion bool) string {
 
 // TypeScript
 func (s String) TypeScript() (string, error) {
-	block := utils.NewCodeBlock()
-	if s.Description != "" {
-		block.AddLines(typescript.NewTypeDocComment(s.Description))
-	}
-
-	block.AddLines(fmt.Sprintf("export type %s = string", s.Name.ToTitleCase()))
-	return block.String(), nil
+	typ := typescript.NewType(
+		s.Name.ToTitleCase(),
+		s.Description,
+		"string",
+	)
+	return typ.String(), nil
 }
 
 func (s String) TypeScriptInterfaceKey() string {
-	return s.Name.Value
+	return s.Name.ToCamelCase()
 }
 
 func (String) TypeScriptInterfaceType() string {
