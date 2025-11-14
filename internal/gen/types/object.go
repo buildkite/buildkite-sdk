@@ -155,109 +155,45 @@ func (o Object) Go() (string, error) {
 func (o Object) TypeScript() (string, error) {
 	keys := o.Properties.Keys()
 	if len(keys) == 0 {
-		block := utils.NewCodeBlock()
-
-		identifier := fmt.Sprintf("export type %s = ", o.Name.ToTitleCase())
-		if o.IsNested {
-			identifier = ""
-		}
-
-		if o.Description != "" {
-			block.AddLines(typescript.NewTypeDocComment(o.Description))
-		}
-
+		recordValue := "any"
 		if o.AdditionalProperties != nil {
 			prop := *o.AdditionalProperties
-			block.AddLines(fmt.Sprintf("%sRecord<string, %s>", identifier, prop.TypeScriptInterfaceType()))
-			return block.String(), nil
+			recordValue = prop.TypeScriptInterfaceType()
 		}
 
-		block.AddLines(fmt.Sprintf("%sRecord<string, any>", identifier))
-		return block.String(), nil
+		typeValue := fmt.Sprintf("Record<string, %s>", recordValue)
+		if o.IsNested {
+			return typeValue, nil
+		}
+
+		typ := typescript.NewType(
+			o.Name.ToTitleCase(),
+			o.Description,
+			typeValue,
+		)
+		return typ.String(), nil
 	}
 
 	tsInterface := typescript.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description, o.IsNested)
 	for _, name := range keys {
 		prop, _ := o.Properties.Get(name)
 		val := prop.(Value)
-
 		structType := val.TypeScriptInterfaceType()
 		required := slices.Contains(o.Required, name)
-
-		// Property Reference
-		if ref, ok := val.(PropertyReference); ok {
-			switch ref.Type.(type) {
-			case String:
-				tsInterface.AddItem(name, "string", val.GetDescription(), required)
-				continue
-			case Number:
-				tsInterface.AddItem(name, "number", val.GetDescription(), required)
-				continue
-			case Boolean:
-				tsInterface.AddItem(name, "boolean", val.GetDescription(), required)
-				continue
-			default:
-				tsInterface.AddItem(name, utils.CamelCaseToTitleCase(ref.Ref.Name()), val.GetDescription(), required)
-				continue
-			}
-		}
-
-		// Nested Object
-		if obj, ok := val.(Object); ok {
-			keys := obj.Properties.Keys()
-			if len(keys) == 0 {
-				tsInterface.AddItem(name, "Record<string,any>", obj.Description, required)
-				continue
-			}
-
-			tsObject := typescript.NewTypeScriptInterface("", obj.Description, true)
-			for _, propName := range keys {
-				nestedProp, _ := obj.Properties.Get(propName)
-				nestedVal := nestedProp.(Value)
-				nestedDescription := nestedVal.GetDescription()
-				nestedRequired := slices.Contains(obj.Required, propName)
-
-				if ref, ok := nestedVal.(PropertyReference); ok {
-					switch ref.Type.(type) {
-					case String:
-						tsObject.AddItem(propName, "string", nestedDescription, required)
-						continue
-					case Number:
-						tsObject.AddItem(propName, "number", nestedDescription, required)
-						continue
-					case Boolean:
-						tsObject.AddItem(propName, "boolean", nestedDescription, required)
-						continue
-					default:
-						tsObject.AddItem(propName, utils.CamelCaseToTitleCase(ref.Ref.Name()), nestedDescription, required)
-						continue
-					}
-				}
-				tsObject.AddItem(propName, nestedVal.TypeScriptInterfaceType(), nestedDescription, nestedRequired)
-			}
-
-			objString := tsObject.Write()
-			tsInterface.AddItem(name, objString, obj.Description, required)
-			continue
-		}
-
 		tsInterface.AddItem(name, structType, val.GetDescription(), required)
 	}
 
-	block := utils.NewCodeBlock(
-		tsInterface.Write(),
-	)
-	return block.String(), nil
+	return tsInterface.Write(), nil
 }
 
 func (o Object) TypeScriptInterfaceKey() string {
-	return o.Name.Value
+	return o.Name.ToCamelCase()
 }
 
 func (o Object) TypeScriptInterfaceType() string {
-	keys := o.Properties.Keys()
-	if len(keys) == 0 {
-		return "Record<string, any>"
+	if o.IsNested {
+		result, _ := o.TypeScript()
+		return result
 	}
 
 	return o.Name.ToTitleCase()

@@ -342,6 +342,19 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 			}
 
 			dependencies = append(dependencies, objDependencies...)
+
+			// Nested object
+			if nestedObject, ok := objProp.(Object); ok {
+				objProp = Object{
+					Name:                 nestedObject.Name,
+					Description:          nestedObject.Description,
+					Properties:           nestedObject.Properties,
+					AdditionalProperties: nestedObject.AdditionalProperties,
+					Required:             nestedObject.Required,
+					IsNested:             true,
+				}
+			}
+
 			properties.Set(name, objProp)
 		}
 		properties.SortKeys(sort.Strings)

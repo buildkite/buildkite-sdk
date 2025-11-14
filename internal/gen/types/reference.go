@@ -60,6 +60,7 @@ func (p PropertyReference) GoStructKey(isUnion bool) string {
 	return utils.CamelCaseToTitleCase(p.Name)
 }
 
+// TypeScript
 func (p PropertyReference) TypeScript() (string, error) {
 	return p.Name, nil
 }
@@ -69,11 +70,21 @@ func (p PropertyReference) TypeScriptInterfaceKey() string {
 }
 
 func (p PropertyReference) TypeScriptInterfaceType() string {
-	if strings.Contains(p.Name, "_") {
-		return utils.DashCaseToTitleCase(p.Name)
-	}
+	switch p.Type.(type) {
+	case String:
+		return "string"
+	case Number:
+		return "number"
+	case Boolean:
+		return "boolean"
+	default:
+		name := p.Ref.Name()
+		if strings.Contains(name, "_") {
+			return utils.DashCaseToTitleCase(name)
+		}
 
-	return utils.CamelCaseToTitleCase(p.Name)
+		return utils.CamelCaseToTitleCase(name)
+	}
 }
 
 // Python
