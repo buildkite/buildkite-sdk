@@ -8,16 +8,20 @@ import (
 )
 
 type OrderedMap[T any] struct {
-	Map *orderedmap.OrderedMap
+	data *orderedmap.OrderedMap
+}
+
+func (o *OrderedMap[T]) Keys() []string {
+	return o.data.Keys()
 }
 
 func (o *OrderedMap[T]) Set(key string, item T) {
-	o.Map.Set(key, item)
+	o.data.Set(key, item)
 }
 
 func (o *OrderedMap[T]) Get(key string) (T, error) {
 	var item T
-	val, ok := o.Map.Get(key)
+	val, ok := o.data.Get(key)
 	if !ok {
 		return item, fmt.Errorf("no value in map found for key \"%s\"", key)
 	}
@@ -31,11 +35,11 @@ func (o *OrderedMap[T]) Get(key string) (T, error) {
 }
 
 func (o *OrderedMap[T]) SortKeys() {
-	o.Map.SortKeys(sort.Strings)
+	o.data.SortKeys(sort.Strings)
 }
 
 func NewOrderedMap[T any]() *OrderedMap[T] {
 	return &OrderedMap[T]{
-		Map: orderedmap.New(),
+		data: orderedmap.New(),
 	}
 }
