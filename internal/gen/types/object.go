@@ -187,7 +187,7 @@ func (o Object) TypeScript() (string, error) {
 }
 
 func (o Object) TypeScriptInterfaceKey() string {
-	return o.Name.ToCamelCase()
+	return o.Name.Value
 }
 
 func (o Object) TypeScriptInterfaceType() string {

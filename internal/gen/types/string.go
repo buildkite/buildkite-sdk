@@ -58,7 +58,7 @@ func (s String) TypeScript() (string, error) {
 }
 
 func (s String) TypeScriptInterfaceKey() string {
-	return s.Name.ToCamelCase()
+	return s.Name.Value
 }
 
 func (String) TypeScriptInterfaceType() string {

@@ -159,7 +159,7 @@ func (e Enum) TypeScript() (string, error) {
 }
 
 func (e Enum) TypeScriptInterfaceKey() string {
-	return e.Name.ToCamelCase()
+	return e.Name.Value
 }
 
 func (e Enum) TypeScriptInterfaceType() string {

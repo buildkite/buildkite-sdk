@@ -128,7 +128,7 @@ func (u Union) Go() (string, error) {
 
 // TypeScript
 func (u Union) TypeScriptInterfaceKey() string {
-	return u.Name.ToCamelCase()
+	return u.Name.Value
 }
 
 func (u Union) TypeScriptInterfaceType() string {

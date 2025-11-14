@@ -134,7 +134,7 @@ func (a Array) TypeScriptInterfaceType() string {
 }
 
 func (a Array) TypeScriptInterfaceKey() string {
-	return a.Name.ToTitleCase()
+	return a.Name.Value
 }
 
 // Python
