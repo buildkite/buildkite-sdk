@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	gogen "github.com/buildkite/buildkite-sdk/internal/gen/go"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 	"github.com/iancoleman/orderedmap"
@@ -76,8 +77,8 @@ func (e Enum) Go() (string, error) {
 	displayName := e.Name.ToTitleCase()
 	enumDefinitionName := e.GoStructType()
 
-	enumInterface := utils.NewGoConstraintInterface(fmt.Sprintf("%sValues", enumDefinitionName), e.Description)
-	enumDefinition := utils.NewGoStruct(enumDefinitionName, e.Description, nil)
+	enumInterface := gogen.NewGoConstraintInterface(fmt.Sprintf("%sValues", enumDefinitionName), e.Description)
+	enumDefinition := gogen.NewGoStruct(enumDefinitionName, e.Description, nil)
 
 	enumMarshalFunction := utils.NewCodeBlock(
 		fmt.Sprintf("func (e %s) MarshalJSON() ([]byte, error) {", displayName),
@@ -100,7 +101,7 @@ func (e Enum) Go() (string, error) {
 
 			lines.AddLines(
 				fmt.Sprintf("type %s %s", enumDefinitionName, typ),
-				fmt.Sprintf("// %s", e.Description),
+				gogen.NewGoComment(e.Description),
 				fmt.Sprintf("var %sValues = map[string]%s{", enumDefinitionName, enumDefinitionName),
 			)
 
@@ -128,19 +129,9 @@ func (e Enum) Go() (string, error) {
 
 	enumMarshalFunction.AddLines("    return json.Marshal(nil)\n}")
 
-	enumInterfaceString, err := enumInterface.Write()
-	if err != nil {
-		return "", fmt.Errorf("generating interface for [%s]: %v", e.Name.Value, err)
-	}
-
-	enumDefinitionString, err := enumDefinition.Write()
-	if err != nil {
-		return "", fmt.Errorf("generating struct for [%s]: %v", e.Name.Value, err)
-	}
-
 	lines.AddLines(
-		enumInterfaceString,
-		enumDefinitionString,
+		enumInterface.Write(),
+		enumDefinition.Write(),
 		enumMarshalFunction.String(),
 	)
 
