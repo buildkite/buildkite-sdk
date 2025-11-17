@@ -21,7 +21,7 @@ func (p PropertyReference) IsReference() bool {
 	return true
 }
 
-func (PropertyReference) IsPrimative() bool {
+func (PropertyReference) IsPrimitive() bool {
 	return false
 }
 
@@ -30,18 +30,23 @@ func (p PropertyReference) IsNested() bool {
 	return len(parts) > 3
 }
 
+// isPrimitiveType checks if the referenced type is a primitive type
+func (p PropertyReference) isPrimitiveType() bool {
+	switch p.Type.(type) {
+	case String, Number, Boolean:
+		return true
+	default:
+		return false
+	}
+}
+
 // Go
 func (p PropertyReference) Go() (string, error) {
 	return utils.CamelCaseToTitleCase(p.Name), nil
 }
 
 func (p PropertyReference) GoStructType() string {
-	switch p.Type.(type) {
-	case String:
-		return p.Type.GoStructType()
-	case Number:
-		return p.Type.GoStructType()
-	case Boolean:
+	if p.isPrimitiveType() {
 		return p.Type.GoStructType()
 	}
 
@@ -70,21 +75,16 @@ func (p PropertyReference) TypeScriptInterfaceKey() string {
 }
 
 func (p PropertyReference) TypeScriptInterfaceType() string {
-	switch p.Type.(type) {
-	case String:
-		return "string"
-	case Number:
-		return "number"
-	case Boolean:
-		return "boolean"
-	default:
-		name := p.Ref.Name()
-		if strings.Contains(name, "_") {
-			return utils.DashCaseToTitleCase(name)
-		}
-
-		return utils.CamelCaseToTitleCase(name)
+	if p.isPrimitiveType() {
+		return p.Type.TypeScriptInterfaceType()
 	}
+
+	name := p.Ref.Name()
+	if strings.Contains(name, "_") {
+		return utils.DashCaseToTitleCase(name)
+	}
+
+	return utils.CamelCaseToTitleCase(name)
 }
 
 // Python
@@ -97,12 +97,7 @@ func (p PropertyReference) PythonClassKey() string {
 }
 
 func (p PropertyReference) PythonClassType() string {
-	switch p.Type.(type) {
-	case String:
-		return p.Type.PythonClassType()
-	case Number:
-		return p.Type.PythonClassType()
-	case Boolean:
+	if p.isPrimitiveType() {
 		return p.Type.PythonClassType()
 	}
 

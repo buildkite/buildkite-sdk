@@ -57,7 +57,7 @@ func (e Enum) IsReference() bool {
 	return false
 }
 
-func (Enum) IsPrimative() bool {
+func (Enum) IsPrimitive() bool {
 	return false
 }
 

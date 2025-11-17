@@ -20,7 +20,7 @@ func (Number) IsReference() bool {
 	return false
 }
 
-func (Number) IsPrimative() bool {
+func (Number) IsPrimitive() bool {
 	return true
 }
 
