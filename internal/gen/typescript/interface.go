@@ -51,10 +51,9 @@ func (t *TypeScriptInterface) Write() string {
 	for _, item := range t.Items {
 		// If the item has a description add a
 		// TypeDoc comment.
-		itemComment := NewTypeDocComment(item.Description)
-		if itemComment != "" {
+		if item.Description != "" {
 			codeBlock.AddLines(
-				fmt.Sprintf("    %s", itemComment),
+				NewTypeDocCommentWithIndent(item.Description, 4),
 			)
 		}
 
@@ -63,8 +62,10 @@ func (t *TypeScriptInterface) Write() string {
 		if item.Required {
 			optional = ""
 		}
-		codeBlock.AddLines(
-			fmt.Sprintf("    %s%s: %v", item.Name, optional, item.Value),
+
+		codeBlock.AddLinesWithIndent(
+			4,
+			fmt.Sprintf("%s%s: %v", item.Name, optional, item.Value),
 		)
 	}
 
