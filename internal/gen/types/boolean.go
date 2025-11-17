@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
@@ -19,7 +20,7 @@ func (b Boolean) IsReference() bool {
 	return false
 }
 
-func (Boolean) IsPrimative() bool {
+func (Boolean) IsPrimitive() bool {
 	return true
 }
 
@@ -47,16 +48,13 @@ func (b Boolean) Go() (string, error) {
 }
 
 // TypeScript
-
-func (b Boolean) TypeScript() (string, error) {
-	block := utils.NewCodeBlock()
-
-	if b.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(b.Description))
-	}
-
-	block.AddLines(fmt.Sprintf("type %s = boolean", b.Name.ToTitleCase()))
-	return block.String(), nil
+func (b Boolean) TypeScript() string {
+	typ := typescript.NewType(
+		b.Name.ToTitleCase(),
+		b.Description,
+		"boolean",
+	)
+	return typ.String()
 }
 
 func (b Boolean) TypeScriptInterfaceKey() string {

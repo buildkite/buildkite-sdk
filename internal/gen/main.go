@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"sort"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
 	"github.com/buildkite/buildkite-sdk/internal/gen/types"
-	"github.com/iancoleman/orderedmap"
 )
 
 func generateTypes(outDir, language string) error {
@@ -17,32 +15,13 @@ func generateTypes(outDir, language string) error {
 		return fmt.Errorf("reading pipeline schema: %v", err)
 	}
 
-	definitions := orderedmap.New()
-	for key, prop := range pipelineSchema.Definitions {
-		definitions.Set(key, prop)
-	}
-	definitions.SortKeys(sort.Strings)
-
-	properties := orderedmap.New()
-	for key, prop := range pipelineSchema.Properties {
-		properties.Set(key, prop)
-	}
-	properties.SortKeys(sort.Strings)
-
-	generator := types.PipelineSchemaGenerator{
-		Definitions: definitions,
-		Properties:  properties,
-	}
-
-	if language == "ts" {
+	generator := types.NewPipelineSchemaGenerator(pipelineSchema)
+	switch language {
+	case "ts":
 		return generateTypeScriptTypes(generator, outDir)
-	}
-
-	if language == "py" {
+	case "py":
 		return generatePythonTypes(generator, outDir)
-	}
-
-	if language == "go" {
+	case "go":
 		return generateGoTypes(generator, outDir)
 	}
 

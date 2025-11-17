@@ -21,7 +21,7 @@ func (p PropertyReference) IsReference() bool {
 	return true
 }
 
-func (PropertyReference) IsPrimative() bool {
+func (PropertyReference) IsPrimitive() bool {
 	return false
 }
 
@@ -30,18 +30,23 @@ func (p PropertyReference) IsNested() bool {
 	return len(parts) > 3
 }
 
+// isPrimitiveType checks if the referenced type is a primitive type
+func (p PropertyReference) isPrimitiveType() bool {
+	switch p.Type.(type) {
+	case String, Number, Boolean:
+		return true
+	default:
+		return false
+	}
+}
+
 // Go
 func (p PropertyReference) Go() (string, error) {
 	return utils.CamelCaseToTitleCase(p.Name), nil
 }
 
 func (p PropertyReference) GoStructType() string {
-	switch p.Type.(type) {
-	case String:
-		return p.Type.GoStructType()
-	case Number:
-		return p.Type.GoStructType()
-	case Boolean:
+	if p.isPrimitiveType() {
 		return p.Type.GoStructType()
 	}
 
@@ -60,8 +65,9 @@ func (p PropertyReference) GoStructKey(isUnion bool) string {
 	return utils.CamelCaseToTitleCase(p.Name)
 }
 
-func (p PropertyReference) TypeScript() (string, error) {
-	return p.Name, nil
+// TypeScript
+func (p PropertyReference) TypeScript() string {
+	return p.Name
 }
 
 func (p PropertyReference) TypeScriptInterfaceKey() string {
@@ -69,11 +75,16 @@ func (p PropertyReference) TypeScriptInterfaceKey() string {
 }
 
 func (p PropertyReference) TypeScriptInterfaceType() string {
-	if strings.Contains(p.Name, "_") {
-		return utils.DashCaseToTitleCase(p.Name)
+	if p.isPrimitiveType() {
+		return p.Type.TypeScriptInterfaceType()
 	}
 
-	return utils.CamelCaseToTitleCase(p.Name)
+	name := p.Ref.Name()
+	if strings.Contains(name, "_") {
+		return utils.DashCaseToTitleCase(name)
+	}
+
+	return utils.CamelCaseToTitleCase(name)
 }
 
 // Python
@@ -86,12 +97,7 @@ func (p PropertyReference) PythonClassKey() string {
 }
 
 func (p PropertyReference) PythonClassType() string {
-	switch p.Type.(type) {
-	case String:
-		return p.Type.PythonClassType()
-	case Number:
-		return p.Type.PythonClassType()
-	case Boolean:
+	if p.isPrimitiveType() {
 		return p.Type.PythonClassType()
 	}
 

@@ -2,9 +2,9 @@ package types
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
@@ -22,7 +22,7 @@ func (u Union) IsReference() bool {
 	return false
 }
 
-func (u Union) IsPrimative() bool {
+func (u Union) IsPrimitive() bool {
 	return false
 }
 
@@ -134,29 +134,9 @@ func (u Union) TypeScriptInterfaceKey() string {
 func (u Union) TypeScriptInterfaceType() string {
 	parts := make([]string, len(u.TypeIdentifiers))
 	for i, typ := range u.TypeIdentifiers {
+		// Object
 		if obj, ok := typ.(Object); ok {
-			if obj.AdditionalProperties != nil {
-				prop := *obj.AdditionalProperties
-				parts[i] = fmt.Sprintf("Record<string, %s>", prop.TypeScriptInterfaceType())
-				continue
-			}
-
-			if obj.Properties == nil {
-				parts[i] = "Record<string, any>"
-				continue
-			}
-
-			block := utils.NewTypeScriptInterface("", obj.Description)
-			for _, name := range obj.Properties.Keys() {
-				prop, _ := obj.Properties.Get(name)
-				val := prop.(Value)
-				required := slices.Contains(obj.Required, name)
-
-				block.AddItem(name, val.TypeScriptInterfaceType(), val.GetDescription(), required)
-			}
-
-			res, _ := block.WriteUnionObject()
-			parts[i] = res
+			parts[i] = obj.TypeScript()
 			continue
 		}
 
@@ -165,29 +145,13 @@ func (u Union) TypeScriptInterfaceType() string {
 	return strings.Join(parts, " | ")
 }
 
-func (u Union) TypeScript() (string, error) {
-	block := utils.NewCodeBlock()
-	if u.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(u.Description))
-	}
-
-	block.AddLines(
-		fmt.Sprintf("export type %s = %s", u.Name.ToTitleCase(), u.TypeScriptInterfaceType()),
+func (u Union) TypeScript() string {
+	typ := typescript.NewType(
+		u.Name.ToTitleCase(),
+		u.Description,
+		u.TypeScriptInterfaceType(),
 	)
-
-	return block.String(), nil
-}
-
-func (u Union) TypeScriptImports() string {
-	var imports []string
-	for _, typ := range u.TypeIdentifiers {
-		if ref, ok := typ.(PropertyReference); ok {
-			imports = append(imports,
-				fmt.Sprintf("import {%s} from \"./%s.ts\"", ref.TypeScriptInterfaceType(), ref.Name),
-			)
-		}
-	}
-	return strings.Join(imports, "\n")
+	return typ.String()
 }
 
 // Python

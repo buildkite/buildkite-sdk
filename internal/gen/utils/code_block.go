@@ -1,6 +1,9 @@
 package utils
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type codeBlock struct {
 	lines []string
@@ -8,6 +11,13 @@ type codeBlock struct {
 
 func (c *codeBlock) AddLines(lines ...string) {
 	c.lines = append(c.lines, lines...)
+}
+
+func (c *codeBlock) AddLinesWithIndent(indentSize int, lines ...string) {
+	indent := strings.Repeat(" ", indentSize)
+	for _, line := range lines {
+		c.lines = append(c.lines, fmt.Sprintf("%s%s", indent, line))
+	}
 }
 
 func (c codeBlock) Length() int {

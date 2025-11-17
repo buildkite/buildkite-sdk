@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
@@ -19,7 +20,7 @@ func (Number) IsReference() bool {
 	return false
 }
 
-func (Number) IsPrimative() bool {
+func (Number) IsPrimitive() bool {
 	return true
 }
 
@@ -47,14 +48,13 @@ func (n Number) GoStructKey(isUnion bool) string {
 }
 
 // TypeScript
-func (n Number) TypeScript() (string, error) {
-	block := utils.NewCodeBlock()
-	if n.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(n.Description))
-	}
-
-	block.AddLines(fmt.Sprintf("type %s = number", n.Name.ToTitleCase()))
-	return block.String(), nil
+func (n Number) TypeScript() string {
+	typ := typescript.NewType(
+		n.Name.ToTitleCase(),
+		n.Description,
+		"number",
+	)
+	return typ.String()
 }
 
 func (n Number) TypeScriptInterfaceKey() string {

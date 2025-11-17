@@ -2,16 +2,21 @@ package types
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
-	"github.com/iancoleman/orderedmap"
 )
 
 type PipelineSchemaGenerator struct {
-	Definitions *orderedmap.OrderedMap
-	Properties  *orderedmap.OrderedMap
+	Definitions *utils.OrderedMap[schema.PropertyDefinition]
+	Properties  *utils.OrderedMap[schema.SchemaProperty]
+}
+
+func NewPipelineSchemaGenerator(pipelineSchema schema.PipelineSchema) PipelineSchemaGenerator {
+	return PipelineSchemaGenerator{
+		Definitions: utils.NewOrderedMap(pipelineSchema.Definitions),
+		Properties:  utils.NewOrderedMap(pipelineSchema.Properties),
+	}
 }
 
 var pipelineFunctions = `func (p Pipeline) ToJSON() (string, error) {
@@ -166,8 +171,10 @@ func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 	goStruct := utils.NewGoStruct("Pipeline", "", nil)
 
 	for _, name := range p.Properties.Keys() {
-		val, _ := p.Properties.Get(name)
-		prop := val.(schema.SchemaProperty)
+		prop, err := p.Properties.Get(name)
+		if err != nil {
+			return "", fmt.Errorf("generating pipeline schema: %v", err)
+		}
 
 		structKey := utils.DashCaseToTitleCase(name)
 		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
@@ -191,8 +198,10 @@ func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 func (p PipelineSchemaGenerator) ResolveReference(ref schema.PropertyReferenceString) schema.PropertyDefinition {
 	keys := ref.Keys()
 	firstKey := keys[0]
-	val, _ := p.Definitions.Get(firstKey)
-	currentDef := val.(schema.PropertyDefinition)
+	currentDef, err := p.Definitions.Get(firstKey)
+	if err != nil {
+		panic(fmt.Sprintf("reference not found for %s", firstKey))
+	}
 
 	if len(keys) == 1 {
 		return currentDef
@@ -303,7 +312,7 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 
 	// Object
 	if property.Type == "object" {
-		properties := orderedmap.New()
+		properties := utils.NewOrderedMap[Value](nil)
 		for name, prop := range property.Properties {
 			if prop.Ref != "" {
 				refProp := p.ResolveReference(prop.Ref)
@@ -342,9 +351,22 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 			}
 
 			dependencies = append(dependencies, objDependencies...)
+
+			// Nested object
+			if nestedObject, ok := objProp.(Object); ok {
+				objProp = Object{
+					Name:                 nestedObject.Name,
+					Description:          nestedObject.Description,
+					Properties:           nestedObject.Properties,
+					AdditionalProperties: nestedObject.AdditionalProperties,
+					Required:             nestedObject.Required,
+					IsNested:             true,
+				}
+			}
+
 			properties.Set(name, objProp)
 		}
-		properties.SortKeys(sort.Strings)
+		properties.SortKeys()
 
 		if property.AdditionalProperties.Type != "" {
 			propDef := schema.PropertyDefinition{
@@ -442,7 +464,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 
 		// Object
 		if item.Type == "object" {
-			properties := orderedmap.New()
+			properties := utils.NewOrderedMap[Value](nil)
 			for name, prop := range item.Properties {
 				objProp, _, err := p.PropertyDefinitionToValue(
 					name,
@@ -451,9 +473,21 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 				if err != nil {
 					return Union{}, dependencies, fmt.Errorf("converting object property to value [%s]: %v", propertyName.Value, err)
 				}
+
+				// Nested object
+				if nestedObject, ok := objProp.(Object); ok {
+					objProp = Object{
+						Name:                 nestedObject.Name,
+						Properties:           nestedObject.Properties,
+						AdditionalProperties: nestedObject.AdditionalProperties,
+						Required:             nestedObject.Required,
+						IsNested:             true,
+					}
+				}
+
 				properties.Set(name, objProp)
 			}
-			properties.SortKeys(sort.Strings)
+			properties.SortKeys()
 
 			if item.AdditionalProperties.Type != "" {
 				propDef := schema.PropertyDefinition{
@@ -472,6 +506,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 					Properties:           properties,
 					AdditionalProperties: &additionalProperties,
 					Required:             item.Required,
+					IsNested:             true,
 				})
 				continue
 			}
@@ -480,6 +515,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 				Name:       propertyName,
 				Properties: properties,
 				Required:   item.Required,
+				IsNested:   true,
 			})
 			continue
 		}
@@ -519,8 +555,10 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 				}
 
 				refName := item.Items.Ref.Name()
-				val, _ := p.Definitions.Get(refName)
-				property := val.(schema.PropertyDefinition)
+				property, err := p.Definitions.Get(refName)
+				if err != nil {
+					return Union{}, dependencies, fmt.Errorf("getting definition for %s", refName)
+				}
 
 				arrayType, _, err := p.PropertyDefinitionToValue(refName, property)
 				if err != nil {
@@ -596,7 +634,7 @@ type Value interface {
 	GoStructKey(isUnion bool) string
 
 	// TypeScript
-	TypeScript() (string, error)
+	TypeScript() string
 	TypeScriptInterfaceKey() string
 	TypeScriptInterfaceType() string
 
@@ -606,5 +644,5 @@ type Value interface {
 	PythonClassType() string
 
 	IsReference() bool
-	IsPrimative() bool
+	IsPrimitive() bool
 }

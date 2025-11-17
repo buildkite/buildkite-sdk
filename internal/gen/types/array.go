@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
 
@@ -22,7 +23,7 @@ func (a Array) IsReference() bool {
 	return a.Reference
 }
 
-func (Array) IsPrimative() bool {
+func (Array) IsPrimitive() bool {
 	return false
 }
 
@@ -101,23 +102,18 @@ func (a Array) Go() (string, error) {
 }
 
 // TypeScript
-func (a Array) TypeScript() (string, error) {
-	block := utils.NewCodeBlock()
-
-	if a.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(a.Description))
+func (a Array) TypeScript() string {
+	arrayType := a.Type.TypeScriptInterfaceType()
+	if _, ok := a.Type.(Union); ok {
+		arrayType = fmt.Sprintf("(%s)", arrayType)
 	}
 
-	if union, ok := a.Type.(Union); ok {
-		block.AddLines(
-			fmt.Sprintf("export type %s = (%s)[]", a.Name.ToTitleCase(), union.TypeScriptInterfaceType()),
-		)
-
-		return block.String(), nil
-	}
-
-	block.AddLines(fmt.Sprintf("export type %s = %s[]", a.Name.ToTitleCase(), a.Type.TypeScriptInterfaceType()))
-	return block.String(), nil
+	typ := typescript.NewType(
+		a.Name.ToTitleCase(),
+		a.Description,
+		fmt.Sprintf("%s[]", arrayType),
+	)
+	return typ.String()
 }
 
 func (a Array) TypeScriptInterfaceType() string {
@@ -138,7 +134,7 @@ func (a Array) TypeScriptInterfaceType() string {
 }
 
 func (a Array) TypeScriptInterfaceKey() string {
-	return a.Name.ToTitleCase()
+	return a.Name.Value
 }
 
 // Python

@@ -3,19 +3,21 @@ package types
 import (
 	"fmt"
 	"slices"
-	"strings"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
-	"github.com/iancoleman/orderedmap"
 )
 
 type Object struct {
 	Name                 PropertyName
 	Description          string
-	Properties           *orderedmap.OrderedMap
+	Properties           *utils.OrderedMap[Value]
 	AdditionalProperties *Value
 	Required             []string
+
+	// Is the object nested in another definition
+	IsNested bool
 }
 
 func (o Object) GetDescription() string {
@@ -26,7 +28,7 @@ func (o Object) IsReference() bool {
 	return false
 }
 
-func (Object) IsPrimative() bool {
+func (Object) IsPrimitive() bool {
 	return false
 }
 
@@ -62,8 +64,10 @@ func (o Object) Go() (string, error) {
 
 	objectStruct := utils.NewGoStruct(o.Name.ToTitleCase(), o.Description, nil)
 	for _, name := range keys {
-		prop, _ := o.Properties.Get(name)
-		val := prop.(Value)
+		val, err := o.Properties.Get(name)
+		if err != nil {
+			return "", err
+		}
 
 		structKey := val.GoStructKey(false)
 		structType := val.GoStructType()
@@ -149,106 +153,37 @@ func (o Object) Go() (string, error) {
 }
 
 // TypeScript
-func (o Object) TypeScript() (string, error) {
+func (o Object) TypeScript() string {
 	keys := o.Properties.Keys()
 	if len(keys) == 0 {
-		block := utils.NewCodeBlock()
-
-		if o.Description != "" {
-			block.AddLines(utils.NewTypeDocComment(o.Description))
-		}
-
+		recordValue := "any"
 		if o.AdditionalProperties != nil {
 			prop := *o.AdditionalProperties
-			block.AddLines(fmt.Sprintf("export type %s = Record<string, %s>", o.Name.ToTitleCase(), prop.TypeScriptInterfaceType()))
-			return block.String(), nil
+			recordValue = prop.TypeScriptInterfaceType()
 		}
 
-		block.AddLines(fmt.Sprintf("export type %s = Record<string, any>", o.Name.ToTitleCase()))
-		return block.String(), nil
+		typeValue := fmt.Sprintf("Record<string, %s>", recordValue)
+		if o.IsNested {
+			return typeValue
+		}
+
+		typ := typescript.NewType(
+			o.Name.ToTitleCase(),
+			o.Description,
+			typeValue,
+		)
+		return typ.String()
 	}
 
-	tsInterface := utils.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description)
+	tsInterface := typescript.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description, o.IsNested)
 	for _, name := range keys {
-		prop, _ := o.Properties.Get(name)
-		val := prop.(Value)
-
+		val, _ := o.Properties.Get(name)
 		structType := val.TypeScriptInterfaceType()
 		required := slices.Contains(o.Required, name)
-
-		// Property Reference
-		if ref, ok := val.(PropertyReference); ok {
-			switch ref.Type.(type) {
-			case String:
-				tsInterface.AddItem(name, "string", val.GetDescription(), required)
-				continue
-			case Number:
-				tsInterface.AddItem(name, "number", val.GetDescription(), required)
-				continue
-			case Boolean:
-				tsInterface.AddItem(name, "boolean", val.GetDescription(), required)
-				continue
-			default:
-				tsInterface.AddItem(name, utils.CamelCaseToTitleCase(ref.Ref.Name()), val.GetDescription(), required)
-				continue
-			}
-		}
-
-		// Nested Object
-		if obj, ok := val.(Object); ok {
-			keys := obj.Properties.Keys()
-			if len(keys) == 0 {
-				tsInterface.AddItem(name, "Record<string,any>", obj.Description, required)
-				continue
-			}
-
-			tsObject := utils.NewTypeScriptInterface("", obj.Description)
-			for _, propName := range keys {
-				nestedProp, _ := obj.Properties.Get(propName)
-				nestedVal := nestedProp.(Value)
-				nestedDescription := nestedVal.GetDescription()
-				nestedRequired := slices.Contains(obj.Required, propName)
-
-				if ref, ok := nestedVal.(PropertyReference); ok {
-					switch ref.Type.(type) {
-					case String:
-						tsObject.AddItem(propName, "string", nestedDescription, required)
-						continue
-					case Number:
-						tsObject.AddItem(propName, "number", nestedDescription, required)
-						continue
-					case Boolean:
-						tsObject.AddItem(propName, "boolean", nestedDescription, required)
-						continue
-					default:
-						tsObject.AddItem(propName, utils.CamelCaseToTitleCase(ref.Ref.Name()), nestedDescription, required)
-						continue
-					}
-				}
-				tsObject.AddItem(propName, nestedVal.TypeScriptInterfaceType(), nestedDescription, nestedRequired)
-			}
-
-			objString, err := tsObject.WriteUnionObject()
-			if err != nil {
-				return "", fmt.Errorf("generating nested object: %v", err)
-			}
-
-			tsInterface.AddItem(name, objString, obj.Description, required)
-			continue
-		}
-
 		tsInterface.AddItem(name, structType, val.GetDescription(), required)
 	}
 
-	tsInterfaceString, err := tsInterface.Write()
-	if err != nil {
-		return "", fmt.Errorf("writing ts interface: %v", err)
-	}
-
-	block := utils.NewCodeBlock(
-		tsInterfaceString,
-	)
-	return block.String(), nil
+	return tsInterface.Write()
 }
 
 func (o Object) TypeScriptInterfaceKey() string {
@@ -256,31 +191,11 @@ func (o Object) TypeScriptInterfaceKey() string {
 }
 
 func (o Object) TypeScriptInterfaceType() string {
-	keys := o.Properties.Keys()
-	if len(keys) == 0 {
-		return "Record<string, any>"
+	if o.IsNested {
+		return o.TypeScript()
 	}
 
 	return o.Name.ToTitleCase()
-}
-
-func (o Object) TypeScriptImports() string {
-	var imports []string
-	for _, key := range o.Properties.Keys() {
-		prop, _ := o.Properties.Get(key)
-		val := prop.(Value)
-
-		if union, ok := val.(Union); ok {
-			imports = append(imports, union.TypeScriptImports())
-		}
-
-		if ref, ok := val.(PropertyReference); ok {
-			imports = append(imports,
-				fmt.Sprintf("import {%s} from \"./%s.ts\"", ref.TypeScriptInterfaceType(), ref.Name),
-			)
-		}
-	}
-	return strings.Join(imports, "\n")
 }
 
 // Python
@@ -308,8 +223,7 @@ func (o Object) Python() (string, error) {
 	pyTypedDict := utils.NewPythonClass(fmt.Sprintf("%sArgs", o.Name.ToTitleCase()), o.Description)
 
 	for _, name := range keys {
-		prop, _ := o.Properties.Get(name)
-		val := prop.(Value)
+		val, _ := o.Properties.Get(name)
 
 		// Reserved words
 		if name == "async" {
@@ -351,8 +265,7 @@ func (o Object) Python() (string, error) {
 			nestedPyClass := utils.NewPythonClass(structType, description)
 			nestedPyTypeDict := utils.NewPythonClass(fmt.Sprintf("%sArgs", structType), description)
 			for _, propName := range keys {
-				nestedProp, _ := obj.Properties.Get(propName)
-				nestedVal := nestedProp.(Value)
+				nestedVal, _ := obj.Properties.Get(propName)
 				nestedType := nestedVal.PythonClassType()
 				nestedRequired := slices.Contains(obj.Required, propName)
 

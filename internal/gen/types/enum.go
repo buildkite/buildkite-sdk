@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 	"github.com/iancoleman/orderedmap"
 )
@@ -56,7 +57,7 @@ func (e Enum) IsReference() bool {
 	return false
 }
 
-func (Enum) IsPrimative() bool {
+func (Enum) IsPrimitive() bool {
 	return false
 }
 
@@ -147,25 +148,14 @@ func (e Enum) Go() (string, error) {
 }
 
 // TypeScript
-func (e Enum) TypeScript() (string, error) {
-	parts := make([]string, len(e.Values))
-	for i, val := range e.Values {
-		if _, ok := val.(string); ok {
-			parts[i] = fmt.Sprintf("'%v'", val)
-			continue
-		}
+func (e Enum) TypeScript() string {
+	typ := typescript.NewType(
+		e.Name.ToTitleCase(),
+		e.Description,
+		e.TypeScriptInterfaceType(),
+	)
 
-		parts[i] = fmt.Sprintf("%v", val)
-	}
-	values := strings.Join(parts, " | ")
-
-	block := utils.NewCodeBlock()
-	if e.Description != "" {
-		block.AddLines(utils.NewTypeDocComment(e.Description))
-	}
-
-	block.AddLines(fmt.Sprintf("export type %s = %s", e.Name.ToTitleCase(), values))
-	return block.String(), nil
+	return typ.String()
 }
 
 func (e Enum) TypeScriptInterfaceKey() string {
