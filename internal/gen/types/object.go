@@ -177,8 +177,7 @@ func (o Object) TypeScript() string {
 
 	tsInterface := typescript.NewTypeScriptInterface(o.Name.ToTitleCase(), o.Description, o.IsNested)
 	for _, name := range keys {
-		prop, _ := o.Properties.Get(name)
-		val := prop.(Value)
+		val, _ := o.Properties.Get(name)
 		structType := val.TypeScriptInterfaceType()
 		required := slices.Contains(o.Required, name)
 		tsInterface.AddItem(name, structType, val.GetDescription(), required)
@@ -224,8 +223,7 @@ func (o Object) Python() (string, error) {
 	pyTypedDict := utils.NewPythonClass(fmt.Sprintf("%sArgs", o.Name.ToTitleCase()), o.Description)
 
 	for _, name := range keys {
-		prop, _ := o.Properties.Get(name)
-		val := prop.(Value)
+		val, _ := o.Properties.Get(name)
 
 		// Reserved words
 		if name == "async" {
@@ -267,8 +265,7 @@ func (o Object) Python() (string, error) {
 			nestedPyClass := utils.NewPythonClass(structType, description)
 			nestedPyTypeDict := utils.NewPythonClass(fmt.Sprintf("%sArgs", structType), description)
 			for _, propName := range keys {
-				nestedProp, _ := obj.Properties.Get(propName)
-				nestedVal := nestedProp.(Value)
+				nestedVal, _ := obj.Properties.Get(propName)
 				nestedType := nestedVal.PythonClassType()
 				nestedRequired := slices.Contains(obj.Required, propName)
 
