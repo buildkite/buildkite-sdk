@@ -369,10 +369,41 @@ describe("CommandStep", () => {
         });
     });
 
-    it("IfChanged", () => {
-        validatePipeline({
-            command: "test",
-            if_changed: "*.txt",
+    describe("IfChanged", () => {
+        it("String", () => {
+            validatePipeline({
+                command: "test",
+                if_changed: "*.txt",
+            });
+        });
+
+        it("StringArray", () => {
+            validatePipeline({
+                command: "test",
+                if_changed: ["*.txt", "*.md"],
+            });
+        });
+
+        describe("Object", () => {
+            it("String", () => {
+                validatePipeline({
+                    command: "test",
+                    if_changed: {
+                        include: "*.txt",
+                        exclude: "*.md",
+                    },
+                });
+            });
+
+            it("StringArray", () => {
+                validatePipeline({
+                    command: "test",
+                    if_changed: {
+                        include: ["*.txt"],
+                        exclude: ["*.md"],
+                    },
+                });
+            });
         });
     });
 });
