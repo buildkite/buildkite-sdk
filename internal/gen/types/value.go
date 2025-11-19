@@ -635,6 +635,11 @@ func isPrimitiveValue(val Value) bool {
 	}
 }
 
+func isUnionValue(val Value) bool {
+	_, ok := val.(Union)
+	return ok
+}
+
 type Value interface {
 	GetDescription() string
 
