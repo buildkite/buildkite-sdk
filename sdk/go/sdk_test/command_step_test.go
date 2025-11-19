@@ -150,9 +150,10 @@ func TestCommandStep(t *testing.T) {
 	})
 
 	t.Run("IfChanged", func(t *testing.T) {
-		ifChanged := "ifChanged"
-		val := buildkite.CommandStep{
-			IfChanged: &ifChanged,
+		val := buildkite.GroupStep{
+			IfChanged: &buildkite.IfChanged{
+				String: buildkite.Value("ifChanged"),
+			},
 		}
 		CheckResult(t, val, `{"if_changed":"ifChanged"}`)
 	})
@@ -421,7 +422,6 @@ func TestCommandStep(t *testing.T) {
 		dependsOn := "step"
 		env := buildkite.Env{"foo": "bar"}
 		ifValue := "ifValue"
-		ifChanged := "ifChanged"
 		key := "key"
 		identifier := "identifier"
 		id := "id"
@@ -482,9 +482,11 @@ func TestCommandStep(t *testing.T) {
 			DependsOn: &buildkite.DependsOn{
 				String: &dependsOn,
 			},
-			Env:        &env,
-			If:         &ifValue,
-			IfChanged:  &ifChanged,
+			Env: &env,
+			If:  &ifValue,
+			IfChanged: &buildkite.IfChanged{
+				String: buildkite.Value("ifChanged"),
+			},
 			Key:        &key,
 			Identifier: &identifier,
 			Id:         &id,
