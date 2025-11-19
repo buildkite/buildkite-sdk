@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// A list of input fields required to be filled out before unblocking the step
 type FieldsItemValues interface {
 	TextField | SelectField
 }
@@ -17,11 +16,11 @@ type FieldsItem struct {
 }
 
 func (e FieldsItem) MarshalJSON() ([]byte, error) {
-	if e.TextField != nil {
-		return json.Marshal(e.TextField)
-	}
 	if e.SelectField != nil {
 		return json.Marshal(e.SelectField)
+	}
+	if e.TextField != nil {
+		return json.Marshal(e.TextField)
 	}
 	return json.Marshal(nil)
 }

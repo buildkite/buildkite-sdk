@@ -11,7 +11,6 @@ var AutomaticRetryExitStatusEnumValues = map[string]AutomaticRetryExitStatusEnum
 	"*": "*",
 }
 
-// The exit status number that will cause this job to retry
 type AutomaticRetryExitStatusValues interface {
 	AutomaticRetryExitStatusEnum | int | []int
 }

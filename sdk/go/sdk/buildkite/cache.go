@@ -10,8 +10,6 @@ type CacheObject struct {
 	Paths []string `json:"paths,omitempty"`
 	Size  *string  `json:"size,omitempty"`
 }
-
-// The paths for the caches to be used in the step
 type CacheValues interface {
 	string | []string | CacheObject
 }
@@ -24,14 +22,14 @@ type Cache struct {
 }
 
 func (e Cache) MarshalJSON() ([]byte, error) {
+	if e.Cache != nil {
+		return json.Marshal(e.Cache)
+	}
 	if e.String != nil {
 		return json.Marshal(e.String)
 	}
 	if e.StringArray != nil {
 		return json.Marshal(e.StringArray)
-	}
-	if e.Cache != nil {
-		return json.Marshal(e.Cache)
 	}
 	return json.Marshal(nil)
 }

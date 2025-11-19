@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// Array of notification options for this step
 type CommandStepNotifyItemValues interface {
 	NotifySimple | NotifyBasecamp | NotifySlack | NotifyGithubCommitStatus | NotifyGithubCheck
 }
@@ -20,20 +19,20 @@ type CommandStepNotifyItem struct {
 }
 
 func (e CommandStepNotifyItem) MarshalJSON() ([]byte, error) {
-	if e.NotifySimple != nil {
-		return json.Marshal(e.NotifySimple)
-	}
 	if e.NotifyBasecamp != nil {
 		return json.Marshal(e.NotifyBasecamp)
 	}
-	if e.NotifySlack != nil {
-		return json.Marshal(e.NotifySlack)
+	if e.NotifyGithubCheck != nil {
+		return json.Marshal(e.NotifyGithubCheck)
 	}
 	if e.NotifyGithubCommitStatus != nil {
 		return json.Marshal(e.NotifyGithubCommitStatus)
 	}
-	if e.NotifyGithubCheck != nil {
-		return json.Marshal(e.NotifyGithubCheck)
+	if e.NotifySimple != nil {
+		return json.Marshal(e.NotifySimple)
+	}
+	if e.NotifySlack != nil {
+		return json.Marshal(e.NotifySlack)
 	}
 	return json.Marshal(nil)
 }

@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// Array of notification options for this step
 type BuildNotifyItemValues interface {
 	NotifySimple | NotifyEmail | NotifyBasecamp | NotifySlack | NotifyWebhook | NotifyPagerduty | NotifyGithubCommitStatus | NotifyGithubCheck
 }
@@ -23,29 +22,29 @@ type BuildNotifyItem struct {
 }
 
 func (e BuildNotifyItem) MarshalJSON() ([]byte, error) {
-	if e.NotifySimple != nil {
-		return json.Marshal(e.NotifySimple)
+	if e.NotifyBasecamp != nil {
+		return json.Marshal(e.NotifyBasecamp)
 	}
 	if e.NotifyEmail != nil {
 		return json.Marshal(e.NotifyEmail)
 	}
-	if e.NotifyBasecamp != nil {
-		return json.Marshal(e.NotifyBasecamp)
+	if e.NotifyGithubCheck != nil {
+		return json.Marshal(e.NotifyGithubCheck)
+	}
+	if e.NotifyGithubCommitStatus != nil {
+		return json.Marshal(e.NotifyGithubCommitStatus)
+	}
+	if e.NotifyPagerduty != nil {
+		return json.Marshal(e.NotifyPagerduty)
+	}
+	if e.NotifySimple != nil {
+		return json.Marshal(e.NotifySimple)
 	}
 	if e.NotifySlack != nil {
 		return json.Marshal(e.NotifySlack)
 	}
 	if e.NotifyWebhook != nil {
 		return json.Marshal(e.NotifyWebhook)
-	}
-	if e.NotifyPagerduty != nil {
-		return json.Marshal(e.NotifyPagerduty)
-	}
-	if e.NotifyGithubCommitStatus != nil {
-		return json.Marshal(e.NotifyGithubCommitStatus)
-	}
-	if e.NotifyGithubCheck != nil {
-		return json.Marshal(e.NotifyGithubCheck)
 	}
 	return json.Marshal(nil)
 }

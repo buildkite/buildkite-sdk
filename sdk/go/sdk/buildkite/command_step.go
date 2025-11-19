@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// The glob path/s of artifacts to upload once this step has finished running
 type CommandStepArtifactPathsValues interface {
 	string | []string
 }

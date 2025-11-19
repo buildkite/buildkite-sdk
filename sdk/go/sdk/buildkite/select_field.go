@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// The value of the option(s) that will be pre-selected in the dropdown
 type SelectFieldDefaultValues interface {
 	string | []string
 }

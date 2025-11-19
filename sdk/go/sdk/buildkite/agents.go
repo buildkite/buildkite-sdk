@@ -16,11 +16,11 @@ type Agents struct {
 }
 
 func (e Agents) MarshalJSON() ([]byte, error) {
-	if e.AgentsObject != nil {
-		return json.Marshal(e.AgentsObject)
-	}
 	if e.AgentsList != nil {
 		return json.Marshal(e.AgentsList)
+	}
+	if e.AgentsObject != nil {
+		return json.Marshal(e.AgentsObject)
 	}
 	return json.Marshal(nil)
 }

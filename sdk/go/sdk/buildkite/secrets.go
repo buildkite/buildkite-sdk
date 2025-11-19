@@ -6,8 +6,6 @@ package buildkite
 import "encoding/json"
 
 type SecretsObject = map[string]string
-
-// A list of secret names or a mapping of environment variable names to secret names to be made available to the build or step
 type SecretsValues interface {
 	[]string | SecretsObject
 }
@@ -19,11 +17,11 @@ type Secrets struct {
 }
 
 func (e Secrets) MarshalJSON() ([]byte, error) {
-	if e.StringArray != nil {
-		return json.Marshal(e.StringArray)
-	}
 	if e.Secrets != nil {
 		return json.Marshal(e.Secrets)
+	}
+	if e.StringArray != nil {
+		return json.Marshal(e.StringArray)
 	}
 	return json.Marshal(nil)
 }

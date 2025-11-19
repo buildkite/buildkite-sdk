@@ -23,7 +23,6 @@ func (e CommandStepAutomaticRetryEnum) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
-// Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
 type CommandStepAutomaticRetryValues interface {
 	CommandStepAutomaticRetryEnum | AutomaticRetry | AutomaticRetryList
 }
@@ -36,14 +35,14 @@ type CommandStepAutomaticRetry struct {
 }
 
 func (e CommandStepAutomaticRetry) MarshalJSON() ([]byte, error) {
-	if e.CommandStepAutomaticRetryEnum != nil {
-		return json.Marshal(e.CommandStepAutomaticRetryEnum)
-	}
 	if e.AutomaticRetry != nil {
 		return json.Marshal(e.AutomaticRetry)
 	}
 	if e.AutomaticRetryList != nil {
 		return json.Marshal(e.AutomaticRetryList)
+	}
+	if e.CommandStepAutomaticRetryEnum != nil {
+		return json.Marshal(e.CommandStepAutomaticRetryEnum)
 	}
 	return json.Marshal(nil)
 }
