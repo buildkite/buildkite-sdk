@@ -25,7 +25,6 @@ func (e SelectFieldDefault) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
-// Whether more than one option may be selected
 type SelectFieldMultipleValues interface {
 	bool | string
 }
@@ -46,7 +45,6 @@ func (e SelectFieldMultiple) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
-// Whether the field is required for form submission
 type SelectFieldRequiredValues interface {
 	bool | string
 }

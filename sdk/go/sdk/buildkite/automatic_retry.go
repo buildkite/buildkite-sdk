@@ -37,7 +37,6 @@ func (e AutomaticRetryExitStatus) MarshalJSON() ([]byte, error) {
 
 type AutomaticRetrySignalReason string
 
-// The exit signal reason, if any, that may be retried
 var AutomaticRetrySignalReasonValues = map[string]AutomaticRetrySignalReason{
 	"*":                  "*",
 	"none":               "none",

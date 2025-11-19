@@ -27,7 +27,6 @@ func (e CommandStepArtifactPaths) MarshalJSON() ([]byte, error) {
 
 type CommandStepConcurrencyMethod string
 
-// Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
 var CommandStepConcurrencyMethodValues = map[string]CommandStepConcurrencyMethod{
 	"ordered": "ordered",
 	"eager":   "eager",
