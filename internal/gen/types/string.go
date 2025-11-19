@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	gogen "github.com/buildkite/buildkite-sdk/internal/gen/go"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
@@ -26,13 +27,12 @@ func (String) IsPrimitive() bool {
 
 // Go
 func (s String) Go() (string, error) {
-	block := utils.NewCodeBlock()
-	if s.Description != "" {
-		block.AddLines(fmt.Sprintf("// %s", s.Description))
-	}
-
-	block.AddLines(fmt.Sprintf("type %s = string", s.Name.ToTitleCase()))
-	return block.String(), nil
+	typ := gogen.NewType(
+		s.Name.ToTitleCase(),
+		s.Description,
+		"string",
+	)
+	return typ.String(), nil
 }
 
 func (s String) GoStructType() string {

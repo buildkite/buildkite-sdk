@@ -20,7 +20,7 @@ func (g goType) String() string {
 	}
 
 	block.AddLines(
-		fmt.Sprintf("export type %s = %s", g.Name, g.Value),
+		fmt.Sprintf("type %s = %s", g.Name, g.Value),
 	)
 
 	return block.String()
