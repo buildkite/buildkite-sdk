@@ -150,7 +150,7 @@ func TestCommandStep(t *testing.T) {
 	})
 
 	t.Run("IfChanged", func(t *testing.T) {
-		val := buildkite.GroupStep{
+		val := buildkite.CommandStep{
 			IfChanged: &buildkite.IfChanged{
 				String: buildkite.Value("ifChanged"),
 			},
