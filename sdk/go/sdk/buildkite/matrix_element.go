@@ -15,14 +15,14 @@ type MatrixElement struct {
 }
 
 func (e MatrixElement) MarshalJSON() ([]byte, error) {
-	if e.String != nil {
-		return json.Marshal(e.String)
+	if e.Bool != nil {
+		return json.Marshal(e.Bool)
 	}
 	if e.Int != nil {
 		return json.Marshal(e.Int)
 	}
-	if e.Bool != nil {
-		return json.Marshal(e.Bool)
+	if e.String != nil {
+		return json.Marshal(e.String)
 	}
 	return json.Marshal(nil)
 }

@@ -14,11 +14,11 @@ type NotifySlackSlack struct {
 }
 
 func (e NotifySlackSlack) MarshalJSON() ([]byte, error) {
-	if e.String != nil {
-		return json.Marshal(e.String)
-	}
 	if e.NotifySlackObject != nil {
 		return json.Marshal(e.NotifySlackObject)
+	}
+	if e.String != nil {
+		return json.Marshal(e.String)
 	}
 	return json.Marshal(nil)
 }

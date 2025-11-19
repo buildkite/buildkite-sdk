@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// A list of steps
 type PipelineStepsItemValues interface {
 	BlockStep | NestedBlockStep | StringBlockStep | InputStep | NestedInputStep | StringInputStep | CommandStep | NestedCommandStep | WaitStep | NestedWaitStep | StringWaitStep | TriggerStep | NestedTriggerStep | GroupStep
 }
@@ -35,32 +34,35 @@ func (e PipelineStepsItem) MarshalJSON() ([]byte, error) {
 	if e.BlockStep != nil {
 		return json.Marshal(e.BlockStep)
 	}
-	if e.NestedBlockStep != nil {
-		return json.Marshal(e.NestedBlockStep)
+	if e.CommandStep != nil {
+		return json.Marshal(e.CommandStep)
 	}
-	if e.StringBlockStep != nil {
-		return json.Marshal(e.StringBlockStep)
+	if e.GroupStep != nil {
+		return json.Marshal(e.GroupStep)
 	}
 	if e.InputStep != nil {
 		return json.Marshal(e.InputStep)
 	}
-	if e.NestedInputStep != nil {
-		return json.Marshal(e.NestedInputStep)
-	}
-	if e.StringInputStep != nil {
-		return json.Marshal(e.StringInputStep)
-	}
-	if e.CommandStep != nil {
-		return json.Marshal(e.CommandStep)
+	if e.NestedBlockStep != nil {
+		return json.Marshal(e.NestedBlockStep)
 	}
 	if e.NestedCommandStep != nil {
 		return json.Marshal(e.NestedCommandStep)
 	}
-	if e.WaitStep != nil {
-		return json.Marshal(e.WaitStep)
+	if e.NestedInputStep != nil {
+		return json.Marshal(e.NestedInputStep)
+	}
+	if e.NestedTriggerStep != nil {
+		return json.Marshal(e.NestedTriggerStep)
 	}
 	if e.NestedWaitStep != nil {
 		return json.Marshal(e.NestedWaitStep)
+	}
+	if e.StringBlockStep != nil {
+		return json.Marshal(e.StringBlockStep)
+	}
+	if e.StringInputStep != nil {
+		return json.Marshal(e.StringInputStep)
 	}
 	if e.StringWaitStep != nil {
 		return json.Marshal(e.StringWaitStep)
@@ -68,11 +70,8 @@ func (e PipelineStepsItem) MarshalJSON() ([]byte, error) {
 	if e.TriggerStep != nil {
 		return json.Marshal(e.TriggerStep)
 	}
-	if e.NestedTriggerStep != nil {
-		return json.Marshal(e.NestedTriggerStep)
-	}
-	if e.GroupStep != nil {
-		return json.Marshal(e.GroupStep)
+	if e.WaitStep != nil {
+		return json.Marshal(e.WaitStep)
 	}
 	return json.Marshal(nil)
 }

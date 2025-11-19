@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	gogen "github.com/buildkite/buildkite-sdk/internal/gen/go"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
@@ -37,90 +38,47 @@ func (u Union) GoStructType() string {
 
 func (u Union) Go() (string, error) {
 	lines := utils.NewCodeBlock()
-
-	displayName := u.Name.ToTitleCase()
-	unionValuesName := fmt.Sprintf("%sValues", displayName)
-
-	unionInterface := utils.NewGoConstraintInterface(unionValuesName, u.Description)
-	unionDefinition := utils.NewGoStruct(displayName, u.Description, nil)
-
-	unionMarshalFunction := utils.NewCodeBlock(
-		fmt.Sprintf("func (e %s) MarshalJSON() ([]byte, error) {", displayName),
-	)
+	unionDefinition := gogen.NewGoStruct(u.Name.ToTitleCase(), u.Description, nil)
 
 	for _, typ := range u.TypeIdentifiers {
-		titleCaseType := typ.GoStructType()
-		structKey := typ.GoStructKey(true)
 		isPointer := true
+		structKey := typ.GoStructKey(true)
+		structType := typ.GoStructType()
+		structTag := ""
 
-		// Enum
-		if enum, ok := typ.(Enum); ok {
-			enumLines, err := enum.Go()
-			if err != nil {
-				return "", fmt.Errorf("generating enum lines for union [%s]: %v", u.Name.Value, err)
+		var extraDefinition Value
+		switch val := typ.(type) {
+		case Enum:
+			extraDefinition = typ
+		case Object:
+			extraDefinition = Object{
+				Name:                 NewPropertyName(fmt.Sprintf("%sObject", val.Name.Value)),
+				Properties:           val.Properties,
+				AdditionalProperties: val.AdditionalProperties,
 			}
-
-			lines.AddLines(enumLines)
-		}
-
-		// Object
-		if obj, ok := typ.(Object); ok {
-			nestedObj := Object{
-				Name:                 NewPropertyName(fmt.Sprintf("%sObject", obj.Name.Value)),
-				Properties:           obj.Properties,
-				AdditionalProperties: obj.AdditionalProperties,
-			}
-
-			objLines, err := nestedObj.Go()
-			if err != nil {
-				return "", fmt.Errorf("generating object lines for union [%s]: %v", u.Name.Value, err)
-			}
-
-			titleCaseType = nestedObj.GoStructType()
-			lines.AddLines(objLines)
-		}
-
-		// Array
-		if array, ok := typ.(Array); ok {
+			structType = extraDefinition.GoStructType()
+		case Array:
 			isPointer = false
-
-			switch array.Type.(type) {
-			case String:
-			case Boolean:
-			case Number:
-			default:
-				arrayLines, err := array.Go()
-				if err != nil {
-					return "", fmt.Errorf("generating array lines for union [%s]: %v", u.Name.Value, err)
-				}
-
-				lines.AddLines(arrayLines)
+			if !isPrimitiveValue(val.Type) {
+				extraDefinition = val
 			}
 		}
 
-		unionInterface.AddItem(titleCaseType)
-		unionDefinition.AddItem(structKey, titleCaseType, "", typ.GetDescription(), isPointer)
-		unionMarshalFunction.AddLines(
-			fmt.Sprintf("    if e.%s != nil {\n        return json.Marshal(e.%s)\n    }", structKey, structKey),
-		)
-	}
+		if extraDefinition != nil {
+			extraLines, err := extraDefinition.Go()
+			if err != nil {
+				return "", err
+			}
+			lines.AddLines(extraLines)
+		}
 
-	unionMarshalFunction.AddLines("    return json.Marshal(nil)\n}")
-
-	unionInterfaceLines, err := unionInterface.Write()
-	if err != nil {
-		return "", fmt.Errorf("generating union interface [%s]: %v", u.Name.Value, err)
-	}
-
-	unionDefinitionLines, err := unionDefinition.Write()
-	if err != nil {
-		return "", fmt.Errorf("generating union interface [%s]: %v", u.Name.Value, err)
+		unionDefinition.AddItem(structKey, structType, structTag, typ.GetDescription(), isPointer)
 	}
 
 	lines.AddLines(
-		unionInterfaceLines,
-		unionDefinitionLines,
-		unionMarshalFunction.String(),
+		unionDefinition.WriteConstraintInterface(),
+		unionDefinition.Write(),
+		unionDefinition.WriteMarshalFunction(),
 	)
 
 	return lines.String(), nil

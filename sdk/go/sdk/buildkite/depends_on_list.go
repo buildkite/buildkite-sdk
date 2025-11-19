@@ -36,11 +36,11 @@ type DependsOnListItem struct {
 }
 
 func (e DependsOnListItem) MarshalJSON() ([]byte, error) {
-	if e.String != nil {
-		return json.Marshal(e.String)
-	}
 	if e.DependsOnList != nil {
 		return json.Marshal(e.DependsOnList)
+	}
+	if e.String != nil {
+		return json.Marshal(e.String)
 	}
 	return json.Marshal(nil)
 }

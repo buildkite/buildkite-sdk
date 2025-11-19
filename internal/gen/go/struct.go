@@ -2,10 +2,9 @@ package gogen
 
 import (
 	"fmt"
-	"sort"
+	"strings"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
-	"github.com/iancoleman/orderedmap"
 )
 
 type GoStructItem struct {
@@ -19,7 +18,7 @@ type GoStructItem struct {
 type GoStruct struct {
 	Name        string
 	Description string
-	Items       *orderedmap.OrderedMap
+	Items       *utils.OrderedMap[GoStructItem]
 }
 
 func (g *GoStruct) AddItem(key, val, tagName, description string, isPointer bool) {
@@ -32,6 +31,43 @@ func (g *GoStruct) AddItem(key, val, tagName, description string, isPointer bool
 	})
 }
 
+func (g GoStruct) WriteConstraintInterface() string {
+	contents := utils.NewCodeBlock()
+
+	keys := g.Items.Keys()
+	items := make([]string, len(keys))
+	for i, key := range keys {
+		item, _ := g.Items.Get(key)
+		items[i] = item.Value
+	}
+
+	contents.AddLines(
+		fmt.Sprintf("type %sValues interface {", g.Name),
+		fmt.Sprintf("    %s", strings.Join(items, " | ")),
+		"}",
+	)
+
+	return contents.String()
+}
+
+func (g GoStruct) WriteMarshalFunction() string {
+	contents := utils.NewCodeBlock(
+		fmt.Sprintf("func (e %s) MarshalJSON() ([]byte, error) {", g.Name),
+	)
+
+	g.Items.SortKeys()
+	for _, key := range g.Items.Keys() {
+		item, _ := g.Items.Get(key)
+		contents.AddLinesWithIndent(4, fmt.Sprintf("if e.%s != nil {", item.Name))
+		contents.AddLinesWithIndent(8, fmt.Sprintf("return json.Marshal(e.%s)", item.Name))
+		contents.AddLinesWithIndent(4, "}")
+	}
+
+	contents.AddLinesWithIndent(4, "return json.Marshal(nil)")
+	contents.AddLines("}")
+	return contents.String()
+}
+
 func (g GoStruct) Write() string {
 	contents := utils.NewCodeBlock()
 
@@ -41,11 +77,9 @@ func (g GoStruct) Write() string {
 
 	contents.AddLines(fmt.Sprintf("type %s struct {", g.Name))
 
-	g.Items.SortKeys(sort.Strings)
-	keys := g.Items.Keys()
-	for _, key := range keys {
-		val, _ := g.Items.Get(key)
-		item := val.(GoStructItem)
+	g.Items.SortKeys()
+	for _, key := range g.Items.Keys() {
+		item, _ := g.Items.Get(key)
 
 		if item.Description != "" {
 			contents.AddLines(fmt.Sprintf("    %s", NewGoComment(item.Description)))
@@ -72,6 +106,6 @@ func NewGoStruct(name, description string, items []GoStructItem) *GoStruct {
 	return &GoStruct{
 		Name:        name,
 		Description: description,
-		Items:       orderedmap.New(),
+		Items:       utils.NewOrderedMap[GoStructItem](nil),
 	}
 }
