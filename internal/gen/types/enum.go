@@ -2,40 +2,33 @@ package types
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 
 	gogen "github.com/buildkite/buildkite-sdk/internal/gen/go"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
-	"github.com/iancoleman/orderedmap"
 )
 
 func parseEnumValue(val any) EnumValue {
-	if s, ok := val.(string); ok {
-		return EnumValue{
-			Value: s,
-			Type:  String{},
+	var enumType Value
+	switch val.(type) {
+	case string:
+		enumType = String{}
+	case bool:
+		enumType = Boolean{}
+	case int:
+		enumType = Number{
+			Name: NewPropertyName("Int"),
 		}
+	default:
+		panic("enum type not implemented ")
+
 	}
 
-	if b, ok := val.(bool); ok {
-		return EnumValue{
-			Value: b,
-			Type:  Boolean{},
-		}
+	return EnumValue{
+		Value: val,
+		Type:  enumType,
 	}
-
-	if n, ok := val.(int); ok {
-		return EnumValue{
-			Value: n,
-			Type: Number{
-				Name: NewPropertyName("Int"),
-			},
-		}
-	}
-
-	panic("not implemented enum type")
 }
 
 type EnumValue struct {
@@ -72,69 +65,40 @@ func (e Enum) GoStructKey(isUnion bool) string {
 }
 
 func (e Enum) Go() (string, error) {
-	lines := utils.NewCodeBlock()
-
-	displayName := e.Name.ToTitleCase()
 	enumDefinitionName := e.GoStructType()
-
-	enumInterface := gogen.NewGoConstraintInterface(fmt.Sprintf("%sValues", enumDefinitionName), e.Description)
 	enumDefinition := gogen.NewGoStruct(enumDefinitionName, e.Description, nil)
 
-	enumMarshalFunction := utils.NewCodeBlock(
-		fmt.Sprintf("func (e %s) MarshalJSON() ([]byte, error) {", displayName),
-	)
-
-	enumTypes := orderedmap.New()
+	enumTypes := utils.NewOrderedMap[string](nil)
 	for _, val := range e.Values {
 		parsed := parseEnumValue(val)
 		typ := parsed.Type.GoStructType()
 		enumTypes.Set(typ, typ)
 	}
-	enumTypes.SortKeys(sort.Strings)
+
+	enumTypes.SortKeys()
+	enumKeys := enumTypes.Keys()
 
 	// If there is only one type in the values.
-	if len(enumTypes.Keys()) == 1 {
-		for _, typ := range enumTypes.Keys() {
-			if typ != "string" {
-				panic("type not supported in single enum")
-			}
-
-			lines.AddLines(
-				fmt.Sprintf("type %s %s", enumDefinitionName, typ),
-				gogen.NewGoComment(e.Description),
-				fmt.Sprintf("var %sValues = map[string]%s{", enumDefinitionName, enumDefinitionName),
-			)
-
-			for _, val := range e.Values {
-				lines.AddLines(
-					fmt.Sprintf("   \"%s\": \"%v\",", val, val),
-				)
-			}
-
-			lines.AddLines("}")
+	if len(enumKeys) == 1 {
+		typ := enumKeys[0]
+		if typ != "string" {
+			panic("go enum values: only strings are supported")
 		}
-		return lines.String(), nil
+
+		enumValues := gogen.NewGoEnumValues(enumDefinitionName, e.Values)
+		return enumValues.Write(), nil
 	}
 
-	for _, typ := range enumTypes.Keys() {
+	for _, typ := range enumKeys {
 		titleCaseType := utils.CamelCaseToTitleCase(typ)
-
-		enumInterface.AddItem(typ)
 		enumDefinition.AddItem(titleCaseType, typ, "", "", true)
-
-		enumMarshalFunction.AddLines(
-			fmt.Sprintf("    if e.%s != nil {\n        return json.Marshal(e.%s)\n    }", titleCaseType, titleCaseType),
-		)
 	}
 
-	enumMarshalFunction.AddLines("    return json.Marshal(nil)\n}")
-
-	lines.AddLines(
-		enumInterface.Write(),
+	lines := utils.NewCodeBlock(
+		enumDefinition.WriteConstraintInterface(),
 		enumDefinition.Write(),
-		enumMarshalFunction.String(),
+		enumDefinition.WriteMarshalFunction(),
 	)
-
 	return lines.String(), nil
 }
 

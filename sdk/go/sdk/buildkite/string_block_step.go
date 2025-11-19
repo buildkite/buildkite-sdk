@@ -5,7 +5,6 @@ package buildkite
 
 type StringBlockStep string
 
-// Pauses the execution of a build and waits on a user to unblock it
 var StringBlockStepValues = map[string]StringBlockStep{
 	"block": "block",
 }

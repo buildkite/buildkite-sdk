@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// Continue to the next steps, even if the previous group of steps fail
 type WaitStepContinueOnFailureValues interface {
 	bool | string
 }

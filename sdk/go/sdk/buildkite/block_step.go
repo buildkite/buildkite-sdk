@@ -5,7 +5,6 @@ package buildkite
 
 type BlockStepBlockedState string
 
-// The state that the build is set to when the build is blocked by this block step
 var BlockStepBlockedStateValues = map[string]BlockStepBlockedState{
 	"passed":  "passed",
 	"failed":  "failed",

@@ -5,7 +5,6 @@ package buildkite
 
 type InputStepBlockedState string
 
-// The state that the build is set to when the build is blocked by this input step
 var InputStepBlockedStateValues = map[string]InputStepBlockedState{
 	"passed":  "passed",
 	"failed":  "failed",
