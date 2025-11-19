@@ -175,7 +175,13 @@ func (u Union) Python() (string, error) {
 			}
 
 			codeBlock.AddLines(objLines)
-			parts = append(parts, nestedObj.PythonClassType())
+			pythonClassType := nestedObj.PythonClassType()
+			parts = append(parts, pythonClassType)
+
+			if !strings.HasPrefix(pythonClassType, "Dict") {
+				parts = append(parts, fmt.Sprintf("%sArgs", nestedObj.PythonClassType()))
+			}
+
 			continue
 		}
 
