@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"slices"
 
+	gogen "github.com/buildkite/buildkite-sdk/internal/gen/go"
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
@@ -44,25 +45,22 @@ func (o Object) GoStructKey(isUnion bool) string {
 func (o Object) Go() (string, error) {
 	keys := o.Properties.Keys()
 	if len(keys) == 0 {
-		block := utils.NewCodeBlock()
-
-		if o.Description != "" {
-			block.AddLines(fmt.Sprintf("// %s", o.Description))
-		}
-
+		mapValueType := "interface{}"
 		if o.AdditionalProperties != nil {
-			prop := *o.AdditionalProperties
-			block.AddLines(fmt.Sprintf("type %s = map[string]%s", o.Name.ToTitleCase(), prop.GoStructType()))
-			return block.String(), nil
+			mapValueType = (*o.AdditionalProperties).GoStructType()
 		}
 
-		block.AddLines(fmt.Sprintf("type %s = map[string]interface{}", o.Name.ToTitleCase()))
-		return block.String(), nil
+		typ := gogen.NewType(
+			o.Name.ToTitleCase(),
+			o.Description,
+			fmt.Sprintf("map[string]%s", mapValueType),
+		)
+		return typ.String(), nil
 	}
 
 	codeBlock := utils.NewCodeBlock()
+	objectStruct := gogen.NewGoStruct(o.Name.ToTitleCase(), o.Description, nil)
 
-	objectStruct := utils.NewGoStruct(o.Name.ToTitleCase(), o.Description, nil)
 	for _, name := range keys {
 		val, err := o.Properties.Get(name)
 		if err != nil {
@@ -74,79 +72,56 @@ func (o Object) Go() (string, error) {
 		description := val.GetDescription()
 		isPointer := true
 
-		// Array
-		if _, ok := val.(Array); ok {
+		var extraValue Value
+		switch typ := val.(type) {
+		case Array:
 			isPointer = false
 			structKey = utils.DashCaseToTitleCase(name)
-		}
-
-		// Object
-		if obj, ok := val.(Object); ok {
+		case Object:
 			structKey = utils.DashCaseToTitleCase(name)
 			nestedObjName := NewPropertyName(fmt.Sprintf("%s%s", o.Name.ToTitleCase(), structKey))
-			nestedObj := Object{
+			extraValue = Object{
 				Name:                 nestedObjName,
-				Description:          obj.Description,
-				Properties:           obj.Properties,
-				AdditionalProperties: obj.AdditionalProperties,
-			}
-
-			objLines, err := nestedObj.Go()
-			if err != nil {
-				return "", fmt.Errorf("generating nested object for [%s]: %v", o.Name.Value, err)
+				Description:          typ.Description,
+				Properties:           typ.Properties,
+				AdditionalProperties: typ.AdditionalProperties,
 			}
 
 			structType = nestedObjName.ToTitleCase()
-			codeBlock.AddLines(objLines)
-		}
-
-		// Enum
-		if enum, ok := val.(Enum); ok {
+		case Enum:
 			structKey = utils.DashCaseToTitleCase(name)
-			nestedEnum := Enum{
+			extraValue = Enum{
 				Name:        NewPropertyName(fmt.Sprintf("%s%s", o.Name.ToTitleCase(), structKey)),
-				Description: enum.Description,
-				Values:      enum.Values,
-				Default:     enum.Default,
+				Description: typ.Description,
+				Values:      typ.Values,
+				Default:     typ.Default,
 			}
 
-			enumLines, err := nestedEnum.Go()
-			if err != nil {
-				return "", fmt.Errorf("generating enum lines for struct [%s]: %v", o.Name.Value, err)
+			structType = extraValue.GoStructType()
+		case Union:
+			extraValue = Union{
+				Name:            NewPropertyName(fmt.Sprintf("%s%s", o.Name.ToTitleCase(), utils.DashCaseToTitleCase(name))),
+				Description:     typ.Description,
+				TypeIdentifiers: typ.TypeIdentifiers,
 			}
 
-			structType = nestedEnum.GoStructType()
-			codeBlock.AddLines(enumLines)
+			structKey = utils.DashCaseToTitleCase(name)
+			structType = extraValue.GoStructType()
 		}
 
-		// Union
-		if union, ok := val.(Union); ok {
-			nestedUnion := Union{
-				Name:            NewPropertyName(fmt.Sprintf("%s%s", o.Name.ToTitleCase(), utils.DashCaseToTitleCase(name))),
-				Description:     union.Description,
-				TypeIdentifiers: union.TypeIdentifiers,
-			}
-
-			unionLines, err := nestedUnion.Go()
+		if extraValue != nil {
+			extraLines, err := extraValue.Go()
 			if err != nil {
-				return "", fmt.Errorf("generating union lines for struct [%s]: %v", o.Name.Value, err)
+				return "", err
 			}
-
-			structType = nestedUnion.GoStructType()
-			structKey = utils.DashCaseToTitleCase(name)
-			codeBlock.AddLines(unionLines)
+			codeBlock.AddLines(extraLines)
 		}
 
 		objectStruct.AddItem(structKey, structType, name, description, isPointer)
 	}
 
-	structLines, err := objectStruct.Write()
-	if err != nil {
-		return "", fmt.Errorf("writing out object struct [%s]: %v", objectStruct.Name, err)
-	}
-
 	codeBlock.AddLines(
-		structLines,
+		objectStruct.Write(),
 	)
 
 	return codeBlock.String(), nil
