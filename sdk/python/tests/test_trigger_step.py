@@ -7,6 +7,7 @@ from buildkite_sdk import (
     NestedTriggerStepArgs,
     DependsOnListObject,
     SoftFailObject,
+    IfChangedObject,
 )
 from .utils import TestRunner
 
@@ -278,9 +279,36 @@ class TestTriggerStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {"steps": [expected]})
 
-    def test_if_changed(self):
+    def test_if_changed_string(self):
         expected: TriggerStepArgs = {"trigger": "a-slug", "if_changed": "*.txt"}
         pipeline = Pipeline(steps=[TriggerStep(trigger="a-slug", if_changed="*.txt")])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_list(self):
+        expected: TriggerStepArgs = {"trigger": "a-slug", "if_changed": ["*.txt"]}
+        pipeline = Pipeline(steps=[TriggerStep(trigger="a-slug", if_changed=["*.txt"])])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_object_string(self):
+        expected: TriggerStepArgs = {
+            "trigger": "a-slug",
+            "if_changed": {"include": "*.txt", "exclude": "*.md"},
+        }
+        pipeline = Pipeline(steps=[TriggerStep(
+            trigger="a-slug",
+            if_changed=IfChangedObject(include="*.txt", exclude="*.md"),
+        )])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_object_list(self):
+        expected: TriggerStepArgs = {
+            "trigger": "a-slug",
+            "if_changed": {"include": ["*.txt"], "exclude": ["*.md"]},
+        }
+        pipeline = Pipeline(steps=[TriggerStep(
+            trigger="a-slug",
+            if_changed=IfChangedObject(include=["*.txt"], exclude=["*.md"]),
+        )])
         self.validator.check_result(pipeline, {"steps": [expected]})
 
 
@@ -443,7 +471,28 @@ class TestTriggerStepArgs(TestRunner):
         pipeline = Pipeline(steps=[TriggerStep.from_dict(expected)])
         self.validator.check_result(pipeline, {"steps": [expected]})
 
-    def test_if_changed(self):
+    def test_if_changed_string(self):
         expected: TriggerStepArgs = {"trigger": "a-slug", "if_changed": "*.txt"}
+        pipeline = Pipeline(steps=[TriggerStep.from_dict(expected)])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_list(self):
+        expected: TriggerStepArgs = {"trigger": "a-slug", "if_changed": ["*.txt"]}
+        pipeline = Pipeline(steps=[TriggerStep.from_dict(expected)])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_object_string(self):
+        expected: TriggerStepArgs = {
+            "trigger": "a-slug",
+            "if_changed": {"include": "*.txt", "exclude": "*.md"},
+        }
+        pipeline = Pipeline(steps=[TriggerStep.from_dict(expected)])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_object_list(self):
+        expected: TriggerStepArgs = {
+            "trigger": "a-slug",
+            "if_changed": {"include": ["*.txt"], "exclude": ["*.md"]},
+        }
         pipeline = Pipeline(steps=[TriggerStep.from_dict(expected)])
         self.validator.check_result(pipeline, {"steps": [expected]})
