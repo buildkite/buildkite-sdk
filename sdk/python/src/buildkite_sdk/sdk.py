@@ -1,7 +1,7 @@
 from .schema import (
     BlockStep as _block_step,
     CommandStep as _command_step,
-    GroupStepClass as _group_step,
+    GroupStep as _group_step,
     InputStep as _input_step,
     TriggerStep as _trigger_step,
     WaitStep as _wait_step,
