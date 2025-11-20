@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// A list of teams that are permitted to unblock this step, whose values are a list of one or more team slugs or IDs
 type AllowedTeamsValues interface {
 	string | []string
 }

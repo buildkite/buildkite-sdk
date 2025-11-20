@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// The glob path/s of artifacts to upload once this step has finished running
 type CommandStepArtifactPathsValues interface {
 	string | []string
 }
@@ -28,7 +27,6 @@ func (e CommandStepArtifactPaths) MarshalJSON() ([]byte, error) {
 
 type CommandStepConcurrencyMethod string
 
-// Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
 var CommandStepConcurrencyMethodValues = map[string]CommandStepConcurrencyMethod{
 	"ordered": "ordered",
 	"eager":   "eager",
@@ -91,8 +89,8 @@ type CommandStep struct {
 	Identifier *string `json:"identifier,omitempty"`
 	// A boolean expression that omits the step when false
 	If *string `json:"if,omitempty"`
-	// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-	IfChanged *string `json:"if_changed,omitempty"`
+	// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+	IfChanged *IfChanged `json:"if_changed,omitempty"`
 	// (Kubernetes stack only) The container image to use for this pipeline or step
 	Image *string `json:"image,omitempty"`
 	// A unique identifier for a step, must not resemble a UUID

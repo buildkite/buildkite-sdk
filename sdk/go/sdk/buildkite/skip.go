@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// Whether this step should be skipped. Passing a string provides a reason for skipping this command
 type SkipValues interface {
 	bool | string
 }

@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// The commands to run on the agent
 type CommandStepCommandValues interface {
 	[]string | string
 }
@@ -17,11 +16,11 @@ type CommandStepCommand struct {
 }
 
 func (e CommandStepCommand) MarshalJSON() ([]byte, error) {
-	if e.StringArray != nil {
-		return json.Marshal(e.StringArray)
-	}
 	if e.String != nil {
 		return json.Marshal(e.String)
+	}
+	if e.StringArray != nil {
+		return json.Marshal(e.StringArray)
 	}
 	return json.Marshal(nil)
 }

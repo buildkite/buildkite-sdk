@@ -5,7 +5,6 @@ package buildkite
 
 type StringInputStep string
 
-// Pauses the execution of a build and waits on a user to unblock it
 var StringInputStepValues = map[string]StringInputStep{
 	"input": "input",
 }
