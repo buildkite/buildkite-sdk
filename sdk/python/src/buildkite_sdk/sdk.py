@@ -11,9 +11,9 @@ from .schema import (
     TriggerStepArgs,
     WaitStep as _wait_step,
     WaitStepArgs,
+    BuildNotify,
 )
 from .environment import Environment
-from .types import PipelineNotify
 from typing import Union
 import json
 import yaml
@@ -42,7 +42,7 @@ class Pipeline:
             self.env = {}
         self.env[key] = value
 
-    def add_notify(self, notify: PipelineNotify):
+    def add_notify(self, notify: BuildNotify):
         self.notify = notify
 
     def add_step(
