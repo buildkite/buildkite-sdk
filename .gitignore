@@ -24,3 +24,5 @@ Gemfile.lock
 
 .DS_Store
 Thumbs.db
+.vscode
+.zed
