@@ -170,10 +170,41 @@ describe("TriggerStep", () => {
         });
     });
 
-    it("IfChanged", () => {
-        validatePipeline({
-            trigger: "a-slug",
-            if_changed: "*.txt",
+    describe("IfChanged", () => {
+        it("String", () => {
+            validatePipeline({
+                trigger: "a-slug",
+                if_changed: "*.txt",
+            });
+        });
+
+        it("StringArray", () => {
+            validatePipeline({
+                trigger: "a-slug",
+                if_changed: ["*.txt", "*.md"],
+            });
+        });
+
+        describe("Object", () => {
+            it("String", () => {
+                validatePipeline({
+                    trigger: "a-slug",
+                    if_changed: {
+                        include: "*.txt",
+                        exclude: "*.md",
+                    },
+                });
+            });
+
+            it("StringArray", () => {
+                validatePipeline({
+                    trigger: "a-slug",
+                    if_changed: {
+                        include: ["*.txt"],
+                        exclude: ["*.md"],
+                    },
+                });
+            });
         });
     });
 });

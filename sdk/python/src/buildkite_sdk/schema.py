@@ -545,10 +545,48 @@ class CacheObject(BaseModel):
 
 
 # The paths for the caches to be used in the step
-Cache = str | List[str] | CacheObject
+Cache = str | List[str] | CacheObject | CacheObjectArgs
 
 # Whether to cancel the job as soon as the build is marked as failing
 CancelOnBuildFailing = Literal[True, False, "true", "false"]
+
+CommandStepManualRetryObjectArgs = TypedDict(
+    "CommandStepManualRetryObjectArgs",
+    {
+        # Whether or not this job can be retried manually
+        "allowed": NotRequired[Literal[True, False, "true", "false"]],
+        # Whether or not this job can be retried after it has passed
+        "permit_on_passed": NotRequired[Literal[True, False, "true", "false"]],
+        # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
+        "reason": NotRequired["str"],
+    },
+)
+
+
+class CommandStepManualRetryObject(BaseModel):
+    # Whether or not this job can be retried manually
+    allowed: Optional[Literal[True, False, "true", "false"]] = None
+    # Whether or not this job can be retried after it has passed
+    permit_on_passed: Optional[Literal[True, False, "true", "false"]] = None
+    # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
+    reason: Optional[str] = None
+
+    @classmethod
+    def from_dict(
+        cls, data: CommandStepManualRetryObjectArgs
+    ) -> CommandStepManualRetryObject:
+        step_if = {"step_if": data["if"]} if "if" in data else {}
+        step_async = {"step_async": data["async"]} if "async" in data else {}
+        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+
+
+PluginsListObject = Dict[str, Any]
+# Array of plugins for this step
+PluginsList = List[str | Dict[str, Any]]
+
+# A map of plugins for this step. Deprecated: please use the array syntax.
+PluginsObject = Dict[str, Any]
 
 MatrixElement = str | int | bool
 
@@ -630,44 +668,6 @@ class MatrixObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: MatrixObjectArgs) -> MatrixObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
-
-
-PluginsListObject = Dict[str, Any]
-# Array of plugins for this step
-PluginsList = List[str | Dict[str, Any]]
-
-# A map of plugins for this step. Deprecated: please use the array syntax.
-PluginsObject = Dict[str, Any]
-
-CommandStepManualRetryObjectArgs = TypedDict(
-    "CommandStepManualRetryObjectArgs",
-    {
-        # Whether or not this job can be retried manually
-        "allowed": NotRequired[Literal[True, False, "true", "false"]],
-        # Whether or not this job can be retried after it has passed
-        "permit_on_passed": NotRequired[Literal[True, False, "true", "false"]],
-        # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
-        "reason": NotRequired["str"],
-    },
-)
-
-
-class CommandStepManualRetryObject(BaseModel):
-    # Whether or not this job can be retried manually
-    allowed: Optional[Literal[True, False, "true", "false"]] = None
-    # Whether or not this job can be retried after it has passed
-    permit_on_passed: Optional[Literal[True, False, "true", "false"]] = None
-    # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
-    reason: Optional[str] = None
-
-    @classmethod
-    def from_dict(
-        cls, data: CommandStepManualRetryObjectArgs
-    ) -> CommandStepManualRetryObject:
         step_if = {"step_if": data["if"]} if "if" in data else {}
         step_async = {"step_async": data["async"]} if "async" in data else {}
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
@@ -764,8 +764,8 @@ CommandStepArgs = TypedDict(
         "identifier": NotRequired["str"],
         # A boolean expression that omits the step when false
         "if": NotRequired["If"],
-        # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-        "if_changed": NotRequired["str"],
+        # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+        "if_changed": NotRequired["IfChanged"],
         # (Kubernetes stack only) The container image to use for this pipeline or step
         "image": NotRequired["str"],
         # A unique identifier for a step, must not resemble a UUID
@@ -831,8 +831,8 @@ class CommandStep(BaseModel):
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
     step_if: Optional[If] = Field(serialization_alias="if", default=None)
-    # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-    if_changed: Optional[str] = None
+    # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+    if_changed: Optional[IfChanged] = None
     # (Kubernetes stack only) The container image to use for this pipeline or step
     image: Optional[str] = None
     # A unique identifier for a step, must not resemble a UUID
@@ -1197,8 +1197,8 @@ TriggerStepArgs = TypedDict(
         "identifier": NotRequired["str"],
         # A boolean expression that omits the step when false
         "if": NotRequired["If"],
-        # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-        "if_changed": NotRequired["str"],
+        # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+        "if_changed": NotRequired["IfChanged"],
         # A unique identifier for a step, must not resemble a UUID
         "key": NotRequired["str"],
         # The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
@@ -1235,8 +1235,8 @@ class TriggerStep(BaseModel):
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
     step_if: Optional[If] = Field(serialization_alias="if", default=None)
-    # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-    if_changed: Optional[str] = None
+    # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+    if_changed: Optional[IfChanged] = None
     # A unique identifier for a step, must not resemble a UUID
     key: Optional[str] = None
     # The label that will be displayed in the pipeline visualisation in Buildkite. Supports emoji.
@@ -1293,8 +1293,8 @@ GroupStepArgs = TypedDict(
         "identifier": NotRequired["str"],
         # A boolean expression that omits the step when false
         "if": NotRequired["If"],
-        # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-        "if_changed": NotRequired["str"],
+        # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+        "if_changed": NotRequired["IfChanged"],
         # A unique identifier for a step, must not resemble a UUID
         "key": NotRequired["str"],
         # The name to give to this group of steps
@@ -1324,8 +1324,8 @@ class GroupStep(BaseModel):
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
     step_if: Optional[If] = Field(serialization_alias="if", default=None)
-    # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-    if_changed: Optional[str] = None
+    # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+    if_changed: Optional[IfChanged] = None
     # A unique identifier for a step, must not resemble a UUID
     key: Optional[str] = None
     # The name to give to this group of steps
@@ -1377,8 +1377,33 @@ GroupSteps = List[
 # A boolean expression that omits the step when false
 If = str
 
-# Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-IfChanged = str
+IfChangedObjectArgs = TypedDict(
+    "IfChangedObjectArgs",
+    {
+        # Pattern or list of patterns to exclude
+        "exclude": NotRequired["str | List[str]"],
+        # Pattern or list of patterns to include
+        "include": NotRequired["str | List[str]"],
+    },
+)
+
+
+class IfChangedObject(BaseModel):
+    # Pattern or list of patterns to exclude
+    exclude: Optional[str | List[str]] = None
+    # Pattern or list of patterns to include
+    include: Optional[str | List[str]] = None
+
+    @classmethod
+    def from_dict(cls, data: IfChangedObjectArgs) -> IfChangedObject:
+        step_if = {"step_if": data["if"]} if "if" in data else {}
+        step_async = {"step_async": data["async"]} if "async" in data else {}
+        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+
+
+# Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+IfChanged = str | List[str] | IfChangedObject | IfChangedObjectArgs
 
 # (Kubernetes stack only) The container image to use for this pipeline or step
 Image = str

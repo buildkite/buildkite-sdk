@@ -8,6 +8,7 @@ from buildkite_sdk import (
     InputStep,
     NestedInputStep,
     NotifyEmail,
+    IfChangedObject,
 )
 from .utils import TestRunner
 
@@ -216,7 +217,7 @@ class TestGroupStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {"steps": [expected]})
 
-    def test_if_changed(self):
+    def test_if_changed_string(self):
         expected: GroupStepArgs = {
             "group": "Tests",
             "steps": [{"command": "test"}],
@@ -233,6 +234,56 @@ class TestGroupStepClass(TestRunner):
         )
         self.validator.check_result(pipeline, {"steps": [expected]})
 
+    def test_if_changed_list(self):
+        expected: GroupStepArgs = {
+            "group": "Tests",
+            "steps": [{"command": "test"}],
+            "if_changed": ["*.txt"],
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(
+                    group="Tests",
+                    steps=[CommandStep(command="test")],
+                    if_changed=["*.txt"],
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_object_string(self):
+        expected: GroupStepArgs = {
+            "group": "Tests",
+            "steps": [{"command": "test"}],
+            "if_changed": {"include": "*.txt", "exclude": "*.md"},
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(
+                    group="Tests",
+                    steps=[CommandStep(command="test")],
+                    if_changed=IfChangedObject(include="*.txt", exclude="*.md"),
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_object_list(self):
+        expected: GroupStepArgs = {
+            "group": "Tests",
+            "steps": [{"command": "test"}],
+            "if_changed": {"include": ["*.txt"], "exclude": ["*.md"]},
+        }
+        pipeline = Pipeline(
+            steps=[
+                GroupStep(
+                    group="Tests",
+                    steps=[CommandStep(command="test")],
+                    if_changed=IfChangedObject(include=["*.txt"], exclude=["*.md"]),
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {"steps": [expected]})
 
 class TestGroupStepArgs(TestRunner):
     def test_id(self):
@@ -339,6 +390,42 @@ class TestGroupStepArgs(TestRunner):
             "group": "Tests",
             "steps": [{"command": "test"}],
             "if_changed": "*.txt",
+        }
+        pipeline = Pipeline(steps=[GroupStep.from_dict(expected)])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_string(self):
+        expected: GroupStepArgs = {
+            "group": "Tests",
+            "steps": [{"command": "test"}],
+            "if_changed": "*.txt",
+        }
+        pipeline = Pipeline(steps=[GroupStep.from_dict(expected)])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_list(self):
+        expected: GroupStepArgs = {
+            "group": "Tests",
+            "steps": [{"command": "test"}],
+            "if_changed": ["*.txt"],
+        }
+        pipeline = Pipeline(steps=[GroupStep.from_dict(expected)])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_object_string(self):
+        expected: GroupStepArgs = {
+            "group": "Tests",
+            "steps": [{"command": "test"}],
+            "if_changed": {"include": "*.txt", "exclude": "*.md"},
+        }
+        pipeline = Pipeline(steps=[GroupStep.from_dict(expected)])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_if_changed_object_list(self):
+        expected: GroupStepArgs = {
+            "group": "Tests",
+            "steps": [{"command": "test"}],
+            "if_changed": {"include": ["*.txt"], "exclude": ["*.md"]},
         }
         pipeline = Pipeline(steps=[GroupStep.from_dict(expected)])
         self.validator.check_result(pipeline, {"steps": [expected]})

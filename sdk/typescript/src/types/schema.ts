@@ -210,9 +210,9 @@ export interface CommandStep {
      */
     if?: string;
     /**
-     * Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+     * Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
      */
-    if_changed?: string;
+    if_changed?: IfChanged;
     /**
      * (Kubernetes stack only) The container image to use for this pipeline or step
      */
@@ -393,9 +393,9 @@ export interface GroupStep {
      */
     if?: string;
     /**
-     * Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+     * Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
      */
-    if_changed?: string;
+    if_changed?: IfChanged;
     /**
      * A unique identifier for a step, must not resemble a UUID
      */
@@ -447,9 +447,21 @@ export type GroupSteps = (
 export type If = string;
 
 /**
- * Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+ * Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
  */
-export type IfChanged = string;
+export type IfChanged =
+    | string
+    | string[]
+    | {
+          /**
+           * Pattern or list of patterns to exclude
+           */
+          exclude?: string | string[];
+          /**
+           * Pattern or list of patterns to include
+           */
+          include: string | string[];
+      };
 
 /**
  * (Kubernetes stack only) The container image to use for this pipeline or step
@@ -857,9 +869,9 @@ export interface TriggerStep {
      */
     if?: string;
     /**
-     * Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
+     * Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
      */
-    if_changed?: string;
+    if_changed?: IfChanged;
     /**
      * A unique identifier for a step, must not resemble a UUID
      */

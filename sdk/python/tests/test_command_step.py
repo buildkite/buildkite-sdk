@@ -1,14 +1,16 @@
 from buildkite_sdk import (
-    Pipeline,
+    AutomaticRetry,
     CommandStep,
     CommandStepArgs,
-    NestedCommandStep,
-    AutomaticRetry,
     CommandStepRetry,
-    SoftFailObject,
-    DependsOnListObject,
     CommandStepSignature,
+    DependsOnListObject,
+    IfChangedObject,
+    NestedCommandStep,
+    Pipeline,
+    SoftFailObject,
 )
+
 from .utils import TestRunner
 
 
@@ -335,20 +337,19 @@ class TestCommandStepClass(TestRunner):
         self.validator.check_result(pipeline, {"steps": [expected]})
 
     def test_secrets_list(self):
-        pipeline = Pipeline(
-            steps=[
-                CommandStep(command='test', secrets=['MY_SECRET'])
-            ]
+        pipeline = Pipeline(steps=[CommandStep(command="test", secrets=["MY_SECRET"])])
+        self.validator.check_result(
+            pipeline, {"steps": [{"command": "test", "secrets": ["MY_SECRET"]}]}
         )
-        self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'secrets': ['MY_SECRET']}]})
 
     def test_secrets_object(self):
         pipeline = Pipeline(
-            steps=[
-                CommandStep(command='test', secrets={"MY_SECRET": "API_TOKEN"})
-            ]
+            steps=[CommandStep(command="test", secrets={"MY_SECRET": "API_TOKEN"})]
         )
-        self.validator.check_result(pipeline, {'steps': [{'command': 'test', 'secrets': {"MY_SECRET": "API_TOKEN"}}]})
+        self.validator.check_result(
+            pipeline,
+            {"steps": [{"command": "test", "secrets": {"MY_SECRET": "API_TOKEN"}}]},
+        )
 
     def test_skip_bool(self):
         pipeline = Pipeline(steps=[CommandStep(command="test", skip=True)])
@@ -532,10 +533,58 @@ class TestCommandStepClass(TestRunner):
             {"steps": [{"command": "test", "cache": ["dist/", "./src/target/"]}]},
         )
 
-    def test_if_changed(self):
+    def test_if_changed_string(self):
         pipeline = Pipeline(steps=[CommandStep(command="test", if_changed="*.txt")])
         self.validator.check_result(
             pipeline, {"steps": [{"command": "test", "if_changed": "*.txt"}]}
+        )
+
+    def test_if_changed_list(self):
+        pipeline = Pipeline(steps=[CommandStep(command="test", if_changed=["*.txt"])])
+        self.validator.check_result(
+            pipeline, {"steps": [{"command": "test", "if_changed": ["*.txt"]}]}
+        )
+
+    def test_if_changed_object_string(self):
+        pipeline = Pipeline(
+            steps=[
+                CommandStep(
+                    command="test",
+                    if_changed=IfChangedObject(include="*.txt", exclude="*.md"),
+                )
+            ]
+        )
+        self.validator.check_result(
+            pipeline,
+            {
+                "steps": [
+                    {
+                        "command": "test",
+                        "if_changed": {"include": "*.txt", "exclude": "*.md"},
+                    }
+                ]
+            },
+        )
+
+    def test_if_changed_object_list(self):
+        pipeline = Pipeline(
+            steps=[
+                CommandStep(
+                    command="test",
+                    if_changed=IfChangedObject(include=["*.txt"], exclude=["*.md"]),
+                )
+            ]
+        )
+        self.validator.check_result(
+            pipeline,
+            {
+                "steps": [
+                    {
+                        "command": "test",
+                        "if_changed": {"include": ["*.txt"], "exclude": ["*.md"]},
+                    }
+                ]
+            },
         )
 
 
@@ -934,10 +983,70 @@ class TestCommandStepArgs(TestRunner):
             {"steps": [{"command": "test", "cache": ["dist/", "./src/target/"]}]},
         )
 
-    def test_if_changed(self):
+    def test_if_changed_string(self):
         pipeline = Pipeline(
             steps=[CommandStep.from_dict({"command": "test", "if_changed": "*.txt"})]
         )
         self.validator.check_result(
             pipeline, {"steps": [{"command": "test", "if_changed": "*.txt"}]}
+        )
+
+    def test_if_changed_list(self):
+        pipeline = Pipeline(
+            steps=[CommandStep.from_dict({"command": "test", "if_changed": ["*.txt"]})]
+        )
+        self.validator.check_result(
+            pipeline, {"steps": [{"command": "test", "if_changed": ["*.txt"]}]}
+        )
+
+    def test_if_changed_object_string(self):
+        pipeline = Pipeline(
+            steps=[
+                CommandStep.from_dict(
+                    {
+                        "command": "test",
+                        "if_changed": {
+                            "include": "*.txt",
+                            "exclude": "*.md",
+                        },
+                    }
+                )
+            ]
+        )
+        self.validator.check_result(
+            pipeline,
+            {
+                "steps": [
+                    {
+                        "command": "test",
+                        "if_changed": {"include": "*.txt", "exclude": "*.md"},
+                    }
+                ]
+            },
+        )
+
+    def test_if_changed_object_list(self):
+        pipeline = Pipeline(
+            steps=[
+                CommandStep.from_dict(
+                    {
+                        "command": "test",
+                        "if_changed": {
+                            "include": ["*.txt"],
+                            "exclude": ["*.md"],
+                        },
+                    }
+                )
+            ]
+        )
+        self.validator.check_result(
+            pipeline,
+            {
+                "steps": [
+                    {
+                        "command": "test",
+                        "if_changed": {"include": ["*.txt"], "exclude": ["*.md"]},
+                    }
+                ]
+            },
         )

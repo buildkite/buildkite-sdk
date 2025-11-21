@@ -3,5 +3,79 @@
 
 package buildkite
 
-// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build.
-type IfChanged = string
+import "encoding/json"
+
+// Pattern or list of patterns to exclude
+type IfChangedObjectExcludeValues interface {
+	string | []string
+}
+
+// Pattern or list of patterns to exclude
+type IfChangedObjectExclude struct {
+	String      *string
+	StringArray []string
+}
+
+func (e IfChangedObjectExclude) MarshalJSON() ([]byte, error) {
+	if e.String != nil {
+		return json.Marshal(e.String)
+	}
+	if e.StringArray != nil {
+		return json.Marshal(e.StringArray)
+	}
+	return json.Marshal(nil)
+}
+
+// Pattern or list of patterns to include
+type IfChangedObjectIncludeValues interface {
+	string | []string
+}
+
+// Pattern or list of patterns to include
+type IfChangedObjectInclude struct {
+	String      *string
+	StringArray []string
+}
+
+func (e IfChangedObjectInclude) MarshalJSON() ([]byte, error) {
+	if e.String != nil {
+		return json.Marshal(e.String)
+	}
+	if e.StringArray != nil {
+		return json.Marshal(e.StringArray)
+	}
+	return json.Marshal(nil)
+}
+
+type IfChangedObject struct {
+	// Pattern or list of patterns to exclude
+	Exclude *IfChangedObjectExclude `json:"exclude,omitempty"`
+	// Pattern or list of patterns to include
+	Include *IfChangedObjectInclude `json:"include,omitempty"`
+}
+
+// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+type IfChangedValues interface {
+	string | []string | IfChangedObject
+}
+
+// Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
+type IfChanged struct {
+	IfChanged *IfChangedObject
+	// A single glob pattern
+	String      *string
+	StringArray []string
+}
+
+func (e IfChanged) MarshalJSON() ([]byte, error) {
+	if e.String != nil {
+		return json.Marshal(e.String)
+	}
+	if e.StringArray != nil {
+		return json.Marshal(e.StringArray)
+	}
+	if e.IfChanged != nil {
+		return json.Marshal(e.IfChanged)
+	}
+	return json.Marshal(nil)
+}

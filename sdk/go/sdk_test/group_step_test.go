@@ -34,9 +34,10 @@ func TestGroupStep(t *testing.T) {
 	})
 
 	t.Run("IfChanged", func(t *testing.T) {
-		ifChanged := "ifChanged"
 		val := buildkite.GroupStep{
-			IfChanged: &ifChanged,
+			IfChanged: &buildkite.IfChanged{
+				String: buildkite.Value("ifChanged"),
+			},
 		}
 		CheckResult(t, val, `{"if_changed":"ifChanged"}`)
 	})
@@ -406,7 +407,6 @@ func TestGroupStep(t *testing.T) {
 		dependsOn := "step"
 		group := "group"
 		ifValue := "if"
-		ifChanged := "ifChanged"
 		key := "key"
 		identifier := "identifier"
 		id := "id"
@@ -424,9 +424,11 @@ func TestGroupStep(t *testing.T) {
 			DependsOn: &buildkite.DependsOn{
 				String: &dependsOn,
 			},
-			Group:      &group,
-			If:         &ifValue,
-			IfChanged:  &ifChanged,
+			Group: &group,
+			If:    &ifValue,
+			IfChanged: &buildkite.IfChanged{
+				String: buildkite.Value("ifChanged"),
+			},
 			Key:        &key,
 			Identifier: &identifier,
 			Id:         &id,

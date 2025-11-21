@@ -140,9 +140,10 @@ func TestTriggerStep(t *testing.T) {
 	})
 
 	t.Run("IfChanged", func(t *testing.T) {
-		ifChanged := "ifChanged"
 		val := buildkite.TriggerStep{
-			IfChanged: &ifChanged,
+			IfChanged: &buildkite.IfChanged{
+				String: buildkite.Value("ifChanged"),
+			},
 		}
 		CheckResult(t, val, `{"if_changed":"ifChanged"}`)
 	})
@@ -232,7 +233,6 @@ func TestTriggerStep(t *testing.T) {
 		buildCommit := "commit"
 		dependsOn := "step"
 		ifValue := "if"
-		ifChanged := "ifChanged"
 		key := "key"
 		identifier := "identifier"
 		id := "id"
@@ -259,8 +259,10 @@ func TestTriggerStep(t *testing.T) {
 			DependsOn: &buildkite.DependsOn{
 				String: &dependsOn,
 			},
-			If:         &ifValue,
-			IfChanged:  &ifChanged,
+			If: &ifValue,
+			IfChanged: &buildkite.IfChanged{
+				String: buildkite.Value("ifChanged"),
+			},
 			Key:        &key,
 			Identifier: &identifier,
 			Id:         &id,
