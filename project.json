@@ -120,18 +120,14 @@
             "options": {
                 "commands": []
             },
-            "dependsOn": [
-                "ci:run:pipeline"
-            ]
+            "dependsOn": ["ci:run:pipeline"]
         },
         "gen:pipeline-release": {
             "executor": "nx:run-commands",
             "options": {
                 "commands": []
             },
-            "dependsOn": [
-                "ci:run:release-pipeline"
-            ]
+            "dependsOn": ["ci:run:release-pipeline"]
         },
         "build:all": {
             "dependsOn": [
@@ -192,10 +188,12 @@
         "rebuild:all": {
             "dependsOn": ["build:all", "docs:all", "run:all"]
         },
-        "release:all": {
+        "create-release-branch": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": ["node ./release.js $VERSION_FROM $VERSION_TO"],
+                "commands": [
+                    "node ./create-release-branch.js $VERSION_FROM $VERSION_TO"
+                ],
                 "env": {
                     "VERSION_FROM": "0.4.1",
                     "VERSION_TO": "0.5.0"
