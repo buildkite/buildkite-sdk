@@ -188,7 +188,7 @@
         "rebuild:all": {
             "dependsOn": ["build:all", "docs:all", "run:all"]
         },
-        "create-release-branch": {
+        "release:create-branch": {
             "executor": "nx:run-commands",
             "options": {
                 "commands": [

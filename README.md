@@ -116,7 +116,7 @@ All SDKs version on the same cadence. To publish a new version (of all SDKs), fo
 1.  Leaving that single change uncommitted and run the release script:
 
     ```bash
-    npm run create-release-branch
+    npm run release:create-branch
     ```
 
     This script:

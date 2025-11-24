@@ -22,7 +22,7 @@
         "watch": "npx nx watch --all -- nx rebuild:all",
         "format": "npx nx format:all",
         "dev": "concurrently 'npm run docs:serve' 'npm run watch' --kill-others",
-        "create-release-branch": "npx nx create-release-branch"
+        "release:create-branch": "npx nx release:create-branch"
     },
     "private": true,
     "devDependencies": {
