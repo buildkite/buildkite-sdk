@@ -157,6 +157,20 @@ class TestCommandStepClass(TestRunner):
             pipeline, {"steps": [{"command": "test", "artifact_paths": "path"}]}
         )
 
+    def test_artifact_paths_path_list(self):
+        from pathlib import Path
+
+        pipeline = Pipeline(
+            steps=[
+                CommandStep(
+                    command="test", artifact_paths=[Path("one"), Path("two")]
+                )
+            ]
+        )
+        self.validator.check_result(
+            pipeline, {"steps": [{"command": "test", "artifact_paths": ["one", "two"]}]}
+        )
+
     def test_branches(self):
         pipeline = Pipeline(
             steps=[CommandStep(command="test", branches="master deploy-*")]

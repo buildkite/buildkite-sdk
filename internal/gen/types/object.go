@@ -349,6 +349,11 @@ func (o Object) Python() (string, error) {
 			dictStructType = newUnion.PythonClassType()
 		}
 
+		if name == "artifact_paths" {
+			structType = "str | Path | List[str | Path]"
+			dictStructType = structType
+		}
+
 		pyTypedDict.AddItem(name, dictStructType, "", "", description, required, isObjectArray)
 		pyClass.AddItem(name, structType, constructorName, "", description, required, isObjectArray)
 	}
