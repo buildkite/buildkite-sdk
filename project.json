@@ -89,6 +89,7 @@
                 "commands": [
                     "rm -rf sdk/python/src/buildkite_sdk/schema.py",
                     "touch sdk/python/src/buildkite_sdk/schema.py",
+                    "curl -o sdk/python/src/buildkite_sdk/schema.json https://raw.githubusercontent.com/buildkite/pipeline-schema/refs/heads/main/schema.json",
                     "./internal/gen/type-gen py sdk/python/src/buildkite_sdk",
                     "npx nx run sdk-python:format"
                 ],
