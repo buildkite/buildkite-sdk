@@ -124,6 +124,7 @@ class Pipeline(BaseModel):
         return self.model_dump(
             by_alias=True,
             exclude_none=True,
+            mode="json",
         )
 
     def to_json(self):
