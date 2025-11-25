@@ -2,6 +2,7 @@
 # *** WARNING: Do not edit by hand unless you're certain you know what you are doing! ***
 from __future__ import annotations
 import sys
+from pathlib import Path
 
 if sys.version_info >= (3, 12):
     from typing import Literal, List, Dict, Any, Optional, TypedDict, NotRequired
@@ -550,37 +551,6 @@ Cache = str | List[str] | CacheObject | CacheObjectArgs
 # Whether to cancel the job as soon as the build is marked as failing
 CancelOnBuildFailing = Literal[True, False, "true", "false"]
 
-CommandStepManualRetryObjectArgs = TypedDict(
-    "CommandStepManualRetryObjectArgs",
-    {
-        # Whether or not this job can be retried manually
-        "allowed": NotRequired[Literal[True, False, "true", "false"]],
-        # Whether or not this job can be retried after it has passed
-        "permit_on_passed": NotRequired[Literal[True, False, "true", "false"]],
-        # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
-        "reason": NotRequired["str"],
-    },
-)
-
-
-class CommandStepManualRetryObject(BaseModel):
-    # Whether or not this job can be retried manually
-    allowed: Optional[Literal[True, False, "true", "false"]] = None
-    # Whether or not this job can be retried after it has passed
-    permit_on_passed: Optional[Literal[True, False, "true", "false"]] = None
-    # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
-    reason: Optional[str] = None
-
-    @classmethod
-    def from_dict(
-        cls, data: CommandStepManualRetryObjectArgs
-    ) -> CommandStepManualRetryObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
-
-
 PluginsListObject = Dict[str, Any]
 # Array of plugins for this step
 PluginsList = List[str | Dict[str, Any]]
@@ -591,9 +561,6 @@ PluginsObject = Dict[str, Any]
 MatrixElement = str | int | bool
 
 MatrixElementList = List[str | int | bool]
-
-# Build Matrix dimension element
-MatrixAdjustmentsWithObject = Dict[str, str]
 
 SoftFailObjectArgs = TypedDict(
     "SoftFailObjectArgs",
@@ -617,6 +584,9 @@ class SoftFailObject(BaseModel):
 
 
 SoftFailList = List[SoftFailObject | SoftFailObjectArgs]
+
+# Build Matrix dimension element
+MatrixAdjustmentsWithObject = Dict[str, str]
 
 # An adjustment to a Build Matrix
 MatrixAdjustmentsArgs = TypedDict(
@@ -668,6 +638,37 @@ class MatrixObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: MatrixObjectArgs) -> MatrixObject:
+        step_if = {"step_if": data["if"]} if "if" in data else {}
+        step_async = {"step_async": data["async"]} if "async" in data else {}
+        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
+        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+
+
+CommandStepManualRetryObjectArgs = TypedDict(
+    "CommandStepManualRetryObjectArgs",
+    {
+        # Whether or not this job can be retried manually
+        "allowed": NotRequired[Literal[True, False, "true", "false"]],
+        # Whether or not this job can be retried after it has passed
+        "permit_on_passed": NotRequired[Literal[True, False, "true", "false"]],
+        # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
+        "reason": NotRequired["str"],
+    },
+)
+
+
+class CommandStepManualRetryObject(BaseModel):
+    # Whether or not this job can be retried manually
+    allowed: Optional[Literal[True, False, "true", "false"]] = None
+    # Whether or not this job can be retried after it has passed
+    permit_on_passed: Optional[Literal[True, False, "true", "false"]] = None
+    # A string that will be displayed in a tooltip on the Retry button in Buildkite. This will only be displayed if the allowed attribute is set to false.
+    reason: Optional[str] = None
+
+    @classmethod
+    def from_dict(
+        cls, data: CommandStepManualRetryObjectArgs
+    ) -> CommandStepManualRetryObject:
         step_if = {"step_if": data["if"]} if "if" in data else {}
         step_async = {"step_async": data["async"]} if "async" in data else {}
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
@@ -737,7 +738,7 @@ CommandStepArgs = TypedDict(
         # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
         "allow_dependency_failure": NotRequired["AllowDependencyFailure"],
         # The glob path/s of artifacts to upload once this step has finished running
-        "artifact_paths": NotRequired["str | List[str]"],
+        "artifact_paths": NotRequired["str | Path | List[str | Path]"],
         # Which branches will include this step in their builds
         "branches": NotRequired["Branches"],
         # The paths for the caches to be used in the step
@@ -804,7 +805,7 @@ class CommandStep(BaseModel):
     # Whether to proceed with this step and further steps if a step named in the depends_on attribute fails
     allow_dependency_failure: Optional[AllowDependencyFailure] = None
     # The glob path/s of artifacts to upload once this step has finished running
-    artifact_paths: Optional[str | List[str]] = None
+    artifact_paths: Optional[str | Path | List[str | Path]] = None
     # Which branches will include this step in their builds
     branches: Optional[Branches] = None
     # The paths for the caches to be used in the step
