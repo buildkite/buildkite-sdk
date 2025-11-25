@@ -27,7 +27,7 @@
         "format": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": ["black ./src"],
+                "commands": ["uv run ruff format ./src"],
                 "cwd": "sdk/python"
             },
             "cache": false

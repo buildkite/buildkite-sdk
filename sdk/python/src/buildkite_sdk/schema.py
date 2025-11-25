@@ -581,19 +581,9 @@ class CommandStepManualRetryObject(BaseModel):
         return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
 
 
-PluginsListObject = Dict[str, Any]
-# Array of plugins for this step
-PluginsList = List[str | Dict[str, Any]]
-
-# A map of plugins for this step. Deprecated: please use the array syntax.
-PluginsObject = Dict[str, Any]
-
 MatrixElement = str | int | bool
 
 MatrixElementList = List[str | int | bool]
-
-# Build Matrix dimension element
-MatrixAdjustmentsWithObject = Dict[str, str]
 
 SoftFailObjectArgs = TypedDict(
     "SoftFailObjectArgs",
@@ -617,6 +607,9 @@ class SoftFailObject(BaseModel):
 
 
 SoftFailList = List[SoftFailObject | SoftFailObjectArgs]
+
+# Build Matrix dimension element
+MatrixAdjustmentsWithObject = Dict[str, str]
 
 # An adjustment to a Build Matrix
 MatrixAdjustmentsArgs = TypedDict(
@@ -672,6 +665,14 @@ class MatrixObject(BaseModel):
         step_async = {"step_async": data["async"]} if "async" in data else {}
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
         return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+
+
+PluginsListObject = Dict[str, Any]
+# Array of plugins for this step
+PluginsList = List[str | Dict[str, Any]]
+
+# A map of plugins for this step. Deprecated: please use the array syntax.
+PluginsObject = Dict[str, Any]
 
 
 # The conditions for retrying this step.
