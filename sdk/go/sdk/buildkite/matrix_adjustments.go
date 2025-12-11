@@ -15,11 +15,11 @@ type MatrixAdjustmentsWith struct {
 }
 
 func (e MatrixAdjustmentsWith) MarshalJSON() ([]byte, error) {
-	if e.MatrixElementList != nil {
-		return json.Marshal(e.MatrixElementList)
-	}
 	if e.MatrixAdjustmentsWithObject != nil {
 		return json.Marshal(e.MatrixAdjustmentsWithObject)
+	}
+	if e.MatrixElementList != nil {
+		return json.Marshal(e.MatrixElementList)
 	}
 	return json.Marshal(nil)
 }

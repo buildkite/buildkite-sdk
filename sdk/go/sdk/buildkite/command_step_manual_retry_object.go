@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// Whether or not this job can be retried manually
 type CommandStepManualRetryObjectAllowedValues interface {
 	bool | string
 }
@@ -26,7 +25,6 @@ func (e CommandStepManualRetryObjectAllowed) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
-// Whether or not this job can be retried after it has passed
 type CommandStepManualRetryObjectPermitOnPassedValues interface {
 	bool | string
 }
