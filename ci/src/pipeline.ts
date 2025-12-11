@@ -134,7 +134,7 @@ function generateAppCommands(key: string, appTarget: string) {
 
     return [
         "mise trust mise.apps.toml",
-        `mise install ${language}@{{matrix}}`,
+        `mise install ${language}@{{matrix}} --raw`,
         appInstallCommand,
         `mise exec ${language}@{{matrix}} -- nx run ${appTarget}:run`,
     ];
@@ -170,7 +170,9 @@ languageTargets.forEach((target) => {
                 commands: [
                     "mise trust",
                     `nx install ${target.sdkTarget}`,
-                    `nx test ${target.sdkTarget}${target.key === "typescript" ? " --runInBand" : ""}`,
+                    `nx test ${target.sdkTarget}${
+                        target.key === "typescript" ? " --runInBand" : ""
+                    }`,
                 ],
             },
             {
