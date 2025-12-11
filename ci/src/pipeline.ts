@@ -134,7 +134,7 @@ function generateAppCommands(key: string, appTarget: string) {
 
     return [
         "mise trust mise.apps.toml",
-        `mise install -v ${language}@{{matrix}}`,
+        `mise install -v ${language}@{{matrix}} --raw`,
         appInstallCommand,
         `mise exec ${language}@{{matrix}} -- nx run ${appTarget}:run`,
     ];
