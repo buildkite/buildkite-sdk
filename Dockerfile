@@ -16,6 +16,7 @@ ENV MISE_CACHE_DIR="/mise/cache"
 ENV MISE_INSTALL_PATH="/usr/local/bin/mise"
 ENV PATH="/mise/shims:$PATH"
 RUN curl https://mise.run | sh
+RUN mise self-update
 
 # Install Node.js, Python, and Go.
 
