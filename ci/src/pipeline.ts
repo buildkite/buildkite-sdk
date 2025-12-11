@@ -134,7 +134,7 @@ function generateAppCommands(key: string, appTarget: string) {
 
     return [
         "mise trust mise.apps.toml",
-        `mise install -v ${language}@{{matrix}} --raw`,
+        `mise install ${language}@{{matrix}}`,
         appInstallCommand,
         `mise exec ${language}@{{matrix}} -- nx run ${appTarget}:run`,
     ];
@@ -203,6 +203,9 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: generateAppCommands(target.key, target.appTarget),
                 matrix: target.versions,
+                env: {
+                    MISE_NODE_VERIFY: false,
+                },
             },
         ],
     });
