@@ -170,7 +170,9 @@ languageTargets.forEach((target) => {
                 commands: [
                     "mise trust",
                     `nx install ${target.sdkTarget}`,
-                    `nx test ${target.sdkTarget}${target.key === "typescript" ? " --runInBand" : ""}`,
+                    `nx test ${target.sdkTarget}${
+                        target.key === "typescript" ? " --runInBand" : ""
+                    }`,
                 ],
             },
             {
@@ -201,6 +203,9 @@ languageTargets.forEach((target) => {
                 plugins: languagePlugins,
                 commands: generateAppCommands(target.key, target.appTarget),
                 matrix: target.versions,
+                env: {
+                    MISE_NODE_VERIFY: false,
+                },
             },
         ],
     });
