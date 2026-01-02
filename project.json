@@ -196,8 +196,8 @@
                     "node ./create-release-branch.js $VERSION_FROM $VERSION_TO"
                 ],
                 "env": {
-                    "VERSION_FROM": "0.5.0",
-                    "VERSION_TO": "0.6.0"
+                    "VERSION_FROM": "0.6.0",
+                    "VERSION_TO": "0.7.0"
                 }
             }
         }
