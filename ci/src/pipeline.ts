@@ -116,12 +116,29 @@ const languageTargets: Target[] = [
         appTarget: "app-ruby",
         versions: languageVersions["ruby"],
     },
+    {
+        icon: ":csharp:",
+        label: "C#",
+        key: "csharp",
+        sdkTarget: "sdk-csharp",
+        appTarget: "app-csharp",
+        versions: [], // C# doesn't use mise for version management
+    },
 ];
 
 function generateAppCommands(key: string, appTarget: string) {
     let language = key;
     if (key === "typescript") {
         language = "node";
+    }
+
+    // C# uses dotnet directly, not mise
+    if (key === "csharp") {
+        return [
+            "mise trust",
+            `nx install ${appTarget}`,
+            `nx run ${appTarget}:run`,
+        ];
     }
 
     let appInstallCommand = `mise exec ${language}@{{matrix}} -- nx install ${appTarget}`;
@@ -196,17 +213,42 @@ languageTargets.forEach((target) => {
                     `nx run ${target.sdkTarget}:docs:build`,
                 ],
             },
-            {
-                label: ":lab_coat: Apps",
-                key: `${target.key}-apps`,
-                depends_on: [`${target.key}-test`, `${target.key}-build`],
-                plugins: languagePlugins,
-                commands: generateAppCommands(target.key, target.appTarget),
-                matrix: target.versions,
-                env: {
-                    MISE_NODE_VERIFY: false,
-                },
-            },
+            // Only add matrix if there are versions to test
+            ...(target.versions.length > 0
+                ? [
+                      {
+                          label: ":lab_coat: Apps",
+                          key: `${target.key}-apps`,
+                          depends_on: [
+                              `${target.key}-test`,
+                              `${target.key}-build`,
+                          ],
+                          plugins: languagePlugins,
+                          commands: generateAppCommands(
+                              target.key,
+                              target.appTarget
+                          ),
+                          matrix: target.versions,
+                          env: {
+                              MISE_NODE_VERIFY: false,
+                          },
+                      },
+                  ]
+                : [
+                      {
+                          label: ":lab_coat: Apps",
+                          key: `${target.key}-apps`,
+                          depends_on: [
+                              `${target.key}-test`,
+                              `${target.key}-build`,
+                          ],
+                          plugins: languagePlugins,
+                          commands: generateAppCommands(
+                              target.key,
+                              target.appTarget
+                          ),
+                      },
+                  ]),
         ],
     });
 });

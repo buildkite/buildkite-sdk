@@ -1,0 +1,59 @@
+{
+    "name": "app-csharp",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/csharp",
+    "projectType": "application",
+    "tags": [],
+    "targets": {
+        "install": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["dotnet restore"],
+                "cwd": "apps/csharp"
+            }
+        },
+        "clean": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["dotnet clean", "rimraf bin", "rimraf obj"],
+                "cwd": "apps/csharp"
+            },
+            "cache": false
+        },
+        "format": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": ["dotnet format"],
+                "cwd": "apps/csharp"
+            },
+            "cache": false
+        },
+        "build": {
+            "executor": "nx:run-commands",
+            "outputs": ["{workspaceRoot}/dist/apps/csharp"],
+            "options": {
+                "commands": [
+                    "rimraf ../../dist/apps/csharp",
+                    "mkdir -p ../../dist/apps/csharp",
+                    "dotnet build --configuration Release --output ../../dist/apps/csharp"
+                ],
+                "cwd": "apps/csharp",
+                "parallel": false
+            },
+            "cache": false
+        },
+        "run": {
+            "executor": "nx:run-commands",
+            "dependsOn": ["build"],
+            "options": {
+                "commands": ["dotnet run"],
+                "cwd": "apps/csharp"
+            }
+        },
+        "test": {
+            "options": {
+                "passWithNoTests": true
+            }
+        }
+    }
+}

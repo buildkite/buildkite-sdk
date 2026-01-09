@@ -4,6 +4,13 @@
   "sourceRoot": "sdk/csharp/src",
   "projectType": "library",
   "targets": {
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["dotnet restore", "dotnet tool restore"],
+        "cwd": "sdk/csharp"
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
       "options": {
@@ -42,6 +49,30 @@
         "cwd": "."
       },
       "dependsOn": ["gen:build"]
+    },
+    "docs:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dotnet tool restore",
+          "dotnet docfx docfx.json"
+        ],
+        "cwd": "sdk/csharp",
+        "parallel": false
+      },
+      "dependsOn": ["build"]
+    },
+    "docs:serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dotnet tool restore",
+          "dotnet docfx docfx.json --serve"
+        ],
+        "cwd": "sdk/csharp",
+        "parallel": false
+      },
+      "dependsOn": ["build"]
     }
   },
   "tags": ["sdk", "csharp"]

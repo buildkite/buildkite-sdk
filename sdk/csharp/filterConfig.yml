@@ -1,0 +1,19 @@
+apiRules:
+- include:
+    uidRegex: ^Buildkite\.Sdk\.Pipeline$
+- include:
+    uidRegex: ^Buildkite\.Sdk\.Environment$
+- include:
+    uidRegex: ^Buildkite\.Sdk\.Schema\.CommandStep$
+- include:
+    uidRegex: ^Buildkite\.Sdk\.Schema\.BlockStep$
+- include:
+    uidRegex: ^Buildkite\.Sdk\.Schema\.TriggerStep$
+- include:
+    uidRegex: ^Buildkite\.Sdk\.Schema\.InputStep$
+- include:
+    uidRegex: ^Buildkite\.Sdk\.Schema\.GroupStep$
+- include:
+    uidRegex: ^Buildkite\.Sdk\.Schema\.WaitStep$
+- exclude:
+    uidRegex: .*
