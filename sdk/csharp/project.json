@@ -1,0 +1,48 @@
+{
+  "name": "sdk-csharp",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "sdk/csharp/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet build",
+        "cwd": "sdk/csharp"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet test",
+        "cwd": "sdk/csharp"
+      },
+      "dependsOn": ["build"]
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet pack -c Release -o ../../dist/csharp",
+        "cwd": "sdk/csharp"
+      },
+      "dependsOn": ["build"]
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet nuget push dist/csharp/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json",
+        "cwd": "."
+      },
+      "dependsOn": ["pack"]
+    },
+    "gen:types": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run ./internal/gen cs sdk/csharp/src/Buildkite.Sdk/Schema",
+        "cwd": "."
+      },
+      "dependsOn": ["gen:build"]
+    }
+  },
+  "tags": ["sdk", "csharp"]
+}
