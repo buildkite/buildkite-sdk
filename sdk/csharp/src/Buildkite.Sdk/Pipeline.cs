@@ -46,11 +46,12 @@ public class Pipeline
         .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
         .Build();
 
-    public AgentsObject Agents { get; set; } = new();
+    public object? Agents { get; set; }
     public Dictionary<string, object?> Env { get; set; } = new();
     public List<INotification> Notify { get; set; } = new();
     public List<IStep> Steps { get; set; } = new();
     public List<string> Secrets { get; set; } = new();
+    public string? Image { get; set; }
 
     public Pipeline AddStep(IStep step)
     {
@@ -60,7 +61,32 @@ public class Pipeline
 
     public Pipeline AddAgent(string key, string value)
     {
-        Agents[key] = value;
+        if (Agents is AgentsObject agentsObj)
+        {
+            agentsObj[key] = value;
+        }
+        else
+        {
+            Agents = new AgentsObject { [key] = value };
+        }
+        return this;
+    }
+
+    public Pipeline SetAgents(AgentsObject agents)
+    {
+        Agents = agents;
+        return this;
+    }
+
+    public Pipeline SetAgents(AgentsList agents)
+    {
+        Agents = agents;
+        return this;
+    }
+
+    public Pipeline SetImage(string image)
+    {
+        Image = image;
         return this;
     }
 
@@ -94,14 +120,26 @@ public class Pipeline
             Steps = pipeline.Steps;
         if (pipeline.Secrets != null)
             Secrets = pipeline.Secrets;
+        if (pipeline.Image != null)
+            Image = pipeline.Image;
         return this;
+    }
+
+    private bool HasAgents()
+    {
+        return Agents switch
+        {
+            AgentsObject obj => obj.Count > 0,
+            AgentsList list => list.Count > 0,
+            _ => Agents != null
+        };
     }
 
     private BuildkitePipeline Build()
     {
         var pipeline = new BuildkitePipeline();
 
-        if (Agents.Count > 0)
+        if (HasAgents())
             pipeline.Agents = Agents;
         if (Env.Count > 0)
             pipeline.Env = Env;
@@ -111,6 +149,8 @@ public class Pipeline
             pipeline.Steps = Steps;
         if (Secrets.Count > 0)
             pipeline.Secrets = Secrets;
+        if (Image != null)
+            pipeline.Image = Image;
 
         return pipeline;
     }

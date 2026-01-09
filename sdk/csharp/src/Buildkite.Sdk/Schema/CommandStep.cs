@@ -26,8 +26,8 @@ public class CommandStep : IStep, IGroupStep
     /// <summary>Alias for Command.</summary>
     public object? Commands { get; set; }
 
-    /// <summary>Agent query rules for targeting specific agents.</summary>
-    public AgentsObject? Agents { get; set; }
+    /// <summary>Agent query rules for targeting specific agents. Can be AgentsObject or AgentsList.</summary>
+    public object? Agents { get; set; }
 
     /// <summary>Environment variables for this step.</summary>
     public Dictionary<string, object?>? Env { get; set; }
