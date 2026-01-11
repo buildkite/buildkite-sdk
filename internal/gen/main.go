@@ -23,6 +23,8 @@ func generateTypes(outDir, language string) error {
 		return generatePythonTypes(generator, outDir)
 	case "go":
 		return generateGoTypes(generator, outDir)
+	case "csharp":
+		return generateCSharpTypes(generator, outDir)
 	}
 
 	return nil
