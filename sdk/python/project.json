@@ -19,7 +19,7 @@
         "install": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": ["uv venv", "uv pip install -r pyproject.toml"],
+                "commands": ["uv sync --group dev"],
                 "cwd": "sdk/python",
                 "parallel": false
             }
