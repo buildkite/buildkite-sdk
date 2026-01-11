@@ -67,6 +67,7 @@ func generateCSharpTypes(
 			"Buildkite.Sdk.Schema",
 			fileName,
 			[]string{
+				"System.Collections.Generic",
 				"System.Text.Json.Serialization",
 			},
 			contents,
@@ -97,6 +98,7 @@ func generateCSharpTypes(
 		"Buildkite.Sdk.Schema",
 		fmt.Sprintf("%s/BuildkitePipeline.cs", outDir),
 		[]string{
+			"System.Collections.Generic",
 			"System.Text.Json.Serialization",
 		},
 		pipelineContents,
@@ -112,6 +114,7 @@ func generateCSharpTypes(
 		"Buildkite.Sdk.Schema",
 		fmt.Sprintf("%s/Interfaces.cs", outDir),
 		[]string{
+			"System.Collections.Generic",
 			"System.Text.Json.Serialization",
 		},
 		interfacesContents,

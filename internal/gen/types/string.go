@@ -83,3 +83,12 @@ func (s String) PythonClassKey() string {
 func (s String) PythonClassType() string {
 	return "str"
 }
+
+// CSharp
+func (s String) CSharp() (string, error) {
+	return "", nil
+}
+
+func (s String) CSharpType() string {
+	return "string"
+}

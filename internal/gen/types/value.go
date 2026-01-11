@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
@@ -166,6 +167,34 @@ func Value[T any](val T) *T {
 	return &val
 }
 `
+
+func (p PipelineSchemaGenerator) GenerateCSharpPipelineSchema() (string, error) {
+	var sb strings.Builder
+
+	sb.WriteString("/// <summary>\n")
+	sb.WriteString("/// Represents a Buildkite pipeline configuration.\n")
+	sb.WriteString("/// </summary>\n")
+	sb.WriteString("public class BuildkitePipeline\n{\n")
+
+	for _, name := range p.Properties.Keys() {
+		prop, err := p.Properties.Get(name)
+		if err != nil {
+			return "", fmt.Errorf("generating pipeline schema: %v", err)
+		}
+
+		propName := utils.DashCaseToTitleCase(name)
+		typeName := utils.ToTitleCase(prop.Ref.Name())
+
+		if propName != name {
+			sb.WriteString(fmt.Sprintf("    [JsonPropertyName(\"%s\")]\n", name))
+		}
+
+		sb.WriteString(fmt.Sprintf("    public %s? %s { get; set; }\n\n", typeName, propName))
+	}
+
+	sb.WriteString("}\n")
+	return sb.String(), nil
+}
 
 func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 	goStruct := utils.NewGoStruct("Pipeline", "", nil)
@@ -642,6 +671,10 @@ type Value interface {
 	Python() (string, error)
 	PythonClassKey() string
 	PythonClassType() string
+
+	// CSharp
+	CSharp() (string, error)
+	CSharpType() string
 
 	IsReference() bool
 	IsPrimitive() bool

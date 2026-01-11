@@ -214,3 +214,115 @@ func (e Enum) PythonClassType() string {
 
 	return fmt.Sprintf("Literal[%s]", strings.Join(parts, ","))
 }
+
+// CSharp
+func (e Enum) canBeCSharpEnum() bool {
+	if len(e.Values) == 0 {
+		return false
+	}
+	for _, v := range e.Values {
+		if s, ok := v.(string); ok {
+			if s == "*" || strings.ContainsAny(s, " -./") {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (e Enum) CSharp() (string, error) {
+	if len(e.Values) == 0 {
+		return "", nil
+	}
+
+	if !e.canBeCSharpEnum() {
+		return e.generateCSharpStringConstants(), nil
+	}
+
+	return e.generateCSharpEnum(), nil
+}
+
+func (e Enum) generateCSharpEnum() string {
+	var sb strings.Builder
+
+	if e.Description != "" {
+		sb.WriteString("/// <summary>\n")
+		sb.WriteString(fmt.Sprintf("/// %s\n", e.Description))
+		sb.WriteString("/// </summary>\n")
+	}
+
+	sb.WriteString("[JsonConverter(typeof(JsonStringEnumConverter))]\n")
+	sb.WriteString(fmt.Sprintf("public enum %s\n{\n", e.Name.ToTitleCase()))
+
+	for i, val := range e.Values {
+		strVal := fmt.Sprintf("%v", val)
+		enumName := sanitizeEnumValue(strVal)
+		if enumName != strVal {
+			sb.WriteString(fmt.Sprintf("    [JsonPropertyName(\"%s\")]\n", strVal))
+		}
+		sb.WriteString(fmt.Sprintf("    %s", enumName))
+		if i < len(e.Values)-1 {
+			sb.WriteString(",")
+		}
+		sb.WriteString("\n")
+	}
+
+	sb.WriteString("}\n")
+	return sb.String()
+}
+
+func (e Enum) generateCSharpStringConstants() string {
+	var sb strings.Builder
+
+	if e.Description != "" {
+		sb.WriteString("/// <summary>\n")
+		sb.WriteString(fmt.Sprintf("/// %s\n", e.Description))
+		sb.WriteString("/// </summary>\n")
+	}
+
+	sb.WriteString(fmt.Sprintf("public static class %sValues\n{\n", e.Name.ToTitleCase()))
+
+	for _, val := range e.Values {
+		strVal := fmt.Sprintf("%v", val)
+		constName := sanitizeEnumValue(strVal)
+		if constName == "" {
+			constName = "Empty"
+		}
+		sb.WriteString(fmt.Sprintf("    public const string %s = \"%s\";\n", constName, strVal))
+	}
+
+	sb.WriteString("}\n")
+	return sb.String()
+}
+
+func sanitizeEnumValue(s string) string {
+	var sb strings.Builder
+	for i, r := range s {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' {
+			sb.WriteRune(r)
+		} else {
+			sb.WriteRune('_')
+		}
+		if i == 0 && r >= '0' && r <= '9' {
+			result := "_" + sb.String()
+			sb.Reset()
+			sb.WriteString(result)
+		}
+	}
+	result := sb.String()
+	if result == "" {
+		return result
+	}
+	runes := []rune(result)
+	if runes[0] >= 'a' && runes[0] <= 'z' {
+		runes[0] = runes[0] - 32
+	}
+	return string(runes)
+}
+
+func (e Enum) CSharpType() string {
+	if !e.canBeCSharpEnum() {
+		return "string"
+	}
+	return e.Name.ToTitleCase()
+}

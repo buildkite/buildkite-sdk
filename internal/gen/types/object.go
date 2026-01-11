@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
@@ -387,5 +388,85 @@ func (o Object) PythonClassType() string {
 		return "Dict[str, Any]"
 	}
 
+	return o.Name.ToTitleCase()
+}
+
+// CSharp
+func (o Object) CSharp() (string, error) {
+	keys := o.Properties.Keys()
+	if len(keys) == 0 {
+		if o.AdditionalProperties != nil {
+			prop := *o.AdditionalProperties
+			return fmt.Sprintf("public class %s : Dictionary<string, %s>\n{\n    public %s() : base() { }\n    public %s(IDictionary<string, %s> dictionary) : base(dictionary) { }\n}\n",
+				o.Name.ToTitleCase(), prop.CSharpType(), o.Name.ToTitleCase(), o.Name.ToTitleCase(), prop.CSharpType()), nil
+		}
+		return fmt.Sprintf("public class %s : Dictionary<string, object>\n{\n    public %s() : base() { }\n    public %s(IDictionary<string, object> dictionary) : base(dictionary) { }\n}\n",
+			o.Name.ToTitleCase(), o.Name.ToTitleCase(), o.Name.ToTitleCase()), nil
+	}
+
+	var sb strings.Builder
+	className := o.Name.ToTitleCase()
+
+	if o.Description != "" {
+		sb.WriteString("/// <summary>\n")
+		for _, line := range strings.Split(o.Description, "\n") {
+			sb.WriteString(fmt.Sprintf("/// %s\n", strings.TrimSpace(line)))
+		}
+		sb.WriteString("/// </summary>\n")
+	}
+
+	sb.WriteString(fmt.Sprintf("public class %s\n{\n", className))
+
+	for _, name := range keys {
+		val, err := o.Properties.Get(name)
+		if err != nil {
+			return "", err
+		}
+
+		description := val.GetDescription()
+		if description != "" {
+			sb.WriteString("    /// <summary>\n")
+			desc := strings.ReplaceAll(description, "\n", " ")
+			sb.WriteString(fmt.Sprintf("    /// %s\n", desc))
+			sb.WriteString("    /// </summary>\n")
+		}
+
+		propName := utils.DashCaseToTitleCase(name)
+		if propName != name {
+			sb.WriteString(fmt.Sprintf("    [JsonPropertyName(\"%s\")]\n", name))
+		}
+
+		typeName := val.CSharpType()
+		if !slices.Contains(o.Required, name) && !isReferenceType(typeName) {
+			typeName += "?"
+		}
+
+		sb.WriteString(fmt.Sprintf("    public %s %s { get; set; }\n\n", typeName, propName))
+	}
+
+	sb.WriteString("}\n")
+	return sb.String(), nil
+}
+
+func isReferenceType(typeName string) bool {
+	referenceTypes := map[string]bool{
+		"string": true,
+		"object": true,
+	}
+	if strings.HasPrefix(typeName, "List<") ||
+		strings.HasPrefix(typeName, "Dictionary<") ||
+		strings.HasSuffix(typeName, "[]") {
+		return true
+	}
+	if referenceTypes[typeName] {
+		return true
+	}
+	if len(typeName) > 0 && typeName[0] >= 'A' && typeName[0] <= 'Z' {
+		return true
+	}
+	return false
+}
+
+func (o Object) CSharpType() string {
 	return o.Name.ToTitleCase()
 }
