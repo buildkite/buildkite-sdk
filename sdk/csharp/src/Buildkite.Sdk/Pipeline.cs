@@ -38,17 +38,15 @@ public class Pipeline
     {
         PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        WriteIndented = true,
-        Converters = { new UnionConverterFactory() }
+        WriteIndented = true
     };
 
     private static readonly ISerializer YamlSerializer = new SerializerBuilder()
         .WithNamingConvention(UnderscoredNamingConvention.Instance)
         .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
-        .WithTypeConverter(new UnionYamlTypeConverter())
         .Build();
 
-    public OneOf<AgentsObject, AgentsList>? Agents { get; set; }
+    public object? Agents { get; set; }
     public Dictionary<string, object?> Env { get; set; } = new();
     public List<INotification> Notify { get; set; } = new();
     public List<IStep> Steps { get; set; } = new();
@@ -63,14 +61,9 @@ public class Pipeline
 
     public Pipeline AddAgent(string key, string value)
     {
-        if (Agents?.AsT1 is AgentsObject agentsObj)
+        if (Agents is AgentsObject agentsObj)
         {
             agentsObj[key] = value;
-        }
-        else if (Agents?.AsT2 is not null)
-        {
-            throw new InvalidOperationException(
-                "Cannot use AddAgent when Agents is already set as a list. Use SetAgents to replace.");
         }
         else
         {
@@ -134,10 +127,12 @@ public class Pipeline
 
     private bool HasAgents()
     {
-        if (Agents == null) return false;
-        if (Agents.Value.AsT1 is AgentsObject obj) return obj.Count > 0;
-        if (Agents.Value.AsT2 is AgentsList list) return list.Count > 0;
-        return false;
+        return Agents switch
+        {
+            AgentsObject obj => obj.Count > 0,
+            AgentsList list => list.Count > 0,
+            _ => Agents != null
+        };
     }
 
     private BuildkitePipeline Build()

@@ -1,4 +1,26 @@
+using System.Text.Json.Serialization;
+
 namespace Buildkite.Sdk.Schema;
+
+/// <summary>
+/// Represents the depends_on configuration for a step.
+/// Can be a single string, list of strings, or list of dependency objects.
+/// </summary>
+public class DependsOn
+{
+    private readonly object _value;
+
+    private DependsOn(object value) => _value = value;
+
+    public static DependsOn FromString(string key) => new(key);
+    public static DependsOn FromStrings(params string[] keys) => new(keys.ToList());
+    public static DependsOn FromDependencies(params Dependency[] dependencies) => new(dependencies.ToList());
+
+    public static implicit operator DependsOn(string key) => FromString(key);
+    public static implicit operator DependsOn(string[] keys) => FromStrings(keys);
+
+    public object Value => _value;
+}
 
 /// <summary>
 /// A dependency specification with optional allow_failure setting.
@@ -58,12 +80,47 @@ public class ManualRetry
 }
 
 /// <summary>
+/// Soft fail configuration. Can be true/false or a list of exit statuses.
+/// </summary>
+public class SoftFail
+{
+    private readonly object _value;
+
+    private SoftFail(object value) => _value = value;
+
+    public static SoftFail FromBool(bool value) => new(value);
+    public static SoftFail FromExitStatuses(params SoftFailCondition[] conditions) => new(conditions.ToList());
+
+    public static implicit operator SoftFail(bool value) => FromBool(value);
+
+    public object Value => _value;
+}
+
+/// <summary>
 /// A soft fail condition based on exit status.
 /// </summary>
 public class SoftFailCondition
 {
     /// <summary>The exit status that should be treated as a soft fail.</summary>
     public object? ExitStatus { get; set; }
+}
+
+/// <summary>
+/// Skip configuration. Can be a boolean or a reason string.
+/// </summary>
+public class Skip
+{
+    private readonly object _value;
+
+    private Skip(object value) => _value = value;
+
+    public static Skip FromBool(bool value) => new(value);
+    public static Skip FromReason(string reason) => new(reason);
+
+    public static implicit operator Skip(bool value) => FromBool(value);
+    public static implicit operator Skip(string reason) => FromReason(reason);
+
+    public object Value => _value;
 }
 
 /// <summary>
@@ -102,10 +159,10 @@ public class MatrixAdjustment
     public Dictionary<string, string>? With { get; set; }
 
     /// <summary>Whether to skip this combination.</summary>
-    public StringOr<bool>? Skip { get; set; }
+    public Skip? Skip { get; set; }
 
     /// <summary>Soft fail configuration for this combination.</summary>
-    public BoolOr<List<SoftFailCondition>>? SoftFail { get; set; }
+    public SoftFail? SoftFail { get; set; }
 }
 
 /// <summary>
@@ -124,19 +181,16 @@ public class Signature
 }
 
 /// <summary>
-/// Plugin configuration.
+/// Plugin configuration. Can be a string or a dictionary with configuration.
 /// </summary>
-public class PluginConfig
+public class Plugin
 {
-    /// <summary>The plugin name (e.g., "docker#v5.0.0").</summary>
-    public string Name { get; }
+    private readonly object _value;
 
-    /// <summary>The plugin configuration.</summary>
-    public object? Config { get; }
+    private Plugin(object value) => _value = value;
 
-    public PluginConfig(string name, object? config = null)
-    {
-        Name = name;
-        Config = config;
-    }
+    public static Plugin FromString(string pluginName) => new(pluginName);
+    public static Plugin FromConfig(string pluginName, object config) => new(new Dictionary<string, object> { [pluginName] = config });
+
+    public object Value => _value;
 }

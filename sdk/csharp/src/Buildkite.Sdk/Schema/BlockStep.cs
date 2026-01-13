@@ -30,22 +30,22 @@ public class BlockStep : IStep, IGroupStep
     public List<Field>? Fields { get; set; }
 
     /// <summary>Branch filter pattern.</summary>
-    public OneOrMany<string>? Branches { get; set; }
+    public object? Branches { get; set; }
 
     /// <summary>A boolean expression to conditionally run this step.</summary>
     public string? If { get; set; }
 
     /// <summary>Glob pattern to run step only if matching files changed.</summary>
-    public OneOrMany<string>? IfChanged { get; set; }
+    public object? IfChanged { get; set; }
 
     /// <summary>Step keys this step depends on.</summary>
-    public OneOf<string, List<string>, List<Dependency>>? DependsOn { get; set; }
+    public object? DependsOn { get; set; }
 
     /// <summary>Whether to proceed if a dependency fails.</summary>
     public bool? AllowDependencyFailure { get; set; }
 
     /// <summary>Team slugs or IDs permitted to unblock this step.</summary>
-    public OneOrMany<string>? AllowedTeams { get; set; }
+    public object? AllowedTeams { get; set; }
 
     /// <summary>The build state when blocked: 'passed', 'failed', or 'running'.</summary>
     public string? BlockedState { get; set; }

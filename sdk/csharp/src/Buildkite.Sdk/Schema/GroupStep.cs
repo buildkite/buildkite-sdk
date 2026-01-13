@@ -30,16 +30,16 @@ public class GroupStep : IStep
     public string? If { get; set; }
 
     /// <summary>Glob pattern to run step only if matching files changed.</summary>
-    public OneOrMany<string>? IfChanged { get; set; }
+    public object? IfChanged { get; set; }
 
     /// <summary>Step keys this step depends on.</summary>
-    public OneOf<string, List<string>, List<Dependency>>? DependsOn { get; set; }
+    public object? DependsOn { get; set; }
 
     /// <summary>Whether to proceed if a dependency fails.</summary>
     public bool? AllowDependencyFailure { get; set; }
 
     /// <summary>Whether to skip this step.</summary>
-    public StringOr<bool>? Skip { get; set; }
+    public object? Skip { get; set; }
 
     /// <summary>Notifications for this group.</summary>
     public List<INotification>? Notify { get; set; }
