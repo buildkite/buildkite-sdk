@@ -5,8 +5,8 @@ namespace Buildkite.Sdk.Schema;
 /// </summary>
 public class BuildkitePipeline
 {
-    /// <summary>Default agents for all steps in the pipeline. Can be AgentsObject or AgentsList.</summary>
-    public object? Agents { get; set; }
+    /// <summary>Default agents for all steps in the pipeline.</summary>
+    public OneOf<AgentsObject, AgentsList>? Agents { get; set; }
 
     /// <summary>Environment variables for all steps in the pipeline.</summary>
     public Dictionary<string, object?>? Env { get; set; }

@@ -27,10 +27,10 @@ public class WaitStep : IStep, IGroupStep
     public string? If { get; set; }
 
     /// <summary>Branch filter pattern.</summary>
-    public object? Branches { get; set; }
+    public OneOrMany<string>? Branches { get; set; }
 
     /// <summary>Step keys this step depends on.</summary>
-    public object? DependsOn { get; set; }
+    public OneOf<string, List<string>, List<Dependency>>? DependsOn { get; set; }
 
     /// <summary>Whether to proceed if a dependency fails.</summary>
     public bool? AllowDependencyFailure { get; set; }

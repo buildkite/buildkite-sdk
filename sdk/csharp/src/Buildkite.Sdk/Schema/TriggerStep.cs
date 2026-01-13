@@ -30,25 +30,25 @@ public class TriggerStep : IStep, IGroupStep
     public TriggerBuild? Build { get; set; }
 
     /// <summary>Branch filter pattern.</summary>
-    public object? Branches { get; set; }
+    public OneOrMany<string>? Branches { get; set; }
 
     /// <summary>A boolean expression to conditionally run this step.</summary>
     public string? If { get; set; }
 
     /// <summary>Glob pattern to run step only if matching files changed.</summary>
-    public object? IfChanged { get; set; }
+    public OneOrMany<string>? IfChanged { get; set; }
 
     /// <summary>Step keys this step depends on.</summary>
-    public object? DependsOn { get; set; }
+    public OneOf<string, List<string>, List<Dependency>>? DependsOn { get; set; }
 
     /// <summary>Whether to proceed if a dependency fails.</summary>
     public bool? AllowDependencyFailure { get; set; }
 
     /// <summary>Whether to skip this step.</summary>
-    public object? Skip { get; set; }
+    public StringOr<bool>? Skip { get; set; }
 
     /// <summary>Soft fail configuration.</summary>
-    public object? SoftFail { get; set; }
+    public BoolOr<List<SoftFailCondition>>? SoftFail { get; set; }
 
     /// <summary>The step type.</summary>
     public string Type => "trigger";
