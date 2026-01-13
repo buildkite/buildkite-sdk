@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    
+    <!-- NuGet Package Metadata -->
+    <PackageId>Buildkite.Sdk</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Buildkite</Authors>
+    <Company>Buildkite</Company>
+    <Description>A C# SDK for Buildkite pipelines. Generate dynamic pipeline configurations programmatically.</Description>
+    <PackageTags>buildkite;ci;cd;pipeline;devops</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/buildkite/buildkite-sdk</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/buildkite/buildkite-sdk</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="YamlDotNet" Version="16.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

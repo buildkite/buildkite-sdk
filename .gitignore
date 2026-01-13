@@ -26,3 +26,7 @@ Gemfile.lock
 Thumbs.db
 .vscode
 .zed
+
+# C# build artifacts
+bin/
+obj/

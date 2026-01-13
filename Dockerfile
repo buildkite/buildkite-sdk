@@ -35,6 +35,10 @@ RUN mise install go@1.25 && \
 RUN mise install ruby@3.4 && \
     mise use --global ruby@3.4
 
+# .NET version support: https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core
+RUN mise install dotnet@9 && \
+    mise use --global dotnet@9
+
 # Install Python tools.
 RUN pip install --no-cache-dir uv black
 RUN npm install -g nx

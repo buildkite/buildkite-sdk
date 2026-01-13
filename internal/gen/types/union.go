@@ -217,3 +217,12 @@ func (u Union) PythonClassType() string {
 	codeBlock.AddLines(strings.Join(parts, " | "))
 	return codeBlock.String()
 }
+
+// CSharp
+func (u Union) CSharp() (string, error) {
+	return "", nil
+}
+
+func (u Union) CSharpType() string {
+	return "object"
+}
