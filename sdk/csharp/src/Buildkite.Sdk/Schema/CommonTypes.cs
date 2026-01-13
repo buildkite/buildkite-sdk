@@ -180,17 +180,4 @@ public class Signature
     public string? Value { get; set; }
 }
 
-/// <summary>
-/// Plugin configuration. Can be a string or a dictionary with configuration.
-/// </summary>
-public class Plugin
-{
-    private readonly object _value;
 
-    private Plugin(object value) => _value = value;
-
-    public static Plugin FromString(string pluginName) => new(pluginName);
-    public static Plugin FromConfig(string pluginName, object config) => new(new Dictionary<string, object> { [pluginName] = config });
-
-    public object Value => _value;
-}

@@ -77,7 +77,11 @@ public class CommandStep : IStep, IGroupStep
     /// <summary>Priority of the job (higher = more priority).</summary>
     public int? Priority { get; set; }
 
-    /// <summary>Plugins to use with this step.</summary>
+    /// <summary>
+    /// Plugins to use with this step.
+    /// Accepts: string[] for simple plugins, or object[] containing Dictionary&lt;string, object&gt; for configured plugins.
+    /// Example: new object[] { "docker#v5.0.0", new Dictionary&lt;string, object&gt; { ["ecr#v2.0.0"] = new { login = true } } }
+    /// </summary>
     public object? Plugins { get; set; }
 
     /// <summary>Matrix configuration for multiple job variations.</summary>
@@ -92,7 +96,12 @@ public class CommandStep : IStep, IGroupStep
     /// <summary>Cancel the job if the build is marked as failing.</summary>
     public bool? CancelOnBuildFailing { get; set; }
 
-    /// <summary>Secrets to make available to the step.</summary>
+    /// <summary>
+    /// Secrets to make available to the step.
+    /// Accepts: string[] for secret names, or Dictionary&lt;string, string&gt; to map env var names to secrets.
+    /// Example (list): new[] { "my-secret" }
+    /// Example (map): new Dictionary&lt;string, string&gt; { ["MY_VAR"] = "org/secret-name" }
+    /// </summary>
     public object? Secrets { get; set; }
 
     /// <summary>Signature for signed pipelines.</summary>
