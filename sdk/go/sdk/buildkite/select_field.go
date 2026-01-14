@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// The value of the option(s) that will be pre-selected in the dropdown
 type SelectFieldDefaultValues interface {
 	string | []string
 }
@@ -26,7 +25,6 @@ func (e SelectFieldDefault) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
-// Whether more than one option may be selected
 type SelectFieldMultipleValues interface {
 	bool | string
 }
@@ -47,7 +45,6 @@ func (e SelectFieldMultiple) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
-// Whether the field is required for form submission
 type SelectFieldRequiredValues interface {
 	bool | string
 }
