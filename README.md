@@ -37,40 +37,40 @@ If you hit any rough edges during development, please file an issue. Thanks!
 
 ```bash
 # Install all project dependencies.
-npm install
+pnpm install
 
 # Test all SDKs and apps.
-npm test
+pnpm test
 
 # Build all SDKs (and write them to ./dist/sdks).
-npm run build
+pnpm run build
 
 # Build all SDK docs (and write them to ./dist/docs).
-npm run docs
+pnpm run docs
 
 # Serve the docs locally (which builds them implicitly).
-npm run docs:serve
+pnpm run docs:serve
 
 # Run all apps (which writes JSON and YAML pipelines to ./out).
-npm run apps
+pnpm run apps
 
 # Watch all projects for changes (which rebuilds the docs and SDKs and re-runs all apps).
-npm run watch
+pnpm run watch
 
 # Launch web servers for all docsets and watch all projects for changes. (Requires reload.)
-npm run dev
+pnpm run dev
 
 # Format all SDK code.
-npm run format
+pnpm run format
 
 # Publish to npm, PyPi pkg.go.dev, and RubyGems.
-npm run publish
+pnpm run publish
 
 # Publish the docs to AWS.
-npm run docs:publish
+pnpm run docs:publish
 
 # Clear away build and test artifacts.
-npm run clean
+pnpm run clean
 ```
 
 ### Regenerating types after a schema change
@@ -79,12 +79,12 @@ This SDK generates types from the [Buildkite pipeline schema](https://github.com
 
 ```bash
 # Regenerate the types for all languages.
-npm run types
+pnpm run types
 
 # Regenerate the types for a specific language.
-npm run types-ts
-npm run types-py
-npm run types-go
+pnpm run types-ts
+pnpm run types-py
+pnpm run types-go
 ```
 
 The type generator automatically fetches the latest schema from the `main` branch of the pipeline-schema repository. Generated types are then written to:
@@ -93,14 +93,14 @@ The type generator automatically fetches the latest schema from the `main` branc
 -   `sdk/python/src/buildkite_sdk/schema.py`
 -   `sdk/go/sdk/buildkite/`
 
-Note that the type-generator binary (a Go program at `internal/gen/type-gen`) is automatically built when you run `npm run types`. If you need to rebuild that binary manually, run `npx nx gen:build`.
+Note that the type-generator binary (a Go program at `internal/gen/type-gen`) is automatically built when you run `pnpm run types`. If you need to rebuild that binary manually, run `pnpm nx gen:build`.
 
 ### Upgrading nx
 
 We manage this repository with [Nx](https://nx.dev/). To upgrade the Nx workspace to the latest version, use `nx migrate`. From the root of the project, run:
 
 ```bash
-npx nx migrate latest
+pnpm nx migrate latest
 ```
 
 See the [nx guide](https://nx.dev/features/automate-updating-dependencies) for details.
@@ -116,7 +116,7 @@ All SDKs version on the same cadence. To publish a new version (of all SDKs), fo
 1.  Leaving that single change uncommitted and run the release script:
 
     ```bash
-    npm run release:create-branch
+    pnpm run release:create-branch
     ```
 
     This script:

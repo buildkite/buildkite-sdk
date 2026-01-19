@@ -21,7 +21,7 @@
         "clean": "nx clean:all",
         "watch": "npx nx watch --all -- nx rebuild:all",
         "format": "npx nx format:all",
-        "dev": "concurrently 'npm run docs:serve' 'npm run watch' --kill-others",
+        "dev": "concurrently 'pnpm run docs:serve' 'pnpm run watch' --kill-others",
         "release:create-branch": "npx nx release:create-branch"
     },
     "private": true,
@@ -30,9 +30,9 @@
         "@nx/esbuild": "22.0.2",
         "@nx/eslint": "22.0.2",
         "@nx/eslint-plugin": "22.0.2",
-        "@nx/jest": "22.1.0",
+        "@nx/jest": "22.0.2",
         "@nx/js": "22.0.2",
-        "@nx/node": "22.1.0",
+        "@nx/node": "22.0.2",
         "@nx/web": "22.0.2",
         "@swc-node/register": "~1.9.1",
         "@swc/core": "~1.5.7",
@@ -67,6 +67,12 @@
         "infra",
         "ci"
     ],
+    "pnpm": {
+        "overrides": {
+            "tar": ">=7.5.3",
+            "diff": ">=8.0.3"
+        }
+    },
     "dependencies": {
         "@octokit/rest": "^21.0.2",
         "axios": "^1.12.1",
