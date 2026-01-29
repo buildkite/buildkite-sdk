@@ -103,3 +103,21 @@ func (p PropertyReference) PythonClassType() string {
 
 	return utils.CamelCaseToTitleCase(p.Ref.Name())
 }
+
+// CSharp
+func (p PropertyReference) CSharp() (string, error) {
+	return "", nil
+}
+
+func (p PropertyReference) CSharpType() string {
+	if p.isPrimitiveType() {
+		return p.Type.CSharpType()
+	}
+
+	name := p.Ref.Name()
+	if strings.Contains(name, "_") {
+		return utils.DashCaseToTitleCase(name)
+	}
+
+	return utils.CamelCaseToTitleCase(name)
+}

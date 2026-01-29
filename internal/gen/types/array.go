@@ -199,3 +199,12 @@ func (a Array) PythonClassKey() string {
 func (a Array) PythonClassType() string {
 	return fmt.Sprintf("List[%s]", a.Type.PythonClassType())
 }
+
+// CSharp
+func (a Array) CSharp() (string, error) {
+	return "", nil
+}
+
+func (a Array) CSharpType() string {
+	return fmt.Sprintf("List<%s>", a.Type.CSharpType())
+}

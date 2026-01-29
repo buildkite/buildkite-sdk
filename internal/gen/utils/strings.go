@@ -81,3 +81,29 @@ func SnakeCaseToCamelCase(str string) string {
 
 	return strings.Join(titleCaseWords, "")
 }
+
+func ToTitleCase(s string) string {
+	if s == "" {
+		return s
+	}
+
+	if strings.Contains(s, "_") {
+		parts := strings.Split(s, "_")
+		for i, part := range parts {
+			parts[i] = ToTitleCase(part)
+		}
+		return strings.Join(parts, "")
+	}
+
+	if strings.Contains(s, "-") {
+		parts := strings.Split(s, "-")
+		for i, part := range parts {
+			parts[i] = ToTitleCase(part)
+		}
+		return strings.Join(parts, "")
+	}
+
+	runes := []rune(s)
+	runes[0] = unicode.ToUpper(runes[0])
+	return string(runes)
+}
