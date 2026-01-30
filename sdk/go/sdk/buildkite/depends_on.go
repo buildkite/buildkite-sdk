@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// The step keys for a step to depend on
 type DependsOnValues interface {
 	string | DependsOnList
 }
@@ -17,11 +16,11 @@ type DependsOn struct {
 }
 
 func (e DependsOn) MarshalJSON() ([]byte, error) {
-	if e.String != nil {
-		return json.Marshal(e.String)
-	}
 	if e.DependsOnList != nil {
 		return json.Marshal(e.DependsOnList)
+	}
+	if e.String != nil {
+		return json.Marshal(e.String)
 	}
 	return json.Marshal(nil)
 }

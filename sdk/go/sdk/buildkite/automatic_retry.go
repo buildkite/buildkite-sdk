@@ -11,7 +11,6 @@ var AutomaticRetryExitStatusEnumValues = map[string]AutomaticRetryExitStatusEnum
 	"*": "*",
 }
 
-// The exit status number that will cause this job to retry
 type AutomaticRetryExitStatusValues interface {
 	AutomaticRetryExitStatusEnum | int | []int
 }
@@ -38,7 +37,6 @@ func (e AutomaticRetryExitStatus) MarshalJSON() ([]byte, error) {
 
 type AutomaticRetrySignalReason string
 
-// The exit signal reason, if any, that may be retried
 var AutomaticRetrySignalReasonValues = map[string]AutomaticRetrySignalReason{
 	"*":                  "*",
 	"none":               "none",
