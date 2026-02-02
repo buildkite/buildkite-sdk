@@ -11,7 +11,8 @@ const plugins = [
        "GITHUB_TOKEN",
        "NPM_TOKEN",
        "PYPI_TOKEN",
-       "GEM_HOST_API_KEY"
+       "GEM_HOST_API_KEY",
+       "NUGET_API_KEY"
      ]
   }},
   { "rubygems-oidc#v0.2.0": { role: "rg_oidc_akr_emf87k6zphtb7x7adyrk" } },
@@ -23,7 +24,8 @@ const plugins = [
     parameters: {
       NPM_TOKEN: "/prod/buildkite-sdk/npm-token",
       PYPI_TOKEN: "/prod/buildkite-sdk/pypi-token",
-      GITHUB_TOKEN: "/prod/buildkite-sdk/github-token"
+      GITHUB_TOKEN: "/prod/buildkite-sdk/github-token",
+      NUGET_API_KEY: "/prod/buildkite-sdk/nuget-api-key"
     }
   }}
 ]
@@ -80,6 +82,13 @@ const languageTargets = [
     key: "ruby",
     sdkLabel: "sdk-ruby",
     appLabel: "app-ruby"
+  },
+  {
+    icon: ":csharp:",
+    label: "C#",
+    key: "csharp",
+    sdkLabel: "sdk-csharp",
+    appLabel: "app-csharp"
   }
 ]
 

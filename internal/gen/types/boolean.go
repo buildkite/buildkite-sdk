@@ -83,3 +83,12 @@ func (b Boolean) PythonClassKey() string {
 func (b Boolean) PythonClassType() string {
 	return "bool"
 }
+
+// CSharp
+func (b Boolean) CSharp() (string, error) {
+	return "", nil
+}
+
+func (b Boolean) CSharpType() string {
+	return "bool"
+}
