@@ -16,7 +16,7 @@ const plugins = [
      ]
   }},
   { "rubygems-oidc#v0.2.0": { role: "rg_oidc_akr_emf87k6zphtb7x7adyrk" } },
-  { "aws-assume-role-with-web-identity#v1.0.0": {
+  { "aws-assume-role-with-web-identity#v1.4.0": {
     "role-arn": "arn:aws:iam::597088016345:role/pipeline-buildkite-buildkite-sdk",
     "session-tags": ["organization_slug", "organization_id", "pipeline_slug"],
   }},
