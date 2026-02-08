@@ -127,10 +127,10 @@ class Pipeline(BaseModel):
             mode="json",
         )
 
-    def to_json(self) -> str:
-        """Serialize the pipeline as a JSON string."""
-        pipeline_json = self.to_dict()
-        return json.dumps(pipeline_json, indent=4)
+    def to_json(self, indent: None | int | str = 4, **kwargs: Any) -> str:
+"""Serialize the pipeline as a JSON string."""
+pipeline_json = self.to_dict()
+return json.dumps(pipeline_json, indent=indent, **kwargs)
 
     def to_yaml(self) -> str:
         """Serialize the pipeline as a YAML string."""
