@@ -128,11 +128,11 @@ class Pipeline(BaseModel):
         )
 
     def to_json(self, indent: None | int | str = 4, **kwargs: Any) -> str:
-"""Serialize the pipeline as a JSON string."""
-pipeline_json = self.to_dict()
-return json.dumps(pipeline_json, indent=indent, **kwargs)
+        """Serialize the pipeline as a JSON string."""
+        pipeline_json = self.to_dict()
+        return json.dumps(pipeline_json, indent=indent, **kwargs)
 
-    def to_yaml(self) -> str:
+    def to_yaml(self, **kwargs: Any) -> str:
         """Serialize the pipeline as a YAML string."""
-        result: str = yaml.dump(self.to_dict())
+        result: str = yaml.dump(self.to_dict(), **kwargs)
         return result
