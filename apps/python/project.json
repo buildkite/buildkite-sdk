@@ -7,7 +7,7 @@
         "install": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": ["uv venv", "uv pip install -r pyproject.toml"],
+                "commands": ["uv venv --clear", "uv pip install -r pyproject.toml"],
                 "cwd": "apps/python",
                 "parallel": false
             }

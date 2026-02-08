@@ -93,13 +93,13 @@ class Pipeline(BaseModel):
     steps: List[Step] = []
 
     @classmethod
-    def from_dict(cls, data: PipelineArgs):
+    def from_dict(cls, data: PipelineArgs) -> Pipeline:
         return cls(**data)
 
-    def set_secrets(self, secrets: Secrets):
+    def set_secrets(self, secrets: Secrets) -> None:
         self.secrets = secrets
 
-    def add_agent(self, key: str, value: Any):
+    def add_agent(self, key: str, value: Any) -> None:
         if self.agents is None:
             self.agents = {}
 
@@ -109,29 +109,30 @@ class Pipeline(BaseModel):
 
         self.agents[key] = value
 
-    def add_environment_variable(self, key: str, value: Any):
+    def add_environment_variable(self, key: str, value: Any) -> None:
         if self.env is None:
             self.env = {}
         self.env[key] = value
 
-    def add_notify(self, notify: BuildNotify):
+    def add_notify(self, notify: BuildNotify) -> None:
         self.notify = notify
 
-    def add_step(self, step: Step):
+    def add_step(self, step: Step) -> None:
         self.steps.append(step)
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
         return self.model_dump(
             by_alias=True,
             exclude_none=True,
             mode="json",
         )
 
-    def to_json(self):
+    def to_json(self) -> str:
         """Serialize the pipeline as a JSON string."""
         pipeline_json = self.to_dict()
         return json.dumps(pipeline_json, indent=4)
 
-    def to_yaml(self):
+    def to_yaml(self) -> str:
         """Serialize the pipeline as a YAML string."""
-        return yaml.dump(self.to_dict())
+        result: str = yaml.dump(self.to_dict())
+        return result
