@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// Whether to continue the build without waiting for the triggered step to complete
 type TriggerStepAsyncValues interface {
 	bool | string
 }

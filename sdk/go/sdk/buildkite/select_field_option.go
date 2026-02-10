@@ -5,7 +5,6 @@ package buildkite
 
 import "encoding/json"
 
-// Whether the field is required for form submission
 type SelectFieldOptionRequiredValues interface {
 	bool | string
 }

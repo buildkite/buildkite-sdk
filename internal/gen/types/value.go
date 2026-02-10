@@ -654,6 +654,21 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 	}, dependencies, nil
 }
 
+// Value
+func isPrimitiveValue(val Value) bool {
+	switch val.(type) {
+	case String, Number, Boolean:
+		return true
+	default:
+		return false
+	}
+}
+
+func isUnionValue(val Value) bool {
+	_, ok := val.(Union)
+	return ok
+}
+
 type Value interface {
 	GetDescription() string
 

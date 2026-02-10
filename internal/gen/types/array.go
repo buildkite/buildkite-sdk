@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	gogen "github.com/buildkite/buildkite-sdk/internal/gen/go"
 	"github.com/buildkite/buildkite-sdk/internal/gen/typescript"
 	"github.com/buildkite/buildkite-sdk/internal/gen/utils"
 )
@@ -29,37 +30,25 @@ func (Array) IsPrimitive() bool {
 
 // Go
 func (a Array) GoStructType() string {
-	if a.IsReference() {
+	if a.IsReference() || isPrimitiveValue(a.Type) {
 		return fmt.Sprintf("[]%s", a.Type.GoStructType())
 	}
 
-	switch a.Type.(type) {
-	case String:
-		return "[]string"
-	case Boolean:
-		return "[]bool"
-	case Number:
-		return "[]int"
-	case Union:
-		return fmt.Sprintf("[]%sItem", a.Name.ToTitleCase())
-	default:
-		return fmt.Sprintf("[]%s", a.Name.ToTitleCase())
+	typeValue := a.Name.ToTitleCase()
+	if isUnionValue(a.Type) {
+		typeValue = fmt.Sprintf("%sItem", typeValue)
 	}
+	return fmt.Sprintf("[]%s", typeValue)
 }
 
 func (a Array) GoStructKey(isUnion bool) string {
 	if isUnion {
-		switch a.Type.(type) {
-		case String:
-			return "StringArray"
-		case Boolean:
-			return "BoolArray"
-		case Number:
-			return "IntArray"
-		case Union:
+		if isPrimitiveValue(a.Type) {
+			return fmt.Sprintf("%sArray", utils.CamelCaseToTitleCase(a.Type.GoStructType()))
+		}
+
+		if isUnionValue(a.Type) {
 			return fmt.Sprintf("%sItem", a.Name.ToTitleCase())
-		default:
-			return a.Name.ToTitleCase()
 		}
 	}
 
@@ -67,11 +56,11 @@ func (a Array) GoStructKey(isUnion bool) string {
 }
 
 func (a Array) Go() (string, error) {
-	lines := utils.NewCodeBlock()
-	description := fmt.Sprintf("// %s", a.Description)
+	contents := utils.NewCodeBlock()
+	typeValue := a.GoStructType()
 
-	union, ok := a.Type.(Union)
-	if !a.IsReference() && ok {
+	if isUnionValue(a.Type) && !a.IsReference() {
+		union := a.Type.(Union)
 		item := Union{
 			Name:            NewPropertyName(fmt.Sprintf("%sItem", a.Name.Value)),
 			Description:     union.Description,
@@ -83,22 +72,16 @@ func (a Array) Go() (string, error) {
 			return "", fmt.Errorf("generating lines for union in array [%s]: %v", a.Name.Value, err)
 		}
 
-		lines.AddLines(itemLines)
-
-		if description != "" {
-			lines.AddLines(description)
-		}
-
-		lines.AddLines(fmt.Sprintf("type %s = []%sItem", a.Name.ToTitleCase(), a.Type.GoStructType()))
-		return lines.String(), nil
+		contents.AddLines(itemLines)
 	}
 
-	if description != "" {
-		lines.AddLines(description)
-	}
-
-	lines.AddLines(fmt.Sprintf("type %s = []%s", a.Name.ToTitleCase(), a.Type.GoStructType()))
-	return lines.String(), nil
+	typ := gogen.NewType(
+		a.Name.ToTitleCase(),
+		a.Description,
+		typeValue,
+	)
+	contents.AddLines(typ.String())
+	return contents.String(), nil
 }
 
 // TypeScript

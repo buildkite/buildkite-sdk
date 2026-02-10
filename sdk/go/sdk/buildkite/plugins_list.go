@@ -6,8 +6,6 @@ package buildkite
 import "encoding/json"
 
 type PluginsListObject = map[string]interface{}
-
-// Array of plugins for this step
 type PluginsListItemValues interface {
 	string | PluginsListObject
 }
@@ -19,11 +17,11 @@ type PluginsListItem struct {
 }
 
 func (e PluginsListItem) MarshalJSON() ([]byte, error) {
-	if e.String != nil {
-		return json.Marshal(e.String)
-	}
 	if e.PluginsList != nil {
 		return json.Marshal(e.PluginsList)
+	}
+	if e.String != nil {
+		return json.Marshal(e.String)
 	}
 	return json.Marshal(nil)
 }
