@@ -69,7 +69,7 @@
     ],
     "dependencies": {
         "@octokit/rest": "^21.0.2",
-        "axios": "^1.12.1",
+        "axios": "^1.13.5",
         "rimraf": "^6.1.2"
     }
 }
