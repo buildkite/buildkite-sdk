@@ -2,5 +2,73 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "description": "Group Nx monorepo packages",
+      "matchPackageNames": ["nx", "@nx/**", "@nrwl/**"],
+      "groupName": "nx monorepo"
+    },
+    {
+      "description": "Group linting and formatting tools",
+      "matchPackageNames": [
+        "eslint",
+        "@eslint/**",
+        "typescript-eslint",
+        "eslint-config-prettier",
+        "prettier",
+        "rubocop",
+        "rubocop-rake",
+        "rubocop-rspec",
+        "ruff",
+        "autopep8"
+      ],
+      "groupName": "linting and formatting"
+    },
+    {
+      "description": "Group JavaScript/TypeScript build tools",
+      "matchPackageNames": [
+        "esbuild",
+        "@swc/**",
+        "tslib",
+        "ts-node",
+        "@swc-node/**",
+        "replace-in-file",
+        "rimraf"
+      ],
+      "groupName": "js build tools"
+    },
+    {
+      "description": "Group TypeScript type definitions",
+      "matchPackageNames": ["@types/**"],
+      "groupName": "type definitions"
+    },
+    {
+      "description": "Group testing frameworks and tools",
+      "matchPackageNames": [
+        "jest",
+        "@types/jest",
+        "jest-environment-node",
+        "jest-util",
+        "ts-jest",
+        "pytest",
+        "pytest-*",
+        "xunit",
+        "xunit.*",
+        "Microsoft.NET.Test.Sdk",
+        "coverlet.collector"
+      ],
+      "groupName": "testing tools"
+    },
+    {
+      "description": "Group Pulumi infrastructure packages",
+      "matchPackageNames": ["@pulumi/**"],
+      "groupName": "pulumi"
+    },
+    {
+      "description": "Group documentation generators",
+      "matchPackageNames": ["typedoc", "pdoc", "yard"],
+      "groupName": "documentation tools"
+    }
   ]
 }
