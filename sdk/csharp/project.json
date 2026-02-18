@@ -8,7 +8,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["dotnet restore", "dotnet tool restore"],
-        "cwd": "sdk/csharp"
+        "cwd": "sdk/csharp",
+        "parallel": false
       }
     },
     "build": {
