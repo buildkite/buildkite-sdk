@@ -68,7 +68,7 @@
         "ci"
     ],
     "dependencies": {
-        "@octokit/rest": "^21.0.2",
+        "@octokit/rest": "^22.0.0",
         "axios": "^1.13.5",
         "rimraf": "^6.1.2"
     }
