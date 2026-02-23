@@ -39,5 +39,5 @@ public class WaitStep : IStep, IGroupStep
     public bool? ContinueOnFailure { get; set; }
 
     /// <summary>The step type.</summary>
-    public string? Type { get; set; } = "wait";
+    public string Type => "wait";
 }
