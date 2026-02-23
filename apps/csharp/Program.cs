@@ -5,11 +5,18 @@ using Buildkite.Sdk.Schema;
 
 var pipeline = new Pipeline();
 
-pipeline.AddStep(new CommandStep
-{
-    Label = "some-label",
-    Command = "echo 'Hello, world!'"
-});
+pipeline
+    .AddStep(new CommandStep
+    {
+        Label = "some-label",
+        Command = "echo 'Hello, world!'"
+    })
+    .AddStep(new WaitStep())
+    .AddStep(new CommandStep
+    {
+        Label = "another-label",
+        Command = "echo 'Hello again!'"
+    });
 
 Directory.CreateDirectory("../../out/apps/csharp");
 
