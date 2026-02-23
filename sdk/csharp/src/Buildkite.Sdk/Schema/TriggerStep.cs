@@ -49,9 +49,6 @@ public class TriggerStep : IStep, IGroupStep
 
     /// <summary>Soft fail configuration.</summary>
     public object? SoftFail { get; set; }
-
-    /// <summary>The step type.</summary>
-    public string Type => "trigger";
 }
 
 /// <summary>

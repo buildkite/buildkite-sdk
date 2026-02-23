@@ -46,7 +46,4 @@ public class InputStep : IStep, IGroupStep
 
     /// <summary>The build state when waiting for input: 'passed', 'failed', or 'running'.</summary>
     public string? BlockedState { get; set; }
-
-    /// <summary>The step type.</summary>
-    public string Type => "input";
 }
