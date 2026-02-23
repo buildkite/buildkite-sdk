@@ -51,9 +51,6 @@ public class BlockStep : IStep, IGroupStep
 
     /// <summary>The build state when blocked: 'passed', 'failed', or 'running'.</summary>
     public string? BlockedState { get; set; }
-
-    /// <summary>The step type.</summary>
-    public string Type => "block";
 }
 
 /// <summary>

@@ -6,7 +6,7 @@ namespace Buildkite.Sdk.Schema;
 public class WaitStep : IStep, IGroupStep
 {
     /// <summary>Optional label for the wait step.</summary>
-    public string? Wait { get; set; }
+    public string? Wait { get; set; } = "";
 
     /// <summary>Alias for Wait.</summary>
     public string? Label { get; set; }
@@ -37,7 +37,4 @@ public class WaitStep : IStep, IGroupStep
 
     /// <summary>Continue even if previous steps failed.</summary>
     public bool? ContinueOnFailure { get; set; }
-
-    /// <summary>The step type.</summary>
-    public string Type => "wait";
 }
