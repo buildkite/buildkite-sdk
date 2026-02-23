@@ -90,6 +90,41 @@ public class BlockStepTests
     }
 
     [Fact]
+    public void BlockStep_WithFields_SerializesDerivedProperties()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new BlockStep
+        {
+            Block = "Release",
+            Fields = new List<Field>
+            {
+                new TextField
+                {
+                    Text = "Release Version",
+                    Key = "release-version",
+                    Required = true
+                },
+                new SelectField
+                {
+                    Select = "Environment",
+                    Key = "environment",
+                    Options = new List<SelectOption>
+                    {
+                        new SelectOption { Label = "Staging", Value = "staging" },
+                        new SelectOption { Label = "Production", Value = "production" }
+                    }
+                }
+            }
+        });
+
+        var json = pipeline.ToJson();
+
+        Assert.Contains("\"text\":", json);
+        Assert.Contains("\"select\":", json);
+        Assert.Contains("\"options\":", json);
+    }
+
+    [Fact]
     public void BlockStep_WithBlockedState_GeneratesStateConfig()
     {
         var pipeline = new Pipeline();

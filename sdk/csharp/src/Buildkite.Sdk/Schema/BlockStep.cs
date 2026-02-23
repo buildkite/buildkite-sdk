@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Buildkite.Sdk.Schema;
 
 /// <summary>
@@ -54,6 +56,8 @@ public class BlockStep : IStep, IGroupStep
 /// <summary>
 /// A field in a block or input step.
 /// </summary>
+[JsonDerivedType(typeof(TextField))]
+[JsonDerivedType(typeof(SelectField))]
 public abstract class Field
 {
     /// <summary>The key to store the field value.</summary>
