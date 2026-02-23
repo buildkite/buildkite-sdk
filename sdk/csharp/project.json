@@ -4,6 +4,22 @@
   "sourceRoot": "sdk/csharp/src",
   "projectType": "library",
   "targets": {
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["dotnet clean", "rimraf bin", "rimraf obj", "rimraf dist"],
+        "cwd": "sdk/csharp"
+      },
+      "cache": false
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["dotnet format"],
+        "cwd": "sdk/csharp"
+      },
+      "cache": false
+    },
     "install": {
       "executor": "nx:run-commands",
       "options": {
