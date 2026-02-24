@@ -66,7 +66,7 @@ public class TriggerBuild
     public string? Message { get; set; }
 
     /// <summary>Environment variables for the triggered build.</summary>
-    public Dictionary<string, object?>? Env { get; set; }
+    public Dictionary<string, string>? Env { get; set; }
 
     /// <summary>Metadata for the triggered build.</summary>
     public Dictionary<string, string>? MetaData { get; set; }
