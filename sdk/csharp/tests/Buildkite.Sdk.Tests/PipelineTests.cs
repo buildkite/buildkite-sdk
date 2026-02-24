@@ -79,6 +79,86 @@ public class PipelineTests
     }
 
     [Fact]
+    public void Pipeline_WithMultipleEnvVars_IncludesAllEnvironmentVariables()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddEnvironmentVariable("MY_VAR", "my_value");
+        pipeline.AddEnvironmentVariable("OTHER_VAR", "other_value");
+        pipeline.AddEnvironmentVariable("THIRD_VAR", "third_value");
+        pipeline.AddStep(new CommandStep { Label = "Build", Command = "make" });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("MY_VAR: my_value", yaml);
+        Assert.Contains("OTHER_VAR: other_value", yaml);
+        Assert.Contains("THIRD_VAR: third_value", yaml);
+    }
+
+    [Fact]
+    public void Pipeline_SetPipeline_WithEnvVars_IncludesAllEnvironmentVariables()
+    {
+        var pipeline = new Pipeline();
+        pipeline.SetPipeline(new BuildkitePipeline
+        {
+            Env = new Dictionary<string, string>
+            {
+                ["NODE_ENV"] = "production",
+                ["CI"] = "true"
+            },
+            Steps = new List<IStep>
+            {
+                new CommandStep { Label = "Build", Command = "make" }
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("NODE_ENV: production", yaml);
+        Assert.Contains("CI: true", yaml);
+    }
+
+    [Fact]
+    public void Pipeline_WithEnvVars_PlacesEnvAtPipelineLevel()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddEnvironmentVariable("MY_VAR", "my_value");
+        pipeline.AddEnvironmentVariable("OTHER_VAR", "other_value");
+        pipeline.AddStep(new CommandStep { Label = "Build", Command = "make" });
+
+        var yaml = pipeline.ToYaml();
+
+        // env block should be at the top level (no leading whitespace)
+        var lines = yaml.Split('\n');
+        var envLineIdx = Array.FindIndex(lines, l => l.TrimEnd() == "env:");
+        Assert.True(envLineIdx >= 0, "Expected top-level 'env:' key");
+        Assert.StartsWith("  MY_VAR:", lines[envLineIdx + 1].TrimEnd());
+    }
+
+    [Fact]
+    public void Pipeline_WithEmptyEnvDict_OmitsEnvFromOutput()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep { Label = "Build", Command = "make" });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.DoesNotContain("env:", yaml);
+    }
+
+    [Fact]
+    public void Pipeline_WithEmptyStringEnvValue_PreservesEntry()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddEnvironmentVariable("EMPTY_VAR", "");
+        pipeline.AddStep(new CommandStep { Label = "Build", Command = "make" });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("env:", yaml);
+        Assert.Contains("EMPTY_VAR:", yaml);
+    }
+
+    [Fact]
     public void Pipeline_Empty_GeneratesEmptyOutput()
     {
         var pipeline = new Pipeline();

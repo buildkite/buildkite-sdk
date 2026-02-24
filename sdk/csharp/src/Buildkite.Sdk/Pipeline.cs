@@ -21,7 +21,7 @@ public class Pipeline
         .Build();
 
     public object? Agents { get; set; }
-    public Dictionary<string, object?> Env { get; set; } = new();
+    public Dictionary<string, string> Env { get; set; } = new();
     public List<INotification> Notify { get; set; } = new();
     public List<IStep> Steps { get; set; } = new();
     public List<string> Secrets { get; set; } = new();
@@ -64,7 +64,7 @@ public class Pipeline
         return this;
     }
 
-    public Pipeline AddEnvironmentVariable(string key, object? value)
+    public Pipeline AddEnvironmentVariable(string key, string value)
     {
         Env[key] = value;
         return this;

@@ -30,7 +30,7 @@ public class CommandStep : IStep, IGroupStep
     public object? Agents { get; set; }
 
     /// <summary>Environment variables for this step.</summary>
-    public Dictionary<string, object?>? Env { get; set; }
+    public Dictionary<string, string>? Env { get; set; }
 
     /// <summary>Branch filter pattern.</summary>
     public object? Branches { get; set; }
