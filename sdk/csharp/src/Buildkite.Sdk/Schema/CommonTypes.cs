@@ -119,10 +119,16 @@ public class SoftFail
     private SoftFail(object value) => _value = value;
 
     public static SoftFail FromBool(bool value) => new(value);
-    public static SoftFail FromString(string value) => new(value);
+    public static SoftFail FromString(string value)
+    {
+        if (value is not ("true" or "false"))
+            throw new ArgumentException("SoftFail string must be \"true\" or \"false\".", nameof(value));
+        return new(value);
+    }
     public static SoftFail FromConditions(params SoftFailCondition[] conditions) => new(conditions.ToList());
 
     public static implicit operator SoftFail(bool value) => FromBool(value);
+    // No implicit string operator: FromString validates input, so conversions should be explicit
 
     public object Value => _value;
 }
@@ -414,6 +420,7 @@ internal class SoftFailYamlConverter : IYamlTypeConverter
                 emitter.Emit(new Scalar(null, b ? "true" : "false"));
                 break;
             case string s:
+                // Always quote: only valid values are "true"/"false", which collide with YAML booleans
                 emitter.Emit(new Scalar(null, null, s, ScalarStyle.DoubleQuoted, true, false));
                 break;
             case List<SoftFailCondition> conditions:
@@ -463,6 +470,7 @@ internal class SkipYamlConverter : IYamlTypeConverter
                 emitter.Emit(new Scalar(null, b ? "true" : "false"));
                 break;
             case string s:
+                // Only quote when the value collides with YAML booleans; arbitrary reason strings are allowed
                 emitter.Emit(YamlQuoting.SafeStringScalar(s));
                 break;
         }

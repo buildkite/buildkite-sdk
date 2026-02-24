@@ -170,6 +170,24 @@ public class DependsOnTests
 
 public class SoftFailTests
 {
+    [Theory]
+    [InlineData("badvalue")]
+    [InlineData("")]
+    [InlineData("yes")]
+    public void SoftFail_FromString_RejectsInvalidValues(string value)
+    {
+        Assert.Throws<ArgumentException>(() => SoftFail.FromString(value));
+    }
+
+    [Theory]
+    [InlineData("true")]
+    [InlineData("false")]
+    public void SoftFail_FromString_AcceptsValidValues(string value)
+    {
+        var sf = SoftFail.FromString(value);
+        Assert.Equal(value, sf.Value);
+    }
+
     [Fact]
     public void SoftFail_True_SerializesAsBool()
     {
