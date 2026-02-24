@@ -65,6 +65,26 @@ public class DependsOnTests
     }
 
     [Fact]
+    public void DependsOn_FromDependencyWithoutAllowFailure_OmitsAllowFailure()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            DependsOn = new[] { new Dependency { Step = "build" } }
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("step: build", yaml);
+        Assert.DoesNotContain("allow_failure", yaml);
+        Assert.Contains("\"step\": \"build\"", json);
+        Assert.DoesNotContain("allow_failure", json);
+    }
+
+    [Fact]
     public void DependsOn_MixedList_SerializesCorrectly()
     {
         var pipeline = new Pipeline();
@@ -115,8 +135,12 @@ public class DependsOnTests
             DependsOn = DependsOn.FromStrings("build", "lint", "format")
         });
 
+        var yaml = pipeline.ToYaml();
         var json = pipeline.ToJson();
 
+        Assert.Contains("- build", yaml);
+        Assert.Contains("- lint", yaml);
+        Assert.Contains("- format", yaml);
         Assert.Contains("\"build\"", json);
         Assert.Contains("\"lint\"", json);
         Assert.Contains("\"format\"", json);
@@ -147,7 +171,7 @@ public class DependsOnTests
 public class SoftFailTests
 {
     [Fact]
-    public void SoftFail_FromBool_SerializesAsBool()
+    public void SoftFail_True_SerializesAsBool()
     {
         var pipeline = new Pipeline();
         pipeline.AddStep(new CommandStep
@@ -165,6 +189,24 @@ public class SoftFailTests
     }
 
     [Fact]
+    public void SoftFail_False_SerializesAsBool()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            SoftFail = false
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("soft_fail: false", yaml);
+        Assert.Contains("\"soft_fail\": false", json);
+    }
+
+    [Fact]
     public void SoftFail_FromStringEnum_SerializesAsQuotedString()
     {
         var pipeline = new Pipeline();
@@ -178,6 +220,7 @@ public class SoftFailTests
         var yaml = pipeline.ToYaml();
         var json = pipeline.ToJson();
 
+        // YAML must quote "true" to distinguish from boolean true
         Assert.Contains("\"true\"", yaml);
         Assert.Contains("\"soft_fail\": \"true\"", json);
     }
@@ -238,6 +281,46 @@ public class SoftFailTests
         var json = pipeline.ToJson();
 
         Assert.Contains("\"exit_status\": 42", json);
+    }
+
+    [Fact]
+    public void SoftFail_FromConditions_MultipleConditions()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            SoftFail = SoftFail.FromConditions(
+                new SoftFailCondition { ExitStatus = 1 },
+                new SoftFailCondition { ExitStatus = SoftFailExitStatus.FromWildcard() }
+            )
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("exit_status: 1", yaml);
+        Assert.Contains("\"*\"", yaml);
+        Assert.Contains("\"exit_status\": 1", json);
+        Assert.Contains("\"exit_status\": \"*\"", json);
+    }
+
+    [Fact]
+    public void SoftFail_OnTriggerStep_SerializesCorrectly()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new TriggerStep
+        {
+            Trigger = "deploy",
+            SoftFail = true
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("soft_fail: true", yaml);
+        Assert.Contains("\"soft_fail\": true", json);
     }
 
     [Fact]
@@ -312,7 +395,6 @@ public class SkipTests
 
         // YAML must quote "true" to prevent parsing as boolean
         Assert.Contains("\"true\"", yaml);
-        // JSON always quotes strings, so this is straightforward
         Assert.Contains("\"skip\": \"true\"", json);
     }
 
