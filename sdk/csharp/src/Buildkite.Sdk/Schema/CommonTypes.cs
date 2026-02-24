@@ -371,7 +371,7 @@ internal class DependsOnItemYamlConverter : IYamlTypeConverter
         switch (item.Value)
         {
             case string s:
-                emitter.Emit(new Scalar(s));
+                emitter.Emit(YamlQuoting.SafeStringScalar(s));
                 break;
             case Dependency dep:
                 serializer(dep, typeof(Dependency));
@@ -394,7 +394,7 @@ internal class DependsOnYamlConverter : IYamlTypeConverter
         switch (dependsOn.Value)
         {
             case string s:
-                emitter.Emit(new Scalar(s));
+                emitter.Emit(YamlQuoting.SafeStringScalar(s));
                 break;
             case List<DependsOnItem> list:
                 serializer(list, typeof(List<DependsOnItem>));
