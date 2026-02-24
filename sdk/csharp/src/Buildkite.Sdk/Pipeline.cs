@@ -18,6 +18,11 @@ public class Pipeline
     private static readonly ISerializer YamlSerializer = new SerializerBuilder()
         .WithNamingConvention(UnderscoredNamingConvention.Instance)
         .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
+        .WithTypeConverter(new DependsOnItemYamlConverter())
+        .WithTypeConverter(new DependsOnYamlConverter())
+        .WithTypeConverter(new SoftFailYamlConverter())
+        .WithTypeConverter(new SoftFailExitStatusYamlConverter())
+        .WithTypeConverter(new SkipYamlConverter())
         .Build();
 
     public object? Agents { get; set; }
