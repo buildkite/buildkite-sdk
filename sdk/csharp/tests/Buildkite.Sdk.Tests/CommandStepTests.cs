@@ -58,6 +58,29 @@ public class CommandStepTests
     }
 
     [Fact]
+    public void CommandStep_WithMultipleEnvVars_GeneratesAllEnvVars()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Build",
+            Command = "make",
+            Env = new Dictionary<string, string>
+            {
+                ["NODE_ENV"] = "production",
+                ["CI"] = "true",
+                ["BUILD_NUMBER"] = "42"
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("NODE_ENV: production", yaml);
+        Assert.Contains("CI: true", yaml);
+        Assert.Contains("BUILD_NUMBER: 42", yaml);
+    }
+
+    [Fact]
     public void CommandStep_WithParallelism_GeneratesParallelConfig()
     {
         var pipeline = new Pipeline();

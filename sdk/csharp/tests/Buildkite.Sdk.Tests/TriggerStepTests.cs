@@ -75,4 +75,30 @@ public class TriggerStepTests
 
         Assert.Contains("DEPLOY_ENV: production", yaml);
     }
+
+    [Fact]
+    public void TriggerStep_WithMultipleBuildEnvVars_GeneratesAllEnvVars()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new TriggerStep
+        {
+            Trigger = "deploy-pipeline",
+            Build = new TriggerBuild
+            {
+                Branch = "main",
+                Env = new Dictionary<string, string>
+                {
+                    ["DEPLOY_ENV"] = "production",
+                    ["REGION"] = "us-east-1",
+                    ["DRY_RUN"] = "false"
+                }
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("DEPLOY_ENV: production", yaml);
+        Assert.Contains("REGION: us-east-1", yaml);
+        Assert.Contains("DRY_RUN: false", yaml);
+    }
 }

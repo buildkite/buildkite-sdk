@@ -79,6 +79,22 @@ public class PipelineTests
     }
 
     [Fact]
+    public void Pipeline_WithMultipleEnvVars_IncludesAllEnvironmentVariables()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddEnvironmentVariable("MY_VAR", "my_value");
+        pipeline.AddEnvironmentVariable("OTHER_VAR", "other_value");
+        pipeline.AddEnvironmentVariable("THIRD_VAR", "third_value");
+        pipeline.AddStep(new CommandStep { Label = "Build", Command = "make" });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("MY_VAR: my_value", yaml);
+        Assert.Contains("OTHER_VAR: other_value", yaml);
+        Assert.Contains("THIRD_VAR: third_value", yaml);
+    }
+
+    [Fact]
     public void Pipeline_Empty_GeneratesEmptyOutput()
     {
         var pipeline = new Pipeline();
