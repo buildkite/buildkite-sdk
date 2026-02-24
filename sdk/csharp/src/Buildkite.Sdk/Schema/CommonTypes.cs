@@ -139,7 +139,6 @@ public class SoftFail
 public class SoftFailCondition
 {
     /// <summary>The exit status that should be treated as a soft fail. Can be "*" or an integer.</summary>
-    [JsonConverter(typeof(SoftFailExitStatusJsonConverter))]
     public SoftFailExitStatus? ExitStatus { get; set; }
 }
 
