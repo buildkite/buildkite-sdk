@@ -81,6 +81,79 @@ public class CommandStepTests
     }
 
     [Fact]
+    public void CommandStep_WithEnv_PlacesEnvUnderStep()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Build",
+            Command = "make",
+            Env = new Dictionary<string, string>
+            {
+                ["NODE_ENV"] = "production",
+                ["CI"] = "true"
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        // Verify env block appears as a child of the step, not at pipeline level
+        var lines = yaml.Split('\n');
+        var envLineIdx = Array.FindIndex(lines, l => l.TrimEnd() == "  env:");
+        Assert.True(envLineIdx >= 0, "Expected indented 'env:' under step");
+        Assert.StartsWith("    NODE_ENV:", lines[envLineIdx + 1].TrimEnd());
+    }
+
+    [Fact]
+    public void CommandStep_WithEmptyEnv_SerializesAsEmptyMapping()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Build",
+            Command = "make",
+            Env = new Dictionary<string, string>()
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("env: {}", yaml);
+    }
+
+    [Fact]
+    public void CommandStep_WithNullEnv_OmitsEnvFromOutput()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Build",
+            Command = "make",
+            Env = null
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.DoesNotContain("env", yaml);
+    }
+
+    [Fact]
+    public void CommandStep_WithEmptyStringEnvValue_PreservesEntry()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Build",
+            Command = "make",
+            Env = new Dictionary<string, string> { ["EMPTY_VAR"] = "" }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("env:", yaml);
+        Assert.Contains("EMPTY_VAR:", yaml);
+    }
+
+    [Fact]
     public void CommandStep_WithParallelism_GeneratesParallelConfig()
     {
         var pipeline = new Pipeline();

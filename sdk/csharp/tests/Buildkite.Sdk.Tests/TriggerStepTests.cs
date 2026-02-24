@@ -77,6 +77,72 @@ public class TriggerStepTests
     }
 
     [Fact]
+    public void TriggerStep_WithBuildEnv_PlacesEnvUnderBuild()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new TriggerStep
+        {
+            Trigger = "deploy-pipeline",
+            Build = new TriggerBuild
+            {
+                Branch = "main",
+                Env = new Dictionary<string, string>
+                {
+                    ["DEPLOY_ENV"] = "production",
+                    ["REGION"] = "us-east-1"
+                }
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        // env should be nested under build
+        var lines = yaml.Split('\n');
+        var buildLineIdx = Array.FindIndex(lines, l => l.TrimEnd() == "  build:");
+        Assert.True(buildLineIdx >= 0, "Expected 'build:' under step");
+        var envLineIdx = Array.FindIndex(lines, buildLineIdx, l => l.TrimEnd() == "    env:");
+        Assert.True(envLineIdx > buildLineIdx, "Expected 'env:' nested under 'build:'");
+    }
+
+    [Fact]
+    public void TriggerStep_WithEmptyBuildEnv_SerializesAsEmptyMapping()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new TriggerStep
+        {
+            Trigger = "deploy-pipeline",
+            Build = new TriggerBuild
+            {
+                Branch = "main",
+                Env = new Dictionary<string, string>()
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("env: {}", yaml);
+    }
+
+    [Fact]
+    public void TriggerStep_WithNullBuildEnv_OmitsEnvFromOutput()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new TriggerStep
+        {
+            Trigger = "deploy-pipeline",
+            Build = new TriggerBuild
+            {
+                Branch = "main",
+                Env = null
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.DoesNotContain("env:", yaml);
+    }
+
+    [Fact]
     public void TriggerStep_WithMultipleBuildEnvVars_GeneratesAllEnvVars()
     {
         var pipeline = new Pipeline();
