@@ -122,7 +122,7 @@ const languageTargets: Target[] = [
         key: "csharp",
         sdkTarget: "sdk-csharp",
         appTarget: "app-csharp",
-        versions: [], // C# doesn't use mise for version management
+        versions: [], // .NET SDK can't build for a higher TFM, so multi-TFM coverage comes from the test project instead
     },
 ];
 
@@ -131,8 +131,6 @@ function generateAppCommands(key: string, appTarget: string) {
     if (key === "typescript") {
         language = "node";
     }
-
-    // C# uses dotnet directly, not mise
     if (key === "csharp") {
         return [
             "mise trust",
