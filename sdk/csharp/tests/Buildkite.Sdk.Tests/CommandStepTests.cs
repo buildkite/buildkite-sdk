@@ -49,7 +49,7 @@ public class CommandStepTests
         {
             Label = "Build",
             Command = "make",
-            Env = new Dictionary<string, object?> { ["NODE_ENV"] = "production" }
+            Env = new Dictionary<string, string> { ["NODE_ENV"] = "production" }
         });
 
         var yaml = pipeline.ToYaml();

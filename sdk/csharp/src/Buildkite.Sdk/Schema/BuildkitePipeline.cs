@@ -9,7 +9,7 @@ public class BuildkitePipeline
     public object? Agents { get; set; }
 
     /// <summary>Environment variables for all steps in the pipeline.</summary>
-    public Dictionary<string, object?>? Env { get; set; }
+    public Dictionary<string, string>? Env { get; set; }
 
     /// <summary>Notifications for the pipeline.</summary>
     public List<INotification>? Notify { get; set; }

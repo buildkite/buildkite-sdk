@@ -67,7 +67,7 @@ public class TriggerStepTests
             Build = new TriggerBuild
             {
                 Branch = "main",
-                Env = new Dictionary<string, object?> { ["DEPLOY_ENV"] = "production" }
+                Env = new Dictionary<string, string> { ["DEPLOY_ENV"] = "production" }
             }
         });
 
