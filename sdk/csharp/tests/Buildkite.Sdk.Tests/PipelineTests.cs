@@ -95,6 +95,29 @@ public class PipelineTests
     }
 
     [Fact]
+    public void Pipeline_SetPipeline_WithEnvVars_IncludesAllEnvironmentVariables()
+    {
+        var pipeline = new Pipeline();
+        pipeline.SetPipeline(new BuildkitePipeline
+        {
+            Env = new Dictionary<string, string>
+            {
+                ["NODE_ENV"] = "production",
+                ["CI"] = "true"
+            },
+            Steps = new List<IStep>
+            {
+                new CommandStep { Label = "Build", Command = "make" }
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("NODE_ENV: production", yaml);
+        Assert.Contains("CI: true", yaml);
+    }
+
+    [Fact]
     public void Pipeline_Empty_GeneratesEmptyOutput()
     {
         var pipeline = new Pipeline();
