@@ -18,7 +18,7 @@ public class BlockStepTests
 
         var yaml = pipeline.ToYaml();
 
-        Assert.Contains(":rocket: Deploy to Production?", yaml);
+        Assert.Contains("block: ':rocket: Deploy to Production?'", yaml);
         Assert.Contains("prompt: Are you sure you want to deploy?", yaml);
     }
 
@@ -57,7 +57,9 @@ public class BlockStepTests
 
         var yaml = pipeline.ToYaml();
 
-        Assert.Contains("release-version", yaml);
+        Assert.Contains("text: Release Version", yaml);
+        Assert.Contains("key: release-version", yaml);
+        Assert.Contains("required: true", yaml);
     }
 
     [Fact]
@@ -84,9 +86,12 @@ public class BlockStepTests
 
         var yaml = pipeline.ToYaml();
 
-        Assert.Contains("environment", yaml);
-        Assert.Contains("staging", yaml);
-        Assert.Contains("production", yaml);
+        Assert.Contains("select: Environment", yaml);
+        Assert.Contains("key: environment", yaml);
+        Assert.Contains("label: Staging", yaml);
+        Assert.Contains("value: staging", yaml);
+        Assert.Contains("label: Production", yaml);
+        Assert.Contains("value: production", yaml);
     }
 
     [Fact]
@@ -119,9 +124,10 @@ public class BlockStepTests
 
         var json = pipeline.ToJson();
 
-        Assert.Contains("\"text\":", json);
-        Assert.Contains("\"select\":", json);
-        Assert.Contains("\"options\":", json);
+        Assert.Contains("\"text\": \"Release Version\"", json);
+        Assert.Contains("\"select\": \"Environment\"", json);
+        Assert.Contains("\"label\": \"Staging\"", json);
+        Assert.Contains("\"value\": \"production\"", json);
     }
 
     [Fact]
