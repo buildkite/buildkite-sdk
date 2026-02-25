@@ -54,19 +54,19 @@ public class CommandStep : IStep, IGroupStep
     public object? IfChanged { get; set; }
 
     /// <summary>Step keys this step depends on.</summary>
-    public object? DependsOn { get; set; }
+    public DependsOn? DependsOn { get; set; }
 
     /// <summary>Whether to proceed if a dependency fails.</summary>
     public bool? AllowDependencyFailure { get; set; }
 
     /// <summary>Whether to skip this step. Can be bool or string reason.</summary>
-    public object? Skip { get; set; }
+    public Skip? Skip { get; set; }
 
     /// <summary>Retry configuration.</summary>
     public Retry? Retry { get; set; }
 
     /// <summary>Soft fail configuration.</summary>
-    public object? SoftFail { get; set; }
+    public SoftFail? SoftFail { get; set; }
 
     /// <summary>Maximum time in minutes for the job to run.</summary>
     public int? TimeoutInMinutes { get; set; }
