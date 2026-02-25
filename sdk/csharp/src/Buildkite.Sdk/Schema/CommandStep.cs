@@ -31,12 +31,12 @@ public class CommandStep : IStep, IGroupStep
     public string? Identifier { get => Key; set => Key = value; }
 
     /// <summary>The shell command(s) to run. Can be a string or list of strings.</summary>
-    public object? Command { get; set; }
+    public Command? Command { get; set; }
 
     /// <summary>Alias for Command.</summary>
     [JsonIgnore]
     [YamlIgnore]
-    public object? Commands { get => Command; set => Command = value; }
+    public Command? Commands { get => Command; set => Command = value; }
 
     /// <summary>Agent query rules for targeting specific agents. Can be AgentsObject or AgentsList.</summary>
     public object? Agents { get; set; }
@@ -45,7 +45,7 @@ public class CommandStep : IStep, IGroupStep
     public Dictionary<string, string>? Env { get; set; }
 
     /// <summary>Branch filter pattern.</summary>
-    public object? Branches { get; set; }
+    public Branches? Branches { get; set; }
 
     /// <summary>A boolean expression to conditionally run this step.</summary>
     public string? If { get; set; }

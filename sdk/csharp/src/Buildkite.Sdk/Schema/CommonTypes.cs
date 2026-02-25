@@ -180,6 +180,44 @@ public class Skip
 }
 
 /// <summary>
+/// Command configuration. Can be a single string or a list of strings.
+/// </summary>
+[JsonConverter(typeof(CommandJsonConverter))]
+public class Command
+{
+    private readonly object _value;
+
+    private Command(object value) => _value = value;
+
+    public static Command FromString(string command) => new(command);
+    public static Command FromList(params string[] commands) => new(commands.ToList());
+
+    public static implicit operator Command(string command) => FromString(command);
+    public static implicit operator Command(string[] commands) => FromList(commands);
+
+    public object Value => _value;
+}
+
+/// <summary>
+/// Branch filter configuration. Can be a single string or a list of strings.
+/// </summary>
+[JsonConverter(typeof(BranchesJsonConverter))]
+public class Branches
+{
+    private readonly object _value;
+
+    private Branches(object value) => _value = value;
+
+    public static Branches FromString(string pattern) => new(pattern);
+    public static Branches FromList(params string[] patterns) => new(patterns.ToList());
+
+    public static implicit operator Branches(string pattern) => FromString(pattern);
+    public static implicit operator Branches(string[] patterns) => FromList(patterns);
+
+    public object Value => _value;
+}
+
+/// <summary>
 /// Cache configuration for a step.
 /// </summary>
 public class Cache
@@ -338,6 +376,48 @@ internal class SkipJsonConverter : JsonConverter<Skip>
     }
 }
 
+internal class CommandJsonConverter : JsonConverter<Command>
+{
+    public override Command? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        => throw new NotSupportedException("Deserialization is not supported.");
+
+    public override void Write(Utf8JsonWriter writer, Command value, JsonSerializerOptions options)
+    {
+        switch (value.Value)
+        {
+            case string s:
+                writer.WriteStringValue(s);
+                break;
+            case List<string> list:
+                JsonSerializer.Serialize(writer, list, options);
+                break;
+            default:
+                throw new JsonException($"Unexpected Command value type: {value.Value?.GetType()}");
+        }
+    }
+}
+
+internal class BranchesJsonConverter : JsonConverter<Branches>
+{
+    public override Branches? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        => throw new NotSupportedException("Deserialization is not supported.");
+
+    public override void Write(Utf8JsonWriter writer, Branches value, JsonSerializerOptions options)
+    {
+        switch (value.Value)
+        {
+            case string s:
+                writer.WriteStringValue(s);
+                break;
+            case List<string> list:
+                JsonSerializer.Serialize(writer, list, options);
+                break;
+            default:
+                throw new JsonException($"Unexpected Branches value type: {value.Value?.GetType()}");
+        }
+    }
+}
+
 #endregion
 
 #region YAML Type Converters
@@ -473,6 +553,52 @@ internal class SkipYamlConverter : IYamlTypeConverter
             case string s:
                 // Only quote when the value collides with YAML booleans; arbitrary reason strings are allowed
                 emitter.Emit(YamlQuoting.SafeStringScalar(s));
+                break;
+        }
+    }
+}
+
+internal class CommandYamlConverter : IYamlTypeConverter
+{
+    public bool Accepts(Type type) => type == typeof(Command);
+
+    public object? ReadYaml(IParser parser, Type type, ObjectDeserializer rootDeserializer)
+        => throw new NotSupportedException("Deserialization is not supported.");
+
+    public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
+    {
+        if (value is not Command command) return;
+
+        switch (command.Value)
+        {
+            case string s:
+                emitter.Emit(YamlQuoting.SafeStringScalar(s));
+                break;
+            case List<string> list:
+                serializer(list, typeof(List<string>));
+                break;
+        }
+    }
+}
+
+internal class BranchesYamlConverter : IYamlTypeConverter
+{
+    public bool Accepts(Type type) => type == typeof(Branches);
+
+    public object? ReadYaml(IParser parser, Type type, ObjectDeserializer rootDeserializer)
+        => throw new NotSupportedException("Deserialization is not supported.");
+
+    public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
+    {
+        if (value is not Branches branches) return;
+
+        switch (branches.Value)
+        {
+            case string s:
+                emitter.Emit(YamlQuoting.SafeStringScalar(s));
+                break;
+            case List<string> list:
+                serializer(list, typeof(List<string>));
                 break;
         }
     }

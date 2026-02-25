@@ -359,6 +359,303 @@ public class SoftFailTests
     }
 }
 
+public class CommandTests
+{
+    [Fact]
+    public void Command_FromString_SerializesAsString()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test"
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("command: make test", yaml);
+        Assert.Contains("\"command\": \"make test\"", json);
+    }
+
+    [Fact]
+    public void Command_FromStringArray_SerializesAsList()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = new[] { "make build", "make test" }
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("- make build", yaml);
+        Assert.Contains("- make test", yaml);
+        Assert.Contains("\"make build\"", json);
+        Assert.Contains("\"make test\"", json);
+    }
+
+    [Fact]
+    public void Command_FromList_FactoryMethod()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = Command.FromList("echo hello", "echo world")
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("- echo hello", yaml);
+        Assert.Contains("- echo world", yaml);
+        Assert.Contains("\"echo hello\"", json);
+        Assert.Contains("\"echo world\"", json);
+    }
+
+    [Fact]
+    public void Command_FromString_FactoryMethod()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = Command.FromString("make test")
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("command: make test", yaml);
+        Assert.Contains("\"command\": \"make test\"", json);
+    }
+
+    [Fact]
+    public void Command_CommandsAliasDelegatesToCommand()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Commands = "make test"
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("command: make test", yaml);
+        Assert.DoesNotContain("commands:", yaml);
+    }
+
+    [Fact]
+    public void Command_WrapperInstance_NeverSerializesValueProperty()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test"
+        });
+
+        var json = pipeline.ToJson();
+
+        Assert.DoesNotContain("\"value\"", json);
+        Assert.Contains("\"command\": \"make test\"", json);
+    }
+
+    [Fact]
+    public void Command_BooleanLikeString_IsQuotedInYaml()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "true"
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("\"true\"", yaml);
+    }
+}
+
+public class BranchesTests
+{
+    [Fact]
+    public void Branches_FromString_SerializesAsString()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Branches = "main"
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("branches: main", yaml);
+        Assert.Contains("\"branches\": \"main\"", json);
+    }
+
+    [Fact]
+    public void Branches_FromStringArray_SerializesAsList()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Branches = new[] { "main", "develop" }
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("- main", yaml);
+        Assert.Contains("- develop", yaml);
+        Assert.Contains("\"main\"", json);
+        Assert.Contains("\"develop\"", json);
+    }
+
+    [Fact]
+    public void Branches_FromList_FactoryMethod()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Branches = Branches.FromList("main", "staging", "production")
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("- main", yaml);
+        Assert.Contains("- staging", yaml);
+        Assert.Contains("- production", yaml);
+    }
+
+    [Fact]
+    public void Branches_FromString_FactoryMethod()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Branches = Branches.FromString("main")
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("branches: main", yaml);
+    }
+
+    [Fact]
+    public void Branches_WrapperInstance_NeverSerializesValueProperty()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Branches = "main"
+        });
+
+        var json = pipeline.ToJson();
+
+        Assert.DoesNotContain("\"value\"", json);
+        Assert.Contains("\"branches\": \"main\"", json);
+    }
+
+    [Fact]
+    public void Branches_BooleanLikeString_IsQuotedInYaml()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Branches = "yes"
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("\"yes\"", yaml);
+    }
+
+    [Fact]
+    public void Branches_OnBlockStep_SerializesCorrectly()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new BlockStep
+        {
+            Block = "Approve",
+            Branches = "main"
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("branches: main", yaml);
+        Assert.Contains("\"branches\": \"main\"", json);
+    }
+
+    [Fact]
+    public void Branches_OnWaitStep_SerializesCorrectly()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new WaitStep
+        {
+            Branches = "main"
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("branches: main", yaml);
+        Assert.Contains("\"branches\": \"main\"", json);
+    }
+
+    [Fact]
+    public void Branches_OnInputStep_SerializesCorrectly()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new InputStep
+        {
+            Input = "Config",
+            Branches = "main"
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("branches: main", yaml);
+        Assert.Contains("\"branches\": \"main\"", json);
+    }
+
+    [Fact]
+    public void Branches_OnTriggerStep_SerializesCorrectly()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new TriggerStep
+        {
+            Trigger = "deploy",
+            Branches = "main"
+        });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("branches: main", yaml);
+        Assert.Contains("\"branches\": \"main\"", json);
+    }
+}
+
 public class SkipTests
 {
     [Fact]

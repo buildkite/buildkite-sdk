@@ -38,9 +38,9 @@ public class AliasPropertyTests
     {
         var cmds = new[] { "make build", "make test" };
         var step = new CommandStep { Commands = cmds };
-        Assert.Same(cmds, step.Command);
+        Assert.Same(step.Commands, step.Command);
         step.Command = "echo hello";
-        Assert.Equal("echo hello", step.Commands);
+        Assert.Equal("echo hello", ((Command)step.Commands!).Value);
     }
 
     [Fact]

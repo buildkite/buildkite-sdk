@@ -42,7 +42,7 @@ public class InputStep : IStep, IGroupStep
     public List<Field>? Fields { get; set; }
 
     /// <summary>Branch filter pattern.</summary>
-    public object? Branches { get; set; }
+    public Branches? Branches { get; set; }
 
     /// <summary>A boolean expression to conditionally run this step.</summary>
     public string? If { get; set; }
