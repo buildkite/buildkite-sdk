@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using YamlDotNet.Serialization;
+
 namespace Buildkite.Sdk.Schema;
 
 /// <summary>
@@ -12,16 +15,23 @@ public class TriggerStep : IStep, IGroupStep
     public string? Label { get; set; }
 
     /// <summary>Alias for Label.</summary>
-    public string? Name { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Name { get => Label; set => Label = value; }
 
     /// <summary>A unique identifier for this step.</summary>
     public string? Key { get; set; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Id { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    [Obsolete("Use Key instead.")]
+    public string? Id { get => Key; set => Key = value; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Identifier { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Identifier { get => Key; set => Key = value; }
 
     /// <summary>Whether to run the triggered build asynchronously.</summary>
     public bool? Async { get; set; }
@@ -39,16 +49,16 @@ public class TriggerStep : IStep, IGroupStep
     public object? IfChanged { get; set; }
 
     /// <summary>Step keys this step depends on.</summary>
-    public object? DependsOn { get; set; }
+    public DependsOn? DependsOn { get; set; }
 
     /// <summary>Whether to proceed if a dependency fails.</summary>
     public bool? AllowDependencyFailure { get; set; }
 
     /// <summary>Whether to skip this step.</summary>
-    public object? Skip { get; set; }
+    public Skip? Skip { get; set; }
 
     /// <summary>Soft fail configuration.</summary>
-    public object? SoftFail { get; set; }
+    public SoftFail? SoftFail { get; set; }
 }
 
 /// <summary>

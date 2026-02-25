@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using YamlDotNet.Serialization;
+
 namespace Buildkite.Sdk.Schema;
 
 /// <summary>
@@ -9,19 +12,28 @@ public class InputStep : IStep, IGroupStep
     public string? Input { get; set; }
 
     /// <summary>Alias for Input.</summary>
-    public string? Label { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Label { get => Input; set => Input = value; }
 
     /// <summary>Alias for Input.</summary>
-    public string? Name { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Name { get => Input; set => Input = value; }
 
     /// <summary>A unique identifier for this step.</summary>
     public string? Key { get; set; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Id { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    [Obsolete("Use Key instead.")]
+    public string? Id { get => Key; set => Key = value; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Identifier { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Identifier { get => Key; set => Key = value; }
 
     /// <summary>The message displayed in the input dialog.</summary>
     public string? Prompt { get; set; }
@@ -36,7 +48,7 @@ public class InputStep : IStep, IGroupStep
     public string? If { get; set; }
 
     /// <summary>Step keys this step depends on.</summary>
-    public object? DependsOn { get; set; }
+    public DependsOn? DependsOn { get; set; }
 
     /// <summary>Whether to proceed if a dependency fails.</summary>
     public bool? AllowDependencyFailure { get; set; }

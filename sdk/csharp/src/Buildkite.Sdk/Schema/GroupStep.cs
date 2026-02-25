@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using YamlDotNet.Serialization;
+
 namespace Buildkite.Sdk.Schema;
 
 /// <summary>
@@ -9,19 +12,28 @@ public class GroupStep : IStep
     public string? Group { get; set; }
 
     /// <summary>Alias for Group.</summary>
-    public string? Label { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Label { get => Group; set => Group = value; }
 
     /// <summary>Alias for Group.</summary>
-    public string? Name { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Name { get => Group; set => Group = value; }
 
     /// <summary>A unique identifier for this step.</summary>
     public string? Key { get; set; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Id { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    [Obsolete("Use Key instead.")]
+    public string? Id { get => Key; set => Key = value; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Identifier { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Identifier { get => Key; set => Key = value; }
 
     /// <summary>The steps within this group.</summary>
     public List<IGroupStep> Steps { get; set; } = new();
@@ -33,13 +45,13 @@ public class GroupStep : IStep
     public object? IfChanged { get; set; }
 
     /// <summary>Step keys this step depends on.</summary>
-    public object? DependsOn { get; set; }
+    public DependsOn? DependsOn { get; set; }
 
     /// <summary>Whether to proceed if a dependency fails.</summary>
     public bool? AllowDependencyFailure { get; set; }
 
     /// <summary>Whether to skip this step.</summary>
-    public object? Skip { get; set; }
+    public Skip? Skip { get; set; }
 
     /// <summary>Notifications for this group.</summary>
     public List<INotification>? Notify { get; set; }

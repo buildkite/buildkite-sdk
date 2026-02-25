@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using YamlDotNet.Serialization;
+
 namespace Buildkite.Sdk.Schema;
 
 /// <summary>
@@ -9,19 +12,28 @@ public class WaitStep : IStep, IGroupStep
     public string? Wait { get; set; } = "";
 
     /// <summary>Alias for Wait.</summary>
-    public string? Label { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Label { get => Wait; set => Wait = value; }
 
     /// <summary>Alias for Wait.</summary>
-    public string? Name { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Name { get => Wait; set => Wait = value; }
 
     /// <summary>A unique identifier for this step.</summary>
     public string? Key { get; set; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Id { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    [Obsolete("Use Key instead.")]
+    public string? Id { get => Key; set => Key = value; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Identifier { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Identifier { get => Key; set => Key = value; }
 
     /// <summary>A boolean expression to conditionally run this step.</summary>
     public string? If { get; set; }
@@ -30,7 +42,7 @@ public class WaitStep : IStep, IGroupStep
     public object? Branches { get; set; }
 
     /// <summary>Step keys this step depends on.</summary>
-    public object? DependsOn { get; set; }
+    public DependsOn? DependsOn { get; set; }
 
     /// <summary>Whether to proceed if a dependency fails.</summary>
     public bool? AllowDependencyFailure { get; set; }
