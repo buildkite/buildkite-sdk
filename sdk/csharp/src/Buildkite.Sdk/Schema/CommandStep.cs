@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using YamlDotNet.Serialization;
+
 namespace Buildkite.Sdk.Schema;
 
 /// <summary>
@@ -9,22 +12,31 @@ public class CommandStep : IStep, IGroupStep
     public string? Label { get; set; }
 
     /// <summary>Alias for Label.</summary>
-    public string? Name { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Name { get => Label; set => Label = value; }
 
     /// <summary>A unique identifier for this step.</summary>
     public string? Key { get; set; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Id { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    [Obsolete("Use Key instead.")]
+    public string? Id { get => Key; set => Key = value; }
 
     /// <summary>Alias for Key.</summary>
-    public string? Identifier { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public string? Identifier { get => Key; set => Key = value; }
 
     /// <summary>The shell command(s) to run. Can be a string or list of strings.</summary>
     public object? Command { get; set; }
 
     /// <summary>Alias for Command.</summary>
-    public object? Commands { get; set; }
+    [JsonIgnore]
+    [YamlIgnore]
+    public object? Commands { get => Command; set => Command = value; }
 
     /// <summary>Agent query rules for targeting specific agents. Can be AgentsObject or AgentsList.</summary>
     public object? Agents { get; set; }
