@@ -253,6 +253,8 @@ internal class DependsOnItemJsonConverter : JsonConverter<DependsOnItem>
             case Dependency dep:
                 JsonSerializer.Serialize(writer, dep, options);
                 break;
+            default:
+                throw new JsonException($"Unexpected DependsOnItem value type: {value.Value?.GetType()}");
         }
     }
 }
