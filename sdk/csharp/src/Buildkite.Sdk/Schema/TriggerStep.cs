@@ -79,5 +79,5 @@ public class TriggerBuild
     public Dictionary<string, string>? Env { get; set; }
 
     /// <summary>Metadata for the triggered build.</summary>
-    public Dictionary<string, string>? MetaData { get; set; }
+    public Dictionary<string, string>? Metadata { get; set; }
 }
