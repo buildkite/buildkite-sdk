@@ -109,6 +109,24 @@ public class AliasPropertyTests
     }
 
     [Fact]
+    public void WaitStep_AliasesNotSerialized()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new WaitStep
+        {
+            Name = "Hold",
+            Identifier = "wait-1",
+        });
+
+        var yaml = pipeline.ToYaml();
+        Assert.Contains("wait: Hold", yaml);
+        Assert.Contains("key: wait-1", yaml);
+        Assert.DoesNotContain("label:", yaml);
+        Assert.DoesNotContain("name:", yaml);
+        Assert.DoesNotContain("identifier:", yaml);
+    }
+
+    [Fact]
     public void GroupStep_LabelAndNameDelegateToGroup()
     {
         var step = new GroupStep { Label = "Tests" };
@@ -118,12 +136,48 @@ public class AliasPropertyTests
     }
 
     [Fact]
+    public void GroupStep_AliasesNotSerialized()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new GroupStep
+        {
+            Label = "Tests",
+            Identifier = "tests",
+        });
+
+        var yaml = pipeline.ToYaml();
+        Assert.Contains("group: Tests", yaml);
+        Assert.Contains("key: tests", yaml);
+        Assert.DoesNotContain("label:", yaml);
+        Assert.DoesNotContain("name:", yaml);
+        Assert.DoesNotContain("identifier:", yaml);
+    }
+
+    [Fact]
     public void InputStep_LabelAndNameDelegateToInput()
     {
         var step = new InputStep { Label = "Config" };
         Assert.Equal("Config", step.Input);
         step.Name = "Settings";
         Assert.Equal("Settings", step.Input);
+    }
+
+    [Fact]
+    public void InputStep_AliasesNotSerialized()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new InputStep
+        {
+            Label = "Config",
+            Identifier = "config",
+        });
+
+        var yaml = pipeline.ToYaml();
+        Assert.Contains("input: Config", yaml);
+        Assert.Contains("key: config", yaml);
+        Assert.DoesNotContain("label:", yaml);
+        Assert.DoesNotContain("name:", yaml);
+        Assert.DoesNotContain("identifier:", yaml);
     }
 
     [Fact]
