@@ -50,12 +50,12 @@ public class GroupStepTests
     public void GroupStep_UsingFluentApi_GeneratesCorrectOutput()
     {
         var pipeline = new Pipeline();
-        
+
         var group = new GroupStep { Group = ":hammer: Build Steps" };
         group
             .AddStep(new CommandStep { Label = "Compile", Command = "dotnet build" })
             .AddStep(new CommandStep { Label = "Package", Command = "dotnet pack" });
-        
+
         pipeline.AddStep(group);
 
         var yaml = pipeline.ToYaml();
