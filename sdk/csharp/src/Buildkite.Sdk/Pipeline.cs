@@ -23,6 +23,8 @@ public class Pipeline
         .WithTypeConverter(new SoftFailYamlConverter())
         .WithTypeConverter(new SoftFailExitStatusYamlConverter())
         .WithTypeConverter(new SkipYamlConverter())
+        .WithTypeConverter(new CommandYamlConverter())
+        .WithTypeConverter(new BranchesYamlConverter())
         .Build();
 
     public object? Agents { get; set; }
