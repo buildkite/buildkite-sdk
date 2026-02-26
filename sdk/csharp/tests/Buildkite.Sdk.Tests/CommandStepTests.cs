@@ -433,7 +433,7 @@ public class CommandStepTests
                     {
                         With = new Dictionary<string, string>
                         {
-                            ["os"] = "windows",
+                            ["os"] = "macos",
                             ["arch"] = "arm64"
                         },
                         Skip = true
@@ -450,6 +450,8 @@ public class CommandStepTests
         Assert.Contains("linux", yaml);
         Assert.Contains("windows", yaml);
         Assert.Contains("adjustments:", yaml);
+        Assert.Contains("with:", yaml);
+        Assert.Contains("macos", yaml);
         Assert.Contains("skip: true", yaml);
     }
 
