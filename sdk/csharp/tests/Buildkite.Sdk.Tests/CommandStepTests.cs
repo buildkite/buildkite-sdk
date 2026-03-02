@@ -336,4 +336,192 @@ public class CommandStepTests
         Assert.Contains("MY_SECRET: org/secret-name", yaml);
         Assert.Contains("API_KEY: org/api-key", yaml);
     }
+
+    [Fact]
+    public void CommandStep_WithAutomaticRetry_GeneratesCorrectYaml()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Retry = new Retry
+            {
+                Automatic = new AutomaticRetry { ExitStatus = -1, Limit = 3 }
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("retry:", yaml);
+        Assert.Contains("automatic:", yaml);
+        Assert.Contains("exit_status: -1", yaml);
+        Assert.Contains("limit: 3", yaml);
+    }
+
+    [Fact]
+    public void CommandStep_WithManualRetry_GeneratesCorrectYaml()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Retry = new Retry
+            {
+                Manual = new ManualRetry
+                {
+                    Allowed = false,
+                    PermitOnPassed = true,
+                    Reason = "Requires approval"
+                }
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("retry:", yaml);
+        Assert.Contains("manual:", yaml);
+        Assert.Contains("allowed: false", yaml);
+        Assert.Contains("permit_on_passed: true", yaml);
+        Assert.Contains("reason: Requires approval", yaml);
+    }
+
+    [Fact]
+    public void CommandStep_WithCache_GeneratesCorrectYaml()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Build",
+            Command = "npm install",
+            Cache = new Cache
+            {
+                Name = "node-modules",
+                Paths = new List<string> { "node_modules", ".cache" },
+                Size = "5g"
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("cache:", yaml);
+        Assert.Contains("name: node-modules", yaml);
+        Assert.Contains("node_modules", yaml);
+        Assert.Contains(".cache", yaml);
+        Assert.Contains("size: 5g", yaml);
+    }
+
+    [Fact]
+    public void CommandStep_WithMatrix_GeneratesCorrectYaml()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Matrix = new Matrix
+            {
+                Setup = new Dictionary<string, List<string>>
+                {
+                    ["os"] = new() { "linux", "windows" },
+                    ["arch"] = new() { "amd64", "arm64" }
+                },
+                Adjustments = new List<MatrixAdjustment>
+                {
+                    new()
+                    {
+                        With = new Dictionary<string, string>
+                        {
+                            ["os"] = "macos",
+                            ["arch"] = "arm64"
+                        },
+                        Skip = true
+                    }
+                }
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("matrix:", yaml);
+        Assert.Contains("setup:", yaml);
+        Assert.Contains("os:", yaml);
+        Assert.Contains("linux", yaml);
+        Assert.Contains("windows", yaml);
+        Assert.Contains("adjustments:", yaml);
+        Assert.Contains("with:", yaml);
+        Assert.Contains("macos", yaml);
+        Assert.Contains("skip: true", yaml);
+    }
+
+    [Fact]
+    public void CommandStep_WithSignature_GeneratesCorrectYaml()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Signed step",
+            Command = "echo hello",
+            Signature = new Signature
+            {
+                Algorithm = "HS512",
+                SignedFields = new List<string> { "command", "env" },
+                Value = "abc123"
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("signature:", yaml);
+        Assert.Contains("algorithm: HS512", yaml);
+        Assert.Contains("signed_fields:", yaml);
+        Assert.Contains("value: abc123", yaml);
+    }
+
+    [Fact]
+    public void CommandStep_WithAutomaticAndManualRetry_GeneratesCorrectYaml()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Retry = new Retry
+            {
+                Automatic = new AutomaticRetry { ExitStatus = 1, Limit = 2 },
+                Manual = new ManualRetry { Allowed = true, PermitOnPassed = false }
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("retry:", yaml);
+        Assert.Contains("automatic:", yaml);
+        Assert.Contains("exit_status: 1", yaml);
+        Assert.Contains("manual:", yaml);
+        Assert.Contains("allowed: true", yaml);
+        Assert.Contains("permit_on_passed: false", yaml);
+    }
+
+    [Fact]
+    public void CommandStep_WithAutomaticRetryWildcardExitStatus_GeneratesCorrectYaml()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new CommandStep
+        {
+            Label = "Test",
+            Command = "make test",
+            Retry = new Retry
+            {
+                Automatic = new AutomaticRetry { ExitStatus = "*", Limit = 2 }
+            }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("automatic:", yaml);
+        Assert.Contains("exit_status: '*'", yaml);
+        Assert.Contains("limit: 2", yaml);
+    }
 }
