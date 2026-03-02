@@ -224,10 +224,10 @@ public class EnvironmentVariableTests : IDisposable
 
     // Rebuild Information
     [Fact]
-    public void Rebuilt_ReturnsValue()
+    public void RebuiltFromBuildId_ReturnsValue()
     {
         SetEnv("BUILDKITE_REBUILT_FROM_BUILD_ID", "original-build-uuid");
-        Assert.Equal("original-build-uuid", EnvironmentVariable.Rebuilt);
+        Assert.Equal("original-build-uuid", EnvironmentVariable.RebuiltFromBuildId);
     }
 
     [Fact]
@@ -254,32 +254,10 @@ public class EnvironmentVariableTests : IDisposable
 
     // Triggered Build Information
     [Fact]
-    public void TriggeredFromBuildId_ReturnsTrue_WhenSet()
+    public void TriggeredFromBuildId_ReturnsValue()
     {
         SetEnv("BUILDKITE_TRIGGERED_FROM_BUILD_ID", "some-build-id");
-        Assert.True(EnvironmentVariable.TriggeredFromBuildId);
-    }
-
-    [Fact]
-    public void TriggeredFromBuildId_ReturnsFalse_WhenUnset()
-    {
-        SetEnv("BUILDKITE_TRIGGERED_FROM_BUILD_ID", null);
-        Assert.False(EnvironmentVariable.TriggeredFromBuildId);
-    }
-
-    [Fact]
-    public void TriggeredFromBuildId_ReturnsFalse_WhenEmpty()
-    {
-        SetEnv("BUILDKITE_TRIGGERED_FROM_BUILD_ID", "");
-        Assert.False(EnvironmentVariable.TriggeredFromBuildId);
-    }
-
-    [Fact]
-    public void TriggeredFromBuildIdValue_ReturnsStringValue()
-    {
-        SetEnv("BUILDKITE_TRIGGERED_FROM_BUILD_ID", "abc-123");
-        Assert.Equal("abc-123", EnvironmentVariable.TriggeredFromBuildIdValue);
-        Assert.True(EnvironmentVariable.TriggeredFromBuildId);
+        Assert.Equal("some-build-id", EnvironmentVariable.TriggeredFromBuildId);
     }
 
     [Fact]
@@ -385,6 +363,13 @@ public class EnvironmentVariableTests : IDisposable
     }
 
     // Unblocker Information
+    [Fact]
+    public void UnblockerId_ReturnsValue()
+    {
+        SetEnv("BUILDKITE_UNBLOCKER_ID", "user-uuid-789");
+        Assert.Equal("user-uuid-789", EnvironmentVariable.UnblockerId);
+    }
+
     [Fact]
     public void UnblockerTeams_ReturnsValue()
     {

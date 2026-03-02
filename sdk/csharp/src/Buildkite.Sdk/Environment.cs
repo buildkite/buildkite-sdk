@@ -173,8 +173,8 @@ public static class EnvironmentVariable
     /// <summary>How many times this job has been retried.</summary>
     public static string? RetryCount => System.Environment.GetEnvironmentVariable("BUILDKITE_RETRY_COUNT");
 
-    /// <summary>Whether this build is a rebuild.</summary>
-    public static string? Rebuilt => System.Environment.GetEnvironmentVariable("BUILDKITE_REBUILT_FROM_BUILD_ID");
+    /// <summary>The UUID of the original build this was rebuilt from, or empty if not a rebuild.</summary>
+    public static string? RebuiltFromBuildId => System.Environment.GetEnvironmentVariable("BUILDKITE_REBUILT_FROM_BUILD_ID");
 
     /// <summary>The number of the original build this was rebuilt from, or empty if not a rebuild.</summary>
     public static string? RebuiltFromBuildNumber => System.Environment.GetEnvironmentVariable("BUILDKITE_REBUILT_FROM_BUILD_NUMBER");
@@ -193,11 +193,8 @@ public static class EnvironmentVariable
     public static bool PullRequestDraft => System.Environment.GetEnvironmentVariable("BUILDKITE_PULL_REQUEST_DRAFT") == "true";
 
     // Triggered Build Information
-    /// <summary>Whether the build is triggered.</summary>
-    public static bool TriggeredFromBuildId => !string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("BUILDKITE_TRIGGERED_FROM_BUILD_ID"));
-
-    /// <summary>The build ID that triggered this build.</summary>
-    public static string? TriggeredFromBuildIdValue => System.Environment.GetEnvironmentVariable("BUILDKITE_TRIGGERED_FROM_BUILD_ID");
+    /// <summary>The UUID of the build that triggered this build, or empty if not triggered.</summary>
+    public static string? TriggeredFromBuildId => System.Environment.GetEnvironmentVariable("BUILDKITE_TRIGGERED_FROM_BUILD_ID");
 
     /// <summary>The number of the build that triggered this build, or empty if not triggered.</summary>
     public static string? TriggeredFromBuildNumber => System.Environment.GetEnvironmentVariable("BUILDKITE_TRIGGERED_FROM_BUILD_NUMBER");
@@ -287,14 +284,14 @@ public static class EnvironmentVariable
     public static string? GroupLabel => System.Environment.GetEnvironmentVariable("BUILDKITE_GROUP_LABEL");
 
     // Unblocker Information
-    /// <summary>The ID of the user who unblocked this step.</summary>
-    public static string? UnblockedById => System.Environment.GetEnvironmentVariable("BUILDKITE_UNBLOCKER_ID");
+    /// <summary>The UUID of the user who unblocked the build.</summary>
+    public static string? UnblockerId => System.Environment.GetEnvironmentVariable("BUILDKITE_UNBLOCKER_ID");
 
     /// <summary>The notification email of the user who unblocked the build.</summary>
     public static string? UnblockerEmail => System.Environment.GetEnvironmentVariable("BUILDKITE_UNBLOCKER_EMAIL");
 
     /// <summary>The name of the user who unblocked the build.</summary>
-    public static string? UnblockerName => System.Environment.GetEnvironmentVariable("BUILDKITE_UNBLOCKER");
+    public static string? Unblocker => System.Environment.GetEnvironmentVariable("BUILDKITE_UNBLOCKER");
 
     /// <summary>A colon-separated list of non-private team slugs that the user who unblocked the build belongs to.</summary>
     public static string? UnblockerTeams => System.Environment.GetEnvironmentVariable("BUILDKITE_UNBLOCKER_TEAMS");
