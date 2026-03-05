@@ -8,7 +8,7 @@
     
     <!-- NuGet Package Metadata -->
     <PackageId>Buildkite.Sdk</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.8.0</Version>
     <Authors>Buildkite</Authors>
     <Company>Buildkite</Company>
     <Description>A C# SDK for Buildkite pipelines. Generate dynamic pipeline configurations programmatically.</Description>

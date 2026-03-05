@@ -16,6 +16,7 @@ if (!from || !to) {
         "sdk/typescript/package.json",
         "sdk/ruby/lib/buildkite/version.rb",
         "sdk/ruby/project.json",
+        "sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj",
     ];
 
     const git = simpleGit();
