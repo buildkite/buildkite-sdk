@@ -3,7 +3,7 @@ module github.com/buildkite/buildkite-sdk/sdk/go
 go 1.25.4
 
 require (
-	github.com/itchyny/json2yaml v0.1.4
+	github.com/itchyny/json2yaml v0.1.5
 	github.com/stretchr/testify v1.11.1
 )
 
