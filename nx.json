@@ -55,6 +55,7 @@
             "inputs": ["production", "^production"]
         }
     },
+    "analytics": false,
     "neverConnectToCloud": true,
     "tui": {
         "enabled": false
