@@ -566,6 +566,9 @@ MatrixElement = str | int | bool
 
 MatrixElementList = List[str | int | bool]
 
+# Build Matrix dimension element
+MatrixAdjustmentsWithObject = Dict[str, str]
+
 SoftFailObjectArgs = TypedDict(
     "SoftFailObjectArgs",
     {
@@ -588,9 +591,6 @@ class SoftFailObject(BaseModel):
 
 
 SoftFailList = List[SoftFailObject | SoftFailObjectArgs]
-
-# Build Matrix dimension element
-MatrixAdjustmentsWithObject = Dict[str, str]
 
 # An adjustment to a Build Matrix
 MatrixAdjustmentsArgs = TypedDict(
