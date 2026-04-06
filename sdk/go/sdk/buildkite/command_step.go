@@ -107,7 +107,7 @@ type CommandStep struct {
 	// The number of parallel jobs that will be created based on this step
 	Parallelism *int     `json:"parallelism,omitempty"`
 	Plugins     *Plugins `json:"plugins,omitempty"`
-	// Priority of the job, higher priorities are assigned to agents
+	// Priority of all jobs in the pipeline, higher priorities are assigned to agents. When set pipeline-wide, it applies to all steps that do not have their own priority key set.
 	Priority *int `json:"priority,omitempty"`
 	// The conditions for retrying this step.
 	Retry *CommandStepRetry `json:"retry,omitempty"`

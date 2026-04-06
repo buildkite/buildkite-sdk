@@ -25,8 +25,8 @@ module Types
   BlockType                  = Strict::String.enum("block")
   BlockedState               = Strict::String.enum("failed", "passed", "running")
   ExitStatusEnum             = Strict::String.enum("*")
-  SignalReason               = Strict::String.enum("agent_refused", "agent_stop", "cancel", "*", "none",
-                                                   "process_run_error", "signature_rejected")
+  SignalReason               = Strict::String.enum("agent_incompatible", "agent_refused", "agent_stop", "cancel", "*", "none",
+                                                   "process_run_error", "signature_rejected", "stack_error")
   ScriptType                 = Strict::String.enum("command", "commands", "script")
   ConcurrencyMethod          = Strict::String.enum("eager", "ordered")
   InputType                  = Strict::String.enum("input")
@@ -777,6 +777,7 @@ end
 
 # The exit signal reason, if any, that may be retried
 module SignalReason
+  AgentIncompatible = "agent_incompatible".freeze
   AgentRefused      = "agent_refused".freeze
   AgentStop         = "agent_stop".freeze
   Cancel            = "cancel".freeze
@@ -784,6 +785,7 @@ module SignalReason
   None              = "none".freeze
   ProcessRunError   = "process_run_error".freeze
   SignatureRejected = "signature_rejected".freeze
+  StackError        = "stack_error".freeze
 end
 
 class AutomaticRetry < Dry::Struct

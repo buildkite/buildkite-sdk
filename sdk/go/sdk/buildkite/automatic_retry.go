@@ -42,11 +42,13 @@ type AutomaticRetrySignalReason string
 var AutomaticRetrySignalReasonValues = map[string]AutomaticRetrySignalReason{
 	"*":                  "*",
 	"none":               "none",
+	"agent_incompatible": "agent_incompatible",
 	"agent_refused":      "agent_refused",
 	"agent_stop":         "agent_stop",
 	"cancel":             "cancel",
 	"process_run_error":  "process_run_error",
 	"signature_rejected": "signature_rejected",
+	"stack_error":        "stack_error",
 }
 
 type AutomaticRetry struct {

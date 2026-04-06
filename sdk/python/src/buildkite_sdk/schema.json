@@ -104,11 +104,13 @@
           "enum": [
             "*",
             "none",
+            "agent_incompatible",
             "agent_refused",
             "agent_stop",
             "cancel",
             "process_run_error",
-            "signature_rejected"
+            "signature_rejected",
+            "stack_error"
           ]
         }
       },
@@ -211,6 +213,8 @@
       "type": "string",
       "description": "A unique identifier for a step, must not resemble a UUID",
       "examples": ["deploy-staging", "test-integration"],
+      "maxLength": 100,
+      "pattern": "^[a-zA-Z0-9_\\-:${}.,]+$",
       "not": {
         "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
       }
@@ -506,7 +510,10 @@
           "items": {
             "type": "string"
           },
-          "examples": [["**.go", "go.{mod,sum}"], ["app/**", "spec/**"]]
+          "examples": [
+            ["**.go", "go.{mod,sum}"],
+            ["app/**", "spec/**"]
+          ]
         },
         {
           "type": "object",
@@ -1141,9 +1148,7 @@
           "enum": ["script", "command", "commands"]
         },
         "priority": {
-          "type": "integer",
-          "description": "Priority of the job, higher priorities are assigned to agents",
-          "examples": [-1, 1]
+          "$ref": "#/definitions/priority"
         },
         "secrets": {
           "$ref": "#/definitions/secrets"
@@ -1416,6 +1421,11 @@
           { "$ref": "#/definitions/groupStep" }
         ]
       }
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Priority of all jobs in the pipeline, higher priorities are assigned to agents. When set pipeline-wide, it applies to all steps that do not have their own priority key set.",
+      "examples": [-1, 0, 10]
     }
   },
   "properties": {
@@ -1433,6 +1443,9 @@
     },
     "secrets": {
       "$ref": "#/definitions/secrets"
+    },
+    "priority": {
+      "$ref": "#/definitions/priority"
     },
     "steps": {
       "$ref": "#/definitions/pipelineSteps"
