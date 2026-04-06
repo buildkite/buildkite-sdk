@@ -14,6 +14,9 @@ public class BuildkitePipeline
     /// <summary>Notifications for the pipeline.</summary>
     public List<INotification>? Notify { get; set; }
 
+    /// <summary>Priority of all jobs in the pipeline, higher priorities are assigned to agents.</summary>
+    public int? Priority { get; set; }
+
     /// <summary>The steps in the pipeline.</summary>
     public List<IStep>? Steps { get; set; }
 
