@@ -36,6 +36,7 @@ from .schema import (
     NestedTriggerStepArgs,
     NestedWaitStep,
     NestedWaitStepArgs,
+    Priority,
     Secrets,
     StringBlockStep,
     StringInputStep,
@@ -80,6 +81,7 @@ class PipelineArgs(TypedDict):
     agents: NotRequired[Agents]
     notify: NotRequired[BuildNotify]
     image: NotRequired[Image]
+    priority: NotRequired[Priority]
     secrets: NotRequired[Secrets]
     steps: List[Step]
 
@@ -89,6 +91,7 @@ class Pipeline(BaseModel):
     agents: Optional[Agents] = None
     notify: Optional[BuildNotify] = None
     image: Optional[Image] = None
+    priority: Optional[Priority] = None
     secrets: Optional[Secrets] = None
     steps: List[Step] = []
 

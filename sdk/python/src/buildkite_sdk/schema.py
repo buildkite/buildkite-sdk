@@ -41,11 +41,13 @@ AutomaticRetryArgs = TypedDict(
             Literal[
                 "*",
                 "none",
+                "agent_incompatible",
                 "agent_refused",
                 "agent_stop",
                 "cancel",
                 "process_run_error",
                 "signature_rejected",
+                "stack_error",
             ]
         ],
     },
@@ -64,11 +66,13 @@ class AutomaticRetry(BaseModel):
         Literal[
             "*",
             "none",
+            "agent_incompatible",
             "agent_refused",
             "agent_stop",
             "cancel",
             "process_run_error",
             "signature_rejected",
+            "stack_error",
         ]
     ] = None
 
@@ -551,6 +555,20 @@ Cache = str | List[str] | CacheObject | CacheObjectArgs
 # Whether to cancel the job as soon as the build is marked as failing
 CancelOnBuildFailing = Literal[True, False, "true", "false"]
 
+PluginsListObject = Dict[str, Any]
+# Array of plugins for this step
+PluginsList = List[str | Dict[str, Any]]
+
+# A map of plugins for this step. Deprecated: please use the array syntax.
+PluginsObject = Dict[str, Any]
+
+MatrixElement = str | int | bool
+
+MatrixElementList = List[str | int | bool]
+
+# Build Matrix dimension element
+MatrixAdjustmentsWithObject = Dict[str, str]
+
 SoftFailObjectArgs = TypedDict(
     "SoftFailObjectArgs",
     {
@@ -573,13 +591,6 @@ class SoftFailObject(BaseModel):
 
 
 SoftFailList = List[SoftFailObject | SoftFailObjectArgs]
-
-MatrixElement = str | int | bool
-
-MatrixElementList = List[str | int | bool]
-
-# Build Matrix dimension element
-MatrixAdjustmentsWithObject = Dict[str, str]
 
 # An adjustment to a Build Matrix
 MatrixAdjustmentsArgs = TypedDict(
@@ -666,14 +677,6 @@ class CommandStepManualRetryObject(BaseModel):
         step_async = {"step_async": data["async"]} if "async" in data else {}
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
         return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
-
-
-PluginsListObject = Dict[str, Any]
-# Array of plugins for this step
-PluginsList = List[str | Dict[str, Any]]
-
-# A map of plugins for this step. Deprecated: please use the array syntax.
-PluginsObject = Dict[str, Any]
 
 
 # The conditions for retrying this step.
@@ -782,7 +785,7 @@ CommandStepArgs = TypedDict(
         # The number of parallel jobs that will be created based on this step
         "parallelism": NotRequired["int"],
         "plugins": NotRequired["Plugins"],
-        # Priority of the job, higher priorities are assigned to agents
+        # Priority of all jobs in the pipeline, higher priorities are assigned to agents. When set pipeline-wide, it applies to all steps that do not have their own priority key set.
         "priority": NotRequired["int"],
         # The conditions for retrying this step.
         "retry": NotRequired["CommandStepRetryArgs"],
@@ -849,7 +852,7 @@ class CommandStep(BaseModel):
     # The number of parallel jobs that will be created based on this step
     parallelism: Optional[int] = None
     plugins: Optional[Plugins] = None
-    # Priority of the job, higher priorities are assigned to agents
+    # Priority of all jobs in the pipeline, higher priorities are assigned to agents. When set pipeline-wide, it applies to all steps that do not have their own priority key set.
     priority: Optional[int] = None
     # The conditions for retrying this step.
     retry: Optional[CommandStepRetry] = None
@@ -1451,6 +1454,9 @@ PipelineSteps = List[
 ]
 
 Plugins = PluginsList | PluginsObject
+
+# Priority of all jobs in the pipeline, higher priorities are assigned to agents. When set pipeline-wide, it applies to all steps that do not have their own priority key set.
+Priority = int
 
 # The instructional message displayed in the dialog box when the unblock step is activated
 Prompt = str

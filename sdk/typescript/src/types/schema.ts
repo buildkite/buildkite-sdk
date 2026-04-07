@@ -42,11 +42,13 @@ export interface AutomaticRetry {
     signal_reason?:
         | "*"
         | "none"
+        | "agent_incompatible"
         | "agent_refused"
         | "agent_stop"
         | "cancel"
         | "process_run_error"
-        | "signature_rejected";
+        | "signature_rejected"
+        | "stack_error";
 }
 
 export type AutomaticRetryList = AutomaticRetry[];
@@ -240,7 +242,7 @@ export interface CommandStep {
     parallelism?: number;
     plugins?: Plugins;
     /**
-     * Priority of the job, higher priorities are assigned to agents
+     * Priority of all jobs in the pipeline, higher priorities are assigned to agents. When set pipeline-wide, it applies to all steps that do not have their own priority key set.
      */
     priority?: number;
     /**
@@ -697,6 +699,11 @@ export type PluginsList = (string | Record<string, any>)[];
 export type PluginsObject = Record<string, any>;
 
 /**
+ * Priority of all jobs in the pipeline, higher priorities are assigned to agents. When set pipeline-wide, it applies to all steps that do not have their own priority key set.
+ */
+export type Priority = number;
+
+/**
  * The instructional message displayed in the dialog box when the unblock step is activated
  */
 export type Prompt = string;
@@ -952,6 +959,7 @@ export interface BuildkitePipeline {
     env?: Env;
     image?: Image;
     notify?: BuildNotify;
+    priority?: Priority;
     secrets?: Secrets;
     steps?: PipelineSteps;
 }
