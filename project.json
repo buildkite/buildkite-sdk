@@ -217,8 +217,8 @@
                     "node ./create-release-branch.js $VERSION_FROM $VERSION_TO"
                 ],
                 "env": {
-                    "VERSION_FROM": "0.8.0",
-                    "VERSION_TO": "0.9.0"
+                    "VERSION_FROM": "0.9.0",
+                    "VERSION_TO": "0.10.0"
                 }
             }
         }
