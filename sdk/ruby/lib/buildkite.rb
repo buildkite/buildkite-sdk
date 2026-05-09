@@ -14,10 +14,15 @@ module Buildkite
       @env = nil
       @notify = nil
       @secrets = nil
+      @priority = nil
     end
 
     def set_secrets(secrets)
       @secrets = secrets
+    end
+
+    def set_priority(priority)
+      @priority = priority
     end
 
     def add_agent(key, value)
@@ -61,6 +66,7 @@ module Buildkite
       pipeline["env"] = @env unless @env.nil?
       pipeline["notify"] = @notify unless @notify.nil?
       pipeline["secrets"] = @secrets unless @secrets.nil?
+      pipeline["priority"] = @priority unless @priority.nil?
       pipeline
     end
 

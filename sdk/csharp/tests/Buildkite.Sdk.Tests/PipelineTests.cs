@@ -169,4 +169,33 @@ public class PipelineTests
         Assert.Equal("{}\n", yaml);
         Assert.Equal("{}", json);
     }
+
+    [Fact]
+    public void Pipeline_WithPriority_IncludesPriorityInOutput()
+    {
+        var pipeline = new Pipeline();
+        pipeline.SetPriority(100);
+        pipeline.AddStep(new CommandStep { Label = "Build", Command = "make" });
+
+        var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
+
+        Assert.Contains("priority: 100", yaml);
+        Assert.Contains("\"priority\": 100", json);
+    }
+
+    [Fact]
+    public void Pipeline_SetPipeline_WithPriority_IncludesPriority()
+    {
+        var pipeline = new Pipeline();
+        pipeline.SetPipeline(new BuildkitePipeline
+        {
+            Priority = 50,
+            Steps = new List<IStep> { new CommandStep { Label = "Build", Command = "make" } }
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("priority: 50", yaml);
+    }
 }

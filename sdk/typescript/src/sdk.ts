@@ -8,6 +8,7 @@ export class Pipeline {
     public notify: schema.BuildNotify = [];
     public steps: schema.PipelineSteps = [];
     public secrets: schema.Secrets = [];
+    public priority: schema.Priority | undefined = undefined;
 
     /**
      * Set the pipeline
@@ -30,6 +31,18 @@ export class Pipeline {
         if (pipeline.steps) {
             this.steps = pipeline.steps;
         }
+
+        if (pipeline.priority !== undefined) {
+            this.priority = pipeline.priority;
+        }
+    }
+
+    /**
+     * Set the priority for all jobs in the pipeline
+     * @param priority
+     */
+    setPriority(priority: schema.Priority) {
+        this.priority = priority;
     }
 
     /**
@@ -99,6 +112,10 @@ export class Pipeline {
 
         if (Object.keys(this.steps).length > 0) {
             pipeline.steps = this.steps;
+        }
+
+        if (this.priority !== undefined) {
+            pipeline.priority = this.priority;
         }
 
         return pipeline;
