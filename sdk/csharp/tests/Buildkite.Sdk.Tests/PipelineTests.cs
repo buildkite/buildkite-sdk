@@ -195,7 +195,9 @@ public class PipelineTests
         });
 
         var yaml = pipeline.ToYaml();
+        var json = pipeline.ToJson();
 
         Assert.Contains("priority: 50", yaml);
+        Assert.Contains("\"priority\": 50", json);
     }
 }

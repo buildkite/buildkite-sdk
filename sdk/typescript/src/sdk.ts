@@ -8,7 +8,7 @@ export class Pipeline {
     public notify: schema.BuildNotify = [];
     public steps: schema.PipelineSteps = [];
     public secrets: schema.Secrets = [];
-    public priority: schema.Priority | undefined = undefined;
+    public priority: schema.Priority | undefined;
 
     /**
      * Set the pipeline

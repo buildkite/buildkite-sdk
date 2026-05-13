@@ -23,6 +23,7 @@ module Buildkite
 
     def set_priority(priority)
       @priority = priority
+      self
     end
 
     def add_agent(key, value)

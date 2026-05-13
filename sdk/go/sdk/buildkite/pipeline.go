@@ -44,7 +44,7 @@ func (p *Pipeline) SetSecrets(secrets *Secrets) {
 }
 
 func (p *Pipeline) SetPriority(priority int) {
-	p.Priority = &priority
+	p.Priority = Value(priority)
 }
 
 func (p *Pipeline) AddAgent(key string, value any) {
