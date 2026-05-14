@@ -3,11 +3,14 @@ import * as fs from "fs";
 import toml from "toml";
 
 const pipeline = new Pipeline();
+pipeline.setSecrets(["MISE_GITHUB_TOKEN"]);
+
 const plugins = [
     {
         "docker#v5.11.0": {
             image: "buildkite-sdk-tools:latest",
             "propagate-environment": true,
+            environment: ["MISE_GITHUB_TOKEN"],
         },
     },
 ];
