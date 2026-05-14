@@ -33,6 +33,7 @@ public class Pipeline
     public List<IStep> Steps { get; set; } = new();
     public List<string> Secrets { get; set; } = new();
     public string? Image { get; set; }
+    public int? Priority { get; set; }
 
     public Pipeline AddStep(IStep step)
     {
@@ -71,6 +72,12 @@ public class Pipeline
         return this;
     }
 
+    public Pipeline SetPriority(int priority)
+    {
+        Priority = priority;
+        return this;
+    }
+
     public Pipeline AddEnvironmentVariable(string key, string value)
     {
         Env[key] = value;
@@ -103,6 +110,8 @@ public class Pipeline
             Secrets = pipeline.Secrets;
         if (pipeline.Image != null)
             Image = pipeline.Image;
+        if (pipeline.Priority != null)
+            Priority = pipeline.Priority;
         return this;
     }
 
@@ -132,6 +141,8 @@ public class Pipeline
             pipeline.Secrets = Secrets;
         if (Image != null)
             pipeline.Image = Image;
+        if (Priority != null)
+            pipeline.Priority = Priority;
 
         return pipeline;
     }
