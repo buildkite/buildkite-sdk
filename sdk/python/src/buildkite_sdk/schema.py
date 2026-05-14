@@ -11,7 +11,7 @@ else:
 
     from typing_extensions import TypedDict, NotRequired
 
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, Field
 
 # Query rules to target specific agents
 AgentsObject = Dict[str, Any]
@@ -282,7 +282,11 @@ class BlockStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
     # A unique identifier for a step, must not resemble a UUID
     key: Optional[str] = None
     # The label of the block step
@@ -319,7 +323,11 @@ NotifyEmailArgs = TypedDict(
 class NotifyEmail(BaseModel):
     email: Optional[str] = None
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
 
     @classmethod
     def from_dict(cls, data: NotifyEmailArgs) -> NotifyEmail:
@@ -342,7 +350,11 @@ NotifyBasecampArgs = TypedDict(
 class NotifyBasecamp(BaseModel):
     basecamp_campfire: Optional[str] = None
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
 
     @classmethod
     def from_dict(cls, data: NotifyBasecampArgs) -> NotifyBasecamp:
@@ -385,7 +397,11 @@ NotifySlackArgs = TypedDict(
 
 class NotifySlack(BaseModel):
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
     slack: Optional[str | NotifySlackObject] = None
 
     @classmethod
@@ -408,7 +424,11 @@ NotifyWebhookArgs = TypedDict(
 
 class NotifyWebhook(BaseModel):
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
     webhook: Optional[str] = None
 
     @classmethod
@@ -431,7 +451,11 @@ NotifyPagerdutyArgs = TypedDict(
 
 class NotifyPagerduty(BaseModel):
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
     pagerduty_change_event: Optional[str] = None
 
     @classmethod
@@ -478,7 +502,11 @@ NotifyGithubCommitStatusArgs = TypedDict(
 class NotifyGithubCommitStatus(BaseModel):
     github_commit_status: Optional[NotifyGithubCommitStatusGithubCommitStatus] = None
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
 
     @classmethod
     def from_dict(cls, data: NotifyGithubCommitStatusArgs) -> NotifyGithubCommitStatus:
@@ -612,7 +640,8 @@ class MatrixAdjustments(BaseModel):
     # The conditions for marking the step as a soft-fail.
     soft_fail: Optional[SoftFail] = None
     matrix_with: MatrixElementList | MatrixAdjustmentsWithObject = Field(
-        serialization_alias="with"
+        validation_alias=AliasChoices("with", "matrix_with"),
+        serialization_alias="with",
     )
 
     @classmethod
@@ -835,7 +864,11 @@ class CommandStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
     # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
     if_changed: Optional[IfChanged] = None
     # (Kubernetes stack only) The container image to use for this pipeline or step
@@ -992,7 +1025,11 @@ class InputStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
     # The label of the input step
     input: Optional[str] = None
     # A unique identifier for a step, must not resemble a UUID
@@ -1102,7 +1139,11 @@ class WaitStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
     # A unique identifier for a step, must not resemble a UUID
     key: Optional[str] = None
     # Waits for previous steps to pass before continuing
@@ -1226,7 +1267,9 @@ class TriggerStep(BaseModel):
     allow_dependency_failure: Optional[AllowDependencyFailure] = None
     # Whether to continue the build without waiting for the triggered step to complete
     step_async: Optional[Literal[True, False, "true", "false"]] = Field(
-        serialization_alias="async", default=None
+        validation_alias=AliasChoices("async", "step_async"),
+        serialization_alias="async",
+        default=None,
     )
     # Which branches will include this step in their builds
     branches: Optional[Branches] = None
@@ -1239,7 +1282,11 @@ class TriggerStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
     # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
     if_changed: Optional[IfChanged] = None
     # A unique identifier for a step, must not resemble a UUID
@@ -1328,7 +1375,11 @@ class GroupStep(BaseModel):
     # A unique identifier for a step, must not resemble a UUID
     identifier: Optional[str] = None
     # A boolean expression that omits the step when false
-    step_if: Optional[If] = Field(serialization_alias="if", default=None)
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
     # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
     if_changed: Optional[IfChanged] = None
     # A unique identifier for a step, must not resemble a UUID

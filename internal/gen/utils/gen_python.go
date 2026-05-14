@@ -25,7 +25,7 @@ else:
 
 	from typing_extensions import TypedDict, NotRequired
 
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, Field
 
 {{.Contents.String}}
 `
@@ -63,7 +63,7 @@ func NewPythonFile(
 }
 
 var pythonClassTemplate = `{{if ne "" .Description}}{{printf "# %s\n" .Description}}{{end}}class {{.Name}}(BaseModel):{{ range .Items}}
-    {{if ne "" .Description}}{{printf "# %s\n    " .Description}}{{end}}{{.Name}}: {{if eq false .Required }}Optional[{{.Value}}]{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{else}} = None{{end}}{{else}}{{.Value}}{{if .Alias}} = Field(serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{end}}{{end}}{{end}}
+    {{if ne "" .Description}}{{printf "# %s\n    " .Description}}{{end}}{{.Name}}: {{if eq false .Required }}Optional[{{.Value}}]{{if .Alias}} = Field(validation_alias=AliasChoices('{{.Alias}}', '{{.Name}}'), serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{else}} = None{{end}}{{else}}{{.Value}}{{if .Alias}} = Field(validation_alias=AliasChoices('{{.Alias}}', '{{.Name}}'), serialization_alias='{{.Alias}}'{{if eq false .Required }}, default=None{{end}}){{end}}{{end}}{{end}}
 
     @classmethod
     def from_dict(cls, data: {{.Name}}Args) -> {{.Name}}:
