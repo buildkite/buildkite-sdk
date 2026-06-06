@@ -19,6 +19,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/buildkite/buildkite-sdk/sdk/go/sdk/buildkite"
 )
 
@@ -27,9 +29,14 @@ func main() {
 
 	pipeline.AddStep(buildkite.CommandStep{
 		Command: &buildkite.CommandStepCommand{
-			String: buildkite.Value("echo 'Hello, world!"),
+			String: buildkite.Value("echo 'Hello, world!'"),
 		},
+		If: buildkite.MustCondition(`build.branch == "main"`),
 	})
+
+	if err := buildkite.ValidateConditionals(pipeline); err != nil {
+		log.Fatalf("Failed to validate conditionals: %v", err)
+	}
 
 	json, err := pipeline.ToJSON()
 	if err != nil {
@@ -44,5 +51,23 @@ func main() {
 	}
 
 	fmt.Println(yaml)
+}
+```
+
+`Condition` returns the same `*string` shape used by generated SDK `if` fields,
+and `ValidateConditionals` walks a pipeline's step and notification conditions
+before serialization:
+
+```go
+condition, err := buildkite.Condition(`step.label == "Deploy"`)
+if err != nil {
+	log.Fatalf("Invalid condition: %v", err)
+}
+
+step := buildkite.CommandStep{
+	Command: &buildkite.CommandStepCommand{
+		String: buildkite.Value("./deploy.sh"),
+	},
+	If: condition,
 }
 ```
