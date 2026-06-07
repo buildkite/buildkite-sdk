@@ -5,6 +5,37 @@
   ],
   "packageRules": [
     {
+      "description": "Automerge low-risk development tooling updates after CI passes",
+      "matchPackageNames": [
+        "@eslint/**",
+        "@types/**",
+        "autopep8",
+        "coverlet.collector",
+        "eslint",
+        "eslint-config-prettier",
+        "jest",
+        "jest-environment-node",
+        "jest-util",
+        "Microsoft.NET.Test.Sdk",
+        "pdoc",
+        "prettier",
+        "pytest",
+        "pytest-*",
+        "rubocop",
+        "rubocop-rake",
+        "rubocop-rspec",
+        "ruff",
+        "ts-jest",
+        "typedoc",
+        "typescript-eslint",
+        "xunit",
+        "xunit.*",
+        "yard"
+      ],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
       "description": "Group Nx monorepo packages",
       "matchPackageNames": ["nx", "@nx/**", "@nrwl/**"],
       "groupName": "nx monorepo"
