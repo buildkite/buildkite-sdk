@@ -3,7 +3,7 @@ module github.com/buildkite/buildkite-sdk/sdk/go
 go 1.25.4
 
 require (
-	github.com/buildkite/conditional v0.0.0-20260606220753-f86646e5c8d4
+	github.com/buildkite/conditional v1.0.0
 	github.com/itchyny/json2yaml v0.1.5
 	github.com/stretchr/testify v1.11.1
 )
