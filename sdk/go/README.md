@@ -59,7 +59,7 @@ and `ValidateConditionals` walks a pipeline's step and notification conditions
 before serialization:
 
 ```go
-condition, err := buildkite.Condition(`step.label == "Deploy"`)
+condition, err := buildkite.Condition(`build.branch == "main"`)
 if err != nil {
 	log.Fatalf("Invalid condition: %v", err)
 }

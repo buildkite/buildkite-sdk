@@ -7,17 +7,17 @@ import (
 	bkconditional "github.com/buildkite/conditional"
 )
 
-// Condition validates a step-aware Buildkite conditional and returns it in the
-// pointer form used by SDK `if` fields.
+// Condition validates a Buildkite step `if` expression and returns it in the
+// pointer form used by generated SDK `if` fields.
 func Condition(expression string) (*string, error) {
-	if err := validateConditional(expression, bkconditional.EntryPointBuildConditionWithStep); err != nil {
+	if err := validateConditional(expression, bkconditional.EntryPointBuildCondition); err != nil {
 		return nil, err
 	}
 
 	return Value(expression), nil
 }
 
-// MustCondition validates a step-aware Buildkite conditional and panics if it
+// MustCondition validates a Buildkite step `if` expression and panics if it
 // is invalid.
 func MustCondition(expression string) *string {
 	condition, err := Condition(expression)
@@ -76,26 +76,32 @@ func validatePipelineSteps(path string, steps PipelineSteps, errs *[]error) {
 		switch {
 		case step.BlockStep != nil:
 			validateBlockStep(stepPath, *step.BlockStep, errs)
-		case step.CommandStep != nil:
-			validateCommandStep(stepPath, *step.CommandStep, errs)
-		case step.GroupStep != nil:
-			validateGroupStep(stepPath, *step.GroupStep, errs)
-		case step.InputStep != nil:
-			validateInputStep(stepPath, *step.InputStep, errs)
 		case step.NestedBlockStep != nil:
 			validateNestedBlockStep(stepPath, *step.NestedBlockStep, errs)
-		case step.NestedCommandStep != nil:
-			validateNestedCommandStep(stepPath, *step.NestedCommandStep, errs)
+		case step.StringBlockStep != nil:
+			continue
+		case step.InputStep != nil:
+			validateInputStep(stepPath, *step.InputStep, errs)
 		case step.NestedInputStep != nil:
 			validateNestedInputStep(stepPath, *step.NestedInputStep, errs)
-		case step.NestedTriggerStep != nil:
-			validateNestedTriggerStep(stepPath, *step.NestedTriggerStep, errs)
-		case step.NestedWaitStep != nil:
-			validateNestedWaitStep(stepPath, *step.NestedWaitStep, errs)
-		case step.TriggerStep != nil:
-			validateTriggerStep(stepPath, *step.TriggerStep, errs)
+		case step.StringInputStep != nil:
+			continue
+		case step.CommandStep != nil:
+			validateCommandStep(stepPath, *step.CommandStep, errs)
+		case step.NestedCommandStep != nil:
+			validateNestedCommandStep(stepPath, *step.NestedCommandStep, errs)
 		case step.WaitStep != nil:
 			validateWaitStep(stepPath, *step.WaitStep, errs)
+		case step.NestedWaitStep != nil:
+			validateNestedWaitStep(stepPath, *step.NestedWaitStep, errs)
+		case step.StringWaitStep != nil:
+			continue
+		case step.TriggerStep != nil:
+			validateTriggerStep(stepPath, *step.TriggerStep, errs)
+		case step.NestedTriggerStep != nil:
+			validateNestedTriggerStep(stepPath, *step.NestedTriggerStep, errs)
+		case step.GroupStep != nil:
+			validateGroupStep(stepPath, *step.GroupStep, errs)
 		}
 	}
 }
@@ -106,41 +112,47 @@ func validateGroupSteps(path string, steps GroupSteps, errs *[]error) {
 		switch {
 		case step.BlockStep != nil:
 			validateBlockStep(stepPath, *step.BlockStep, errs)
-		case step.CommandStep != nil:
-			validateCommandStep(stepPath, *step.CommandStep, errs)
-		case step.InputStep != nil:
-			validateInputStep(stepPath, *step.InputStep, errs)
 		case step.NestedBlockStep != nil:
 			validateNestedBlockStep(stepPath, *step.NestedBlockStep, errs)
-		case step.NestedCommandStep != nil:
-			validateNestedCommandStep(stepPath, *step.NestedCommandStep, errs)
+		case step.StringBlockStep != nil:
+			continue
+		case step.InputStep != nil:
+			validateInputStep(stepPath, *step.InputStep, errs)
 		case step.NestedInputStep != nil:
 			validateNestedInputStep(stepPath, *step.NestedInputStep, errs)
-		case step.NestedTriggerStep != nil:
-			validateNestedTriggerStep(stepPath, *step.NestedTriggerStep, errs)
-		case step.NestedWaitStep != nil:
-			validateNestedWaitStep(stepPath, *step.NestedWaitStep, errs)
-		case step.TriggerStep != nil:
-			validateTriggerStep(stepPath, *step.TriggerStep, errs)
+		case step.StringInputStep != nil:
+			continue
+		case step.CommandStep != nil:
+			validateCommandStep(stepPath, *step.CommandStep, errs)
+		case step.NestedCommandStep != nil:
+			validateNestedCommandStep(stepPath, *step.NestedCommandStep, errs)
 		case step.WaitStep != nil:
 			validateWaitStep(stepPath, *step.WaitStep, errs)
+		case step.NestedWaitStep != nil:
+			validateNestedWaitStep(stepPath, *step.NestedWaitStep, errs)
+		case step.StringWaitStep != nil:
+			continue
+		case step.TriggerStep != nil:
+			validateTriggerStep(stepPath, *step.TriggerStep, errs)
+		case step.NestedTriggerStep != nil:
+			validateNestedTriggerStep(stepPath, *step.NestedTriggerStep, errs)
 		}
 	}
 }
 
 func validateBlockStep(path string, step BlockStep, errs *[]error) {
-	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildConditionWithStep, errs)
+	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildCondition, errs)
 }
 
 func validateCommandStep(path string, step CommandStep, errs *[]error) {
-	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildConditionWithStep, errs)
+	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildCondition, errs)
 	if step.Notify != nil {
 		validateCommandNotifications(path+".notify", *step.Notify, errs)
 	}
 }
 
 func validateGroupStep(path string, step GroupStep, errs *[]error) {
-	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildConditionWithStep, errs)
+	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildCondition, errs)
 	if step.Notify != nil {
 		validateBuildNotifications(path+".notify", *step.Notify, bkconditional.EntryPointStepNotification, errs)
 	}
@@ -150,15 +162,15 @@ func validateGroupStep(path string, step GroupStep, errs *[]error) {
 }
 
 func validateInputStep(path string, step InputStep, errs *[]error) {
-	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildConditionWithStep, errs)
+	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildCondition, errs)
 }
 
 func validateTriggerStep(path string, step TriggerStep, errs *[]error) {
-	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildConditionWithStep, errs)
+	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildCondition, errs)
 }
 
 func validateWaitStep(path string, step WaitStep, errs *[]error) {
-	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildConditionWithStep, errs)
+	appendConditionalError(path+".if", step.If, bkconditional.EntryPointBuildCondition, errs)
 }
 
 func validateNestedBlockStep(path string, step NestedBlockStep, errs *[]error) {
@@ -204,18 +216,22 @@ func validateBuildNotifications(path string, notifications BuildNotify, entryPoi
 	for i, notification := range notifications {
 		notificationPath := fmt.Sprintf("%s[%d]", path, i)
 		switch {
-		case notification.NotifyBasecamp != nil:
-			appendConditionalError(notificationPath+".if", notification.NotifyBasecamp.If, entryPoint, errs)
+		case notification.NotifySimple != nil:
+			continue
 		case notification.NotifyEmail != nil:
 			appendConditionalError(notificationPath+".if", notification.NotifyEmail.If, entryPoint, errs)
-		case notification.NotifyGithubCommitStatus != nil:
-			appendConditionalError(notificationPath+".if", notification.NotifyGithubCommitStatus.If, entryPoint, errs)
-		case notification.NotifyPagerduty != nil:
-			appendConditionalError(notificationPath+".if", notification.NotifyPagerduty.If, entryPoint, errs)
+		case notification.NotifyBasecamp != nil:
+			appendConditionalError(notificationPath+".if", notification.NotifyBasecamp.If, entryPoint, errs)
 		case notification.NotifySlack != nil:
 			appendConditionalError(notificationPath+".if", notification.NotifySlack.If, entryPoint, errs)
 		case notification.NotifyWebhook != nil:
 			appendConditionalError(notificationPath+".if", notification.NotifyWebhook.If, entryPoint, errs)
+		case notification.NotifyPagerduty != nil:
+			appendConditionalError(notificationPath+".if", notification.NotifyPagerduty.If, entryPoint, errs)
+		case notification.NotifyGithubCommitStatus != nil:
+			appendConditionalError(notificationPath+".if", notification.NotifyGithubCommitStatus.If, entryPoint, errs)
+		case notification.NotifyGithubCheck != nil:
+			continue
 		}
 	}
 }
@@ -224,12 +240,16 @@ func validateCommandNotifications(path string, notifications CommandStepNotify, 
 	for i, notification := range notifications {
 		notificationPath := fmt.Sprintf("%s[%d]", path, i)
 		switch {
+		case notification.NotifySimple != nil:
+			continue
 		case notification.NotifyBasecamp != nil:
 			appendConditionalError(notificationPath+".if", notification.NotifyBasecamp.If, bkconditional.EntryPointStepNotification, errs)
-		case notification.NotifyGithubCommitStatus != nil:
-			appendConditionalError(notificationPath+".if", notification.NotifyGithubCommitStatus.If, bkconditional.EntryPointStepNotification, errs)
 		case notification.NotifySlack != nil:
 			appendConditionalError(notificationPath+".if", notification.NotifySlack.If, bkconditional.EntryPointStepNotification, errs)
+		case notification.NotifyGithubCommitStatus != nil:
+			appendConditionalError(notificationPath+".if", notification.NotifyGithubCommitStatus.If, bkconditional.EntryPointStepNotification, errs)
+		case notification.NotifyGithubCheck != nil:
+			continue
 		}
 	}
 }
