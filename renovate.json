@@ -1,8 +1,20 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    ":disableDependencyDashboard",
+    ":semanticCommits",
+    ":automergeMinor",
+    "schedule:nonOfficeHours"
   ],
+  "minimumReleaseAge": "3 days",
+  "automerge": true,
+  "automergeType": "pr",
+  "platformAutomerge": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "minimumReleaseAge": "0"
+  },
   "packageRules": [
     {
       "description": "Group Nx monorepo packages",
