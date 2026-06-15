@@ -85,3 +85,17 @@ class TestPipelineClass(TestRunner):
                 ]
             },
         )
+
+    def test_set_priority(self):
+        pipeline = Pipeline()
+        pipeline.priority = 100
+        pipeline.add_step({"command": "run.sh"})
+        self.validator.check_result(
+            pipeline, {"steps": [{"command": "run.sh"}], "priority": 100}
+        )
+
+    def test_from_dict_with_priority(self):
+        pipeline = Pipeline.from_dict({"steps": [{"command": "run.sh"}], "priority": 50})
+        self.validator.check_result(
+            pipeline, {"steps": [{"command": "run.sh"}], "priority": 50}
+        )

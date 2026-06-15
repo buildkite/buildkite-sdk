@@ -75,4 +75,13 @@ func TestPipeline(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, `{"steps":[{"command":"build.sh"}]}`, result)
 	})
+
+	t.Run("Priority", func(t *testing.T) {
+		pipeline := buildkite.NewPipeline()
+		pipeline.SetPriority(100)
+
+		result, err := pipeline.ToJSON()
+		assert.NoError(t, err)
+		assert.Equal(t, `{"priority":100}`, result)
+	})
 }

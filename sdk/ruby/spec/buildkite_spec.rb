@@ -30,4 +30,43 @@ RSpec.describe Buildkite do
     expected = JSON.pretty_generate(json, indent: "    ")
     expect(pipeline.to_json).to eq(expected)
   end
+
+  it "sets pipeline-level priority" do
+    pipeline = Buildkite::Pipeline.new
+    pipeline.set_priority(100)
+    pipeline.add_step(label: "some-label", command: "echo 'Hello, World!'")
+
+    json = {
+      steps: [{ label: "some-label", "command": "echo 'Hello, World!'" }],
+      priority: 100
+    }
+    expected = JSON.pretty_generate(json, indent: "    ")
+    expect(pipeline.to_json).to eq(expected)
+  end
+
+  it "sets a negative pipeline-level priority" do
+    pipeline = Buildkite::Pipeline.new
+    pipeline.set_priority(-10)
+    pipeline.add_step(label: "some-label", command: "echo 'Hello, World!'")
+
+    json = {
+      steps: [{ label: "some-label", "command": "echo 'Hello, World!'" }],
+      priority: -10
+    }
+    expected = JSON.pretty_generate(json, indent: "    ")
+    expect(pipeline.to_json).to eq(expected)
+  end
+
+  it "sets a large pipeline-level priority" do
+    pipeline = Buildkite::Pipeline.new
+    pipeline.set_priority(99999)
+    pipeline.add_step(label: "some-label", command: "echo 'Hello, World!'")
+
+    json = {
+      steps: [{ label: "some-label", "command": "echo 'Hello, World!'" }],
+      priority: 99999
+    }
+    expected = JSON.pretty_generate(json, indent: "    ")
+    expect(pipeline.to_json).to eq(expected)
+  end
 end
