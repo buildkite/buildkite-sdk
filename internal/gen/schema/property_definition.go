@@ -24,10 +24,12 @@ func (p PropertyReferenceString) IsNested() bool {
 }
 
 type PropertyDefinitionItems struct {
-	Type  string                  `json:"type,omitempty"`
-	AnyOf []PropertyDefinition    `json:"anyOf,omitempty"`
-	OneOf []PropertyDefinition    `json:"oneOf,omitempty"`
-	Ref   PropertyReferenceString `json:"$ref,omitempty"`
+	Type       string                        `json:"type,omitempty"`
+	AnyOf      []PropertyDefinition          `json:"anyOf,omitempty"`
+	OneOf      []PropertyDefinition          `json:"oneOf,omitempty"`
+	Ref        PropertyReferenceString       `json:"$ref,omitempty"`
+	Properties map[string]PropertyDefinition `json:"properties,omitempty"`
+	Required   []string                      `json:"required,omitempty"`
 }
 
 type PropertyAdditionalProperties struct {

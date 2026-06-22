@@ -76,9 +76,32 @@ func (o Object) Go() (string, error) {
 		isPointer := true
 
 		// Array
-		if _, ok := val.(Array); ok {
+		if array, ok := val.(Array); ok {
 			isPointer = false
 			structKey = utils.DashCaseToTitleCase(name)
+
+			// Array of inline objects (e.g. items defined directly in-place
+			// rather than via a $ref) have no separate named struct written
+			// out elsewhere, so write one here instead of referencing a name
+			// that was never defined.
+			if obj, ok := array.Type.(Object); ok && len(obj.Properties.Keys()) > 0 {
+				nestedObjName := NewPropertyName(fmt.Sprintf("%s%s", o.Name.ToTitleCase(), structKey))
+				nestedObj := Object{
+					Name:                 nestedObjName,
+					Description:          obj.Description,
+					Properties:           obj.Properties,
+					AdditionalProperties: obj.AdditionalProperties,
+					Required:             obj.Required,
+				}
+
+				objLines, err := nestedObj.Go()
+				if err != nil {
+					return "", fmt.Errorf("generating nested array object for [%s]: %v", o.Name.Value, err)
+				}
+
+				structType = fmt.Sprintf("[]%s", nestedObjName.ToTitleCase())
+				codeBlock.AddLines(objLines)
+			}
 		}
 
 		// Object
@@ -199,6 +222,67 @@ func (o Object) TypeScriptInterfaceType() string {
 	return o.Name.ToTitleCase()
 }
 
+// writeNestedPythonClasses returns the Python class/TypedDict source for a
+// nested object, recursing into any of its properties that are themselves
+// objects (or arrays of objects) so that deeply nested structures get every
+// class they reference actually written out, not just referenced by name.
+func writeNestedPythonClasses(structType, description string, properties *utils.OrderedMap[Value], required []string) (string, error) {
+	var sb strings.Builder
+
+	nestedPyClass := utils.NewPythonClass(structType, description)
+	nestedPyTypeDict := utils.NewPythonClass(fmt.Sprintf("%sArgs", structType), description)
+
+	for _, propName := range properties.Keys() {
+		nestedVal, _ := properties.Get(propName)
+		nestedType := nestedVal.PythonClassType()
+		nestedRequired := slices.Contains(required, propName)
+		nestedDictType := nestedType
+
+		if obj, ok := nestedVal.(Object); ok {
+			if len(obj.Properties.Keys()) > 0 {
+				nestedDictType = fmt.Sprintf("%sArgs", nestedType)
+				nested, err := writeNestedPythonClasses(obj.PythonClassType(), obj.Description, obj.Properties, obj.Required)
+				if err != nil {
+					return "", err
+				}
+				sb.WriteString(nested)
+			}
+		}
+
+		if array, ok := nestedVal.(Array); ok {
+			if obj, ok := array.Type.(Object); ok {
+				if len(obj.Properties.Keys()) > 0 {
+					nestedDictType = fmt.Sprintf("List[%sArgs]", obj.PythonClassType())
+					nested, err := writeNestedPythonClasses(obj.PythonClassType(), obj.Description, obj.Properties, obj.Required)
+					if err != nil {
+						return "", err
+					}
+					sb.WriteString(nested)
+				}
+			}
+		}
+
+		nestedPyTypeDict.AddItem(propName, nestedDictType, "", "", nestedVal.GetDescription(), nestedRequired, false)
+		nestedPyClass.AddItem(propName, nestedType, "", "", nestedVal.GetDescription(), nestedRequired, false)
+	}
+
+	nestedObjectClass, err := nestedPyClass.Write()
+	if err != nil {
+		return "", fmt.Errorf("writing nested class [%s]: %v", structType, err)
+	}
+	sb.WriteString(nestedObjectClass)
+	sb.WriteString("\n")
+
+	nestedObjectTypedDict, err := nestedPyTypeDict.WriteTypedDict()
+	if err != nil {
+		return "", fmt.Errorf("writing nested class [%s]: %v", structType, err)
+	}
+	sb.WriteString(nestedObjectTypedDict)
+	sb.WriteString("\n")
+
+	return sb.String(), nil
+}
+
 // Python
 func (o Object) Python() (string, error) {
 	keys := o.Properties.Keys()
@@ -263,35 +347,11 @@ func (o Object) Python() (string, error) {
 
 			dictStructType = fmt.Sprintf("%sArgs", dictStructType)
 			constructorName = structType
-			nestedPyClass := utils.NewPythonClass(structType, description)
-			nestedPyTypeDict := utils.NewPythonClass(fmt.Sprintf("%sArgs", structType), description)
-			for _, propName := range keys {
-				nestedVal, _ := obj.Properties.Get(propName)
-				nestedType := nestedVal.PythonClassType()
-				nestedRequired := slices.Contains(obj.Required, propName)
-
-				nestedDictType := nestedType
-				if obj, ok := nestedVal.(Object); ok {
-					if len(obj.Properties.Keys()) > 0 {
-						nestedDictType = fmt.Sprintf("%sArgs", nestedType)
-					}
-				}
-
-				nestedPyTypeDict.AddItem(propName, nestedDictType, "", "", nestedVal.GetDescription(), nestedRequired, false)
-				nestedPyClass.AddItem(propName, nestedType, "", "", nestedVal.GetDescription(), nestedRequired, false)
-			}
-
-			nestedObjectClass, err := nestedPyClass.Write()
+			nested, err := writeNestedPythonClasses(structType, description, obj.Properties, obj.Required)
 			if err != nil {
 				return "", fmt.Errorf("writing nested class [%s]: %v", o.Name.Value, err)
 			}
-			codeBlock.AddLines(nestedObjectClass)
-
-			nestedObjectTypedDict, err := nestedPyTypeDict.WriteTypedDict()
-			if err != nil {
-				return "", fmt.Errorf("writing nested class [%s]: %v", o.Name.Value, err)
-			}
-			codeBlock.AddLines(nestedObjectTypedDict)
+			codeBlock.AddLines(nested)
 		}
 
 		// PropertyReference

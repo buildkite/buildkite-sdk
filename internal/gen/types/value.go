@@ -334,6 +334,24 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 				Description: property.Description,
 				Type:        Number{},
 			}, dependencies, nil
+		case "object":
+			itemDefinition := schema.PropertyDefinition{
+				Type:       "object",
+				Properties: property.Items.Properties,
+				Required:   property.Items.Required,
+			}
+
+			itemType, itemDependencies, err := p.PropertyDefinitionToValue(propertyName.Value, itemDefinition)
+			if err != nil {
+				return nil, dependencies, fmt.Errorf("converting array item object for [%s]: %v", propertyName.Value, err)
+			}
+
+			dependencies = append(dependencies, itemDependencies...)
+			return Array{
+				Name:        propertyName,
+				Description: property.Description,
+				Type:        itemType,
+			}, dependencies, nil
 		default:
 			panic(fmt.Sprintf("unsupported array type [%s]", propertyName.Value))
 		}
