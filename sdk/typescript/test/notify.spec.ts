@@ -88,7 +88,7 @@ describe("Notify", () => {
 
             it("Object", () => {
                 validatePipeline({
-                    notify: [{ github_check: { foo: "bar" } }],
+                    notify: [{ github_check: { name: "my-check" } }],
                 });
             });
         });
@@ -172,7 +172,7 @@ describe("Notify", () => {
             it("Object", () => {
                 validatePipeline({
                     command: "blah.sh",
-                    notify: [{ github_check: { foo: "bar" } }],
+                    notify: [{ github_check: { name: "my-check" } }],
                 });
             });
         });
