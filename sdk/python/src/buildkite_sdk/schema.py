@@ -346,14 +346,14 @@ class NotifyBasecamp(BaseModel):
 NotifySlackObjectArgs = TypedDict(
     "NotifySlackObjectArgs",
     {
-        "channels": NotRequired["List[str]"],
+        "channels": "List[str]",
         "message": NotRequired["str"],
     },
 )
 
 
 class NotifySlackObject(BaseModel):
-    channels: Optional[List[str]] = None
+    channels: List[str]
     message: Optional[str] = None
 
     @classmethod
@@ -481,20 +481,134 @@ class NotifyGithubCommitStatus(BaseModel):
         return cls.model_validate({**data, **step_if})
 
 
+class NotifyGithubCheckGithubCheckOutputAnnotations(BaseModel):
+    # The level of the annotation
+    annotation_level: Literal["notice", "warning", "failure"]
+    # The end column of the annotation. Only valid when start_line and end_line are equal
+    end_column: Optional[int] = None
+    # The end line of the annotation
+    end_line: int
+    # The message for the annotation
+    message: str
+    # The path of the file to add an annotation to, relative to the repository root
+    path: str
+    # Additional details for the annotation, displayed alongside the message
+    raw_details: Optional[str] = None
+    # The start column of the annotation. Only valid when start_line and end_line are equal
+    start_column: Optional[int] = None
+    # The start line of the annotation
+    start_line: int
+    # The title for the annotation
+    title: Optional[str] = None
+
+    @classmethod
+    def from_dict(
+        cls, data: NotifyGithubCheckGithubCheckOutputAnnotationsArgs
+    ) -> NotifyGithubCheckGithubCheckOutputAnnotations:
+        return cls.model_validate({**data})
+
+
+NotifyGithubCheckGithubCheckOutputAnnotationsArgs = TypedDict(
+    "NotifyGithubCheckGithubCheckOutputAnnotationsArgs",
+    {
+        # The level of the annotation
+        "annotation_level": Literal["notice", "warning", "failure"],
+        # The end column of the annotation. Only valid when start_line and end_line are equal
+        "end_column": NotRequired["int"],
+        # The end line of the annotation
+        "end_line": "int",
+        # The message for the annotation
+        "message": "str",
+        # The path of the file to add an annotation to, relative to the repository root
+        "path": "str",
+        # Additional details for the annotation, displayed alongside the message
+        "raw_details": NotRequired["str"],
+        # The start column of the annotation. Only valid when start_line and end_line are equal
+        "start_column": NotRequired["int"],
+        # The start line of the annotation
+        "start_line": "int",
+        # The title for the annotation
+        "title": NotRequired["str"],
+    },
+)
+
+
+class NotifyGithubCheckGithubCheckOutput(BaseModel):
+    annotations: Optional[List[NotifyGithubCheckGithubCheckOutputAnnotations]] = None
+    # The summary of the GitHub check's output
+    summary: Optional[str] = None
+    # The details of the GitHub check's output. Supports Markdown
+    text: Optional[str] = None
+    # The title of the GitHub check's output
+    title: Optional[str] = None
+
+    @classmethod
+    def from_dict(
+        cls, data: NotifyGithubCheckGithubCheckOutputArgs
+    ) -> NotifyGithubCheckGithubCheckOutput:
+        return cls.model_validate({**data})
+
+
+NotifyGithubCheckGithubCheckOutputArgs = TypedDict(
+    "NotifyGithubCheckGithubCheckOutputArgs",
+    {
+        "annotations": NotRequired[
+            "List[NotifyGithubCheckGithubCheckOutputAnnotationsArgs]"
+        ],
+        # The summary of the GitHub check's output
+        "summary": NotRequired["str"],
+        # The details of the GitHub check's output. Supports Markdown
+        "text": NotRequired["str"],
+        # The title of the GitHub check's output
+        "title": NotRequired["str"],
+    },
+)
+
+
+class NotifyGithubCheckGithubCheck(BaseModel):
+    # The name of the GitHub check
+    name: Optional[str] = None
+    output: Optional[NotifyGithubCheckGithubCheckOutput] = None
+
+    @classmethod
+    def from_dict(
+        cls, data: NotifyGithubCheckGithubCheckArgs
+    ) -> NotifyGithubCheckGithubCheck:
+        return cls.model_validate({**data})
+
+
+NotifyGithubCheckGithubCheckArgs = TypedDict(
+    "NotifyGithubCheckGithubCheckArgs",
+    {
+        # The name of the GitHub check
+        "name": NotRequired["str"],
+        "output": NotRequired["NotifyGithubCheckGithubCheckOutputArgs"],
+    },
+)
+
 NotifyGithubCheckArgs = TypedDict(
     "NotifyGithubCheckArgs",
     {
-        "github_check": NotRequired["Dict[str, Any]"],
+        "github_check": NotRequired["NotifyGithubCheckGithubCheckArgs"],
+        # A boolean expression that omits the step when false
+        "if": NotRequired["If"],
     },
 )
 
 
 class NotifyGithubCheck(BaseModel):
-    github_check: Optional[Dict[str, Any]] = None
+    github_check: Optional[NotifyGithubCheckGithubCheck] = None
+    # A boolean expression that omits the step when false
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
 
     @classmethod
     def from_dict(cls, data: NotifyGithubCheckArgs) -> NotifyGithubCheck:
-        return cls.model_validate({**data})
+        step_if = {"step_if": data["if"]} if "if" in data else {}
+        return cls.model_validate({**data, **step_if})
 
 
 # Array of notification options for this step

@@ -42,6 +42,10 @@ func (p *Pipeline) SetSecrets(secrets *Secrets) {
 	p.Secrets = secrets
 }
 
+func (p *Pipeline) SetPriority(priority int) {
+	p.Priority = Value(priority)
+}
+
 func (p *Pipeline) AddAgent(key string, value any) {
 	agents := map[string]interface{}{}
 	if p.Agents != nil {

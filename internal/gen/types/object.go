@@ -83,8 +83,9 @@ func (o Object) Go() (string, error) {
 			// Array of inline objects (e.g. items defined directly in-place
 			// rather than via a $ref) have no separate named struct written
 			// out elsewhere, so write one here instead of referencing a name
-			// that was never defined.
-			if obj, ok := array.Type.(Object); ok && len(obj.Properties.Keys()) > 0 {
+			// that was never defined. $ref'd arrays already have their own
+			// named type written elsewhere, so leave those alone.
+			if obj, ok := array.Type.(Object); ok && !array.IsReference() && len(obj.Properties.Keys()) > 0 {
 				nestedObjName := NewPropertyName(fmt.Sprintf("%s%s", o.Name.ToTitleCase(), structKey))
 				nestedObj := Object{
 					Name:                 nestedObjName,
@@ -249,7 +250,7 @@ func writeNestedPythonClasses(structType, description string, properties *utils.
 			}
 		}
 
-		if array, ok := nestedVal.(Array); ok {
+		if array, ok := nestedVal.(Array); ok && !array.IsReference() {
 			if obj, ok := array.Type.(Object); ok {
 				if len(obj.Properties.Keys()) > 0 {
 					nestedDictType = fmt.Sprintf("List[%sArgs]", obj.PythonClassType())

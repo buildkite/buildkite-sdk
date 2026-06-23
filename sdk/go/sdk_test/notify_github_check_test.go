@@ -7,9 +7,11 @@ import (
 )
 
 func TestNotifyGithubCheck(t *testing.T) {
-	githubCheck := map[string]interface{}{"foo": "bar"}
+	name := "my-check"
 	val := buildkite.NotifyGithubCheck{
-		GithubCheck: &githubCheck,
+		GithubCheck: &buildkite.NotifyGithubCheckGithubCheck{
+			Name: &name,
+		},
 	}
-	CheckResult(t, val, `{"github_check":{"foo":"bar"}}`)
+	CheckResult(t, val, `{"github_check":{"name":"my-check"}}`)
 }

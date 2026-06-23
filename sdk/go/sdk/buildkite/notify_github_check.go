@@ -3,7 +3,51 @@
 
 package buildkite
 
-type NotifyGithubCheckGithubCheck = map[string]interface{}
+type NotifyGithubCheckGithubCheckOutputAnnotationsAnnotationLevel string
+
+// The level of the annotation
+var NotifyGithubCheckGithubCheckOutputAnnotationsAnnotationLevelValues = map[string]NotifyGithubCheckGithubCheckOutputAnnotationsAnnotationLevel{
+	"notice":  "notice",
+	"warning": "warning",
+	"failure": "failure",
+}
+
+type NotifyGithubCheckGithubCheckOutputAnnotations struct {
+	// The level of the annotation
+	AnnotationLevel *NotifyGithubCheckGithubCheckOutputAnnotationsAnnotationLevel `json:"annotation_level,omitempty"`
+	// The end column of the annotation. Only valid when start_line and end_line are equal
+	EndColumn *int `json:"end_column,omitempty"`
+	// The end line of the annotation
+	EndLine *int `json:"end_line,omitempty"`
+	// The message for the annotation
+	Message *string `json:"message,omitempty"`
+	// The path of the file to add an annotation to, relative to the repository root
+	Path *string `json:"path,omitempty"`
+	// Additional details for the annotation, displayed alongside the message
+	RawDetails *string `json:"raw_details,omitempty"`
+	// The start column of the annotation. Only valid when start_line and end_line are equal
+	StartColumn *int `json:"start_column,omitempty"`
+	// The start line of the annotation
+	StartLine *int `json:"start_line,omitempty"`
+	// The title for the annotation
+	Title *string `json:"title,omitempty"`
+}
+type NotifyGithubCheckGithubCheckOutput struct {
+	Annotations []NotifyGithubCheckGithubCheckOutputAnnotations `json:"annotations,omitempty"`
+	// The summary of the GitHub check's output
+	Summary *string `json:"summary,omitempty"`
+	// The details of the GitHub check's output. Supports Markdown
+	Text *string `json:"text,omitempty"`
+	// The title of the GitHub check's output
+	Title *string `json:"title,omitempty"`
+}
+type NotifyGithubCheckGithubCheck struct {
+	// The name of the GitHub check
+	Name   *string                             `json:"name,omitempty"`
+	Output *NotifyGithubCheckGithubCheckOutput `json:"output,omitempty"`
+}
 type NotifyGithubCheck struct {
 	GithubCheck *NotifyGithubCheckGithubCheck `json:"github_check,omitempty"`
+	// A boolean expression that omits the step when false
+	If *string `json:"if,omitempty"`
 }

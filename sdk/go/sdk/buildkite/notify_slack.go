@@ -10,7 +10,8 @@ type NotifySlackSlackValues interface {
 }
 type NotifySlackSlack struct {
 	NotifySlackObject *NotifySlackObject
-	String            *string
+	// A Slack channel as `#channel`, `team#channel`, `@user`, `team@user`, or a Slack ID. Must not be empty or contain whitespace.
+	String *string
 }
 
 func (e NotifySlackSlack) MarshalJSON() ([]byte, error) {

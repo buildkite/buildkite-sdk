@@ -112,16 +112,18 @@ func TestBuildNotify(t *testing.T) {
 	})
 
 	t.Run("NotifyGithubCheck", func(t *testing.T) {
-		value := map[string]interface{}{"foo": "bar"}
+		name := "my-check"
 		val := testBuildNotify{
 			Notify: []buildkite.BuildNotifyItem{
 				{
 					NotifyGithubCheck: &buildkite.NotifyGithubCheck{
-						GithubCheck: &value,
+						GithubCheck: &buildkite.NotifyGithubCheckGithubCheck{
+							Name: &name,
+						},
 					},
 				},
 			},
 		}
-		CheckResult(t, val, `{"notify":[{"github_check":{"foo":"bar"}}]}`)
+		CheckResult(t, val, `{"notify":[{"github_check":{"name":"my-check"}}]}`)
 	})
 }
