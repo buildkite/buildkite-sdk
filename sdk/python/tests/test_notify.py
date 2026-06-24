@@ -8,6 +8,8 @@ from buildkite_sdk import (
     NotifyPagerduty,
     NotifyGithubCommitStatus,
     NotifyGithubCommitStatusGithubCommitStatus,
+    NotifyGithubCheck,
+    NotifyGithubCheckGithubCheck,
     CommandStep,
     CommandStepArgs,
 )
@@ -207,6 +209,28 @@ class TestPipelineNotifyClass(TestRunner):
     def test_github_check_string(self):
         pipeline = Pipeline(notify=["github_check"])
         self.validator.check_result(pipeline, {"steps": [], "notify": ["github_check"]})
+
+    def test_github_check_if(self):
+        pipeline = Pipeline(
+            notify=[
+                NotifyGithubCheck(
+                    step_if="build.state == 'failed",
+                    github_check=NotifyGithubCheckGithubCheck(name="my-check"),
+                )
+            ]
+        )
+        self.validator.check_result(
+            pipeline,
+            {
+                "steps": [],
+                "notify": [
+                    {
+                        "if": "build.state == 'failed",
+                        "github_check": {"name": "my-check"},
+                    }
+                ],
+            },
+        )
 
     def test_github_commit_status_string(self):
         pipeline = Pipeline(notify=["github_commit_status"])
@@ -465,6 +489,30 @@ class TestPipelineNotifyDict(TestRunner):
             },
         )
 
+    def test_github_check_if(self):
+        pipeline = Pipeline(
+            notify=[
+                NotifyGithubCheck.from_dict(
+                    {
+                        "if": "build.state == 'failed",
+                        "github_check": {"name": "my-check"},
+                    }
+                )
+            ]
+        )
+        self.validator.check_result(
+            pipeline,
+            {
+                "steps": [],
+                "notify": [
+                    {
+                        "if": "build.state == 'failed",
+                        "github_check": {"name": "my-check"},
+                    }
+                ],
+            },
+        )
+
     def test_github_commit_status(self):
         pipeline = Pipeline(
             notify=[
@@ -631,6 +679,31 @@ class TestCommandNotifyClass(TestRunner):
         )
         self.validator.check_result(pipeline, {"steps": [expected]})
 
+    def test_github_check_if(self):
+        expected: CommandStepArgs = {
+            "command": "bash.sh",
+            "notify": [
+                {
+                    "github_check": {"name": "my-check"},
+                    "if": "build.state == 'failed'",
+                }
+            ],
+        }
+        pipeline = Pipeline(
+            steps=[
+                CommandStep(
+                    command="bash.sh",
+                    notify=[
+                        NotifyGithubCheck(
+                            step_if="build.state == 'failed'",
+                            github_check=NotifyGithubCheckGithubCheck(name="my-check"),
+                        )
+                    ],
+                )
+            ]
+        )
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
     def test_github_commit_status_string(self):
         expected: CommandStepArgs = {
             "command": "bash.sh",
@@ -752,6 +825,19 @@ class TestCommandNotifyDict(TestRunner):
 
     def test_github_check(self):
         expected: CommandStepArgs = {"command": "bash.sh", "notify": ["github_check"]}
+        pipeline = Pipeline(steps=[CommandStep.from_dict(expected)])
+        self.validator.check_result(pipeline, {"steps": [expected]})
+
+    def test_github_check_if(self):
+        expected: CommandStepArgs = {
+            "command": "bash.sh",
+            "notify": [
+                {
+                    "github_check": {"name": "my-check"},
+                    "if": "build.state == 'failed'",
+                }
+            ],
+        }
         pipeline = Pipeline(steps=[CommandStep.from_dict(expected)])
         self.validator.check_result(pipeline, {"steps": [expected]})
 

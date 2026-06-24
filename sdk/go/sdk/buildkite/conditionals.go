@@ -231,7 +231,7 @@ func validateBuildNotifications(path string, notifications BuildNotify, entryPoi
 		case notification.NotifyGithubCommitStatus != nil:
 			appendConditionalError(notificationPath+".if", notification.NotifyGithubCommitStatus.If, entryPoint, errs)
 		case notification.NotifyGithubCheck != nil:
-			continue
+			appendConditionalError(notificationPath+".if", notification.NotifyGithubCheck.If, entryPoint, errs)
 		}
 	}
 }
@@ -249,7 +249,7 @@ func validateCommandNotifications(path string, notifications CommandStepNotify, 
 		case notification.NotifyGithubCommitStatus != nil:
 			appendConditionalError(notificationPath+".if", notification.NotifyGithubCommitStatus.If, bkconditional.EntryPointStepNotification, errs)
 		case notification.NotifyGithubCheck != nil:
-			continue
+			appendConditionalError(notificationPath+".if", notification.NotifyGithubCheck.If, bkconditional.EntryPointStepNotification, errs)
 		}
 	}
 }

@@ -151,6 +151,50 @@ func TestValidateConditionals(t *testing.T) {
 		assert.NotContains(t, err.Error(), `steps[0].if`)
 	})
 
+	t.Run("CatchesInvalidGithubCheckConditional", func(t *testing.T) {
+		name := "my-check"
+		pipeline := buildkite.Pipeline{
+			Notify: &buildkite.BuildNotify{
+				{
+					NotifyGithubCheck: &buildkite.NotifyGithubCheck{
+						GithubCheck: &buildkite.NotifyGithubCheckGithubCheck{
+							Name: &name,
+						},
+						If: buildkite.Value(`build.branch == `),
+					},
+				},
+			},
+		}
+
+		err := buildkite.ValidateConditionals(pipeline)
+		require.Error(t, err)
+		assert.ErrorContains(t, err, "notify[0].if")
+	})
+
+	t.Run("ValidatesValidGithubCheckConditional", func(t *testing.T) {
+		name := "my-check"
+		pipeline := buildkite.Pipeline{
+			Steps: &buildkite.PipelineSteps{
+				{
+					CommandStep: &buildkite.CommandStep{
+						Notify: &buildkite.CommandStepNotify{
+							{
+								NotifyGithubCheck: &buildkite.NotifyGithubCheck{
+									GithubCheck: &buildkite.NotifyGithubCheckGithubCheck{
+										Name: &name,
+									},
+									If: buildkite.Value(`build.branch == "main"`),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		require.NoError(t, buildkite.ValidateConditionals(pipeline))
+	})
+
 	t.Run("MatchesSerializedNotificationArmOrder", func(t *testing.T) {
 		pipeline := buildkite.Pipeline{
 			Notify: &buildkite.BuildNotify{

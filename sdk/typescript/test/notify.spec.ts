@@ -91,6 +91,17 @@ describe("Notify", () => {
                     notify: [{ github_check: { name: "my-check" } }],
                 });
             });
+
+            it("Object with if", () => {
+                validatePipeline({
+                    notify: [
+                        {
+                            github_check: { name: "my-check" },
+                            if: "build.state == 'failed'",
+                        },
+                    ],
+                });
+            });
         });
 
         describe("GithubCommitStatus", () => {
@@ -173,6 +184,18 @@ describe("Notify", () => {
                 validatePipeline({
                     command: "blah.sh",
                     notify: [{ github_check: { name: "my-check" } }],
+                });
+            });
+
+            it("Object with if", () => {
+                validatePipeline({
+                    command: "blah.sh",
+                    notify: [
+                        {
+                            github_check: { name: "my-check" },
+                            if: "build.state == 'failed'",
+                        },
+                    ],
                 });
             });
         });
