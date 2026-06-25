@@ -619,7 +619,68 @@ export interface NotifyEmail {
 }
 
 export interface NotifyGithubCheck {
-    github_check?: Record<string, any>;
+    github_check?: {
+        /**
+         * The name of the GitHub check
+         */
+        name?: string;
+        output?: {
+            annotations?: {
+                /**
+                 * The level of the annotation
+                 */
+                annotation_level: "notice" | "warning" | "failure";
+                /**
+                 * The end column of the annotation. Only valid when start_line and end_line are equal
+                 */
+                end_column?: number;
+                /**
+                 * The end line of the annotation
+                 */
+                end_line: number;
+                /**
+                 * The message for the annotation
+                 */
+                message: string;
+                /**
+                 * The path of the file to add an annotation to, relative to the repository root
+                 */
+                path: string;
+                /**
+                 * Additional details for the annotation, displayed alongside the message
+                 */
+                raw_details?: string;
+                /**
+                 * The start column of the annotation. Only valid when start_line and end_line are equal
+                 */
+                start_column?: number;
+                /**
+                 * The start line of the annotation
+                 */
+                start_line: number;
+                /**
+                 * The title for the annotation
+                 */
+                title?: string;
+            }[];
+            /**
+             * The summary of the GitHub check's output
+             */
+            summary?: string;
+            /**
+             * The details of the GitHub check's output. Supports Markdown
+             */
+            text?: string;
+            /**
+             * The title of the GitHub check's output
+             */
+            title?: string;
+        };
+    };
+    /**
+     * A boolean expression that omits the step when false
+     */
+    if?: string;
 }
 
 export interface NotifyGithubCommitStatus {
@@ -654,7 +715,7 @@ export interface NotifySlack {
 }
 
 export interface NotifySlackObject {
-    channels?: string[];
+    channels: string[];
     message?: string;
 }
 

@@ -121,13 +121,27 @@ func (a Array) TypeScriptInterfaceType() string {
 		return fmt.Sprintf("%s[]", a.Type.GoStructType())
 	}
 
-	switch a.Type.(type) {
+	switch t := a.Type.(type) {
 	case String:
 		return "string[]"
 	case Boolean:
 		return "boolean[]"
 	case Number:
 		return "number[]"
+	case Object:
+		// Inline object item types (e.g. an array of objects defined
+		// directly in-place, rather than via a $ref) have no separate
+		// named type written out elsewhere, so render the object
+		// inline instead of assuming a name-only reference exists.
+		nested := Object{
+			Name:                 t.Name,
+			Description:          t.Description,
+			Properties:           t.Properties,
+			AdditionalProperties: t.AdditionalProperties,
+			Required:             t.Required,
+			IsNested:             true,
+		}
+		return fmt.Sprintf("(%s)[]", nested.TypeScript())
 	default:
 		return fmt.Sprintf("%s[]", a.Name.ToTitleCase())
 	}

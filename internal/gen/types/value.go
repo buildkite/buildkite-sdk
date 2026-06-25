@@ -42,6 +42,10 @@ func (p *Pipeline) SetSecrets(secrets *Secrets) {
 	p.Secrets = secrets
 }
 
+func (p *Pipeline) SetPriority(priority int) {
+	p.Priority = Value(priority)
+}
+
 func (p *Pipeline) AddAgent(key string, value any) {
 	agents := map[string]interface{}{}
 	if p.Agents != nil {
@@ -333,6 +337,24 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 				Name:        propertyName,
 				Description: property.Description,
 				Type:        Number{},
+			}, dependencies, nil
+		case "object":
+			itemDefinition := schema.PropertyDefinition{
+				Type:       "object",
+				Properties: property.Items.Properties,
+				Required:   property.Items.Required,
+			}
+
+			itemType, itemDependencies, err := p.PropertyDefinitionToValue(propertyName.Value, itemDefinition)
+			if err != nil {
+				return nil, dependencies, fmt.Errorf("converting array item object for [%s]: %v", propertyName.Value, err)
+			}
+
+			dependencies = append(dependencies, itemDependencies...)
+			return Array{
+				Name:        propertyName,
+				Description: property.Description,
+				Type:        itemType,
 			}, dependencies, nil
 		default:
 			panic(fmt.Sprintf("unsupported array type [%s]", propertyName.Value))

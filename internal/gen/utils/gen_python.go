@@ -67,10 +67,10 @@ var pythonClassTemplate = `{{if ne "" .Description}}{{printf "# %s\n" .Descripti
 
     @classmethod
     def from_dict(cls, data: {{.Name}}Args) -> {{.Name}}:
-        step_if = {'step_if': data['if']} if 'if' in data else {}
-        step_async = {'step_async': data['async']} if 'async' in data else {}
-        matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})`
+        {{if .HasIf}}step_if = {'step_if': data['if']} if 'if' in data else {}
+        {{end}}{{if .HasAsync}}step_async = {'step_async': data['async']} if 'async' in data else {}
+        {{end}}{{if .HasWith}}matrix_with = {'matrix_with': data['with']} if 'with' in data else {}
+        {{end}}return cls.model_validate({**data{{if .HasIf}}, **step_if{{end}}{{if .HasAsync}}, **step_async{{end}}{{if .HasWith}}, **matrix_with{{end}}})`
 
 var pythonTypedDictTemplate = `{{if ne "" .Description}}{{printf "# %s\n" .Description}}{{end}}{{.Name}} = TypedDict('{{.Name}}',{
     {{ range .Items}}{{if ne "" .Description}}{{printf "# %s\n    " .Description}}{{end}}'{{.Name}}': {{if eq false .Required }}NotRequired[{{.Value}}]{{else}}{{.Value}}{{end}},
@@ -91,6 +91,27 @@ type PythonClass struct {
 	Name        string
 	Description string
 	Items       []PythonClassItem
+}
+
+func (p PythonClass) HasIf() bool {
+	return p.hasAlias("if")
+}
+
+func (p PythonClass) HasAsync() bool {
+	return p.hasAlias("async")
+}
+
+func (p PythonClass) HasWith() bool {
+	return p.hasAlias("with")
+}
+
+func (p PythonClass) hasAlias(alias string) bool {
+	for _, item := range p.Items {
+		if item.Alias == alias {
+			return true
+		}
+	}
+	return false
 }
 
 func (p *PythonClass) AddItem(name, value, constructorName, alias, description string, required, isObjectArray bool) {

@@ -78,10 +78,7 @@ class AutomaticRetry(BaseModel):
 
     @classmethod
     def from_dict(cls, data: AutomaticRetryArgs) -> AutomaticRetry:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 AutomaticRetryList = List[AutomaticRetry | AutomaticRetryArgs]
@@ -101,10 +98,7 @@ class DependsOnListObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: DependsOnListObjectArgs) -> DependsOnListObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 DependsOnList = List[str | DependsOnListObject | DependsOnListObjectArgs]
@@ -144,10 +138,7 @@ class TextField(BaseModel):
 
     @classmethod
     def from_dict(cls, data: TextFieldArgs) -> TextField:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 SelectFieldOptionArgs = TypedDict(
@@ -177,10 +168,7 @@ class SelectFieldOption(BaseModel):
 
     @classmethod
     def from_dict(cls, data: SelectFieldOptionArgs) -> SelectFieldOption:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 SelectFieldArgs = TypedDict(
@@ -220,10 +208,7 @@ class SelectField(BaseModel):
 
     @classmethod
     def from_dict(cls, data: SelectFieldArgs) -> SelectField:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 BlockStepArgs = TypedDict(
@@ -300,9 +285,7 @@ class BlockStep(BaseModel):
     @classmethod
     def from_dict(cls, data: BlockStepArgs) -> BlockStep:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 # Which branches will include this step in their builds
@@ -332,9 +315,7 @@ class NotifyEmail(BaseModel):
     @classmethod
     def from_dict(cls, data: NotifyEmailArgs) -> NotifyEmail:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 NotifyBasecampArgs = TypedDict(
@@ -359,30 +340,25 @@ class NotifyBasecamp(BaseModel):
     @classmethod
     def from_dict(cls, data: NotifyBasecampArgs) -> NotifyBasecamp:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 NotifySlackObjectArgs = TypedDict(
     "NotifySlackObjectArgs",
     {
-        "channels": NotRequired["List[str]"],
+        "channels": "List[str]",
         "message": NotRequired["str"],
     },
 )
 
 
 class NotifySlackObject(BaseModel):
-    channels: Optional[List[str]] = None
+    channels: List[str]
     message: Optional[str] = None
 
     @classmethod
     def from_dict(cls, data: NotifySlackObjectArgs) -> NotifySlackObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 NotifySlackArgs = TypedDict(
@@ -407,9 +383,7 @@ class NotifySlack(BaseModel):
     @classmethod
     def from_dict(cls, data: NotifySlackArgs) -> NotifySlack:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 NotifyWebhookArgs = TypedDict(
@@ -434,9 +408,7 @@ class NotifyWebhook(BaseModel):
     @classmethod
     def from_dict(cls, data: NotifyWebhookArgs) -> NotifyWebhook:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 NotifyPagerdutyArgs = TypedDict(
@@ -461,9 +433,7 @@ class NotifyPagerduty(BaseModel):
     @classmethod
     def from_dict(cls, data: NotifyPagerdutyArgs) -> NotifyPagerduty:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 class NotifyGithubCommitStatusGithubCommitStatus(BaseModel):
@@ -474,10 +444,7 @@ class NotifyGithubCommitStatusGithubCommitStatus(BaseModel):
     def from_dict(
         cls, data: NotifyGithubCommitStatusGithubCommitStatusArgs
     ) -> NotifyGithubCommitStatusGithubCommitStatus:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 NotifyGithubCommitStatusGithubCommitStatusArgs = TypedDict(
@@ -511,28 +478,137 @@ class NotifyGithubCommitStatus(BaseModel):
     @classmethod
     def from_dict(cls, data: NotifyGithubCommitStatusArgs) -> NotifyGithubCommitStatus:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
+
+class NotifyGithubCheckGithubCheckOutputAnnotations(BaseModel):
+    # The level of the annotation
+    annotation_level: Literal["notice", "warning", "failure"]
+    # The end column of the annotation. Only valid when start_line and end_line are equal
+    end_column: Optional[int] = None
+    # The end line of the annotation
+    end_line: int
+    # The message for the annotation
+    message: str
+    # The path of the file to add an annotation to, relative to the repository root
+    path: str
+    # Additional details for the annotation, displayed alongside the message
+    raw_details: Optional[str] = None
+    # The start column of the annotation. Only valid when start_line and end_line are equal
+    start_column: Optional[int] = None
+    # The start line of the annotation
+    start_line: int
+    # The title for the annotation
+    title: Optional[str] = None
+
+    @classmethod
+    def from_dict(
+        cls, data: NotifyGithubCheckGithubCheckOutputAnnotationsArgs
+    ) -> NotifyGithubCheckGithubCheckOutputAnnotations:
+        return cls.model_validate({**data})
+
+
+NotifyGithubCheckGithubCheckOutputAnnotationsArgs = TypedDict(
+    "NotifyGithubCheckGithubCheckOutputAnnotationsArgs",
+    {
+        # The level of the annotation
+        "annotation_level": Literal["notice", "warning", "failure"],
+        # The end column of the annotation. Only valid when start_line and end_line are equal
+        "end_column": NotRequired["int"],
+        # The end line of the annotation
+        "end_line": "int",
+        # The message for the annotation
+        "message": "str",
+        # The path of the file to add an annotation to, relative to the repository root
+        "path": "str",
+        # Additional details for the annotation, displayed alongside the message
+        "raw_details": NotRequired["str"],
+        # The start column of the annotation. Only valid when start_line and end_line are equal
+        "start_column": NotRequired["int"],
+        # The start line of the annotation
+        "start_line": "int",
+        # The title for the annotation
+        "title": NotRequired["str"],
+    },
+)
+
+
+class NotifyGithubCheckGithubCheckOutput(BaseModel):
+    annotations: Optional[List[NotifyGithubCheckGithubCheckOutputAnnotations]] = None
+    # The summary of the GitHub check's output
+    summary: Optional[str] = None
+    # The details of the GitHub check's output. Supports Markdown
+    text: Optional[str] = None
+    # The title of the GitHub check's output
+    title: Optional[str] = None
+
+    @classmethod
+    def from_dict(
+        cls, data: NotifyGithubCheckGithubCheckOutputArgs
+    ) -> NotifyGithubCheckGithubCheckOutput:
+        return cls.model_validate({**data})
+
+
+NotifyGithubCheckGithubCheckOutputArgs = TypedDict(
+    "NotifyGithubCheckGithubCheckOutputArgs",
+    {
+        "annotations": NotRequired[
+            "List[NotifyGithubCheckGithubCheckOutputAnnotationsArgs]"
+        ],
+        # The summary of the GitHub check's output
+        "summary": NotRequired["str"],
+        # The details of the GitHub check's output. Supports Markdown
+        "text": NotRequired["str"],
+        # The title of the GitHub check's output
+        "title": NotRequired["str"],
+    },
+)
+
+
+class NotifyGithubCheckGithubCheck(BaseModel):
+    # The name of the GitHub check
+    name: Optional[str] = None
+    output: Optional[NotifyGithubCheckGithubCheckOutput] = None
+
+    @classmethod
+    def from_dict(
+        cls, data: NotifyGithubCheckGithubCheckArgs
+    ) -> NotifyGithubCheckGithubCheck:
+        return cls.model_validate({**data})
+
+
+NotifyGithubCheckGithubCheckArgs = TypedDict(
+    "NotifyGithubCheckGithubCheckArgs",
+    {
+        # The name of the GitHub check
+        "name": NotRequired["str"],
+        "output": NotRequired["NotifyGithubCheckGithubCheckOutputArgs"],
+    },
+)
 
 NotifyGithubCheckArgs = TypedDict(
     "NotifyGithubCheckArgs",
     {
-        "github_check": NotRequired["Dict[str, Any]"],
+        "github_check": NotRequired["NotifyGithubCheckGithubCheckArgs"],
+        # A boolean expression that omits the step when false
+        "if": NotRequired["If"],
     },
 )
 
 
 class NotifyGithubCheck(BaseModel):
-    github_check: Optional[Dict[str, Any]] = None
+    github_check: Optional[NotifyGithubCheckGithubCheck] = None
+    # A boolean expression that omits the step when false
+    step_if: Optional[If] = Field(
+        validation_alias=AliasChoices("if", "step_if"),
+        serialization_alias="if",
+        default=None,
+    )
 
     @classmethod
     def from_dict(cls, data: NotifyGithubCheckArgs) -> NotifyGithubCheck:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 # Array of notification options for this step
@@ -571,10 +647,7 @@ class CacheObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: CacheObjectArgs) -> CacheObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 # The paths for the caches to be used in the step
@@ -612,10 +685,7 @@ class SoftFailObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: SoftFailObjectArgs) -> SoftFailObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 SoftFailList = List[SoftFailObject | SoftFailObjectArgs]
@@ -646,10 +716,8 @@ class MatrixAdjustments(BaseModel):
 
     @classmethod
     def from_dict(cls, data: MatrixAdjustmentsArgs) -> MatrixAdjustments:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
         matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **matrix_with})
 
 
 # Configuration for multi-dimension Build Matrix
@@ -671,10 +739,7 @@ class MatrixObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: MatrixObjectArgs) -> MatrixObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 CommandStepManualRetryObjectArgs = TypedDict(
@@ -702,10 +767,7 @@ class CommandStepManualRetryObject(BaseModel):
     def from_dict(
         cls, data: CommandStepManualRetryObjectArgs
     ) -> CommandStepManualRetryObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 # The conditions for retrying this step.
@@ -717,10 +779,7 @@ class CommandStepRetry(BaseModel):
 
     @classmethod
     def from_dict(cls, data: CommandStepRetryArgs) -> CommandStepRetry:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 # The conditions for retrying this step.
@@ -746,10 +805,7 @@ class CommandStepSignature(BaseModel):
 
     @classmethod
     def from_dict(cls, data: CommandStepSignatureArgs) -> CommandStepSignature:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 # The signature of the command step, generally injected by agents at pipeline upload
@@ -904,9 +960,7 @@ class CommandStep(BaseModel):
     @classmethod
     def from_dict(cls, data: CommandStepArgs) -> CommandStep:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 # Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
@@ -962,10 +1016,7 @@ class NestedBlockStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedBlockStepArgs) -> NestedBlockStep:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 # Pauses the execution of a build and waits on a user to unblock it
@@ -1045,9 +1096,7 @@ class InputStep(BaseModel):
     @classmethod
     def from_dict(cls, data: InputStepArgs) -> InputStep:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 NestedInputStepArgs = TypedDict(
@@ -1063,10 +1112,7 @@ class NestedInputStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedInputStepArgs) -> NestedInputStep:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 # Pauses the execution of a build and waits on a user to unblock it
@@ -1089,10 +1135,7 @@ class NestedCommandStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedCommandStepArgs) -> NestedCommandStep:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 WaitStepArgs = TypedDict(
@@ -1157,9 +1200,7 @@ class WaitStep(BaseModel):
     @classmethod
     def from_dict(cls, data: WaitStepArgs) -> WaitStep:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 NestedWaitStepArgs = TypedDict(
@@ -1177,10 +1218,7 @@ class NestedWaitStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedWaitStepArgs) -> NestedWaitStep:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 # Waits for previous steps to pass before continuing
@@ -1202,10 +1240,7 @@ class TriggerStepBuild(BaseModel):
 
     @classmethod
     def from_dict(cls, data: TriggerStepBuildArgs) -> TriggerStepBuild:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 # Properties of the build that will be created when the step is triggered
@@ -1307,8 +1342,7 @@ class TriggerStep(BaseModel):
     def from_dict(cls, data: TriggerStepArgs) -> TriggerStep:
         step_if = {"step_if": data["if"]} if "if" in data else {}
         step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if, **step_async})
 
 
 NestedTriggerStepArgs = TypedDict(
@@ -1324,10 +1358,7 @@ class NestedTriggerStep(BaseModel):
 
     @classmethod
     def from_dict(cls, data: NestedTriggerStepArgs) -> NestedTriggerStep:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 GroupStepArgs = TypedDict(
@@ -1398,9 +1429,7 @@ class GroupStep(BaseModel):
     @classmethod
     def from_dict(cls, data: GroupStepArgs) -> GroupStep:
         step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data, **step_if})
 
 
 # A list of steps
@@ -1452,10 +1481,7 @@ class IfChangedObject(BaseModel):
 
     @classmethod
     def from_dict(cls, data: IfChangedObjectArgs) -> IfChangedObject:
-        step_if = {"step_if": data["if"]} if "if" in data else {}
-        step_async = {"step_async": data["async"]} if "async" in data else {}
-        matrix_with = {"matrix_with": data["with"]} if "with" in data else {}
-        return cls.model_validate({**data, **step_if, **step_async, **matrix_with})
+        return cls.model_validate({**data})
 
 
 # Agent-applied attribute: A glob pattern that omits the step from a build if it does not match any files changed in the build. Can be a single pattern, list of patterns, or an object with include/exclude attributes.
