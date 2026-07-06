@@ -1,4 +1,4 @@
-# Build from ruby:latest, as it's Debian-based, and keeps us from having to build Ruby from source.
+# Build from ruby:latest, as it's Debian-based.
 FROM ruby:latest AS base
 
 RUN apt-get update && apt-get install -y \
@@ -15,6 +15,8 @@ ENV MISE_CONFIG_DIR="/mise"
 ENV MISE_CACHE_DIR="/mise/cache"
 ENV MISE_INSTALL_PATH="/usr/local/bin/mise"
 ENV PATH="/mise/shims:$PATH"
+# mise compiles Ruby from source by default; install precompiled binaries instead (for ruby@3.4 below).
+ENV MISE_RUBY_COMPILE="0"
 RUN curl https://mise.run | sh
 
 # Install Node.js, Python, and Go.
