@@ -186,8 +186,13 @@ func (p PipelineSchemaGenerator) GenerateCSharpPipelineSchema() (string, error) 
 			return "", fmt.Errorf("generating pipeline schema: %v", err)
 		}
 
+		ref := prop.Reference()
+		if ref == "" {
+			return "", fmt.Errorf("pipeline property [%s] has no resolvable $ref", name)
+		}
+
 		propName := utils.DashCaseToTitleCase(name)
-		typeName := utils.ToTitleCase(prop.Ref.Name())
+		typeName := utils.ToTitleCase(ref.Name())
 
 		if propName != name {
 			sb.WriteString(fmt.Sprintf("    [JsonPropertyName(\"%s\")]\n", name))
@@ -209,8 +214,13 @@ func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 			return "", fmt.Errorf("generating pipeline schema: %v", err)
 		}
 
+		ref := prop.Reference()
+		if ref == "" {
+			return "", fmt.Errorf("pipeline property [%s] has no resolvable $ref", name)
+		}
+
 		structKey := utils.DashCaseToTitleCase(name)
-		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
+		structType := utils.CamelCaseToTitleCase(ref.Name())
 		goStruct.AddItem(structKey, structType, name, "", true)
 	}
 
@@ -270,9 +280,18 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 		return Enum{
 			Name:        propertyName,
 			Description: property.Description,
-			Values:      property.Enum,
+			Values:      filterNullEnumValues(property.Enum),
 			Default:     property.Default,
 		}, dependencies, nil
+	}
+
+	// Multi-type scalar (e.g. ["integer", "string"]) — a union of the primitives.
+	if types := property.Type.List(); len(types) > 1 {
+		defs := make([]schema.PropertyDefinition, len(types))
+		for i, t := range types {
+			defs[i] = schema.PropertyDefinition{Type: schema.PropertyType(t)}
+		}
+		return p.UnionDefinitionToUnionValue(propertyName, property.Description, defs)
 	}
 
 	// Array
@@ -507,7 +526,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 			typeIdentifiers = append(typeIdentifiers, Enum{
 				Name:        NewPropertyName(fmt.Sprintf("%sEnum", propertyName.Value)),
 				Description: item.Description,
-				Values:      item.Enum,
+				Values:      filterNullEnumValues(item.Enum),
 				Default:     item.Default,
 			})
 			continue

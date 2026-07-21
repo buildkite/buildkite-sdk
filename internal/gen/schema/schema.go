@@ -19,7 +19,25 @@ type PipelineSchema struct {
 }
 
 type SchemaProperty struct {
-	Ref PropertyReferenceString `json:"$ref,omitempty"`
+	Ref   PropertyReferenceString `json:"$ref,omitempty"`
+	AllOf []SchemaProperty        `json:"allOf,omitempty"`
+}
+
+// Reference resolves the property's definition reference: either a direct
+// $ref, or one wrapped in an allOf (used to narrow a definition, e.g. the
+// pipeline-level checkout property, which forbids the step-only ssh_secret
+// key). Narrowing keywords alongside the allOf are validation-only and do not
+// change the generated type.
+func (s SchemaProperty) Reference() PropertyReferenceString {
+	if s.Ref != "" {
+		return s.Ref
+	}
+	for _, member := range s.AllOf {
+		if ref := member.Reference(); ref != "" {
+			return ref
+		}
+	}
+	return ""
 }
 
 func ReadSchema() (PipelineSchema, error) {

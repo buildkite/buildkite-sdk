@@ -94,16 +94,30 @@ func (p *PropertyType) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	// Attempt to unmarshal as a string array
+	// Attempt to unmarshal as a string array. A "null" member means the
+	// property may be explicitly unset — it contributes no type, so a list
+	// like ["string", "null"] normalizes to the plain "string" type.
 	var sa []string
 	if err := json.Unmarshal(data, &sa); err == nil {
-		// TODO: make this not a hack
-		*p = PropertyType("string")
+		nonNull := make([]string, 0, len(sa))
+		for _, t := range sa {
+			if t != "null" {
+				nonNull = append(nonNull, t)
+			}
+		}
+		*p = PropertyType(strings.Join(nonNull, ","))
 		return nil
 	}
 
 	// If neither worked, return an error
 	return fmt.Errorf("cannot unmarshal %s into PropertyType", data)
+}
+
+func (p PropertyType) List() []string {
+	if p == "" {
+		return nil
+	}
+	return strings.Split(string(p), ",")
 }
 
 type PropertyDefinition struct {
