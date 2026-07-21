@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sort"
 )
 
 type PipelineSchema struct {
@@ -19,8 +20,24 @@ type PipelineSchema struct {
 }
 
 type SchemaProperty struct {
-	Ref   PropertyReferenceString `json:"$ref,omitempty"`
-	AllOf []SchemaProperty        `json:"allOf,omitempty"`
+	Ref         PropertyReferenceString    `json:"$ref,omitempty"`
+	Description string                     `json:"description,omitempty"`
+	AllOf       []SchemaProperty           `json:"allOf,omitempty"`
+	Properties  map[string]json.RawMessage `json:"properties,omitempty"`
+}
+
+// RemovedProperties lists the property keys a schema property narrows away
+// with a literal `false` subschema, e.g. the pipeline-level checkout
+// forbidding the step-only ssh_secret key.
+func (s SchemaProperty) RemovedProperties() []string {
+	removed := []string{}
+	for key, raw := range s.Properties {
+		if string(raw) == "false" {
+			removed = append(removed, key)
+		}
+	}
+	sort.Strings(removed)
+	return removed
 }
 
 // Reference resolves the property's definition reference: either a direct
