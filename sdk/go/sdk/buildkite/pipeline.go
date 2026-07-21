@@ -13,6 +13,7 @@ import (
 
 type Pipeline struct {
 	Agents   *Agents        `json:"agents,omitempty"`
+	Checkout *Checkout      `json:"checkout,omitempty"`
 	Env      *Env           `json:"env,omitempty"`
 	Image    *Image         `json:"image,omitempty"`
 	Notify   *BuildNotify   `json:"notify,omitempty"`

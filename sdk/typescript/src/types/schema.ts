@@ -149,6 +149,68 @@ export type Cache =
  */
 export type CancelOnBuildFailing = true | false | "true" | "false";
 
+/**
+ * Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key
+ */
+export interface Checkout {
+    /**
+     * Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
+     */
+    commit_verification?: "strict" | "warn";
+    /**
+     * Number of commits to fetch when performing a shallow clone; omit for full history
+     */
+    depth?: number | string;
+    /**
+     * Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration
+     */
+    flags?: {
+        /**
+         * Flags for the git checkout command
+         */
+        checkout?: string;
+        /**
+         * Flags for the git clean command
+         */
+        clean?: string;
+        /**
+         * Flags for the git clone command
+         */
+        clone?: string;
+        /**
+         * Flags for the git fetch command
+         */
+        fetch?: string;
+    };
+    /**
+     * Whether to install Git LFS and fetch LFS objects after checkout. An explicit null is treated as unset
+     */
+    lfs?: true | false | "true" | "false";
+    /**
+     * Skip the git checkout phase. An explicit null is treated as unset
+     */
+    skip?: true | false | "true" | "false";
+    /**
+     * Check out only the specified paths in git cone mode; requires git 2.27+ on the agent
+     */
+    sparse?: {
+        /**
+         * Repository-relative directory paths within the worktree, as one path or a list of paths; cone mode includes each directory recursively, not file globs
+         */
+        paths: string | string[];
+    };
+    /**
+     * Name of an SSH private key secret from Buildkite Secrets to use for git clone/fetch operations. The name must start with a letter, contain only letters, numbers, and underscores, and must not start with `buildkite` or `bk` (case-insensitive).
+     */
+    ssh_secret?: string;
+    /**
+     * Initialize, sync, update, and clean submodules recursively as part of checkout. An explicit null is treated as unset
+     */
+    submodules?: true | false | "true" | "false";
+}
+
+export type CheckoutSparsePath = string;
+
 export interface CommandStep {
     agents?: Agents;
     /**
@@ -171,6 +233,10 @@ export interface CommandStep {
      * Whether to cancel the job as soon as the build is marked as failing
      */
     cancel_on_build_failing?: CancelOnBuildFailing;
+    /**
+     * Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key
+     */
+    checkout?: Checkout;
     /**
      * The commands to run on the agent
      */
@@ -298,12 +364,7 @@ export interface CommandStep {
  * Whether to allow a job to retry automatically. If set to true, the retry conditions are set to the default value.
  */
 export type CommandStepAutomaticRetry =
-    | true
-    | false
-    | "true"
-    | "false"
-    | AutomaticRetry
-    | AutomaticRetryList;
+    true | false | "true" | "false" | AutomaticRetry | AutomaticRetryList;
 
 /**
  * The commands to run on the agent
@@ -314,11 +375,7 @@ export type CommandStepCommand = string[] | string;
  * Whether to allow a job to be retried manually
  */
 export type CommandStepManualRetry =
-    | true
-    | false
-    | "true"
-    | "false"
-    | CommandStepManualRetryObject;
+    true | false | "true" | "false" | CommandStepManualRetryObject;
 
 export interface CommandStepManualRetryObject {
     /**
@@ -1017,6 +1074,7 @@ export interface WaitStep {
 
 export interface BuildkitePipeline {
     agents?: Agents;
+    checkout?: Checkout;
     env?: Env;
     image?: Image;
     notify?: BuildNotify;

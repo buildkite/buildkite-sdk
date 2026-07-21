@@ -454,6 +454,7 @@ NotifyGithubCommitStatusGithubCommitStatusArgs = TypedDict(
         "context": NotRequired["str"],
     },
 )
+
 NotifyGithubCommitStatusArgs = TypedDict(
     "NotifyGithubCommitStatusArgs",
     {
@@ -656,6 +657,108 @@ Cache = str | List[str] | CacheObject | CacheObjectArgs
 # Whether to cancel the job as soon as the build is marked as failing
 CancelOnBuildFailing = Literal[True, False, "true", "false"]
 
+CheckoutSparsePath = str
+
+
+# Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration
+class CheckoutFlags(BaseModel):
+    # Flags for the git checkout command
+    checkout: Optional[str] = None
+    # Flags for the git clean command
+    clean: Optional[str] = None
+    # Flags for the git clone command
+    clone: Optional[str] = None
+    # Flags for the git fetch command
+    fetch: Optional[str] = None
+
+    @classmethod
+    def from_dict(cls, data: CheckoutFlagsArgs) -> CheckoutFlags:
+        return cls.model_validate({**data})
+
+
+# Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration
+CheckoutFlagsArgs = TypedDict(
+    "CheckoutFlagsArgs",
+    {
+        # Flags for the git checkout command
+        "checkout": NotRequired["str"],
+        # Flags for the git clean command
+        "clean": NotRequired["str"],
+        # Flags for the git clone command
+        "clone": NotRequired["str"],
+        # Flags for the git fetch command
+        "fetch": NotRequired["str"],
+    },
+)
+
+
+# Check out only the specified paths in git cone mode; requires git 2.27+ on the agent
+class CheckoutSparse(BaseModel):
+    # Repository-relative directory paths within the worktree, as one path or a list of paths; cone mode includes each directory recursively, not file globs
+    paths: str | List[str]
+
+    @classmethod
+    def from_dict(cls, data: CheckoutSparseArgs) -> CheckoutSparse:
+        return cls.model_validate({**data})
+
+
+# Check out only the specified paths in git cone mode; requires git 2.27+ on the agent
+CheckoutSparseArgs = TypedDict(
+    "CheckoutSparseArgs",
+    {
+        # Repository-relative directory paths within the worktree, as one path or a list of paths; cone mode includes each directory recursively, not file globs
+        "paths": "str | List[str]",
+    },
+)
+
+# Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key
+CheckoutArgs = TypedDict(
+    "CheckoutArgs",
+    {
+        # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
+        "commit_verification": NotRequired[Literal["strict", "warn"]],
+        # Number of commits to fetch when performing a shallow clone; omit for full history
+        "depth": NotRequired["int | str"],
+        # Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration
+        "flags": NotRequired["CheckoutFlagsArgs"],
+        # Whether to install Git LFS and fetch LFS objects after checkout. An explicit null is treated as unset
+        "lfs": NotRequired[Literal[True, False, "true", "false"]],
+        # Skip the git checkout phase. An explicit null is treated as unset
+        "skip": NotRequired[Literal[True, False, "true", "false"]],
+        # Check out only the specified paths in git cone mode; requires git 2.27+ on the agent
+        "sparse": NotRequired["CheckoutSparseArgs"],
+        # Name of an SSH private key secret from Buildkite Secrets to use for git clone/fetch operations. The name must start with a letter, contain only letters, numbers, and underscores, and must not start with `buildkite` or `bk` (case-insensitive).
+        "ssh_secret": NotRequired["str"],
+        # Initialize, sync, update, and clean submodules recursively as part of checkout. An explicit null is treated as unset
+        "submodules": NotRequired[Literal[True, False, "true", "false"]],
+    },
+)
+
+
+# Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key
+class Checkout(BaseModel):
+    # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
+    commit_verification: Optional[Literal["strict", "warn"]] = None
+    # Number of commits to fetch when performing a shallow clone; omit for full history
+    depth: Optional[int | str] = None
+    # Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration
+    flags: Optional[CheckoutFlags] = None
+    # Whether to install Git LFS and fetch LFS objects after checkout. An explicit null is treated as unset
+    lfs: Optional[Literal[True, False, "true", "false"]] = None
+    # Skip the git checkout phase. An explicit null is treated as unset
+    skip: Optional[Literal[True, False, "true", "false"]] = None
+    # Check out only the specified paths in git cone mode; requires git 2.27+ on the agent
+    sparse: Optional[CheckoutSparse] = None
+    # Name of an SSH private key secret from Buildkite Secrets to use for git clone/fetch operations. The name must start with a letter, contain only letters, numbers, and underscores, and must not start with `buildkite` or `bk` (case-insensitive).
+    ssh_secret: Optional[str] = None
+    # Initialize, sync, update, and clean submodules recursively as part of checkout. An explicit null is treated as unset
+    submodules: Optional[Literal[True, False, "true", "false"]] = None
+
+    @classmethod
+    def from_dict(cls, data: CheckoutArgs) -> Checkout:
+        return cls.model_validate({**data})
+
+
 PluginsListObject = Dict[str, Any]
 # Array of plugins for this step
 PluginsList = List[str | Dict[str, Any]]
@@ -710,8 +813,7 @@ class MatrixAdjustments(BaseModel):
     # The conditions for marking the step as a soft-fail.
     soft_fail: Optional[SoftFail] = None
     matrix_with: MatrixElementList | MatrixAdjustmentsWithObject = Field(
-        validation_alias=AliasChoices("with", "matrix_with"),
-        serialization_alias="with",
+        validation_alias=AliasChoices("with", "matrix_with"), serialization_alias="with"
     )
 
     @classmethod
@@ -820,6 +922,7 @@ CommandStepSignatureArgs = TypedDict(
         "value": NotRequired["str"],
     },
 )
+
 CommandStepArgs = TypedDict(
     "CommandStepArgs",
     {
@@ -834,6 +937,8 @@ CommandStepArgs = TypedDict(
         "cache": NotRequired["Cache"],
         # Whether to cancel the job as soon as the build is marked as failing
         "cancel_on_build_failing": NotRequired["CancelOnBuildFailing"],
+        # Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key
+        "checkout": NotRequired["CheckoutArgs"],
         # The commands to run on the agent
         "command": NotRequired["CommandStepCommand"],
         # The commands to run on the agent
@@ -901,6 +1006,8 @@ class CommandStep(BaseModel):
     cache: Optional[Cache] = None
     # Whether to cancel the job as soon as the build is marked as failing
     cancel_on_build_failing: Optional[CancelOnBuildFailing] = None
+    # Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key
+    checkout: Optional[Checkout] = None
     # The commands to run on the agent
     command: Optional[CommandStepCommand] = None
     # The commands to run on the agent
@@ -1259,6 +1366,7 @@ TriggerStepBuildArgs = TypedDict(
         "meta_data": NotRequired["Dict[str, Any]"],
     },
 )
+
 TriggerStepArgs = TypedDict(
     "TriggerStepArgs",
     {
