@@ -12,14 +12,14 @@ import (
 )
 
 type Pipeline struct {
-	Agents   *Agents        `json:"agents,omitempty"`
-	Checkout *Checkout      `json:"checkout,omitempty"`
-	Env      *Env           `json:"env,omitempty"`
-	Image    *Image         `json:"image,omitempty"`
-	Notify   *BuildNotify   `json:"notify,omitempty"`
-	Priority *Priority      `json:"priority,omitempty"`
-	Secrets  *Secrets       `json:"secrets,omitempty"`
-	Steps    *PipelineSteps `json:"steps,omitempty"`
+	Agents   *Agents           `json:"agents,omitempty"`
+	Checkout *PipelineCheckout `json:"checkout,omitempty"`
+	Env      *Env              `json:"env,omitempty"`
+	Image    *Image            `json:"image,omitempty"`
+	Notify   *BuildNotify      `json:"notify,omitempty"`
+	Priority *Priority         `json:"priority,omitempty"`
+	Secrets  *Secrets          `json:"secrets,omitempty"`
+	Steps    *PipelineSteps    `json:"steps,omitempty"`
 }
 
 func (p Pipeline) ToJSON() (string, error) {

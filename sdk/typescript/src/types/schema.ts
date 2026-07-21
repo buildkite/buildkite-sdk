@@ -785,6 +785,62 @@ export interface NotifyWebhook {
 }
 
 /**
+ * Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key. ssh_secret is step-level only and is not valid here
+ */
+export interface PipelineCheckout {
+    /**
+     * Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
+     */
+    commit_verification?: "strict" | "warn";
+    /**
+     * Number of commits to fetch when performing a shallow clone; omit for full history
+     */
+    depth?: number | string;
+    /**
+     * Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration
+     */
+    flags?: {
+        /**
+         * Flags for the git checkout command
+         */
+        checkout?: string;
+        /**
+         * Flags for the git clean command
+         */
+        clean?: string;
+        /**
+         * Flags for the git clone command
+         */
+        clone?: string;
+        /**
+         * Flags for the git fetch command
+         */
+        fetch?: string;
+    };
+    /**
+     * Whether to install Git LFS and fetch LFS objects after checkout. An explicit null is treated as unset
+     */
+    lfs?: true | false | "true" | "false";
+    /**
+     * Skip the git checkout phase. An explicit null is treated as unset
+     */
+    skip?: true | false | "true" | "false";
+    /**
+     * Check out only the specified paths in git cone mode; requires git 2.27+ on the agent
+     */
+    sparse?: {
+        /**
+         * Repository-relative directory paths within the worktree, as one path or a list of paths; cone mode includes each directory recursively, not file globs
+         */
+        paths: string | string[];
+    };
+    /**
+     * Initialize, sync, update, and clean submodules recursively as part of checkout. An explicit null is treated as unset
+     */
+    submodules?: true | false | "true" | "false";
+}
+
+/**
  * A list of steps
  */
 export type PipelineSteps = (
@@ -1074,7 +1130,7 @@ export interface WaitStep {
 
 export interface BuildkitePipeline {
     agents?: Agents;
-    checkout?: Checkout;
+    checkout?: PipelineCheckout;
     env?: Env;
     image?: Image;
     notify?: BuildNotify;
