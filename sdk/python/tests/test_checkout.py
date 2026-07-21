@@ -91,3 +91,12 @@ class TestPipelineCheckout(TestRunner):
             pipeline,
             {"checkout": {"lfs": True}, "steps": [{"command": "ls"}]},
         )
+
+    def test_pipeline_checkout_drops_step_only_ssh_secret(self):
+        pipeline = Pipeline.model_validate(
+            {
+                "checkout": {"skip": True, "ssh_secret": "deploy_key"},
+                "steps": [{"command": "ls"}],
+            }
+        )
+        assert pipeline.to_dict()["checkout"] == {"skip": True}

@@ -120,9 +120,9 @@ func TestCheckout(t *testing.T) {
 
 	t.Run("Pipeline", func(t *testing.T) {
 		pipeline := buildkite.NewPipeline()
-		pipeline.Checkout = &buildkite.Checkout{
-			Submodules: &buildkite.CheckoutSubmodules{Bool: buildkite.Value(false)},
-			Depth:      &buildkite.CheckoutDepth{Int: buildkite.Value(50)},
+		pipeline.Checkout = &buildkite.PipelineCheckout{
+			Submodules: &buildkite.PipelineCheckoutSubmodules{Bool: buildkite.Value(false)},
+			Depth:      &buildkite.PipelineCheckoutDepth{Int: buildkite.Value(50)},
 		}
 		pipeline.AddStep(buildkite.CommandStep{
 			Command: &buildkite.CommandStepCommand{

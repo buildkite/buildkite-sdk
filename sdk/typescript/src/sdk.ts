@@ -4,7 +4,7 @@ export { EnvironmentVariable } from "./environment";
 
 export class Pipeline {
     public agents: schema.AgentsObject = {};
-    public checkout: schema.Checkout | undefined;
+    public checkout: schema.PipelineCheckout | undefined;
     public env: schema.Env = {};
     public notify: schema.BuildNotify = [];
     public steps: schema.PipelineSteps = [];
@@ -63,7 +63,7 @@ export class Pipeline {
      * Set the git checkout behavior for the pipeline's steps
      * @param checkout
      */
-    setCheckout(checkout: schema.Checkout) {
+    setCheckout(checkout: schema.PipelineCheckout) {
         this.checkout = checkout;
     }
 

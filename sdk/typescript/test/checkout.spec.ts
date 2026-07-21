@@ -93,6 +93,12 @@ describe("Checkout", () => {
             );
         });
 
+        it("rejects the step-only ssh_secret at pipeline level", () => {
+            const pipeline = new buildkite.Pipeline();
+            // @ts-expect-error ssh_secret is step-level only
+            pipeline.setCheckout({ ssh_secret: "deploy_key" });
+        });
+
         it("should render step-level checkout", () => {
             const pipeline = new buildkite.Pipeline();
             pipeline.addStep({ command: "ls", checkout: { skip: false } });

@@ -18,8 +18,6 @@ from .schema import (
     BlockStep,
     BlockStepArgs,
     BuildNotify,
-    Checkout,
-    CheckoutArgs,
     CommandStep,
     CommandStepArgs,
     Env,
@@ -38,6 +36,8 @@ from .schema import (
     NestedTriggerStepArgs,
     NestedWaitStep,
     NestedWaitStepArgs,
+    PipelineCheckout,
+    PipelineCheckoutArgs,
     Priority,
     Secrets,
     StringBlockStep,
@@ -81,7 +81,7 @@ Step = (
 class PipelineArgs(TypedDict):
     env: NotRequired[Env]
     agents: NotRequired[Agents]
-    checkout: NotRequired[Checkout | CheckoutArgs]
+    checkout: NotRequired[PipelineCheckout | PipelineCheckoutArgs]
     notify: NotRequired[BuildNotify]
     image: NotRequired[Image]
     priority: NotRequired[Priority]
@@ -92,7 +92,7 @@ class PipelineArgs(TypedDict):
 class Pipeline(BaseModel):
     env: Optional[Env] = None
     agents: Optional[Agents] = None
-    checkout: Optional[Checkout] = None
+    checkout: Optional[PipelineCheckout | PipelineCheckoutArgs] = None
     notify: Optional[BuildNotify] = None
     image: Optional[Image] = None
     priority: Optional[Priority] = None
@@ -106,9 +106,9 @@ class Pipeline(BaseModel):
     def set_secrets(self, secrets: Secrets) -> None:
         self.secrets = secrets
 
-    def set_checkout(self, checkout: Checkout | CheckoutArgs) -> None:
+    def set_checkout(self, checkout: PipelineCheckout | PipelineCheckoutArgs) -> None:
         """Set the git checkout behavior for the pipeline's steps."""
-        self.checkout = Checkout.model_validate(checkout)
+        self.checkout = PipelineCheckout.model_validate(checkout)
 
     def add_agent(self, key: str, value: Any) -> None:
         if self.agents is None:
