@@ -18,6 +18,8 @@ from .schema import (
     BlockStep,
     BlockStepArgs,
     BuildNotify,
+    Checkout,
+    CheckoutArgs,
     CommandStep,
     CommandStepArgs,
     Env,
@@ -79,6 +81,7 @@ Step = (
 class PipelineArgs(TypedDict):
     env: NotRequired[Env]
     agents: NotRequired[Agents]
+    checkout: NotRequired[Checkout | CheckoutArgs]
     notify: NotRequired[BuildNotify]
     image: NotRequired[Image]
     priority: NotRequired[Priority]
@@ -89,6 +92,7 @@ class PipelineArgs(TypedDict):
 class Pipeline(BaseModel):
     env: Optional[Env] = None
     agents: Optional[Agents] = None
+    checkout: Optional[Checkout] = None
     notify: Optional[BuildNotify] = None
     image: Optional[Image] = None
     priority: Optional[Priority] = None
@@ -101,6 +105,10 @@ class Pipeline(BaseModel):
 
     def set_secrets(self, secrets: Secrets) -> None:
         self.secrets = secrets
+
+    def set_checkout(self, checkout: Checkout | CheckoutArgs) -> None:
+        """Set the git checkout behavior for the pipeline's steps."""
+        self.checkout = Checkout.model_validate(checkout)
 
     def add_agent(self, key: str, value: Any) -> None:
         if self.agents is None:

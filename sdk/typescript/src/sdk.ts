@@ -4,6 +4,7 @@ export { EnvironmentVariable } from "./environment";
 
 export class Pipeline {
     public agents: schema.AgentsObject = {};
+    public checkout: schema.Checkout | undefined;
     public env: schema.Env = {};
     public notify: schema.BuildNotify = [];
     public steps: schema.PipelineSteps = [];
@@ -18,6 +19,10 @@ export class Pipeline {
     setPipeline(pipeline: schema.BuildkitePipeline) {
         if (pipeline.agents) {
             this.agents = pipeline.agents;
+        }
+
+        if (pipeline.checkout) {
+            this.checkout = pipeline.checkout;
         }
 
         if (pipeline.env) {
@@ -52,6 +57,14 @@ export class Pipeline {
      */
     setSecrets(secrets: schema.Secrets) {
         this.secrets = secrets;
+    }
+
+    /**
+     * Set the git checkout behavior for the pipeline's steps
+     * @param checkout
+     */
+    setCheckout(checkout: schema.Checkout) {
+        this.checkout = checkout;
     }
 
     /**
@@ -100,6 +113,10 @@ export class Pipeline {
 
         if (Object.keys(this.agents).length > 0) {
             pipeline.agents = this.agents;
+        }
+
+        if (this.checkout !== undefined) {
+            pipeline.checkout = this.checkout;
         }
 
         if (Object.keys(this.env).length > 0) {
