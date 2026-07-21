@@ -52,7 +52,12 @@ func generateGoTypes(
 	file := utils.NewGoFile(
 		"buildkite",
 		pipelineFileName,
-		[]string{},
+		[]string{
+			"encoding/json",
+			"fmt",
+			"strings",
+			"github.com/itchyny/json2yaml",
+		},
 		utils.NewCodeBlock(
 			pipelineSchemaString,
 		),
