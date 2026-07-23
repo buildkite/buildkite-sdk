@@ -71,6 +71,8 @@ type CommandStep struct {
 	Cache *Cache `json:"cache,omitempty"`
 	// Whether to cancel the job as soon as the build is marked as failing
 	CancelOnBuildFailing *CancelOnBuildFailing `json:"cancel_on_build_failing,omitempty"`
+	// Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key
+	Checkout *Checkout `json:"checkout,omitempty"`
 	// The commands to run on the agent
 	Command *CommandStepCommand `json:"command,omitempty"`
 	// The commands to run on the agent

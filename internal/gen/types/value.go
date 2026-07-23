@@ -14,10 +14,63 @@ type PipelineSchemaGenerator struct {
 }
 
 func NewPipelineSchemaGenerator(pipelineSchema schema.PipelineSchema) PipelineSchemaGenerator {
-	return PipelineSchemaGenerator{
+	generator := PipelineSchemaGenerator{
 		Definitions: utils.NewOrderedMap(pipelineSchema.Definitions),
 		Properties:  utils.NewOrderedMap(pipelineSchema.Properties),
 	}
+	generator.materializeNarrowedProperties()
+
+	return generator
+}
+
+// materializeNarrowedProperties turns each pipeline property that narrows the
+// definition it references (an allOf $ref plus `false` subschemas for
+// forbidden keys, like checkout's step-only ssh_secret) into its own
+// pipeline-scoped definition, so generated types only accept what the schema
+// accepts at pipeline level.
+func (p PipelineSchemaGenerator) materializeNarrowedProperties() {
+	for _, name := range p.Properties.Keys() {
+		prop, err := p.Properties.Get(name)
+		if err != nil {
+			panic(fmt.Sprintf("getting pipeline property %s: %v", name, err))
+		}
+
+		removed := prop.RemovedProperties()
+		if prop.Ref != "" || len(removed) == 0 {
+			continue
+		}
+
+		ref := prop.Reference()
+		if ref == "" {
+			// Left for the per-language generators to report.
+			continue
+		}
+
+		baseName := ref.Name()
+		base, err := p.Definitions.Get(baseName)
+		if err != nil {
+			panic(fmt.Sprintf("reference not found for %s", baseName))
+		}
+
+		derived := base
+		derived.Properties = make(map[string]schema.PropertyDefinition, len(base.Properties))
+		for key, val := range base.Properties {
+			derived.Properties[key] = val
+		}
+		for _, key := range removed {
+			delete(derived.Properties, key)
+		}
+		if prop.Description != "" {
+			derived.Description = prop.Description
+		}
+
+		derivedName := fmt.Sprintf("pipeline%s", utils.ToTitleCase(baseName))
+		p.Definitions.Set(derivedName, derived)
+		p.Properties.Set(name, schema.SchemaProperty{
+			Ref: schema.PropertyReferenceString("#/definitions/" + derivedName),
+		})
+	}
+	p.Definitions.SortKeys()
 }
 
 var pipelineFunctions = `func (p Pipeline) ToJSON() (string, error) {
@@ -186,8 +239,13 @@ func (p PipelineSchemaGenerator) GenerateCSharpPipelineSchema() (string, error) 
 			return "", fmt.Errorf("generating pipeline schema: %v", err)
 		}
 
+		ref := prop.Reference()
+		if ref == "" {
+			return "", fmt.Errorf("pipeline property [%s] has no resolvable $ref", name)
+		}
+
 		propName := utils.DashCaseToTitleCase(name)
-		typeName := utils.ToTitleCase(prop.Ref.Name())
+		typeName := utils.ToTitleCase(ref.Name())
 
 		if propName != name {
 			sb.WriteString(fmt.Sprintf("    [JsonPropertyName(\"%s\")]\n", name))
@@ -209,8 +267,13 @@ func (p PipelineSchemaGenerator) GeneratePipelineSchema() (string, error) {
 			return "", fmt.Errorf("generating pipeline schema: %v", err)
 		}
 
+		ref := prop.Reference()
+		if ref == "" {
+			return "", fmt.Errorf("pipeline property [%s] has no resolvable $ref", name)
+		}
+
 		structKey := utils.DashCaseToTitleCase(name)
-		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
+		structType := utils.CamelCaseToTitleCase(ref.Name())
 		goStruct.AddItem(structKey, structType, name, "", true)
 	}
 
@@ -270,9 +333,18 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 		return Enum{
 			Name:        propertyName,
 			Description: property.Description,
-			Values:      property.Enum,
+			Values:      filterNullEnumValues(property.Enum),
 			Default:     property.Default,
 		}, dependencies, nil
+	}
+
+	// Multi-type scalar (e.g. ["integer", "string"]) — a union of the primitives.
+	if types := property.Type.List(); len(types) > 1 {
+		defs := make([]schema.PropertyDefinition, len(types))
+		for i, t := range types {
+			defs[i] = schema.PropertyDefinition{Type: schema.PropertyType(t)}
+		}
+		return p.UnionDefinitionToUnionValue(propertyName, property.Description, defs)
 	}
 
 	// Array
@@ -507,7 +579,7 @@ func (p PipelineSchemaGenerator) UnionDefinitionToUnionValue(propertyName Proper
 			typeIdentifiers = append(typeIdentifiers, Enum{
 				Name:        NewPropertyName(fmt.Sprintf("%sEnum", propertyName.Value)),
 				Description: item.Description,
-				Values:      item.Enum,
+				Values:      filterNullEnumValues(item.Enum),
 				Default:     item.Default,
 			})
 			continue

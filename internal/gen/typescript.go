@@ -39,7 +39,12 @@ func generateTypeScriptTypes(
 			return fmt.Errorf("getting property: %v", err)
 		}
 
-		structType := utils.CamelCaseToTitleCase(prop.Ref.Name())
+		ref := prop.Reference()
+		if ref == "" {
+			return fmt.Errorf("pipeline property [%s] has no resolvable $ref", name)
+		}
+
+		structType := utils.CamelCaseToTitleCase(ref.Name())
 		pipelineInterface.AddItem(name, structType, "", false)
 	}
 

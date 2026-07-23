@@ -353,6 +353,10 @@ func (o Object) Python() (string, error) {
 				return "", fmt.Errorf("writing nested class [%s]: %v", o.Name.Value, err)
 			}
 			codeBlock.AddLines(nested)
+
+			// Accept the Args TypedDict alongside the model so typed callers
+			// can pass plain dicts; pydantic still coerces them to the model.
+			structType = fmt.Sprintf("%s | %sArgs", constructorName, constructorName)
 		}
 
 		// PropertyReference
@@ -361,6 +365,11 @@ func (o Object) Python() (string, error) {
 				if len(obj.Properties.Keys()) > 0 {
 					dictStructType = fmt.Sprintf("%sArgs", structType)
 					constructorName = structType
+
+					// Accept the Args TypedDict alongside the model so typed
+					// callers can pass plain dicts; pydantic still coerces
+					// them to the model.
+					structType = fmt.Sprintf("%s | %sArgs", constructorName, constructorName)
 				}
 			}
 		}

@@ -10,6 +10,19 @@ import (
 	"github.com/iancoleman/orderedmap"
 )
 
+// schema treats an explicit null as equivalent to omitting the property, which
+// SDK types express by leaving the field unset — the same way union
+// definitions skip their "null" type members.
+func filterNullEnumValues(values []any) []any {
+	filtered := make([]any, 0, len(values))
+	for _, v := range values {
+		if v != nil {
+			filtered = append(filtered, v)
+		}
+	}
+	return filtered
+}
+
 func parseEnumValue(val any) EnumValue {
 	if s, ok := val.(string); ok {
 		return EnumValue{
