@@ -2,7 +2,7 @@ module myapp
 
 go 1.25.4
 
-require github.com/buildkite/buildkite-sdk/sdk/go v0.11.0
+require github.com/buildkite/buildkite-sdk/sdk/go v0.12.0
 
 require (
 	github.com/buildkite/conditional v1.0.0 // indirect
