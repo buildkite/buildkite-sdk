@@ -111,34 +111,32 @@ All SDKs version on the same cadence. To publish a new version (of all SDKs), fo
 
 1.  Commit all pending changes. We want the release commit to be "clean" (i.e., to consist only of changes related to the release itself.)
 
-1.  Update the `VERSION_FROM` and `VERSION_TO` values in the `release:all` task in [`./project.json`](./project.json).
-
-1.  Leaving that single change uncommitted and run the release script:
+1.  Run the release script with the version you are releasing:
 
     ```bash
-    npm run release:create-branch
+    npx nx release:create-branch --args="--version=0.13.0"
     ```
 
     This script:
 
-    -   Updates the version numbers in all affected files
+    -   Updates each SDK's version file
     -   Rebuilds all SDKs
     -   Commits all changes (e.g., to version files, lockfiles, and anything else under `./sdk`)
     -   Pushes the branch to GitHub
 
 1. Next open a PR with the created branch.
 
-1. After the PR is merged, from an up-to-date main branch, create and push the release tags:
+1. After the PR is merged, from an up-to-date main branch, create and push the release tags. Tag the release commit itself, not whatever main has since moved on to:
 
     ```bash
-    git tag v{VERSION_TO} main
-    git tag sdk/go/v{VERSION_TO} main
+    git tag v0.13.0 <release-commit>
+    git tag sdk/go/v0.13.0 <release-commit>
 
-    git push origin v{VERSION_TO}
-    git push origin sdk/go/v{VERSION_TO}
+    git push origin v0.13.0
+    git push origin sdk/go/v0.13.0
     ```
 
-1. Once the tags have been created, manually trigger the SDK Release Pipeline in Buildkite. After the pipeline has finished, manually create a release in GitHub ([example](https://github.com/buildkite/buildkite-sdk/releases/tag/v0.5.0)).
+1. Once the tags have been created, manually trigger the SDK Release Pipeline in Buildkite. SDKs with no changes since the previous release have their publish step skipped, so expect some to be marked skipped rather than green. After the pipeline has finished, manually create a release in GitHub ([example](https://github.com/buildkite/buildkite-sdk/releases/tag/v0.5.0)).
 
 ### Docs
 
@@ -149,7 +147,8 @@ The SDK language docs are managed by a Pulumi Program in `infra` and manually de
 The following environment variables are required for releasing and publishing:
 
 -   `NPM_TOKEN` for publishing to npm (with `npm publish`)
--   `PYPI_TOKEN` fror publishing to PyPI (with `uv publish`)
+-   `PYPI_TOKEN` for publishing to PyPI (with `uv publish`)
 -   `GEM_HOST_API_KEY` for publishing to RubyGems (with `gem push`)
+-   `NUGET_API_KEY` for publishing to NuGet (with `dotnet nuget push`)
 
 See the `publish:all` tasks in `./project.json` for details.
