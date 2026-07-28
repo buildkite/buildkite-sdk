@@ -1,45 +1,63 @@
-const [from, to] = [process.argv[2], process.argv[3]];
+const target = process.argv[2];
 
-if (!from || !to) {
-    console.error(`Invalid 'from' or 'to' version: '${from}', '${to}'`);
+if (!/^\d+\.\d+\.\d+$/.test(target || "")) {
+    console.error(
+        `Usage: node create-release-branch.js <version>, got '${target}'`,
+    );
     process.exit(1);
 }
 
+// Go is absent: it has no version file, its version is the sdk/go/vX.Y.Z tag.
+const manifests = [
+    {
+        file: "sdk/typescript/package.json",
+        pattern: /("version":\s*")(\d+\.\d+\.\d+)(")/,
+    },
+    {
+        file: "sdk/python/pyproject.toml",
+        pattern: /^(version = ")(\d+\.\d+\.\d+)(")/m,
+    },
+    {
+        file: "sdk/ruby/lib/buildkite/version.rb",
+        pattern: /(VERSION = ")(\d+\.\d+\.\d+)(")/,
+    },
+    {
+        file: "sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj",
+        pattern: /(<Version>)(\d+\.\d+\.\d+)(<\/Version>)/,
+    },
+];
+
 (async () => {
-    const { replaceInFileSync } = await import("replace-in-file");
+    const fs = await import("fs");
     const { simpleGit } = await import("simple-git");
     const { execSync } = await import("child_process");
 
-    const paths = [
-        "sdk/go/project.json",
-        "sdk/python/pyproject.toml",
-        "sdk/typescript/package.json",
-        "sdk/ruby/lib/buildkite/version.rb",
-        "sdk/ruby/project.json",
-        "sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj",
-    ];
-
     const git = simpleGit();
-    const branch = `release/v${to}`;
+    const branch = `release/v${target}`;
 
     await git.checkoutLocalBranch(branch);
 
-    // Bump versions.
-    replaceInFileSync({
-        files: paths,
-        from,
-        to,
-    });
+    // Matches the version field, not the version string, so a dependency
+    // pinned at the same number survives.
+    for (const { file, pattern } of manifests) {
+        const before = fs.readFileSync(file, "utf-8");
+        const match = pattern.exec(before);
+
+        if (!match) {
+            console.error(`No version field found in ${file}`);
+            process.exit(1);
+        }
+
+        fs.writeFileSync(file, before.replace(pattern, `$1${target}$3`));
+        console.log(`${file}: ${match[2]} -> ${target}`);
+    }
 
     // Build all SDKs.
     execSync("npm run build", { stdio: "inherit" });
 
-    // Commit and tag.
+    // Commit and push.
     await git.add("sdk"); // Include everything here, as lockfiles will also have changed.
-    await git.add("project.json"); // As this contains the new version.
-    await git.commit(`Release v${to}`);
-
-    // Push the commit.
+    await git.commit(`Release v${target}`);
     await git.push("origin", branch);
 
     console.log("Release branch created");
