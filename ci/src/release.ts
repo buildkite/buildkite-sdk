@@ -1,5 +1,6 @@
 import { Pipeline } from "@buildkite/buildkite-sdk"
 import * as fs from "fs"
+import { execSync } from "child_process"
 
 const pipeline = new Pipeline()
 
@@ -92,7 +93,116 @@ const languageTargets = [
   }
 ]
 
+// Skip publishing SDKs unchanged since the previous release tag. Lockstep bumps
+// touch every manifest, so those don't count.
+
+function git(args: string): string {
+    return execSync(`git ${args}`, { encoding: "utf-8" }).trim();
+}
+
+// Files the release rewrites to carry the new version. Deliberately excludes
+// lockfiles.
+const VERSION_MANIFESTS = new Set([
+    "sdk/go/project.json",
+    "sdk/python/pyproject.toml",
+    "sdk/typescript/package.json",
+    "sdk/ruby/lib/buildkite/version.rb",
+    "sdk/ruby/project.json",
+    "sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj",
+]);
+
+function releasedVersions(): string[] {
+    return git(
+        "tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname --merged HEAD"
+    )
+        .split("\n")
+        .filter(Boolean)
+        .map((tag) => tag.slice(1));
+}
+
+function resolveBaseTag(versions: string[]): string | null {
+    if (versions.length === 0) {
+        return null;
+    }
+
+    // Tagged HEAD is the release itself, so diff from the one before.
+    const headTags = git("tag --points-at HEAD").split("\n").filter(Boolean);
+    const base = headTags.includes(`v${versions[0]}`)
+        ? versions[1]
+        : versions[0];
+
+    return base ? `v${base}` : null;
+}
+
+function isVersionBumpOnly(
+    base: string,
+    file: string,
+    versions: string[]
+): boolean {
+    if (!VERSION_MANIFESTS.has(file)) {
+        return false;
+    }
+
+    const diff = git(`diff --unified=0 ${base}..HEAD -- "${file}"`);
+    const removed: string[] = [];
+    const added: string[] = [];
+
+    for (const line of diff.split("\n")) {
+        if (line.startsWith("---") || line.startsWith("+++")) continue;
+        if (line.startsWith("-")) removed.push(line.slice(1));
+        else if (line.startsWith("+")) added.push(line.slice(1));
+    }
+
+    if (removed.length === 0 || removed.length !== added.length) {
+        return false;
+    }
+
+    // Blank out released versions before comparing.
+    const strip = (line: string) =>
+        versions.reduce((acc, version) => acc.split(version).join("\0"), line);
+
+    return added.every((line, i) => strip(line) === strip(removed[i]));
+}
+
+function changedFiles(
+    base: string,
+    sdkPath: string,
+    versions: string[]
+): string[] {
+    return git(`diff --name-only ${base}..HEAD -- ${sdkPath}`)
+        .split("\n")
+        .filter(Boolean)
+        .filter((file) => !isVersionBumpOnly(base, file, versions));
+}
+
+const releasedVersionList = releasedVersions();
+const baseTag = resolveBaseTag(releasedVersionList);
+
+// Longest first so `0.12.0` is stripped before `0.1.0` matches inside it.
+const strippableVersions = [...releasedVersionList].sort(
+    (a, b) => b.length - a.length
+);
+
+console.log(
+    baseTag
+        ? `Gating publish steps on changes since ${baseTag}.`
+        : "No previous release tag found. Publishing every SDK."
+);
+
 languageTargets.forEach((target) => {
+    const sdkPath = `sdk/${target.key}`;
+    const skipPublish =
+        baseTag &&
+        changedFiles(baseTag, sdkPath, strippableVersions).length === 0
+            ? `No changes in ${sdkPath} since ${baseTag}`
+            : undefined;
+
+    console.log(
+        skipPublish
+            ? `  ${target.label}: skipping publish (${skipPublish})`
+            : `  ${target.label}: publishing`
+    );
+
     pipeline.addStep({
         depends_on: "install",
         key: `${target.key}`,
@@ -112,6 +222,7 @@ languageTargets.forEach((target) => {
             key: `${target.key}-publish`,
             label: ":rocket: Publish",
             depends_on: [`${target.key}-test`],
+            ...(skipPublish ? { skip: skipPublish } : {}),
             plugins: languagePlugins,
             commands: [
                 "mise trust",
