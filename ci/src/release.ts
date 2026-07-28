@@ -1,6 +1,6 @@
 import { Pipeline } from "@buildkite/buildkite-sdk"
 import * as fs from "fs"
-import { execSync } from "child_process"
+import { execFileSync } from "child_process"
 
 const pipeline = new Pipeline()
 
@@ -96,8 +96,11 @@ const languageTargets = [
 // Skip publishing SDKs unchanged since the previous release tag. Lockstep bumps
 // touch every manifest, so those don't count.
 
-function git(args: string): string {
-    return execSync(`git ${args}`, { encoding: "utf-8" }).trim();
+function git(...args: string[]): string {
+    return execFileSync("git", args, {
+        encoding: "utf-8",
+        maxBuffer: 64 * 1024 * 1024,
+    });
 }
 
 // Files the release rewrites to carry the new version. Deliberately excludes
@@ -111,27 +114,55 @@ const VERSION_MANIFESTS = new Set([
     "sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj",
 ]);
 
-function releasedVersions(): string[] {
-    return git(
-        "tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname --merged HEAD"
-    )
-        .split("\n")
-        .filter(Boolean)
-        .map((tag) => tag.slice(1));
+const RELEASE_TAG = /^v(\d+)\.(\d+)\.(\d+)$/;
+
+interface Release {
+    tag: string;
+    parts: number[];
 }
 
-function resolveBaseTag(versions: string[]): string | null {
-    if (versions.length === 0) {
+function compareParts(a: number[], b: number[]): number {
+    return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+}
+
+function releases(): Release[] {
+    return git("tag", "--list", "--merged", "HEAD")
+        .split("\n")
+        .map((line) => RELEASE_TAG.exec(line.trim()))
+        .filter((match): match is RegExpExecArray => match !== null)
+        .map((match) => ({
+            tag: match[0],
+            parts: [+match[1], +match[2], +match[3]],
+        }))
+        .sort((a, b) => compareParts(b.parts, a.parts));
+}
+
+function pendingVersion(): number[] | null {
+    const manifest = JSON.parse(
+        fs.readFileSync("sdk/typescript/package.json", "utf-8")
+    );
+    const match = RELEASE_TAG.exec(`v${manifest.version}`);
+    return match ? [+match[1], +match[2], +match[3]] : null;
+}
+
+function resolveBaseTag(pending: number[] | null): string | null {
+    if (!pending) {
         return null;
     }
 
-    // Tagged HEAD is the release itself, so diff from the one before.
-    const headTags = git("tag --points-at HEAD").split("\n").filter(Boolean);
-    const base = headTags.includes(`v${versions[0]}`)
-        ? versions[1]
-        : versions[0];
+    const previous = releases().find(
+        (release) => compareParts(release.parts, pending) < 0
+    );
 
-    return base ? `v${base}` : null;
+    return previous ? previous.tag : null;
+}
+
+function fileAt(rev: string, file: string): string | null {
+    try {
+        return git("show", `${rev}:${file}`);
+    } catch {
+        return null;
+    }
 }
 
 function isVersionBumpOnly(
@@ -143,25 +174,17 @@ function isVersionBumpOnly(
         return false;
     }
 
-    const diff = git(`diff --unified=0 ${base}..HEAD -- "${file}"`);
-    const removed: string[] = [];
-    const added: string[] = [];
+    const before = fileAt(base, file);
+    const after = fileAt("HEAD", file);
 
-    for (const line of diff.split("\n")) {
-        if (line.startsWith("---") || line.startsWith("+++")) continue;
-        if (line.startsWith("-")) removed.push(line.slice(1));
-        else if (line.startsWith("+")) added.push(line.slice(1));
-    }
-
-    if (removed.length === 0 || removed.length !== added.length) {
+    if (before === null || after === null) {
         return false;
     }
 
-    // Blank out released versions before comparing.
-    const strip = (line: string) =>
-        versions.reduce((acc, version) => acc.split(version).join("\0"), line);
+    const strip = (text: string) =>
+        versions.reduce((acc, version) => acc.split(version).join("\0"), text);
 
-    return added.every((line, i) => strip(line) === strip(removed[i]));
+    return strip(before) === strip(after);
 }
 
 function changedFiles(
@@ -169,19 +192,22 @@ function changedFiles(
     sdkPath: string,
     versions: string[]
 ): string[] {
-    return git(`diff --name-only ${base}..HEAD -- ${sdkPath}`)
+    return git("diff", "--name-only", `${base}..HEAD`, "--", sdkPath)
         .split("\n")
+        .map((line) => line.trim())
         .filter(Boolean)
         .filter((file) => !isVersionBumpOnly(base, file, versions));
 }
 
-const releasedVersionList = releasedVersions();
-const baseTag = resolveBaseTag(releasedVersionList);
+const pending = pendingVersion();
+const baseTag = resolveBaseTag(pending);
 
-// Longest first so `0.12.0` is stripped before `0.1.0` matches inside it.
-const strippableVersions = [...releasedVersionList].sort(
-    (a, b) => b.length - a.length
-);
+const strippableVersions = [
+    ...new Set([
+        ...releases().map((release) => release.parts.join(".")),
+        ...(pending ? [pending.join(".")] : []),
+    ]),
+].sort((a, b) => b.length - a.length);
 
 console.log(
     baseTag
