@@ -52,7 +52,7 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": [
-                    "go list -m github.com/buildkite/buildkite-sdk/sdk/go@$(git tag --list 'sdk/go/v*' --sort=-v:refname | head -1 | sed 's|sdk/go/||')"
+                    "go list -m github.com/buildkite/buildkite-sdk/sdk/go@v${GO_RELEASE_VERSION:?set by the release pipeline}"
                 ],
                 "env": {
                     "GOPROXY": "proxy.golang.org"

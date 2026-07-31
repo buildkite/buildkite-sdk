@@ -21,8 +21,7 @@
         "clean": "nx clean:all",
         "watch": "npx nx watch --all -- nx rebuild:all",
         "format": "npx nx format:all",
-        "dev": "concurrently 'npm run docs:serve' 'npm run watch' --kill-others",
-        "release:create-branch": "npx nx release:create-branch"
+        "dev": "concurrently 'npm run docs:serve' 'npm run watch' --kill-others"
     },
     "private": true,
     "devDependencies": {
@@ -50,8 +49,6 @@
         "mustache": "^4.2.0",
         "nx": "23.1.0",
         "prettier": "^3.0.0",
-        "replace-in-file": "^8.3.0",
-        "simple-git": "^3.27.0",
         "ts-jest": "^29.4.5",
         "toml": "^5.0.0",
         "ts-node": "10.9.2",

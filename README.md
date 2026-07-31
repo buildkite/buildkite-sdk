@@ -107,36 +107,41 @@ See the [nx guide](https://nx.dev/features/automate-updating-dependencies) for d
 
 ## Publishing new versions
 
-All SDKs version on the same cadence. To publish a new version (of all SDKs), follow these steps:
+Each SDK versions independently. Releasing one leaves the others untouched, and the pipeline publishes a version only if that SDK's registry does not already have it, so it is safe to re-run.
 
 1.  Commit all pending changes. We want the release commit to be "clean" (i.e., to consist only of changes related to the release itself.)
 
-1.  Run the release script with the version you are releasing:
+1.  Release the SDKs you are shipping, with the bump each one needs:
 
     ```bash
-    npx nx release:create-branch --args="--version=0.13.0"
+    npx nx release patch --projects=sdk-python --skip-publish
+    npx nx release minor --projects=sdk-typescript,sdk-go --skip-publish
     ```
 
-    This script:
+    `--skip-publish` matters: publishing is the release pipeline's job, and
+    without it `nx release` would push packages straight from your machine.
 
-    -   Updates each SDK's version file
-    -   Rebuilds all SDKs
-    -   Commits all changes (e.g., to version files, lockfiles, and anything else under `./sdk`)
-    -   Pushes the branch to GitHub
+    For each project this:
 
-1. Next open a PR with the created branch.
+    -   Bumps its version file (Go has none; its version is the tag)
+    -   Writes its `CHANGELOG.md`
+    -   Commits, and tags as `sdk/<language>/v<version>`
 
-1. After the PR is merged, from an up-to-date main branch, create and push the release tags. Tag the release commit itself, not whatever main has since moved on to:
+    Add `--dry-run` to preview without changing anything.
 
-    ```bash
-    git tag v0.13.0 <release-commit>
-    git tag sdk/go/v0.13.0 <release-commit>
+1. Push the commits and tags, then manually trigger the SDK Release Pipeline in Buildkite. For each SDK it takes the newest `sdk/<language>/v*` tag reachable from the build's commit and publishes it only if that version is missing from the registry, so SDKs you did not release are marked skipped rather than green, and re-running the pipeline is harmless. If no release tags are reachable at all it fails rather than quietly publishing nothing, which usually means tags were not fetched. After it has finished, create a release in GitHub ([example](https://github.com/buildkite/buildkite-sdk/releases/tag/v0.5.0)).
 
-    git push origin v0.13.0
-    git push origin sdk/go/v0.13.0
-    ```
+### Version sources
 
-1. Once the tags have been created, manually trigger the SDK Release Pipeline in Buildkite. SDKs with no changes since the previous release have their publish step skipped, so expect some to be marked skipped rather than green. After the pipeline has finished, manually create a release in GitHub ([example](https://github.com/buildkite/buildkite-sdk/releases/tag/v0.5.0)).
+| SDK        | Version lives in                                     |
+| ---------- | ---------------------------------------------------- |
+| TypeScript | `sdk/typescript/package.json`                        |
+| Python     | `sdk/python/pyproject.toml`                          |
+| Ruby       | `sdk/ruby/lib/buildkite/version.rb`                  |
+| C#         | `sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj`  |
+| Go         | the `sdk/go/v*` git tag, no file                     |
+
+TypeScript uses Nx's built-in npm support. The other four are handled by [`tools/release/version-actions.ts`](./tools/release/version-actions.ts), wired up per SDK in the `release` block of [`nx.json`](./nx.json).
 
 ### Docs
 

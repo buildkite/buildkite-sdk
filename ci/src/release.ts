@@ -93,8 +93,6 @@ const languageTargets = [
   }
 ]
 
-// Skip publishing SDKs unchanged since the previous release tag. Lockstep bumps
-// touch every manifest, so those don't count.
 
 function git(...args: string[]): string {
     return execFileSync("git", args, {
@@ -103,130 +101,161 @@ function git(...args: string[]): string {
     });
 }
 
-// Files the release rewrites to carry the new version. Deliberately excludes
-// lockfiles.
-const VERSION_MANIFESTS = new Set([
-    "sdk/go/project.json",
-    "sdk/python/pyproject.toml",
-    "sdk/typescript/package.json",
-    "sdk/ruby/lib/buildkite/version.rb",
-    "sdk/ruby/project.json",
-    "sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj",
-]);
+// Each returns a URL that is 200 when the version is published, 404 when not.
+const REGISTRY_URL: Record<string, (version: string) => string> = {
+    typescript: (v) =>
+        `https://registry.npmjs.org/@buildkite%2Fbuildkite-sdk/${v}`,
+    python: (v) => `https://pypi.org/pypi/buildkite-sdk/${v}/json`,
+    ruby: (v) =>
+        `https://rubygems.org/api/v2/rubygems/buildkite-sdk/versions/${v}.json`,
+    csharp: (v) =>
+        `https://api.nuget.org/v3-flatcontainer/buildkite.sdk/${v}/buildkite.sdk.${v}.nupkg`,
+    go: (v) =>
+        `https://proxy.golang.org/github.com/buildkite/buildkite-sdk/sdk/go/@v/v${v}.info`,
+};
 
-const RELEASE_TAG = /^v(\d+)\.(\d+)\.(\d+)$/;
+const RELEASE_TAG = /\/v(\d+\.\d+\.\d+)$/;
 
-interface Release {
-    tag: string;
-    parts: number[];
-}
+const MANIFEST: Record<string, { file: string; pattern: RegExp }> = {
+    typescript: {
+        file: "sdk/typescript/package.json",
+        pattern: /"version":\s*"(\d+\.\d+\.\d+)"/,
+    },
+    python: {
+        // Scoped to [project], so a version key in another table cannot win.
+        file: "sdk/python/pyproject.toml",
+        pattern: /\[project\][\s\S]*?^version\s*=\s*"(\d+\.\d+\.\d+)"/m,
+    },
+    ruby: {
+        file: "sdk/ruby/lib/buildkite/version.rb",
+        pattern: /VERSION\s*=\s*"(\d+\.\d+\.\d+)"/,
+    },
+    csharp: {
+        file: "sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj",
+        pattern: /<Version>(\d+\.\d+\.\d+)<\/Version>/,
+    },
+};
 
-function compareParts(a: number[], b: number[]): number {
-    return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
-}
-
-function releases(): Release[] {
-    return git("tag", "--list", "--merged", "HEAD")
+function taggedVersion(key: string): string | null {
+    const versions = git("tag", "--list", `sdk/${key}/v*`, "--merged", "HEAD")
         .split("\n")
         .map((line) => RELEASE_TAG.exec(line.trim()))
         .filter((match): match is RegExpExecArray => match !== null)
-        .map((match) => ({
-            tag: match[0],
-            parts: [+match[1], +match[2], +match[3]],
-        }))
-        .sort((a, b) => compareParts(b.parts, a.parts));
-}
+        .map((match) => match[1].split(".").map(Number));
 
-function pendingVersion(): number[] | null {
-    const manifest = JSON.parse(
-        fs.readFileSync("sdk/typescript/package.json", "utf-8")
-    );
-    const match = RELEASE_TAG.exec(`v${manifest.version}`);
-    return match ? [+match[1], +match[2], +match[3]] : null;
-}
-
-function resolveBaseTag(pending: number[] | null): string | null {
-    if (!pending) {
+    if (!versions.length) {
         return null;
     }
 
-    const previous = releases().find(
-        (release) => compareParts(release.parts, pending) < 0
-    );
-
-    return previous ? previous.tag : null;
+    versions.sort((a, b) => b[0] - a[0] || b[1] - a[1] || b[2] - a[2]);
+    return versions[0].join(".");
 }
 
-function fileAt(rev: string, file: string): string | null {
+// Throws rather than returning null: every failure here means we cannot tell
+// what would ship, and skipping on that is how a release goes missing quietly.
+function releaseVersion(key: string): string {
+    if (key === "go") {
+        const version = taggedVersion(key);
+        if (!version) {
+            throw new Error("no sdk/go/v* tag reachable from HEAD");
+        }
+        return version;
+    }
+
+    const manifest = MANIFEST[key];
+    if (!manifest) {
+        throw new Error(`no version source configured for "${key}"`);
+    }
+
+    let contents: string;
     try {
-        return git("show", `${rev}:${file}`);
+        contents = fs.readFileSync(manifest.file, "utf-8");
+    } catch {
+        throw new Error(`could not read ${manifest.file}`);
+    }
+
+    const match = manifest.pattern.exec(contents);
+    if (!match) {
+        throw new Error(
+            `no X.Y.Z version in ${manifest.file}; prereleases are not supported`
+        );
+    }
+
+    return match[1];
+}
+
+function isPublished(key: string, version: string): boolean | null {
+    try {
+        const status = execFileSync(
+            "curl",
+            [
+                "-s",
+                "-o",
+                "/dev/null",
+                "-w",
+                "%{http_code}",
+                "--max-time",
+                "20",
+                "--retry",
+                "2",
+                "--retry-delay",
+                "1",
+                REGISTRY_URL[key](version),
+            ],
+            { encoding: "utf-8" }
+        ).trim();
+
+        if (status === "200") return true;
+        if (status === "404") return false;
+        return null;
     } catch {
         return null;
     }
 }
 
-function isVersionBumpOnly(
-    base: string,
-    file: string,
-    versions: string[]
-): boolean {
-    if (!VERSION_MANIFESTS.has(file)) {
-        return false;
-    }
-
-    const before = fileAt(base, file);
-    const after = fileAt("HEAD", file);
-
-    if (before === null || after === null) {
-        return false;
-    }
-
-    const strip = (text: string) =>
-        versions.reduce((acc, version) => acc.split(version).join("\0"), text);
-
-    return strip(before) === strip(after);
+// Buildkite fetches with an explicit refspec, which does not bring tags. No
+// release tags at all means the checkout is wrong, not that there is nothing
+// to do. Anything less than this cannot fire, since sdk/go/v* always exists.
+if (!git("tag", "--list", "sdk/*/v*").trim()) {
+    console.error(
+        "No sdk/<language>/v* tags exist in this checkout. Fetch tags before " +
+            "generating this pipeline: git fetch --tags."
+    );
+    process.exit(1);
 }
 
-function changedFiles(
-    base: string,
-    sdkPath: string,
-    versions: string[]
-): string[] {
-    return git("diff", "--name-only", `${base}..HEAD`, "--", sdkPath)
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .filter((file) => !isVersionBumpOnly(base, file, versions));
-}
+const plans = languageTargets.map((target) => {
+    let version: string;
+    try {
+        version = releaseVersion(target.key);
+    } catch (error) {
+        console.error(`${target.label}: ${(error as Error).message}`);
+        process.exit(1);
+    }
 
-const pending = pendingVersion();
-const baseTag = resolveBaseTag(pending);
+    const published = isPublished(target.key, version);
+    if (published === true) {
+        return { key: target.key, skip: `${version} is already published` };
+    }
+    if (published === null) {
+        console.warn(
+            `  ${target.label}: registry lookup failed, publishing ${version} anyway`
+        );
+    }
 
-const strippableVersions = [
-    ...new Set([
-        ...releases().map((release) => release.parts.join(".")),
-        ...(pending ? [pending.join(".")] : []),
-    ]),
-].sort((a, b) => b.length - a.length);
+    return { key: target.key, version };
+});
 
-console.log(
-    baseTag
-        ? `Gating publish steps on changes since ${baseTag}.`
-        : "No previous release tag found. Publishing every SDK."
-);
+const planFor = new Map(plans.map((plan) => [plan.key, plan]));
 
 languageTargets.forEach((target) => {
-    const sdkPath = `sdk/${target.key}`;
-    const skipPublish =
-        baseTag &&
-        changedFiles(baseTag, sdkPath, strippableVersions).length === 0
-            ? `No changes in ${sdkPath} since ${baseTag}`
-            : undefined;
+    const plan = planFor.get(target.key);
+    const skipPublish = plan?.skip;
 
     console.log(
         skipPublish
             ? `  ${target.label}: skipping publish (${skipPublish})`
-            : `  ${target.label}: publishing`
+            : `  ${target.label}: publishing ${plan?.version}`
     );
 
     pipeline.addStep({
@@ -249,6 +278,9 @@ languageTargets.forEach((target) => {
             label: ":rocket: Publish",
             depends_on: [`${target.key}-test`],
             ...(skipPublish ? { skip: skipPublish } : {}),
+            ...(target.key === "go" && plan?.version
+                ? { env: { GO_RELEASE_VERSION: plan.version } }
+                : {}),
             plugins: languagePlugins,
             commands: [
                 "mise trust",

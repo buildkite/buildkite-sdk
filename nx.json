@@ -55,6 +55,65 @@
             "inputs": ["production", "^production"]
         }
     },
+    "release": {
+        "projectsRelationship": "independent",
+        "version": {
+            "adjustSemverBumpsForZeroMajorVersion": false
+        },
+        "changelog": {
+            "workspaceChangelog": false,
+            "projectChangelogs": true,
+            "automaticFromRef": true
+        },
+        "groups": {
+            "sdk-typescript": {
+                "projects": ["sdk-typescript"],
+                "releaseTag": { "pattern": "sdk/typescript/v{version}" },
+                "version": { "currentVersionResolver": "disk" }
+            },
+            "sdk-python": {
+                "projects": ["sdk-python"],
+                "releaseTag": { "pattern": "sdk/python/v{version}" },
+                "version": {
+                    "versionActions": "tools/release/version-actions.ts",
+                    "versionActionsOptions": {
+                        "file": "sdk/python/pyproject.toml"
+                    },
+                    "currentVersionResolver": "disk"
+                }
+            },
+            "sdk-ruby": {
+                "projects": ["sdk-ruby"],
+                "releaseTag": { "pattern": "sdk/ruby/v{version}" },
+                "version": {
+                    "versionActions": "tools/release/version-actions.ts",
+                    "versionActionsOptions": {
+                        "file": "sdk/ruby/lib/buildkite/version.rb"
+                    },
+                    "currentVersionResolver": "disk"
+                }
+            },
+            "sdk-csharp": {
+                "projects": ["sdk-csharp"],
+                "releaseTag": { "pattern": "sdk/csharp/v{version}" },
+                "version": {
+                    "versionActions": "tools/release/version-actions.ts",
+                    "versionActionsOptions": {
+                        "file": "sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj"
+                    },
+                    "currentVersionResolver": "disk"
+                }
+            },
+            "sdk-go": {
+                "projects": ["sdk-go"],
+                "releaseTag": { "pattern": "sdk/go/v{version}" },
+                "version": {
+                    "versionActions": "tools/release/version-actions.ts",
+                    "currentVersionResolver": "git-tag"
+                }
+            }
+        }
+    },
     "analytics": false,
     "neverConnectToCloud": true,
     "tui": {

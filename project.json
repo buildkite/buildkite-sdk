@@ -209,12 +209,6 @@
         },
         "rebuild:all": {
             "dependsOn": ["build:all", "docs:all", "run:all"]
-        },
-        "release:create-branch": {
-            "executor": "nx:run-commands",
-            "options": {
-                "command": "node ./create-release-branch.js {args.version}"
-            }
         }
     }
 }
