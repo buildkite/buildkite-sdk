@@ -58,7 +58,10 @@
     "release": {
         "projectsRelationship": "independent",
         "version": {
-            "adjustSemverBumpsForZeroMajorVersion": false
+            "adjustSemverBumpsForZeroMajorVersion": false,
+            "versionActionsOptions": {
+                "installIgnoreScripts": true
+            }
         },
         "changelog": {
             "workspaceChangelog": false,
