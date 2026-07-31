@@ -46,8 +46,12 @@
     "pack": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet pack -c Release -o ../../dist/csharp",
-        "cwd": "sdk/csharp"
+        "commands": [
+          "rimraf ../../dist/csharp",
+          "dotnet pack -c Release -o ../../dist/csharp"
+        ],
+        "cwd": "sdk/csharp",
+        "parallel": false
       },
       "dependsOn": ["build"]
     },
