@@ -107,37 +107,84 @@ See the [nx guide](https://nx.dev/features/automate-updating-dependencies) for d
 
 ## Publishing new versions
 
-Each SDK versions independently. Releasing one leaves the others untouched, and the pipeline publishes a version only if that SDK's registry does not already have it, so it is safe to re-run.
+Each SDK has its own version and `sdk/<language>/v<version>` tag. Always use
+`release:create`; do not run `nx release` directly. The local command creates
+the release commit and tags. Buildkite publishes the packages.
 
-1.  Commit all pending changes. We want the release commit to be "clean" (i.e., to consist only of changes related to the release itself.)
+1.  Prepare the repository.
 
-1.  Cut the release:
+    Commit all intended changes, then confirm the working tree is clean:
 
     ```bash
-    npx nx release:create --dry-run
-    npx nx release:create
-    npx nx release:create --bump=minor
+    git status --short
     ```
 
-    This works out which SDKs changed since their own last tag and releases
-    exactly those, defaulting to a patch. You choose the size of the bump; the
-    tooling chooses what gets released, so an unchanged SDK cannot be shipped
-    by mistake. It fetches tags first, requires a clean working tree, and does
-    nothing if no SDK has changed.
+    This command must produce no output. `release:create` also fetches tags and
+    stops if a local tag conflicts with the remote.
 
-    Changes to an SDK's `project.json` alone do not select it, since a build
-    config edit is rarely worth a release on its own. Pass `--force` to include
-    them for a deliberate packaging release.
+1.  Preview the release and choose a bump.
 
-    For each SDK released, it:
+    | Bump  | Preview                                        | Create                               |
+    | ----- | ---------------------------------------------- | ------------------------------------ |
+    | Patch | `npx nx release:create --dry-run`              | `npx nx release:create`              |
+    | Minor | `npx nx release:create --dry-run --bump=minor` | `npx nx release:create --bump=minor` |
+    | Major | `npx nx release:create --dry-run --bump=major` | `npx nx release:create --bump=major` |
 
-    - Bumps the version file (Go has none; its version is the tag)
-    - Writes its `CHANGELOG.md`
-    - Commits, and tags as `sdk/<language>/v<version>`
+    The helper selects every SDK changed since its own latest tag. One bump
+    applies to every SDK selected by that run. Confirm the preview lists only
+    the SDKs you intend to release before continuing.
 
-    Nothing is published and nothing is pushed at this point.
+    A change to `sdk/<language>/project.json` alone is ignored. To make a
+    deliberate packaging release for such a change, add `--force` to both the
+    preview and create commands.
 
-1.  Push the commits and tags, then manually trigger the SDK Release Pipeline in Buildkite. For each SDK it reads the version from that SDK's version file, or from the newest `sdk/go/v*` tag in Go's case, and publishes it only if the registry does not already have it. SDKs you did not release are marked skipped rather than green, and re-running the pipeline is harmless. A publish fails rather than proceeding when the matching `sdk/<language>/v<version>` tag is missing, or when that SDK differs from its tag, so a published artifact always matches the tag it claims. After it has finished, create one GitHub Release per SDK you released, against its `sdk/<language>/v<version>` tag, using that SDK's new `CHANGELOG.md` entry as the body.
+1.  Create the release.
+
+    Run exactly one command from the **Create** column above, using the same
+    bump you previewed. For every selected SDK, the command:
+
+    - Updates its version file (Go has no version file)
+    - Updates its `CHANGELOG.md`
+    - Creates one release commit
+    - Creates an `sdk/<language>/v<version>` tag
+
+    It does not push or publish anything.
+
+1.  Review the release commit and tags.
+
+    ```bash
+    git show --stat
+    git tag --points-at HEAD
+    ```
+
+    Confirm the commit contains only release changes and that there is one tag
+    for each SDK shown in the preview. If anything is wrong, do not push it.
+
+1.  Push the commit and tags.
+
+    ```bash
+    git push --follow-tags
+    ```
+
+1.  Publish from Buildkite.
+
+    Get the release commit SHA:
+
+    ```bash
+    git rev-parse HEAD
+    ```
+
+    Manually trigger the **SDK Release Pipeline** against that exact commit.
+    The pipeline checks each registry first, skips versions already published,
+    and publishes only versions missing from their registry. A publish step
+    turns red instead of publishing if its tag is missing or its SDK files do
+    not match the tag. Other SDKs can continue independently.
+
+1.  Create the GitHub Releases.
+
+    After Buildkite succeeds, create one GitHub Release for each SDK published.
+    Select its `sdk/<language>/v<version>` tag and use that SDK's new
+    `CHANGELOG.md` entry as the release body.
 
 ### Version sources
 
@@ -157,7 +204,8 @@ The SDK language docs are managed by a Pulumi Program in `infra` and manually de
 
 ### Required environment variables
 
-The following environment variables are required for releasing and publishing:
+The local `release:create` command does not need registry credentials. The
+Buildkite SDK Release Pipeline supplies these variables when publishing:
 
 - `NPM_TOKEN` for publishing to npm (with `npm publish`)
 - `PYPI_TOKEN` for publishing to PyPI (with `uv publish`)
