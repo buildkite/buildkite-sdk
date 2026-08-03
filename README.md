@@ -63,9 +63,6 @@ npm run dev
 # Format all SDK code.
 npm run format
 
-# Publish to npm, PyPi pkg.go.dev, and RubyGems.
-npm run publish
-
 # Publish the docs to AWS.
 npm run docs:publish
 
@@ -212,4 +209,6 @@ Buildkite SDK Release Pipeline supplies these variables when publishing:
 - `GEM_HOST_API_KEY` for publishing to RubyGems (with `gem push`)
 - `NUGET_API_KEY` for publishing to NuGet (with `dotnet nuget push`)
 
-See the `publish:all` tasks in `./project.json` for details.
+See each SDK's `publish` target in `sdk/<language>/project.json` for details.
+There is no aggregate publish target: publishing happens only through the
+release pipeline, one SDK at a time.

@@ -17,7 +17,6 @@
         "docs:serve": "nx run-many --parallel --target 'docs:serve' --projects 'sdk-typescript,sdk-python,sdk-ruby' --output-style 'stream'",
         "docs:publish": "nx docs:publish",
         "apps": "nx run:all",
-        "publish": "nx publish:all",
         "clean": "nx clean:all",
         "watch": "npx nx watch --all -- nx rebuild:all",
         "format": "npx nx format:all",

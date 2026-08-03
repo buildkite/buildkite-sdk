@@ -198,15 +198,6 @@
                 "app-csharp:run"
             ]
         },
-        "publish:all": {
-            "dependsOn": [
-                "sdk-typescript:publish",
-                "sdk-python:publish",
-                "sdk-go:publish",
-                "sdk-ruby:publish",
-                "sdk-csharp:publish"
-            ]
-        },
         "rebuild:all": {
             "dependsOn": ["build:all", "docs:all", "run:all"]
         },
