@@ -20,9 +20,9 @@ In v0.4.0 we introduced type generation from Buildkite's [Pipeline Schema](https
 
 To work on the SDK, you'll need current versions of the following tools:
 
--   [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
--   For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
--   For Ruby: [Bundler](https://bundler.io/)
+- [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+- For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
+- For Ruby: [Bundler](https://bundler.io/)
 
 See `mise.toml` for details. (We also recommend [Mise](https://mise.jdx.dev/) for tool-version management.) If you're on a Mac, and you use [Homebrew](https://brew.sh/), you can run `brew bundle` and `mise install` to get all you need:
 
@@ -89,9 +89,9 @@ npm run types-go
 
 The type generator automatically fetches the latest schema from the `main` branch of the pipeline-schema repository. Generated types are then written to:
 
--   `sdk/typescript/src/types/`
--   `sdk/python/src/buildkite_sdk/schema.py`
--   `sdk/go/sdk/buildkite/`
+- `sdk/typescript/src/types/`
+- `sdk/python/src/buildkite_sdk/schema.py`
+- `sdk/go/sdk/buildkite/`
 
 Note that the type-generator binary (a Go program at `internal/gen/type-gen`) is automatically built when you run `npm run types`. If you need to rebuild that binary manually, run `npx nx gen:build`.
 
@@ -131,23 +131,23 @@ Each SDK versions independently. Releasing one leaves the others untouched, and 
 
     For each SDK released, it:
 
-    -   Bumps the version file (Go has none; its version is the tag)
-    -   Writes its `CHANGELOG.md`
-    -   Commits, and tags as `sdk/<language>/v<version>`
+    - Bumps the version file (Go has none; its version is the tag)
+    - Writes its `CHANGELOG.md`
+    - Commits, and tags as `sdk/<language>/v<version>`
 
     Nothing is published and nothing is pushed at this point.
 
-1. Push the commits and tags, then manually trigger the SDK Release Pipeline in Buildkite. For each SDK it reads the version from that SDK's version file, or from the newest `sdk/go/v*` tag in Go's case, and publishes it only if the registry does not already have it. SDKs you did not release are marked skipped rather than green, and re-running the pipeline is harmless. A publish fails rather than proceeding when the matching `sdk/<language>/v<version>` tag is missing, or when that SDK differs from its tag, so a published artifact always matches the tag it claims. After it has finished, create one GitHub Release per SDK you released, against its `sdk/<language>/v<version>` tag, using that SDK's new `CHANGELOG.md` entry as the body.
+1.  Push the commits and tags, then manually trigger the SDK Release Pipeline in Buildkite. For each SDK it reads the version from that SDK's version file, or from the newest `sdk/go/v*` tag in Go's case, and publishes it only if the registry does not already have it. SDKs you did not release are marked skipped rather than green, and re-running the pipeline is harmless. A publish fails rather than proceeding when the matching `sdk/<language>/v<version>` tag is missing, or when that SDK differs from its tag, so a published artifact always matches the tag it claims. After it has finished, create one GitHub Release per SDK you released, against its `sdk/<language>/v<version>` tag, using that SDK's new `CHANGELOG.md` entry as the body.
 
 ### Version sources
 
-| SDK        | Version lives in                                     |
-| ---------- | ---------------------------------------------------- |
-| TypeScript | `sdk/typescript/package.json`                        |
-| Python     | `sdk/python/pyproject.toml`                          |
-| Ruby       | `sdk/ruby/lib/buildkite/version.rb`                  |
-| C#         | `sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj`  |
-| Go         | the `sdk/go/v*` git tag, no file                     |
+| SDK        | Version lives in                                    |
+| ---------- | --------------------------------------------------- |
+| TypeScript | `sdk/typescript/package.json`                       |
+| Python     | `sdk/python/pyproject.toml`                         |
+| Ruby       | `sdk/ruby/lib/buildkite/version.rb`                 |
+| C#         | `sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj` |
+| Go         | the `sdk/go/v*` git tag, no file                    |
 
 TypeScript uses Nx's built-in npm support. The other four are handled by [`tools/release/version-actions.ts`](./tools/release/version-actions.ts), wired up per SDK in the `release` block of [`nx.json`](./nx.json).
 
@@ -159,9 +159,9 @@ The SDK language docs are managed by a Pulumi Program in `infra` and manually de
 
 The following environment variables are required for releasing and publishing:
 
--   `NPM_TOKEN` for publishing to npm (with `npm publish`)
--   `PYPI_TOKEN` for publishing to PyPI (with `uv publish`)
--   `GEM_HOST_API_KEY` for publishing to RubyGems (with `gem push`)
--   `NUGET_API_KEY` for publishing to NuGet (with `dotnet nuget push`)
+- `NPM_TOKEN` for publishing to npm (with `npm publish`)
+- `PYPI_TOKEN` for publishing to PyPI (with `uv publish`)
+- `GEM_HOST_API_KEY` for publishing to RubyGems (with `gem push`)
+- `NUGET_API_KEY` for publishing to NuGet (with `dotnet nuget push`)
 
 See the `publish:all` tasks in `./project.json` for details.

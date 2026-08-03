@@ -1,98 +1,109 @@
-import { Pipeline } from "@buildkite/buildkite-sdk"
-import * as fs from "fs"
-import { execFileSync } from "child_process"
+import { Pipeline } from "@buildkite/buildkite-sdk";
+import * as fs from "fs";
+import { execFileSync } from "child_process";
 
-const pipeline = new Pipeline()
+const pipeline = new Pipeline();
 
 const plugins = [
-  { "docker#v5.11.0": {
-     image: "buildkite-sdk-tools:latest",
-     "propagate-environment": true,
-     environment: [
-       "GITHUB_TOKEN",
-       "NPM_TOKEN",
-       "PYPI_TOKEN",
-       "GEM_HOST_API_KEY",
-       "NUGET_API_KEY"
-     ]
-  }},
-  { "rubygems-oidc#v0.2.0": { role: "rg_oidc_akr_emf87k6zphtb7x7adyrk" } },
-  { "aws-assume-role-with-web-identity#v1.4.0": {
-    "role-arn": "arn:aws:iam::597088016345:role/pipeline-buildkite-buildkite-sdk",
-    "session-tags": ["organization_slug", "organization_id", "pipeline_slug"],
-  }},
-  { "aws-ssm#v1.0.0": {
-    parameters: {
-      NPM_TOKEN: "/prod/buildkite-sdk/npm-token",
-      PYPI_TOKEN: "/prod/buildkite-sdk/pypi-token",
-      GITHUB_TOKEN: "/prod/buildkite-sdk/github-token",
-      NUGET_API_KEY: "/prod/buildkite-sdk/nuget-api-key"
-    }
-  }}
-]
+    {
+        "docker#v5.11.0": {
+            image: "buildkite-sdk-tools:latest",
+            "propagate-environment": true,
+            environment: [
+                "GITHUB_TOKEN",
+                "NPM_TOKEN",
+                "PYPI_TOKEN",
+                "GEM_HOST_API_KEY",
+                "NUGET_API_KEY",
+            ],
+        },
+    },
+    { "rubygems-oidc#v0.2.0": { role: "rg_oidc_akr_emf87k6zphtb7x7adyrk" } },
+    {
+        "aws-assume-role-with-web-identity#v1.4.0": {
+            "role-arn":
+                "arn:aws:iam::597088016345:role/pipeline-buildkite-buildkite-sdk",
+            "session-tags": [
+                "organization_slug",
+                "organization_id",
+                "pipeline_slug",
+            ],
+        },
+    },
+    {
+        "aws-ssm#v1.0.0": {
+            parameters: {
+                NPM_TOKEN: "/prod/buildkite-sdk/npm-token",
+                PYPI_TOKEN: "/prod/buildkite-sdk/pypi-token",
+                GITHUB_TOKEN: "/prod/buildkite-sdk/github-token",
+                NUGET_API_KEY: "/prod/buildkite-sdk/nuget-api-key",
+            },
+        },
+    },
+];
 
 pipeline.addStep({
     key: "install",
     label: ":test_tube: Install",
     plugins: [
         ...plugins,
-        { "artifacts#v1.9.2": {
-            upload: ["node_modules"],
-            compressed: "node_modules.tgz"
-        }}
+        {
+            "artifacts#v1.9.2": {
+                upload: ["node_modules"],
+                compressed: "node_modules.tgz",
+            },
+        },
     ],
-    commands: [
-        "mise trust",
-        "npm install --ignore-scripts"
-    ]
-})
+    commands: ["mise trust", "npm install --ignore-scripts"],
+});
 
 const languagePlugins = [
     ...plugins,
-    { "artifacts#v1.9.2": {
-        download: ["node_modules"],
-        compressed: "node_modules.tgz"
-    }}
-]
+    {
+        "artifacts#v1.9.2": {
+            download: ["node_modules"],
+            compressed: "node_modules.tgz",
+        },
+    },
+];
 
 const languageTargets = [
-  {
-    icon: ":typescript:",
-    label: "Typescript",
-    key: "typescript",
-    sdkLabel: "sdk-typescript",
-    appLabel: "app-typescript"
-  },
-  {
-    icon: ":python:",
-    label: "Python",
-    key: "python",
-    sdkLabel: "sdk-python",
-    appLabel: "app-python"
-  },
-  {
-    icon: ":go:",
-    label: "Go",
-    key: "go",
-    sdkLabel: "sdk-go",
-    appLabel: "app-go"
-  },
-  {
-    icon: ":ruby:",
-    label: "Ruby",
-    key: "ruby",
-    sdkLabel: "sdk-ruby",
-    appLabel: "app-ruby"
-  },
-  {
-    icon: ":csharp:",
-    label: "C#",
-    key: "csharp",
-    sdkLabel: "sdk-csharp",
-    appLabel: "app-csharp"
-  }
-]
-
+    {
+        icon: ":typescript:",
+        label: "Typescript",
+        key: "typescript",
+        sdkLabel: "sdk-typescript",
+        appLabel: "app-typescript",
+    },
+    {
+        icon: ":python:",
+        label: "Python",
+        key: "python",
+        sdkLabel: "sdk-python",
+        appLabel: "app-python",
+    },
+    {
+        icon: ":go:",
+        label: "Go",
+        key: "go",
+        sdkLabel: "sdk-go",
+        appLabel: "app-go",
+    },
+    {
+        icon: ":ruby:",
+        label: "Ruby",
+        key: "ruby",
+        sdkLabel: "sdk-ruby",
+        appLabel: "app-ruby",
+    },
+    {
+        icon: ":csharp:",
+        label: "C#",
+        key: "csharp",
+        sdkLabel: "sdk-csharp",
+        appLabel: "app-csharp",
+    },
+];
 
 function git(...args: string[]): string {
     return execFileSync("git", args, {
@@ -181,7 +192,7 @@ function releaseVersion(key: string): string {
     const match = manifest.pattern.exec(contents);
     if (!match) {
         throw new Error(
-            `no X.Y.Z version in ${manifest.file}; prereleases are not supported`
+            `no X.Y.Z version in ${manifest.file}; prereleases are not supported`,
         );
     }
 
@@ -231,7 +242,7 @@ function isPublished(key: string, version: string): boolean | null {
                 "1",
                 REGISTRY_URL[key](version),
             ],
-            { encoding: "utf-8" }
+            { encoding: "utf-8" },
         ).trim();
 
         if (status === "200") return true;
@@ -248,7 +259,7 @@ function isPublished(key: string, version: string): boolean | null {
 if (!git("tag", "--list", "sdk/*/v*").trim()) {
     console.error(
         "No sdk/<language>/v* tags exist in this checkout. Fetch tags before " +
-            "generating this pipeline: git fetch --tags."
+            "generating this pipeline: git fetch --tags.",
     );
     process.exit(1);
 }
@@ -268,7 +279,7 @@ const plans = languageTargets.map((target) => {
     }
     if (published === null) {
         console.warn(
-            `  ${target.label}: registry lookup failed, publishing ${version} anyway`
+            `  ${target.label}: registry lookup failed, publishing ${version} anyway`,
         );
     }
 
@@ -291,7 +302,7 @@ languageTargets.forEach((target) => {
             ? `  ${target.label}: skipping publish (${skipPublish})`
             : blocked
               ? `  ${target.label}: BLOCKED - ${blocked}`
-              : `  ${target.label}: publishing ${plan && "version" in plan ? plan.version : "?"}`
+              : `  ${target.label}: publishing ${plan && "version" in plan ? plan.version : "?"}`,
     );
 
     pipeline.addStep({
@@ -299,38 +310,38 @@ languageTargets.forEach((target) => {
         key: `${target.key}`,
         group: `${target.icon} ${target.label}`,
         steps: [
-        {
-            key: `${target.key}-test`,
-            label: ":test_tube: Test",
-            plugins: languagePlugins,
-            commands: [
-                "mise trust",
-                `nx install ${target.sdkLabel}`,
-                `nx test ${target.sdkLabel}`
-            ],
-        },
-        {
-            key: `${target.key}-publish`,
-            label: ":rocket: Publish",
-            depends_on: [`${target.key}-test`],
-            ...(skipPublish ? { skip: skipPublish } : {}),
-            ...(!blocked && target.key === "go" && plan && "version" in plan
-                ? { env: { GO_RELEASE_VERSION: plan.version } }
-                : {}),
-            plugins: languagePlugins,
-            // A blocked SDK fails its own step rather than skipping, so it is
-            // red rather than quietly absent, and the others still publish.
-            commands: blocked
-                ? [`echo ${JSON.stringify(blocked)}`, "exit 1"]
-                : [
-                      "mise trust",
-                      `nx install ${target.sdkLabel}`,
-                      `nx build ${target.sdkLabel}`,
-                      `nx run ${target.sdkLabel}:publish`
-                  ],
-        },
-        ]
-    })
-})
+            {
+                key: `${target.key}-test`,
+                label: ":test_tube: Test",
+                plugins: languagePlugins,
+                commands: [
+                    "mise trust",
+                    `nx install ${target.sdkLabel}`,
+                    `nx test ${target.sdkLabel}`,
+                ],
+            },
+            {
+                key: `${target.key}-publish`,
+                label: ":rocket: Publish",
+                depends_on: [`${target.key}-test`],
+                ...(skipPublish ? { skip: skipPublish } : {}),
+                ...(!blocked && target.key === "go" && plan && "version" in plan
+                    ? { env: { GO_RELEASE_VERSION: plan.version } }
+                    : {}),
+                plugins: languagePlugins,
+                // A blocked SDK fails its own step rather than skipping, so it is
+                // red rather than quietly absent, and the others still publish.
+                commands: blocked
+                    ? [`echo ${JSON.stringify(blocked)}`, "exit 1"]
+                    : [
+                          "mise trust",
+                          `nx install ${target.sdkLabel}`,
+                          `nx build ${target.sdkLabel}`,
+                          `nx run ${target.sdkLabel}:publish`,
+                      ],
+            },
+        ],
+    });
+});
 
-fs.writeFileSync(".buildkite/pipeline.json", pipeline.toJSON())
+fs.writeFileSync(".buildkite/pipeline.json", pipeline.toJSON());
