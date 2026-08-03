@@ -3,7 +3,11 @@ import { basename, dirname } from "node:path/posix";
 import type { Tree } from "nx/src/generators/tree";
 
 const PATTERNS: { match: RegExp; version: RegExp }[] = [
-    { match: /\.toml$/, version: /^(version\s*=\s*")([^"]+)(")/m },
+    // Scoped to [project], so a version key in another table cannot win.
+    {
+        match: /\.toml$/,
+        version: /(\[project\][\s\S]*?^version\s*=\s*")([^"]+)(")/m,
+    },
     { match: /\.rb$/, version: /(VERSION\s*=\s*")([^"]+)(")/ },
     { match: /\.csproj$/, version: /(<Version>)([^<]+)(<\/Version>)/ },
 ];

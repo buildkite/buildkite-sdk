@@ -136,8 +136,12 @@ const MANIFEST: Record<string, { file: string; pattern: RegExp }> = {
     },
 };
 
+// All tags, not just those merged into HEAD: a squash or rebase merge leaves
+// the release tag unreachable, and nx resolves the same way via
+// checkAllBranchesWhen. Correctness comes from comparing the tagged tree to
+// HEAD, not from reachability.
 function taggedVersion(key: string): string | null {
-    const versions = git("tag", "--list", `sdk/${key}/v*`, "--merged", "HEAD")
+    const versions = git("tag", "--list", `sdk/${key}/v*`)
         .split("\n")
         .map((line) => RELEASE_TAG.exec(line.trim()))
         .filter((match): match is RegExpExecArray => match !== null)
@@ -157,7 +161,7 @@ function releaseVersion(key: string): string {
     if (key === "go") {
         const version = taggedVersion(key);
         if (!version) {
-            throw new Error("no sdk/go/v* tag reachable from HEAD");
+            throw new Error("no sdk/go/v* tag found");
         }
         return version;
     }
@@ -182,6 +186,31 @@ function releaseVersion(key: string): string {
     }
 
     return match[1];
+}
+
+// A published artifact has to be reproducible from its tag. project.json is
+// included: it sets build and pack commands, so a change there can alter the
+// artifact. Returns a reason when the version must not ship, or null.
+function reproducibilityProblem(key: string, version: string): string | null {
+    const tag = `sdk/${key}/v${version}`;
+
+    if (!git("tag", "--list", tag).trim()) {
+        return `${tag} does not exist; push the release tag`;
+    }
+
+    const drift = git("diff", "--name-only", `${tag}..HEAD`, "--", `sdk/${key}`)
+        .trim()
+        .split("\n")
+        .filter(Boolean);
+
+    if (drift.length) {
+        return (
+            `sdk/${key} differs from ${tag} (${drift.length} file(s)), so ` +
+            `${version} would not match its tag. Release a new version.`
+        );
+    }
+
+    return null;
 }
 
 function isPublished(key: string, version: string): boolean | null {
@@ -243,19 +272,26 @@ const plans = languageTargets.map((target) => {
         );
     }
 
-    return { key: target.key, version };
+    // Only a version that is about to ship needs to match its tag. Checking
+    // earlier would let one SDK's drift block every other SDK's release.
+    const blocked = reproducibilityProblem(target.key, version);
+
+    return { key: target.key, version, blocked };
 });
 
 const planFor = new Map(plans.map((plan) => [plan.key, plan]));
 
 languageTargets.forEach((target) => {
     const plan = planFor.get(target.key);
-    const skipPublish = plan?.skip;
+    const skipPublish = plan && "skip" in plan ? plan.skip : undefined;
+    const blocked = plan && "blocked" in plan ? plan.blocked : null;
 
     console.log(
         skipPublish
             ? `  ${target.label}: skipping publish (${skipPublish})`
-            : `  ${target.label}: publishing ${plan?.version}`
+            : blocked
+              ? `  ${target.label}: BLOCKED - ${blocked}`
+              : `  ${target.label}: publishing ${plan && "version" in plan ? plan.version : "?"}`
     );
 
     pipeline.addStep({
@@ -278,16 +314,20 @@ languageTargets.forEach((target) => {
             label: ":rocket: Publish",
             depends_on: [`${target.key}-test`],
             ...(skipPublish ? { skip: skipPublish } : {}),
-            ...(target.key === "go" && plan?.version
+            ...(!blocked && target.key === "go" && plan && "version" in plan
                 ? { env: { GO_RELEASE_VERSION: plan.version } }
                 : {}),
             plugins: languagePlugins,
-            commands: [
-                "mise trust",
-                `nx install ${target.sdkLabel}`,
-                `nx build ${target.sdkLabel}`,
-                `nx run ${target.sdkLabel}:publish`
-            ],
+            // A blocked SDK fails its own step rather than skipping, so it is
+            // red rather than quietly absent, and the others still publish.
+            commands: blocked
+                ? [`echo ${JSON.stringify(blocked)}`, "exit 1"]
+                : [
+                      "mise trust",
+                      `nx install ${target.sdkLabel}`,
+                      `nx build ${target.sdkLabel}`,
+                      `nx run ${target.sdkLabel}:publish`
+                  ],
         },
         ]
     })

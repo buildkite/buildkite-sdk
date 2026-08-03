@@ -111,25 +111,33 @@ Each SDK versions independently. Releasing one leaves the others untouched, and 
 
 1.  Commit all pending changes. We want the release commit to be "clean" (i.e., to consist only of changes related to the release itself.)
 
-1.  Release the SDKs you are shipping, with the bump each one needs:
+1.  Cut the release:
 
     ```bash
-    npx nx release patch --projects=sdk-python --skip-publish
-    npx nx release minor --projects=sdk-typescript,sdk-go --skip-publish
+    npx nx release:create --dry-run
+    npx nx release:create
+    npx nx release:create --bump=minor
     ```
 
-    `--skip-publish` matters: publishing is the release pipeline's job, and
-    without it `nx release` would push packages straight from your machine.
+    This works out which SDKs changed since their own last tag and releases
+    exactly those, defaulting to a patch. You choose the size of the bump; the
+    tooling chooses what gets released, so an unchanged SDK cannot be shipped
+    by mistake. It fetches tags first, requires a clean working tree, and does
+    nothing if no SDK has changed.
 
-    For each project this:
+    Changes to an SDK's `project.json` alone do not select it, since a build
+    config edit is rarely worth a release on its own. Pass `--force` to include
+    them for a deliberate packaging release.
 
-    -   Bumps its version file (Go has none; its version is the tag)
+    For each SDK released, it:
+
+    -   Bumps the version file (Go has none; its version is the tag)
     -   Writes its `CHANGELOG.md`
     -   Commits, and tags as `sdk/<language>/v<version>`
 
-    Add `--dry-run` to preview without changing anything.
+    Nothing is published and nothing is pushed at this point.
 
-1. Push the commits and tags, then manually trigger the SDK Release Pipeline in Buildkite. For each SDK it takes the newest `sdk/<language>/v*` tag reachable from the build's commit and publishes it only if that version is missing from the registry, so SDKs you did not release are marked skipped rather than green, and re-running the pipeline is harmless. If no release tags are reachable at all it fails rather than quietly publishing nothing, which usually means tags were not fetched. After it has finished, create a release in GitHub ([example](https://github.com/buildkite/buildkite-sdk/releases/tag/v0.5.0)).
+1. Push the commits and tags, then manually trigger the SDK Release Pipeline in Buildkite. For each SDK it reads the version from that SDK's version file, or from the newest `sdk/go/v*` tag in Go's case, and publishes it only if the registry does not already have it. SDKs you did not release are marked skipped rather than green, and re-running the pipeline is harmless. A publish fails rather than proceeding when the matching `sdk/<language>/v<version>` tag is missing, or when that SDK differs from its tag, so a published artifact always matches the tag it claims. After it has finished, create one GitHub Release per SDK you released, against its `sdk/<language>/v<version>` tag, using that SDK's new `CHANGELOG.md` entry as the body.
 
 ### Version sources
 

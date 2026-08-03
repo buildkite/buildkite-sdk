@@ -109,7 +109,10 @@
             },
             "sdk-go": {
                 "projects": ["sdk-go"],
-                "releaseTag": { "pattern": "sdk/go/v{version}" },
+                "releaseTag": {
+                    "pattern": "sdk/go/v{version}",
+                    "checkAllBranchesWhen": true
+                },
                 "version": {
                     "versionActions": "tools/release/version-actions.ts",
                     "currentVersionResolver": "git-tag"

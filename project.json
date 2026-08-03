@@ -209,6 +209,12 @@
         },
         "rebuild:all": {
             "dependsOn": ["build:all", "docs:all", "run:all"]
+        },
+        "release:create": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "node ./tools/release/create-release.js"
+            }
         }
     }
 }
