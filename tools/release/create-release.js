@@ -191,6 +191,6 @@ if (!dryRun) {
     console.log(
         "\nReview the release commit and tags, then push them:\n" +
             "  git show --stat\n" +
-            "  git push --follow-tags",
+            "  git push --atomic --follow-tags origin main",
     );
 }

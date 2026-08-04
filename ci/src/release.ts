@@ -249,13 +249,22 @@ function isPublished(key: string, version: string): boolean | null {
     }
 }
 
-// Buildkite fetches with an explicit refspec, which does not bring tags. No
-// release tags at all means the checkout is wrong, not that there is nothing
-// to do. Anything less than this cannot fire, since sdk/go/v* always exists.
+// Buildkite can reuse a checkout whose tags are missing, stale, or deleted.
+// The remote tag set is authoritative for release planning.
+try {
+    execFileSync(
+        "git",
+        ["fetch", "--force", "--prune", "--prune-tags", "--tags", "origin"],
+        { stdio: "inherit" },
+    );
+} catch {
+    console.error("Could not refresh release tags from origin.");
+    process.exit(1);
+}
+
 if (!git("tag", "--list", "sdk/*/v*").trim()) {
     console.error(
-        "No sdk/<language>/v* tags exist in this checkout. Fetch tags before " +
-            "generating this pipeline: git fetch --tags.",
+        "No sdk/<language>/v* tags exist after fetching from origin.",
     );
     process.exit(1);
 }
