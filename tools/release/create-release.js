@@ -46,15 +46,19 @@ if (git("status", "--porcelain").trim()) {
     process.exit(1);
 }
 
-// Tag resolution deliberately considers unmerged and squashed branches, so a
-// stale local tag set produces the wrong version. Fetch rather than suggest it.
-// No --force: a local tag that disagrees with the remote is a conflict to look
-// at, not something to silently overwrite with release tags in play.
-// git writes its per-ref report to stderr, so both streams are read to surface
-// which tag conflicts rather than only that the fetch failed.
-const fetch = spawnSync("git", ["fetch", "origin", "--tags"], {
-    encoding: "utf-8",
-});
+// Mirror SDK release tags from origin. Conflicting tags are not overwritten.
+const fetch = spawnSync(
+    "git",
+    [
+        "fetch",
+        "--prune",
+        "--no-tags",
+        "origin",
+        "+refs/heads/*:refs/remotes/origin/*",
+        "refs/tags/sdk/*:refs/tags/sdk/*",
+    ],
+    { encoding: "utf-8" },
+);
 const report = `${fetch.stdout || ""}${fetch.stderr || ""}`.trim();
 
 if (report.includes("[rejected]")) {

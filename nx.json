@@ -68,6 +68,17 @@
             "projectChangelogs": true,
             "automaticFromRef": true
         },
+        "conventionalCommits": {
+            "types": {
+                "__INVALID__": {
+                    "semverBump": "none",
+                    "changelog": {
+                        "title": "Changes",
+                        "hidden": false
+                    }
+                }
+            }
+        },
         "groups": {
             "sdk-typescript": {
                 "projects": ["sdk-typescript"],

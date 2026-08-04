@@ -118,9 +118,10 @@ the release commit and tags. Buildkite publishes the packages.
     git status --short
     ```
 
-    The status command must produce no output. `release:create` fetches tags
-    and remote branches before it starts. A real release stops unless `HEAD`
-    matches `origin/main`, or if a local tag conflicts with the remote.
+    The status command must produce no output. `release:create` refreshes
+    `origin/main` and the SDK release tags before it starts. Local SDK release
+    tags that were never pushed are discarded. A real release stops unless
+    `HEAD` matches `origin/main`, or if a local tag conflicts with the remote.
 
 1.  Preview the release and choose a bump.
 
@@ -159,6 +160,8 @@ the release commit and tags. Buildkite publishes the packages.
 
     Confirm the commit contains only release changes and that there is one tag
     for each SDK shown in the preview. If anything is wrong, do not push it.
+    Discard the generated release with `git reset --hard origin/main`. The next
+    `release:create` run removes its unpushed SDK tags.
 
 1.  Push the commit and tags.
 
