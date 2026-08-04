@@ -110,14 +110,17 @@ the release commit and tags. Buildkite publishes the packages.
 
 1.  Prepare the repository.
 
-    Commit all intended changes, then confirm the working tree is clean:
+    Start from the latest `main`, then confirm the working tree is clean:
 
     ```bash
+    git switch main
+    git pull --ff-only
     git status --short
     ```
 
-    This command must produce no output. `release:create` also fetches tags and
-    stops if a local tag conflicts with the remote.
+    The status command must produce no output. `release:create` fetches tags
+    and remote branches before it starts. A real release stops unless `HEAD`
+    matches `origin/main`, or if a local tag conflicts with the remote.
 
 1.  Preview the release and choose a bump.
 

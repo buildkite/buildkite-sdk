@@ -52,7 +52,9 @@ if (git("status", "--porcelain").trim()) {
 // at, not something to silently overwrite with release tags in play.
 // git writes its per-ref report to stderr, so both streams are read to surface
 // which tag conflicts rather than only that the fetch failed.
-const fetch = spawnSync("git", ["fetch", "--tags"], { encoding: "utf-8" });
+const fetch = spawnSync("git", ["fetch", "origin", "--tags"], {
+    encoding: "utf-8",
+});
 const report = `${fetch.stdout || ""}${fetch.stderr || ""}`.trim();
 
 if (report.includes("[rejected]")) {
@@ -70,6 +72,23 @@ if (fetch.error || fetch.status !== 0) {
             (report ? `\n\n${report}` : ""),
     );
     process.exit(1);
+}
+
+if (!dryRun) {
+    const branch = git("branch", "--show-current").trim() || "(detached HEAD)";
+    const head = git("rev-parse", "HEAD").trim();
+    const remoteMain = git("rev-parse", "refs/remotes/origin/main").trim();
+
+    if (branch !== "main" || head !== remoteMain) {
+        console.error(
+            "Create releases only from main at the current origin/main commit.\n" +
+                `Current branch: ${branch}\n` +
+                `HEAD: ${head}\n` +
+                `origin/main: ${remoteMain}\n\n` +
+                "Switch to main and update it before trying again.",
+        );
+        process.exit(1);
+    }
 }
 
 // All tags, not just those merged into HEAD. A squash or rebase merge leaves
