@@ -149,8 +149,7 @@ const MANIFEST: Record<string, { file: string; pattern: RegExp }> = {
 
 // All tags, not just those merged into HEAD: a squash or rebase merge leaves
 // the release tag unreachable, and nx resolves the same way via
-// checkAllBranchesWhen. Correctness comes from comparing the tagged tree to
-// HEAD, not from reachability.
+// checkAllBranchesWhen. An unpublished tag must point at HEAD before it ships.
 function taggedVersion(key: string): string | null {
     const versions = git("tag", "--list", `sdk/${key}/v*`)
         .split("\n")
@@ -199,9 +198,8 @@ function releaseVersion(key: string): string {
     return match[1];
 }
 
-// A published artifact has to be reproducible from its tag. project.json is
-// included: it sets build and pack commands, so a change there can alter the
-// artifact. Returns a reason when the version must not ship, or null.
+// An unpublished version must be built from the exact commit its tag names.
+// This also covers shared build inputs outside the SDK directory.
 function reproducibilityProblem(key: string, version: string): string | null {
     const tag = `sdk/${key}/v${version}`;
 
@@ -209,15 +207,13 @@ function reproducibilityProblem(key: string, version: string): string | null {
         return `${tag} does not exist; push the release tag`;
     }
 
-    const drift = git("diff", "--name-only", `${tag}..HEAD`, "--", `sdk/${key}`)
-        .trim()
-        .split("\n")
-        .filter(Boolean);
+    const taggedCommit = git("rev-parse", `${tag}^{commit}`).trim();
+    const head = git("rev-parse", "HEAD").trim();
 
-    if (drift.length) {
+    if (taggedCommit !== head) {
         return (
-            `sdk/${key} differs from ${tag} (${drift.length} file(s)), so ` +
-            `${version} would not match its tag. Release a new version.`
+            `${tag} points to ${taggedCommit.slice(0, 12)}, not this build ` +
+            `${head.slice(0, 12)}; trigger the pipeline at the tagged commit`
         );
     }
 

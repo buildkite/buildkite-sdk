@@ -177,8 +177,8 @@ the release commit and tags. Buildkite publishes the packages.
     Manually trigger the **SDK Release Pipeline** against that exact commit.
     The pipeline checks each registry first, skips versions already published,
     and publishes only versions missing from their registry. A publish step
-    turns red instead of publishing if its tag is missing or its SDK files do
-    not match the tag. Other SDKs can continue independently.
+    turns red instead of publishing if its tag is missing or does not point at
+    the build commit. Other SDKs can continue independently.
 
 1.  Create the GitHub Releases.
 
