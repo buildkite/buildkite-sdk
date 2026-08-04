@@ -36,8 +36,12 @@
             "executor": "nx:run-commands",
             "outputs": ["{workspaceRoot}/dist/sdks/python"],
             "options": {
-                "command": "uv build -o ../../dist/sdks/python",
-                "cwd": "sdk/python"
+                "commands": [
+                    "rimraf ../../dist/sdks/python",
+                    "uv build -o ../../dist/sdks/python"
+                ],
+                "cwd": "sdk/python",
+                "parallel": false
             },
             "cache": false
         },

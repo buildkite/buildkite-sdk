@@ -45,11 +45,9 @@
         "publish": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": ["gem push buildkite-sdk-$VERSION.gem"],
-                "cwd": "dist/sdks/ruby",
-                "env": {
-                    "VERSION": "0.12.0"
-                }
+                "commands": [
+                    "gem push dist/sdks/ruby/buildkite-sdk-$(ruby -r./sdk/ruby/lib/buildkite/version -e 'print Buildkite::VERSION').gem"
+                ]
             },
             "cache": false
         },

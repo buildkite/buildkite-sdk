@@ -52,11 +52,10 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": [
-                    "go list -m github.com/buildkite/buildkite-sdk/sdk/go@v$VERSION"
+                    "go list -m github.com/buildkite/buildkite-sdk/sdk/go@v${GO_RELEASE_VERSION:?set by the release pipeline}"
                 ],
                 "env": {
-                    "GOPROXY": "proxy.golang.org",
-                    "VERSION": "0.12.0"
+                    "GOPROXY": "proxy.golang.org"
                 }
             },
             "cache": false

@@ -198,28 +198,13 @@
                 "app-csharp:run"
             ]
         },
-        "publish:all": {
-            "dependsOn": [
-                "sdk-typescript:publish",
-                "sdk-python:publish",
-                "sdk-go:publish",
-                "sdk-ruby:publish",
-                "sdk-csharp:publish"
-            ]
-        },
         "rebuild:all": {
             "dependsOn": ["build:all", "docs:all", "run:all"]
         },
-        "release:create-branch": {
+        "release:create": {
             "executor": "nx:run-commands",
             "options": {
-                "commands": [
-                    "node ./create-release-branch.js $VERSION_FROM $VERSION_TO"
-                ],
-                "env": {
-                    "VERSION_FROM": "0.11.0",
-                    "VERSION_TO": "0.12.0"
-                }
+                "command": "node ./tools/release/create-release.js"
             }
         }
     }

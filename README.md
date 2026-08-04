@@ -20,9 +20,9 @@ In v0.4.0 we introduced type generation from Buildkite's [Pipeline Schema](https
 
 To work on the SDK, you'll need current versions of the following tools:
 
--   [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
--   For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
--   For Ruby: [Bundler](https://bundler.io/)
+- [Node.js](https://nodejs.org/en/download), [Python](https://www.python.org/downloads/), [Go](https://go.dev/doc/install), [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+- For Python: [uv](https://docs.astral.sh/uv/), [Black](https://black.readthedocs.io/en/stable/)
+- For Ruby: [Bundler](https://bundler.io/)
 
 See `mise.toml` for details. (We also recommend [Mise](https://mise.jdx.dev/) for tool-version management.) If you're on a Mac, and you use [Homebrew](https://brew.sh/), you can run `brew bundle` and `mise install` to get all you need:
 
@@ -63,9 +63,6 @@ npm run dev
 # Format all SDK code.
 npm run format
 
-# Publish to npm, PyPi pkg.go.dev, and RubyGems.
-npm run publish
-
 # Publish the docs to AWS.
 npm run docs:publish
 
@@ -89,9 +86,9 @@ npm run types-go
 
 The type generator automatically fetches the latest schema from the `main` branch of the pipeline-schema repository. Generated types are then written to:
 
--   `sdk/typescript/src/types/`
--   `sdk/python/src/buildkite_sdk/schema.py`
--   `sdk/go/sdk/buildkite/`
+- `sdk/typescript/src/types/`
+- `sdk/python/src/buildkite_sdk/schema.py`
+- `sdk/go/sdk/buildkite/`
 
 Note that the type-generator binary (a Go program at `internal/gen/type-gen`) is automatically built when you run `npm run types`. If you need to rebuild that binary manually, run `npx nx gen:build`.
 
@@ -107,38 +104,106 @@ See the [nx guide](https://nx.dev/features/automate-updating-dependencies) for d
 
 ## Publishing new versions
 
-All SDKs version on the same cadence. To publish a new version (of all SDKs), follow these steps:
+Each SDK has its own version and `sdk/<language>/v<version>` tag. Always use
+`release:create`; do not run `nx release` directly. The local command creates
+the release commit and tags. Buildkite publishes the packages.
 
-1.  Commit all pending changes. We want the release commit to be "clean" (i.e., to consist only of changes related to the release itself.)
+1.  Prepare the repository.
 
-1.  Update the `VERSION_FROM` and `VERSION_TO` values in the `release:all` task in [`./project.json`](./project.json).
-
-1.  Leaving that single change uncommitted and run the release script:
-
-    ```bash
-    npm run release:create-branch
-    ```
-
-    This script:
-
-    -   Updates the version numbers in all affected files
-    -   Rebuilds all SDKs
-    -   Commits all changes (e.g., to version files, lockfiles, and anything else under `./sdk`)
-    -   Pushes the branch to GitHub
-
-1. Next open a PR with the created branch.
-
-1. After the PR is merged, from an up-to-date main branch, create and push the release tags:
+    Start from the latest `main`, then confirm the working tree is clean:
 
     ```bash
-    git tag v{VERSION_TO} main
-    git tag sdk/go/v{VERSION_TO} main
-
-    git push origin v{VERSION_TO}
-    git push origin sdk/go/v{VERSION_TO}
+    git switch main
+    git pull --ff-only
+    git status --short
     ```
 
-1. Once the tags have been created, manually trigger the SDK Release Pipeline in Buildkite. After the pipeline has finished, manually create a release in GitHub ([example](https://github.com/buildkite/buildkite-sdk/releases/tag/v0.5.0)).
+    The status command must produce no output. `release:create` refreshes
+    `origin/main` and the SDK release tags before it starts. Local SDK release
+    tags that were never pushed are discarded. A real release stops unless
+    `HEAD` matches `origin/main`, or if a local tag conflicts with the remote.
+
+1.  Preview the release and choose a bump.
+
+    | Bump  | Preview                                        | Create                               |
+    | ----- | ---------------------------------------------- | ------------------------------------ |
+    | Patch | `npx nx release:create --dry-run`              | `npx nx release:create`              |
+    | Minor | `npx nx release:create --dry-run --bump=minor` | `npx nx release:create --bump=minor` |
+    | Major | `npx nx release:create --dry-run --bump=major` | `npx nx release:create --bump=major` |
+
+    The helper selects every SDK changed since its own latest tag. One bump
+    applies to every SDK selected by that run. Confirm the preview lists only
+    the SDKs you intend to release before continuing.
+
+    A change to `sdk/<language>/project.json` alone is ignored. To make a
+    deliberate packaging release for such a change, add `--force` to both the
+    preview and create commands.
+
+1.  Create the release.
+
+    Run exactly one command from the **Create** column above, using the same
+    bump you previewed. For every selected SDK, the command:
+
+    - Updates its version file (Go has no version file)
+    - Updates its `CHANGELOG.md`
+    - Creates one release commit
+    - Creates an `sdk/<language>/v<version>` tag
+
+    It does not push or publish anything.
+
+1.  Review the release commit and tags.
+
+    ```bash
+    git show --stat
+    git tag --points-at HEAD
+    ```
+
+    Confirm the commit contains only release changes and that there is one tag
+    for each SDK shown in the preview. If anything is wrong, do not push it.
+    Discard the generated release with `git reset --hard origin/main`. The next
+    `release:create` run removes its unpushed SDK tags.
+
+1.  Push the commit and tags.
+
+    ```bash
+    git push --atomic --follow-tags origin main
+    ```
+
+    The atomic push prevents release tags from landing if `main` moved after
+    the release was created.
+
+1.  Publish from Buildkite.
+
+    Get the release commit SHA:
+
+    ```bash
+    git rev-parse HEAD
+    ```
+
+    Manually trigger the **SDK Release Pipeline** against that exact commit.
+    The pipeline refreshes tags from `origin`, checks each registry first,
+    skips versions already published, and publishes only versions missing from
+    their registry. A publish step turns red instead of publishing if its tag
+    is missing or does not point at the build commit. Other SDKs can continue
+    independently.
+
+1.  Create the GitHub Releases.
+
+    After Buildkite succeeds, create one GitHub Release for each SDK published.
+    Select its `sdk/<language>/v<version>` tag and use that SDK's new
+    `CHANGELOG.md` entry as the release body.
+
+### Version sources
+
+| SDK        | Version lives in                                    |
+| ---------- | --------------------------------------------------- |
+| TypeScript | `sdk/typescript/package.json`                       |
+| Python     | `sdk/python/pyproject.toml`                         |
+| Ruby       | `sdk/ruby/lib/buildkite/version.rb`                 |
+| C#         | `sdk/csharp/src/Buildkite.Sdk/Buildkite.Sdk.csproj` |
+| Go         | the `sdk/go/v*` git tag, no file                    |
+
+TypeScript uses Nx's built-in npm support. The other four are handled by [`tools/release/version-actions.ts`](./tools/release/version-actions.ts), wired up per SDK in the `release` block of [`nx.json`](./nx.json).
 
 ### Docs
 
@@ -146,10 +211,14 @@ The SDK language docs are managed by a Pulumi Program in `infra` and manually de
 
 ### Required environment variables
 
-The following environment variables are required for releasing and publishing:
+The local `release:create` command does not need registry credentials. The
+Buildkite SDK Release Pipeline supplies these variables when publishing:
 
--   `NPM_TOKEN` for publishing to npm (with `npm publish`)
--   `PYPI_TOKEN` fror publishing to PyPI (with `uv publish`)
--   `GEM_HOST_API_KEY` for publishing to RubyGems (with `gem push`)
+- `NPM_TOKEN` for publishing to npm (with `npm publish`)
+- `PYPI_TOKEN` for publishing to PyPI (with `uv publish`)
+- `GEM_HOST_API_KEY` for publishing to RubyGems (with `gem push`)
+- `NUGET_API_KEY` for publishing to NuGet (with `dotnet nuget push`)
 
-See the `publish:all` tasks in `./project.json` for details.
+See each SDK's `publish` target in `sdk/<language>/project.json` for details.
+There is no aggregate publish target: publishing happens only through the
+release pipeline, one SDK at a time.

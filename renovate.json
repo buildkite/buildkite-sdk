@@ -76,7 +76,6 @@
         "tslib",
         "ts-node",
         "@swc-node/**",
-        "replace-in-file",
         "rimraf"
       ],
       "groupName": "js build tools"
