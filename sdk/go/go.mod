@@ -5,7 +5,7 @@ go 1.25.4
 require (
 	github.com/buildkite/conditional v1.0.0
 	github.com/itchyny/json2yaml v0.1.5
-	github.com/stretchr/testify v1.11.1
+	github.com/stretchr/testify v1.12.0
 )
 
 require (
