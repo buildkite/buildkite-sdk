@@ -179,6 +179,15 @@ class TestCommandStepClass(TestRunner):
             pipeline, {"steps": [{"command": "test", "branches": "master deploy-*"}]}
         )
 
+    def test_concurrency_object(self):
+        concurrency = {"limit": 1, "group": "my-group", "method": "eager"}
+        pipeline = Pipeline(
+            steps=[CommandStep(command="test", concurrency=concurrency)]
+        )
+        self.validator.check_result(
+            pipeline, {"steps": [{"command": "test", "concurrency": concurrency}]}
+        )
+
     def test_concurrency(self):
         pipeline = Pipeline(
             steps=[

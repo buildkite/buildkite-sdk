@@ -90,6 +90,10 @@ The type generator automatically fetches the latest schema from the `main` branc
 - `sdk/python/src/buildkite_sdk/schema.py`
 - `sdk/go/sdk/buildkite/`
 
+Go regeneration deletes every `.go` file in `sdk/go/sdk/buildkite/` except `conditionals.go`, which is hand-written. If you add another hand-written file there, add it to the exclusion in the `gen:types-go` target in `project.json`.
+
+C# and Ruby types are not generated. When the schema changes, update `sdk/csharp/src/Buildkite.Sdk/Schema/` by hand.
+
 Note that the type-generator binary (a Go program at `internal/gen/type-gen`) is automatically built when you run `npm run types`. If you need to rebuild that binary manually, run `npx nx gen:build`.
 
 ### Upgrading nx

@@ -106,6 +106,12 @@ class TestBlockStepClass(TestRunner):
             pipeline, {"steps": [{"block": "label", "prompt": "prompt"}]}
         )
 
+    def test_submit(self):
+        pipeline = Pipeline(steps=[BlockStep(block="label", submit="Go")])
+        self.validator.check_result(
+            pipeline, {"steps": [{"block": "label", "submit": "Go"}]}
+        )
+
     def test_fields(self):
         pipeline = Pipeline(
             steps=[

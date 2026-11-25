@@ -110,6 +110,10 @@ export interface BlockStep {
      * The instructional message displayed in the dialog box when the unblock step is activated
      */
     prompt?: string;
+    /**
+     * The label on the button that submits the dialog and unblocks the step
+     */
+    submit?: string;
     type?: "block";
 }
 
@@ -154,9 +158,9 @@ export type CancelOnBuildFailing = true | false | "true" | "false";
  */
 export interface Checkout {
     /**
-     * Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
+     * Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs (Agent v3 only), and off disables verification (Agent v4 only)
      */
-    commit_verification?: "strict" | "warn";
+    commit_verification?: "strict" | "warn" | "off";
     /**
      * Number of commits to fetch when performing a shallow clone; omit for full history
      */
@@ -246,15 +250,15 @@ export interface CommandStep {
      */
     commands?: CommandStepCommand;
     /**
-     * The maximum number of jobs created from this step that are allowed to run at the same time. If you use this attribute, you must also define concurrency_group.
+     * The maximum number of jobs created from this step that are allowed to run at the same time, or an object configuring the limit, group, method, and cancellation. A positive limit requires a group. An omitted or null limit disables concurrency.
      */
-    concurrency?: number;
+    concurrency?: number | Record<string, any>;
     /**
      * A unique name for the concurrency group that you are creating with the concurrency attribute
      */
     concurrency_group?: string;
     /**
-     * Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
+     * Control command order, allowed values are 'ordered' (default) and 'eager'. Requires a concurrency limit and group, specified in concurrency or the legacy fields.
      */
     concurrency_method?: "ordered" | "eager";
     /**
@@ -789,9 +793,9 @@ export interface NotifyWebhook {
  */
 export interface PipelineCheckout {
     /**
-     * Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
+     * Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs (Agent v3 only), and off disables verification (Agent v4 only)
      */
-    commit_verification?: "strict" | "warn";
+    commit_verification?: "strict" | "warn" | "off";
     /**
      * Number of commits to fetch when performing a shallow clone; omit for full history
      */

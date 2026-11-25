@@ -242,6 +242,8 @@ BlockStepArgs = TypedDict(
         "name": NotRequired["str"],
         # The instructional message displayed in the dialog box when the unblock step is activated
         "prompt": NotRequired["str"],
+        # The label on the button that submits the dialog and unblocks the step
+        "submit": NotRequired["str"],
         "type": NotRequired[Literal["block"]],
     },
 )
@@ -280,6 +282,8 @@ class BlockStep(BaseModel):
     name: Optional[str] = None
     # The instructional message displayed in the dialog box when the unblock step is activated
     prompt: Optional[str] = None
+    # The label on the button that submits the dialog and unblocks the step
+    submit: Optional[str] = None
     type: Optional[Literal["block"]] = None
 
     @classmethod
@@ -720,8 +724,8 @@ CheckoutSparseArgs = TypedDict(
 CheckoutArgs = TypedDict(
     "CheckoutArgs",
     {
-        # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
-        "commit_verification": NotRequired[Literal["strict", "warn"]],
+        # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs (Agent v3 only), and off disables verification (Agent v4 only)
+        "commit_verification": NotRequired[Literal["strict", "warn", "off"]],
         # Number of commits to fetch when performing a shallow clone; omit for full history
         "depth": NotRequired["int | str"],
         # Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration
@@ -742,8 +746,8 @@ CheckoutArgs = TypedDict(
 
 # Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key
 class Checkout(BaseModel):
-    # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
-    commit_verification: Optional[Literal["strict", "warn"]] = None
+    # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs (Agent v3 only), and off disables verification (Agent v4 only)
+    commit_verification: Optional[Literal["strict", "warn", "off"]] = None
     # Number of commits to fetch when performing a shallow clone; omit for full history
     depth: Optional[int | str] = None
     # Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration
@@ -768,9 +772,6 @@ MatrixElement = str | int | bool
 
 MatrixElementList = List[str | int | bool]
 
-# Build Matrix dimension element
-MatrixAdjustmentsWithObject = Dict[str, str]
-
 SoftFailObjectArgs = TypedDict(
     "SoftFailObjectArgs",
     {
@@ -790,6 +791,9 @@ class SoftFailObject(BaseModel):
 
 
 SoftFailList = List[SoftFailObject | SoftFailObjectArgs]
+
+# Build Matrix dimension element
+MatrixAdjustmentsWithObject = Dict[str, str]
 
 # An adjustment to a Build Matrix
 MatrixAdjustmentsArgs = TypedDict(
@@ -948,11 +952,11 @@ CommandStepArgs = TypedDict(
         "command": NotRequired["CommandStepCommand"],
         # The commands to run on the agent
         "commands": NotRequired["CommandStepCommand"],
-        # The maximum number of jobs created from this step that are allowed to run at the same time. If you use this attribute, you must also define concurrency_group.
-        "concurrency": NotRequired["int"],
+        # The maximum number of jobs created from this step that are allowed to run at the same time, or an object configuring the limit, group, method, and cancellation. A positive limit requires a group. An omitted or null limit disables concurrency.
+        "concurrency": NotRequired["int | Dict[str, Any]"],
         # A unique name for the concurrency group that you are creating with the concurrency attribute
         "concurrency_group": NotRequired["str"],
-        # Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
+        # Control command order, allowed values are 'ordered' (default) and 'eager'. Requires a concurrency limit and group, specified in concurrency or the legacy fields.
         "concurrency_method": NotRequired[Literal["ordered", "eager"]],
         # The step keys for a step to depend on
         "depends_on": NotRequired["DependsOn"],
@@ -1017,11 +1021,11 @@ class CommandStep(BaseModel):
     command: Optional[CommandStepCommand] = None
     # The commands to run on the agent
     commands: Optional[CommandStepCommand] = None
-    # The maximum number of jobs created from this step that are allowed to run at the same time. If you use this attribute, you must also define concurrency_group.
-    concurrency: Optional[int] = None
+    # The maximum number of jobs created from this step that are allowed to run at the same time, or an object configuring the limit, group, method, and cancellation. A positive limit requires a group. An omitted or null limit disables concurrency.
+    concurrency: Optional[int | Dict[str, Any]] = None
     # A unique name for the concurrency group that you are creating with the concurrency attribute
     concurrency_group: Optional[str] = None
-    # Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
+    # Control command order, allowed values are 'ordered' (default) and 'eager'. Requires a concurrency limit and group, specified in concurrency or the legacy fields.
     concurrency_method: Optional[Literal["ordered", "eager"]] = None
     # The step keys for a step to depend on
     depends_on: Optional[DependsOn] = None
@@ -1670,8 +1674,8 @@ PipelineCheckoutSparseArgs = TypedDict(
 PipelineCheckoutArgs = TypedDict(
     "PipelineCheckoutArgs",
     {
-        # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
-        "commit_verification": NotRequired[Literal["strict", "warn"]],
+        # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs (Agent v3 only), and off disables verification (Agent v4 only)
+        "commit_verification": NotRequired[Literal["strict", "warn", "off"]],
         # Number of commits to fetch when performing a shallow clone; omit for full history
         "depth": NotRequired["int | str"],
         # Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration
@@ -1690,8 +1694,8 @@ PipelineCheckoutArgs = TypedDict(
 
 # Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key. ssh_secret is step-level only and is not valid here
 class PipelineCheckout(BaseModel):
-    # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
-    commit_verification: Optional[Literal["strict", "warn"]] = None
+    # Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs (Agent v3 only), and off disables verification (Agent v4 only)
+    commit_verification: Optional[Literal["strict", "warn", "off"]] = None
     # Number of commits to fetch when performing a shallow clone; omit for full history
     depth: Optional[int | str] = None
     # Custom flags passed to git commands during checkout. Flag strings are passed to git verbatim and are not sanitized; do not interpolate untrusted input. See the agent documentation for precedence and defaults: https://buildkite.com/docs/agent/v3/configuration

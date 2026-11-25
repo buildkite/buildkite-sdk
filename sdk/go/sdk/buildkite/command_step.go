@@ -26,9 +26,32 @@ func (e CommandStepArtifactPaths) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nil)
 }
 
+type CommandStepConcurrencyObject = map[string]interface{}
+
+// The maximum number of jobs created from this step that are allowed to run at the same time, or an object configuring the limit, group, method, and cancellation. A positive limit requires a group. An omitted or null limit disables concurrency.
+type CommandStepConcurrencyValues interface {
+	int | CommandStepConcurrencyObject
+}
+
+// The maximum number of jobs created from this step that are allowed to run at the same time, or an object configuring the limit, group, method, and cancellation. A positive limit requires a group. An omitted or null limit disables concurrency.
+type CommandStepConcurrency struct {
+	CommandStepConcurrency *CommandStepConcurrencyObject
+	Int                    *int
+}
+
+func (e CommandStepConcurrency) MarshalJSON() ([]byte, error) {
+	if e.Int != nil {
+		return json.Marshal(e.Int)
+	}
+	if e.CommandStepConcurrency != nil {
+		return json.Marshal(e.CommandStepConcurrency)
+	}
+	return json.Marshal(nil)
+}
+
 type CommandStepConcurrencyMethod string
 
-// Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
+// Control command order, allowed values are 'ordered' (default) and 'eager'. Requires a concurrency limit and group, specified in concurrency or the legacy fields.
 var CommandStepConcurrencyMethodValues = map[string]CommandStepConcurrencyMethod{
 	"ordered": "ordered",
 	"eager":   "eager",
@@ -77,11 +100,11 @@ type CommandStep struct {
 	Command *CommandStepCommand `json:"command,omitempty"`
 	// The commands to run on the agent
 	Commands *CommandStepCommand `json:"commands,omitempty"`
-	// The maximum number of jobs created from this step that are allowed to run at the same time. If you use this attribute, you must also define concurrency_group.
-	Concurrency *int `json:"concurrency,omitempty"`
+	// The maximum number of jobs created from this step that are allowed to run at the same time, or an object configuring the limit, group, method, and cancellation. A positive limit requires a group. An omitted or null limit disables concurrency.
+	Concurrency *CommandStepConcurrency `json:"concurrency,omitempty"`
 	// A unique name for the concurrency group that you are creating with the concurrency attribute
 	ConcurrencyGroup *string `json:"concurrency_group,omitempty"`
-	// Control command order, allowed values are 'ordered' (default) and 'eager'.  If you use this attribute, you must also define concurrency_group and concurrency.
+	// Control command order, allowed values are 'ordered' (default) and 'eager'. Requires a concurrency limit and group, specified in concurrency or the legacy fields.
 	ConcurrencyMethod *CommandStepConcurrencyMethod `json:"concurrency_method,omitempty"`
 	// The step keys for a step to depend on
 	DependsOn *DependsOn `json:"depends_on,omitempty"`

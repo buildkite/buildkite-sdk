@@ -38,6 +38,9 @@ public class BlockStep : IStep, IGroupStep
     /// <summary>The message displayed in the unblock dialog.</summary>
     public string? Prompt { get; set; }
 
+    /// <summary>The label on the button that submits the dialog and unblocks the step. Defaults to "Continue".</summary>
+    public string? Submit { get; set; }
+
     /// <summary>Input fields to display in the unblock dialog.</summary>
     public List<Field>? Fields { get; set; }
 

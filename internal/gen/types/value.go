@@ -2,6 +2,8 @@ package types
 
 import (
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 
 	"github.com/buildkite/buildkite-sdk/internal/gen/schema"
@@ -436,7 +438,9 @@ func (p PipelineSchemaGenerator) PropertyDefinitionToValue(name string, property
 	// Object
 	if property.Type == "object" {
 		properties := utils.NewOrderedMap[Value](nil)
-		for name, prop := range property.Properties {
+		// Iterate in sorted order so dependencies, and the generated output, are deterministic.
+		for _, name := range slices.Sorted(maps.Keys(property.Properties)) {
+			prop := property.Properties[name]
 			if prop.Ref != "" {
 				refProp := p.ResolveReference(prop.Ref)
 				refVal, objDependencies, err := p.PropertyDefinitionToValue(name, refProp)

@@ -87,8 +87,7 @@
             "executor": "nx:run-commands",
             "options": {
                 "commands": [
-                    "rm -rf sdk/go/sdk/buildkite",
-                    "mkdir sdk/go/sdk/buildkite",
+                    "find sdk/go/sdk/buildkite -name '*.go' ! -name 'conditionals.go' -delete",
                     "go install golang.org/x/tools/cmd/goimports@latest",
                     "export PATH=\"$HOME/go/bin:$PATH\"",
                     "./internal/gen/type-gen go sdk/go/sdk/buildkite",
