@@ -69,6 +69,13 @@ class TestCommandStepCheckout(TestRunner):
             pipeline, {"steps": [{"command": "ls", "checkout": checkout}]}
         )
 
+    def test_checkout_commit_verification_off(self):
+        checkout = {"commit_verification": "off"}
+        pipeline = Pipeline(steps=[CommandStep(command="ls", checkout=checkout)])
+        self.validator.check_result(
+            pipeline, {"steps": [{"command": "ls", "checkout": checkout}]}
+        )
+
 
 class TestPipelineCheckout(TestRunner):
     def test_pipeline_level_checkout(self):

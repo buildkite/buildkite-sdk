@@ -102,9 +102,17 @@ func TestCommandStep(t *testing.T) {
 	t.Run("Concurrency", func(t *testing.T) {
 		concurrency := 1
 		val := buildkite.CommandStep{
-			Concurrency: &concurrency,
+			Concurrency: &buildkite.CommandStepConcurrency{Int: &concurrency},
 		}
 		CheckResult(t, val, `{"concurrency":1}`)
+	})
+
+	t.Run("ConcurrencyObject", func(t *testing.T) {
+		concurrency := buildkite.CommandStepConcurrencyObject{"limit": 1, "group": "deploy"}
+		val := buildkite.CommandStep{
+			Concurrency: &buildkite.CommandStepConcurrency{CommandStepConcurrency: &concurrency},
+		}
+		CheckResult(t, val, `{"concurrency":{"group":"deploy","limit":1}}`)
 	})
 
 	t.Run("ConcurrencyGroup", func(t *testing.T) {
@@ -476,7 +484,7 @@ func TestCommandStep(t *testing.T) {
 			Commands: &buildkite.CommandStepCommand{
 				StringArray: commands,
 			},
-			Concurrency:       &concurrency,
+			Concurrency:       &buildkite.CommandStepConcurrency{Int: &concurrency},
 			ConcurrencyGroup:  &concurrencyGroup,
 			ConcurrencyMethod: &concurrencyMethod,
 			DependsOn: &buildkite.DependsOn{

@@ -23,6 +23,21 @@ public class BlockStepTests
     }
 
     [Fact]
+    public void BlockStep_WithSubmit_GeneratesSubmitLabel()
+    {
+        var pipeline = new Pipeline();
+        pipeline.AddStep(new BlockStep
+        {
+            Block = "Deploy",
+            Submit = "Yes, deploy it"
+        });
+
+        var yaml = pipeline.ToYaml();
+
+        Assert.Contains("submit: Yes, deploy it", yaml);
+    }
+
+    [Fact]
     public void BlockStep_WithKey_GeneratesKeyConfig()
     {
         var pipeline = new Pipeline();

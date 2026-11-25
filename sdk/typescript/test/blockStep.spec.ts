@@ -1,3 +1,4 @@
+import { Pipeline } from "../src/index";
 import { createValidator, PipelineStepValidator } from "./utils";
 
 describe("BlockStep", () => {
@@ -61,6 +62,20 @@ describe("BlockStep", () => {
             validatePipeline({
                 block: "A label",
                 prompt: "A prompt",
+            });
+        });
+
+        it("Submit", () => {
+            validatePipeline({
+                block: "A label",
+                prompt: "A prompt",
+                submit: "Yes, deploy it!",
+            });
+
+            const pipeline = new Pipeline();
+            pipeline.addStep({ block: "A label", submit: "Yes, deploy it!" });
+            expect(JSON.parse(pipeline.toJSON())).toEqual({
+                steps: [{ block: "A label", submit: "Yes, deploy it!" }],
             });
         });
 

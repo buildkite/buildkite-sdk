@@ -7,10 +7,11 @@ import "encoding/json"
 
 type PipelineCheckoutCommitVerification string
 
-// Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
+// Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs (Agent v3 only), and off disables verification (Agent v4 only)
 var PipelineCheckoutCommitVerificationValues = map[string]PipelineCheckoutCommitVerification{
 	"strict": "strict",
 	"warn":   "warn",
+	"off":    "off",
 }
 
 // Number of commits to fetch when performing a shallow clone; omit for full history
@@ -138,7 +139,7 @@ func (e PipelineCheckoutSubmodules) MarshalJSON() ([]byte, error) {
 
 // Configure git checkout behavior. Pipeline-level values are inherited by each step unless that step overrides the same key. ssh_secret is step-level only and is not valid here
 type PipelineCheckout struct {
-	// Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs
+	// Verify the checked-out commit is on the expected branch; strict fails the job on a definitive mismatch, warn only logs (Agent v3 only), and off disables verification (Agent v4 only)
 	CommitVerification *PipelineCheckoutCommitVerification `json:"commit_verification,omitempty"`
 	// Number of commits to fetch when performing a shallow clone; omit for full history
 	Depth *PipelineCheckoutDepth `json:"depth,omitempty"`

@@ -134,6 +134,14 @@ func TestBlockStep(t *testing.T) {
 		CheckResult(t, val, `{"prompt":"value"}`)
 	})
 
+	t.Run("Submit", func(t *testing.T) {
+		value := "Yes, deploy it!"
+		val := buildkite.BlockStep{
+			Submit: &value,
+		}
+		CheckResult(t, val, `{"submit":"Yes, deploy it!"}`)
+	})
+
 	t.Run("Type", func(t *testing.T) {
 		value := buildkite.BlockStepTypeValues["block"]
 		val := buildkite.BlockStep{

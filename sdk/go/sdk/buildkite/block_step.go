@@ -46,6 +46,8 @@ type BlockStep struct {
 	// The label of the block step
 	Name *string `json:"name,omitempty"`
 	// The instructional message displayed in the dialog box when the unblock step is activated
-	Prompt *string        `json:"prompt,omitempty"`
+	Prompt *string `json:"prompt,omitempty"`
+	// The label on the button that submits the dialog and unblocks the step
+	Submit *string        `json:"submit,omitempty"`
 	Type   *BlockStepType `json:"type,omitempty"`
 }
